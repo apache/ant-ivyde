@@ -1,0 +1,88 @@
+<project name="ivyde" default="resolve" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	<property environment="env"/>
+	<property file="build.properties"/>
+	
+	<property name="ivy.install.version" value="1.4" />
+
+	<!-- =================================================================
+               IVY AUTO INSTALL
+               Ivy eats its own dog food, and thus require Ivy jar to
+               be built. This section will download Ivy from
+               internet and use it for ivy tasks of this build.
+         ================================================================= -->
+	<condition property="ivy.home" value="${env.IVY_HOME}">
+		<isset property="env.IVY_HOME" />
+	</condition>
+	<property name="ivy.home" value="${user.home}/.ivy" />
+	<property name="ivy.jar.dir" value="${ivy.home}/jars" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	
+	<target name="download-ivy" unless="offline">
+    	<mkdir dir="${ivy.jar.dir}"/>
+		<!-- download Ivy from web site so that it can be used even without any special installation -->
+    	<get src="http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+    		 dest="${ivy.jar.file}" usetimestamp="true"/>
+	</target>
+	
+	<target name="init-ivy" depends="download-ivy">
+    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+    	      it into ant's lib dir (note that the latter copy will always take precedence).
+    	      We will not fail as long as local lib dir exists (it may be empty) and
+    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
+    	<path id="ivy.lib.path">
+    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    	</path>
+    	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
+    	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+	
+	
+    <!-- =================================================================
+               PREPARATION, CLEANING AND FLAGS TASKS
+         ================================================================= -->
+	<target name="init">
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<path id="run.classpath">
+			<path refid="build.classpath"/>
+			<pathelement location="${classes.build.dir}"/>
+		</path>
+	</target>
+	
+	<target name="prepare" depends="init">
+	   <mkdir dir="${classes.build.dir}"/>
+	   <mkdir dir="${artifacts.build.dir}"/>
+	</target>
+	
+	<target name="clean">
+	   <delete dir="${classes.build.dir}"/>
+	   <delete dir="${artifacts.build.dir}"/>
+	   <delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="clean-lib">
+    	<delete dir="${lib.dir}"/>
+	</target>
+	
+	<target name="clean-all" depends="clean, clean-lib"/>
+	
+	<target name="noresolve" description="use to skip dependency resolution">
+		<property name="no.resolve" value="true"/>
+	</target>
+	
+	<target name="offline" depends="noresolve" description="use to indicate no internet connection is available">
+		<property name="offline" value="true" />
+	</target>
+	
+
+    <!-- =================================================================
+               DEPENDENCY MNGT
+         ================================================================= -->
+	<target name="resolve" depends="init-ivy, prepare" unless="no.resolve">
+		<ivy:retrieve conf="*" pattern="${lib.dir}/[conf]/[artifact].[ext]" />
+	</target>
+	
+</project>

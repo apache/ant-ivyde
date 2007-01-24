@@ -1,0 +1,10 @@
+<ivyconf>
+	<conf defaultResolver="public" />
+	<resolvers>
+		<url name="public">
+			<ivy pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/ivy-[revision].xml"/>
+			<artifact pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+			<artifact pattern="http://www.ibiblio.org/maven/[module]/[type]s/[artifact]-[revision].[ext]"/>
+		</url>
+	</resolvers>
+</ivyconf>

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.jayasoft.ivyde.eclipse"
+   name="IvyDE Eclipse Plug-in"
+   version="1.2.0"
+   provider-name="Jayasoft"
+   class="org.jayasoft.ivyde.eclipse.IvyPlugin">
+
+   <runtime>
+      <library name="ivyde-eclipse.jar"/>
+      <library name="lib/default/ivy-core.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/default/commons-codec.jar">
+      </library>
+      <library name="lib/default/commons-httpclient.jar">
+      </library>
+      <library name="lib/default/commons-logging.jar">
+      </library>
+      <library name="lib/default/oro.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/default/commons-vfs.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/default/jsch.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/default/slide-webdavlib.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.jdt.core" /> 
+      <import plugin="org.eclipse.jdt.ui" />
+      <import plugin="org.eclipse.ui.console"/>
+   </requires>
+   
+   <extension
+        point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry library="lib/ant/ivy.jar"/>
+  	</extension>
+  	
+	<extension point="org.eclipse.ui.console.consoleFactories">
+	  <consoleFactory 
+	     label="Ivy Console"
+	     class="org.jayasoft.ivyde.eclipse.ui.console.IvyConsoleFactory"
+	     icon="icons/logo16x16.gif">
+	  </consoleFactory>
+	</extension>
+
+   <extension
+         point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+      		id="org.jayasoft.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER"
+      		name="IvyDE Managed Dependencies"
+            class="org.jayasoft.ivyde.eclipse.cpcontainer.IvydeContainerPage"
+            >
+      </classpathContainerPage>
+   </extension>
+   
+    <extension
+          id="org.jayasoft.ivyde.eclipse.cpcontainer.Container"
+          name="IvyDE Classpath Container"
+          point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.jayasoft.ivyde.eclipse.cpcontainer.IvyClasspathInitializer"
+            id="org.jayasoft.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+
+   <extension point="org.eclipse.ui.popupMenus"> 
+      <objectContribution 
+         id="org.jayasoft.ivyde.eclipse.ui.actions.RefreshAction" 
+         objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 
+         <action
+            id="org.jayasoft.ivyde.eclipse.ui.actions.RefreshAction" 
+            label="Re&amp;fresh"
+            class="org.jayasoft.ivyde.eclipse.ui.actions.RefreshAction" 
+            enablesFor="1"
+			/> 
+      </objectContribution> 
+      <objectContribution 
+         id="org.jayasoft.ivyde.eclipse.ui.actions.ResolveAction" 
+         objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 
+         <action
+            id="org.jayasoft.ivyde.eclipse.ui.actions.ResolveAction" 
+            label="&amp;Resolve"
+            class="org.jayasoft.ivyde.eclipse.ui.actions.ResolveAction" 
+            enablesFor="1"
+			/> 
+      </objectContribution> 
+      <objectContribution 
+         id="org.jayasoft.ivyde.eclipse.ui.actions.OpenIvyFileAction" 
+         objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 
+         <action
+            id="org.jayasoft.ivyde.eclipse.ui.actions.OpenIvyFileAction" 
+            label="&amp;Edit"
+            class="org.jayasoft.ivyde.eclipse.ui.actions.OpenIvyFileAction" 
+            enablesFor="1"
+			/> 
+      </objectContribution> 
+      <objectContribution 
+         id="org.jayasoft.ivyde.eclipse.ui.actions.CreateContainerAction" 
+         objectClass="org.eclipse.core.resources.IFile"
+         nameFilter="*.xml"> 
+         <action
+            id="org.jayasoft.ivyde.eclipse.ui.actions.CreateContainerAction" 
+            label="Add &amp;Ivy Library"
+            class="org.jayasoft.ivyde.eclipse.ui.actions.CreateContainerAction" 
+            enablesFor="1"
+			/> 
+      </objectContribution> 
+   </extension> 
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.jayasoft.ivyde.eclipse.ui.editors.IvyEditor"
+            contributorClass="org.jayasoft.ivyde.eclipse.ui.editors.IvyEditorContributor"
+            filenames="ivy.xml,ivy-dev.xml,ivy-snapshot.xml"
+            icon="icons/logo16x16.gif"
+            id="org.jayasoft.ivyde.editors.IvyEditor"
+            name="Ivy Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+		<category 
+		   id="org.jayasoft.ivyde.eclipse.ui.new"
+		   name="IvyDE">
+		</category>
+      <wizard
+            class="org.jayasoft.ivyde.eclipse.ui.wizards.IvyNewWizard"
+            icon="icons/logo16x16.gif"
+            id="org.jayasoft.ivyde.eclipse.ui.wizards.IvyNewWizard"
+            category="org.jayasoft.ivyde.eclipse.ui.new"
+            name="Ivy file">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Ivy"
+            class="org.jayasoft.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            id="org.jayasoft.ivyde.eclipse.ui.preferences.IvyPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.jayasoft.ivyde.eclipse.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            class="org.jayasoft.ivyde.eclipse.ui.properties.IvyProjectPropertyPage"
+            id="org.jayasoft.ivyde.eclipse.properties.ivyProjectPropertyPage"
+            name="Ivy">
+         <filter
+               name="nature"
+               value="org.eclipse.jdt.core.javanature">
+         </filter>
+         <keywordReference id="org.eclipse.jdt.ui.buildpath"/>
+      </page>
+      <page
+            objectClass="org.eclipse.jdt.core.IJavaProject"
+            class="org.jayasoft.ivyde.eclipse.ui.properties.IvyProjectPropertyPage"
+            id="org.jayasoft.ivyde.eclipse.properties.ivyProjectPropertyPage"
+            name="Ivy">
+         <filter
+               name="nature"
+               value="org.eclipse.jdt.core.javanature">
+         </filter>
+         <keywordReference id="org.eclipse.jdt.ui.buildpath"/>
+      </page>
+   </extension>
+   
+	<extension 
+	   point="org.eclipse.ui.views">
+		<category 
+		   id="org.jayasoft.ivyde.eclipse.ui.views"
+		   name="IvyDE">
+		</category>
+		<view
+	 	   id="org.jayasoft.ivyde.eclipse.ui.views.ReportView"
+		   name="Ivy Report"
+		   icon="icons/logo16x16.gif"
+		   category="org.jayasoft.ivyde.eclipse.ui.views"
+		   class="org.jayasoft.ivyde.eclipse.ui.views.ReportView">
+		</view>
+	</extension>
+	
+   <!-- uncomment to enable fixed search
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            showScopeSection="true"
+            canSearchEnclosingProjects="true"
+            label="(f)Java Search"
+            icon="icons/jsearch_obj.gif"
+            extensions="java:90, jav:90"
+            class="org.jayasoft.ivyde.eclipse.ui.search.FixedJavaSearchPage"
+            sizeHint="460,160"
+            id="org.jayasoft.ivyde.eclipse.ui.search.FixedJavaSearchPage">
+      </page>
+   </extension>
+   -->
+
+   <!-- Uncomment to enable resolve all action
+   
+   <extension point = "org.eclipse.ui.actionSets">
+	   <actionSet id="org.jayasoft.ivyde.eclipse.ui.actions.actionSet"
+		   label="IvyDE Actions"
+		   visible="true">
+		   <action id="org.jayasoft.ivyde.eclipse.ui.actions.resolveAll"
+			   toolbarPath="readme"
+			   label="Resolve All Dependencies"
+			   icon="icons/resolve-all.gif"
+			   class="org.jayasoft.ivyde.eclipse.ui.actions.ResolveAllAction"
+			   definitionID="org.jayasoft.ivyde.eclipse.ui.actions.resolveAll">
+		   </action>
+	   </actionSet>
+   </extension>
+   
+   <extension point="org.eclipse.ui.commands">
+      <command
+            name="Resolve All Dependencies"
+            description="Resolve All Project Dependencies with Ivy"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.jayasoft.ivyde.eclipse.ui.actions.resolveAll">
+      </command>
+   </extension>
+   -->
+   
+
+
+   <!--
+   <extension point="org.eclipse.ui.commands">
+      <command
+            name="Resolve Dependencies"
+            description="Resolve Project Dependencies with Ivy"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.jayasoft.ivyde.eclipse.cpcontainer.command.resolve">
+      </command>
+   </extension>
+   
+   <extension point="org.eclipse.ui.bindings">
+      <key
+            sequence="M2+F5"
+            commandId="org.jayasoft.ivyde.eclipse.cpcontainer.command.resolve"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
+   -->
+	
+      <!--
+   <extension 
+   		 point="org.eclipse.core.runtime.contentTypes">
+      <content-type 
+      		id="ivyfile" 
+      		name="ivyfile" 
+    		base-type="org.eclipse.core.runtime.xml"
+   			priority="high"				
+    		file-names="ivy*.xml"/>
+    </extension>
+
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            name="Ivy Page"
+            nameFilter="ivy.xml"
+            class="org.jayasoft.ivyde.eclipse.ui.properties.IvyPropertyPage"
+            id="org.jayasoft.ivyde.eclipse.ui.properties.samplePropertyPage">
+      </page>
+   </extension>
+   -->
+</plugin>
