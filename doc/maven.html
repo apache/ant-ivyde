@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>General</h1>
+<p>If you want to use a maven pom instead of Ivy xml file, you just have to select a pom file in the configuration form of IvyDE class path.<br/>When a maven pom is selected, the configurations list is updated with all maven scopes.</p>
+<p>Both exemples below are a good illustration of maven pom use simplicity :</p>
+<ul>
+<li><a href="#one">Maven1 sample</a></li>
+<li><a href="#two">Maven2 sample</a></li>
+</ul>
+<h1><a name="one"></a>Maven1 Sample</h1>
+<p>This sample presents a simple use case of maven pom for IvyDE class path container. We are going to create an eclipse project on commons_httpclient sources.</p>
+<p><b> - Download the <a href="">commons httpclient sources</a></b></p>
+<p><b> - Unzip this file (c:/tmp/commons-httpclient/)</b></p>
+<p><b> - Create a new eclipse java project based on the unzipped sources (c:/tmp/commons-httpclient/)</b><br />
+<center><img src="images/httpProject_errors.jpg"><br/><br />
+<u><b>Notes :</b></u> your project do not compile : some imports cannot be resolved.<br />
+</center><br />
+<b> - Add a new class path container based on the "project.xml" pom and select "default" configuration (maven scope)</b><br />
+<center><br />
+<img src="images/httpProject_pom.jpg"><br />
+</center><br />
+<b> - That's All : Your project compiles !</b><br />
+<center><br />
+<img src="images/httpProject_clean.jpg"><br />
+</center></p>
+<h1><a name="two"></a>Maven2 Sample</h1>
+<p>This sample shows that IvyDE Class path container on a Maven2 pom can handle transitive dependancies.</p>
+<p><b> - Create a new empty java project in eclipse.</b></p>
+<p><b> - In your Ivy project configuration, set the ivy conf file below (Project/Properties/Ivy):</b></p>
+<code><ivyconf>
+	<conf defaultResolver="ibiblio-maven2"/>
+	<resolvers>
+		<ibiblio name="ibiblio-maven2" m2compatible="true" />
+	</resolvers>
+</ivyconf>
+</code>
+<p>Using the m2compatible attribute, you can benefit from Maven2 repository compatibility.<br/><br />
+<b> - Add the pom below in your project and select it for an IvyDE class path container choosing "compile" and "runtime" configurations.</b><br/></p>
+<code>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.jayasoft</groupId>
+  <artifactId>maven2sample</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <dependencies>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.0</version>
+    </dependency>
+  </dependencies>
+</project>
+</code>
+
+<p><b> - That's All ! Your IvyDE class path container get all dependencies even those that were transitive to the commons-httpclient module !</b><br />
+<br/><br />
+<img src="images/maven2classpath.jpg"/></p>
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
