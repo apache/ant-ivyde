@@ -10,12 +10,16 @@ body  {
   background-color: #fff;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h2, h3, h4, h5, h6 {
   color: #369;
 }
 h1 {
   color: #fff;
   background-color: #369;
+}
+h1 a:hover {
+   color: #ffffff;
+   background-color: #336699;
 }
 #main > h1 {
   color: #369;
