@@ -12,6 +12,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 
+import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -25,8 +28,6 @@ import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -51,9 +52,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
-import fr.jayasoft.ivy.Configuration;
-import fr.jayasoft.ivy.ModuleDescriptor;
-import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 
 public class IvydeContainerPage extends NewElementWizardPage
     implements IClasspathContainerPage, IClasspathContainerPageExtension {
@@ -303,7 +301,7 @@ public class IvydeContainerPage extends NewElementWizardPage
         try {
             IFile file = _project.getProject().getFile(ivyfile);
             URL url = new File( file.getLocation().toOSString()).toURL();
-            return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(IvyPlugin.getIvy(_project), url, false);
+            return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(IvyPlugin.getIvy(_project).getSettings(), url, false);
         } catch (Exception e) {}
         return null;
     }

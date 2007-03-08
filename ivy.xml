@@ -8,7 +8,7 @@
     	<conf name="ant" visibility="public" description="For ant contribution"/>
     </configurations>
     <dependencies>
-        <dependency org="jayasoft" name="ivy" rev="1.4.1" conf="default->core,httpclient,oro,vfs,sftp;ant->default"/>
+        <dependency org="apache" name="ivy" rev="latest.integration" conf="default->core,httpclient,oro,vfs,sftp;ant->default"/>
         <dependency org="apache" name="commons-logging" rev="1.0.4" conf="default->default"/>
     </dependencies>
 </ivy-module>

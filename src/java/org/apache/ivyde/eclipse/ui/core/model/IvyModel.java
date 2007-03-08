@@ -11,17 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.jdt.core.IJavaProject;
-
-import fr.jayasoft.ivy.DefaultDependencyDescriptor;
-import fr.jayasoft.ivy.DependencyResolver;
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleRevisionId;
-import fr.jayasoft.ivy.ResolveData;
-import fr.jayasoft.ivy.ResolvedModuleRevision;
-import fr.jayasoft.ivy.util.IvyPatternHelper;
 
 public class IvyModel {
     private IJavaProject _javaProject;
@@ -315,11 +316,11 @@ public class IvyModel {
                     base.append(' ');
                     qualifier = qualifier.substring(1);
                 }
-                ResolveData data = new ResolveData(getIvy(), getIvy().getDefaultCache(), null, null, true);
+                ResolveData data = new ResolveData(getIvy().getResolveEngine(), new ResolveOptions());
                 ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, name, branch, rev, otherAtts);
                 DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                 try {
-                    DependencyResolver resolver = getIvy().getResolver(mrid.getModuleId());
+                    DependencyResolver resolver = getIvySettings().getResolver(mrid.getModuleId());
                     if (resolver == null) {
                         return null;
                     }
@@ -361,11 +362,11 @@ public class IvyModel {
                             base.append(' ');
                             qualifier = qualifier.substring(1);
                         }
-                        ResolveData data = new ResolveData(getIvy(), getIvy().getDefaultCache(), null, null, true);
+                        ResolveData data = new ResolveData(getIvy().getResolveEngine(), new ResolveOptions());
                         ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, (String)otherAttValues.get("name"), (String)otherAttValues.get("rev"));
                         DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                         try {
-                            String[] confs = getIvy().getResolver(mrid.getModuleId()).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
+                            String[] confs = getIvySettings().getResolver(mrid.getModuleId()).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
                             for (int i = 0; i < confs.length; i++) {
                                 confs[i] = base + confs[i];
                             }
@@ -394,11 +395,11 @@ public class IvyModel {
                         Map otherAttValues = ivyFile.getAllAttsValues(indexes[0]+1);
                         String org = ivyFile.getDependencyOrganisation(otherAttValues);
                         if(org != null && otherAttValues != null && otherAttValues.get("name") != null && otherAttValues.get("rev") != null && getIvy() != null) {
-                            ResolveData data = new ResolveData(getIvy(), getIvy().getDefaultCache(), null, null, true);
+                            ResolveData data = new ResolveData(getIvy().getResolveEngine(), new ResolveOptions());
                             ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, (String)otherAttValues.get("name"), (String)otherAttValues.get("rev"));
                             DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                             try {
-                                String[] confs = getIvy().getResolver(mrid.getModuleId()).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
+                                String[] confs = getIvySettings().getResolver(mrid.getModuleId()).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
                                 List ret = new ArrayList(Arrays.asList(confs));
                                 ret.add("*");
                                 return (String[])ret.toArray(new String[ret.size()]);
@@ -512,6 +513,10 @@ public class IvyModel {
         return IvyPlugin.getIvy(_javaProject);
     }
 
+    private IvySettings getIvySettings() {
+        return getIvy().getSettings();
+    }
+
 
 	private List listDependencyTokenValues(String att, IvyFile ivyfile) {
 		Map allAttsValues = ivyfile.getAllAttsValues();
@@ -530,7 +535,7 @@ public class IvyModel {
 			replaceToken(otherAttValues, "rev", IvyPatternHelper.REVISION_KEY);
 
         	if (!otherAttValues.containsKey(IvyPatternHelper.BRANCH_KEY)) {
-        		otherAttValues.put(IvyPatternHelper.BRANCH_KEY, getIvy().getDefaultBranch());
+        		otherAttValues.put(IvyPatternHelper.BRANCH_KEY, getIvySettings().getDefaultBranch());
         	}
 
 		    String stdAtt = standardiseDependencyAttribute(att);

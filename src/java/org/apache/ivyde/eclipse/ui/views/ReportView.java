@@ -2,8 +2,8 @@ package org.apache.ivyde.eclipse.ui.views;
 
 import java.net.URL;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
@@ -17,10 +17,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-
-import fr.jayasoft.ivy.util.Message;
 
 public class ReportView extends ViewPart implements ISelectionListener {
 	private Browser _browser;

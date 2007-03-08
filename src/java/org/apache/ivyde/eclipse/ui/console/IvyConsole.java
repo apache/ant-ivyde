@@ -6,6 +6,8 @@
  */
 package org.apache.ivyde.eclipse.ui.console;
 
+import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MessageImpl;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
@@ -16,9 +18,6 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
-
-import fr.jayasoft.ivy.util.Message;
-import fr.jayasoft.ivy.util.MessageImpl;
 
 /**
  * This class is used to deal with ivy output, and is largely insprired of

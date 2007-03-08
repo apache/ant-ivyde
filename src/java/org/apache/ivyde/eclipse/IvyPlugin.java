@@ -14,6 +14,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
@@ -37,11 +41,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
-
-import fr.jayasoft.ivy.Artifact;
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.IvyContext;
-import fr.jayasoft.ivy.util.Message;
 
 /**
  * The main plugin class to be used in the desktop.
