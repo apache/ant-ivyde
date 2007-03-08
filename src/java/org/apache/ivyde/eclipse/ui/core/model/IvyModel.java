@@ -416,12 +416,17 @@ public class IvyModel {
         }));
         conf3.addChildIvyTag(mapped);
         MODEL.put(mapped.getName(), mapped);
+        
+        ListValueProvider matcherNamesProvider = new ListValueProvider(
+        		(String[])getIvy().getSettings().getMatcherNames().toArray(new String[0]));
+        
         IvyTag artifact2 = new IvyTag("artifact", "defines artifacts restriction \nuse only if you do not control dependency ivy file");
         artifact2.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \ndependency module to add to the include list, \nor a regexp matching this name", false));
         artifact2.addAttribute(new IvyTagAttribute("type", "the type of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name", false,
                 new ListValueProvider(_defaults.getProperty("type"))));
         artifact2.addAttribute(new IvyTagAttribute("ext", "the extension of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name", false,
                 new ListValueProvider(_defaults.getProperty("ext"))));
+        artifact2.addAttribute(new IvyTagAttribute("url", "an url where this artifact can be found \nif it isn't present at the standard \nlocation in the repository", false));
         artifact2.addAttribute(new IvyTagAttribute("conf", "comma separated list of the master configurations \nin which this artifact should be included. \n'*' wildcard can be used to designate all configurations of this module", false, 
                 masterConfsValueProvider));
         IvyTag conf4 = new IvyTag("conf", "configuration in which the artifact should be included");
@@ -436,6 +441,8 @@ public class IvyModel {
                 new ListValueProvider(_defaults.getProperty("type"))));
         include.addAttribute(new IvyTagAttribute("ext",  "the extension of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name", false,
                 new ListValueProvider(_defaults.getProperty("ext"))));
+        include.addAttribute(new IvyTagAttribute("matcher",  "the matcher to use to match the modules to include", false,
+                matcherNamesProvider));
         include.addAttribute(new IvyTagAttribute("conf", "comma separated list of the master configurations \nin which this artifact should be included. \n'*' wildcard can be used to designate all configurations of this module", false,
                 masterConfsValueProvider));
         IvyTag conf5 = new IvyTag("conf", "configuration in which the artifact should be included");
@@ -445,11 +452,15 @@ public class IvyModel {
         MODEL.put(include.getName(), include);
         allConf.add(conf5);
         IvyTag exclude = new IvyTag("exclude", "defines artifacts restriction \nuse only if you do not control dependency ivy file");
-        exclude.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \ndependency module to add to the exclude list, \nor a regexp matching this name", false));
-        exclude.addAttribute(new IvyTagAttribute("type", "the type of the artifact of the \ndependency module to add to the exclude list, \nor a regexp matching this name", false, 
+        exclude.addAttribute(new IvyTagAttribute("org", "the organisation of the dependency \nmodule or artifact to exclude, \nor a pattern matching this organisation", false));
+        exclude.addAttribute(new IvyTagAttribute("module", "the name of the dependency \nmodule or the artifact to exclude, \nor a pattern matching this module name", false));
+        exclude.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name", false));
+        exclude.addAttribute(new IvyTagAttribute("type", "the type of the artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name", false, 
                 new ListValueProvider(_defaults.getProperty("type"))));
-        exclude.addAttribute(new IvyTagAttribute("ext",  "the extension of the artifact of the \ndependency module to add to the exclude list, \nor a regexp matching this name", false,
+        exclude.addAttribute(new IvyTagAttribute("ext",  "the extension of the artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name", false,
                 new ListValueProvider(_defaults.getProperty("ext"))));
+        exclude.addAttribute(new IvyTagAttribute("matcher",  "the matcher to use to match the modules to include", false,
+                matcherNamesProvider));
         exclude.addAttribute(new IvyTagAttribute("conf", "comma separated list of the master configurations \nin which this artifact should be excluded. \n'*' wildcard can be used to designate all configurations of this module", false,
                 masterConfsValueProvider));
         IvyTag conf6 = new IvyTag("conf", "configuration in which the artifact should be excluded");
