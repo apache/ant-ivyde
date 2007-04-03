@@ -33,6 +33,13 @@
         "children": [
 
           ]
+      },
+      {
+        "id":"issues",
+        "title":"Issue Tracking",
+        "children": [
+
+          ]
       }
     ]
 }
