@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
@@ -24,8 +26,11 @@ import org.apache.ivy.core.event.download.StartArtifactDownloadEvent;
 import org.apache.ivy.core.event.resolve.EndResolveDependencyEvent;
 import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -207,7 +212,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         							status[0] = Status.CANCEL_STATUS;
         							return;
         						}
-        						//eventually do a retrieve
+        						// call retrieve if required
         						if(IvyPlugin.shouldDoRetrieve(_javaProject)) {
         							_monitor.setTaskName("retrieving dependencies in "+IvyPlugin.getFullRetrievePatternHerited(_javaProject));
         							_ivy.retrieve(
@@ -336,22 +341,58 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 	return _cacheMgr.getArchiveFileInCache(a);
                 }
             }
-			return null;
+            if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
+            	// source artifact not found in resolved artifacts, 
+            	// try to see if a non declared one is available
+            	Map extraAtt = new HashMap(artifact.getExtraAttributes());
+            	extraAtt.put("classifier", "sources");
+            	Artifact sourceArtifact = new DefaultArtifact(
+            			artifact.getModuleRevisionId(),
+            			artifact.getPublicationDate(),
+            			artifact.getName(),
+            			"source",
+            			"jar",
+            			extraAtt
+            	);
+            	_ivy.getResolveEngine().download(sourceArtifact, _cacheMgr, false);
+            	File source = _cacheMgr.getArchiveFileInCache(sourceArtifact);
+            	return source.exists()?source:null;
+            } else {
+            	return null;
+            }
 		}
 
 		private File getJavadocArtifact(Artifact artifact, Collection all)
 		{
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                Artifact a = (Artifact)iter.next();
-                if (a.getName().equals(artifact.getName()) &&
-                		a.getModuleRevisionId().equals(artifact.getModuleRevisionId()) &&
-                		a.getId().equals(artifact.getId()) &&
-                		IvyPlugin.isJavadoc(_javaProject, a))
-                {
-                	return _cacheMgr.getArchiveFileInCache(a);
-                }
+			for (Iterator iter = all.iterator(); iter.hasNext();) {
+				Artifact a = (Artifact)iter.next();
+				if (a.getName().equals(artifact.getName()) &&
+						a.getModuleRevisionId().equals(artifact.getModuleRevisionId()) &&
+						a.getId().equals(artifact.getId()) &&
+						IvyPlugin.isJavadoc(_javaProject, a))
+				{
+					return _cacheMgr.getArchiveFileInCache(a);
+				}
+			}
+			if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
+				// javadoc artifact not found in resolved artifacts, 
+				// try to see if a non declared one is available
+				Map extraAtt = new HashMap(artifact.getExtraAttributes());
+				extraAtt.put("classifier", "javadocs");
+				Artifact javadocArtifact = new DefaultArtifact(
+						artifact.getModuleRevisionId(),
+						artifact.getPublicationDate(),
+						artifact.getName(),
+						"javadoc",
+						"jar",
+						extraAtt
+				);
+				_ivy.getResolveEngine().download(javadocArtifact, _cacheMgr, false);
+				File javadoc = _cacheMgr.getArchiveFileInCache(javadocArtifact);
+				return javadoc.exists()?javadoc:null;
+			} else {
+            	return null;
             }
-			return null;
 		}
     }
     

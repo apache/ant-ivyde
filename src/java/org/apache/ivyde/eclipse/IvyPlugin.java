@@ -549,6 +549,14 @@ public class IvyPlugin extends AbstractUIPlugin {
         return !"".equals(getRetrievePatternHerited(project));
     }
 
+    public static boolean shouldTestNonDeclaredSources(IJavaProject project) {
+        return true; // TODO: add settings for that
+    }
+
+    public static boolean shouldTestNonDeclaredJavadocs(IJavaProject project) {
+        return true; // TODO: add settings for that
+    }
+
     public IEclipsePreferences getProjectPreferences(final IJavaProject project) {
     	IScopeContext projectScope = new ProjectScope(project.getProject());
     	IEclipsePreferences projectNode = projectScope.getNode(ID);
