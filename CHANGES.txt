@@ -1,8 +1,9 @@
 				IvyDE 
 				============================================
 
-  version 1.3.0 (not yet released)
+  version in svn (not yet released)
 ===========================
+- IMPROVE: enable 'Resolve all' action (IVYDE-42)
 - moved to apache, packages renamed to org.apache.ivyde
   				
 

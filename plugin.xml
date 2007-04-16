@@ -221,8 +221,6 @@
    </extension>
    -->
 
-   <!-- Uncomment to enable resolve all action
-   
    <extension point = "org.eclipse.ui.actionSets">
 	   <actionSet id="org.apache.ivyde.eclipse.ui.actions.actionSet"
 		   label="IvyDE Actions"
@@ -245,7 +243,6 @@
             id="org.apache.ivyde.eclipse.ui.actions.resolveAll">
       </command>
    </extension>
-   -->
    
 
 

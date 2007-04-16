@@ -1,9 +1,15 @@
 package org.apache.ivyde.eclipse.ui.actions;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -24,10 +30,25 @@ public class ResolveAllAction implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-        for (Iterator iter = IvyPlugin.getDefault().getAllContainers().iterator(); iter.hasNext();) {
-			IvyClasspathContainer cp = (IvyClasspathContainer) iter.next();
-			cp.resolve();
-		}
+        Job resolveAllJob = new Job("Resolve all dependencies") {
+            protected IStatus run(IProgressMonitor monitor) {
+                Collection containers = IvyPlugin.getDefault().getAllContainers();
+                monitor.beginTask("Resolve all dependencies", containers.size());
+                for (Iterator iter = IvyPlugin.getDefault().getAllContainers().iterator(); iter.hasNext();) {
+                    if (monitor.isCanceled()) {
+                        return Status.CANCEL_STATUS;
+                    }
+                    SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+                    IvyClasspathContainer cp = (IvyClasspathContainer) iter.next();
+                    cp.resolve(subMonitor);
+                }
+
+                return Status.OK_STATUS;
+            }
+        };
+
+        resolveAllJob.setUser(true);
+        resolveAllJob.schedule();
 	}
 	
 	/**

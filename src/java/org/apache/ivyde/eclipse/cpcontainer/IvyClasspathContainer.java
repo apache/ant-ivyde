@@ -520,6 +520,15 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }        
     }
 
+    /**
+     * This method is here to available the Resolve all action to run in a single progress window.
+     * It is quiet ugly but it is a first way to do this quiet quickly.
+     * @param monitor
+     */
+    public void resolve(IProgressMonitor monitor) {
+        computeClasspathEntries(false, true).run(monitor);
+    }
+    
     public void resolve() {
         computeClasspathEntries(false, true).schedule();
     }
