@@ -3,7 +3,7 @@
 
   version in svn (not yet released)
 ===========================
-- IMPROVE: enable 'Resolve all' action (IVYDE-42)
+- IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
 - moved to apache, packages renamed to org.apache.ivyde
   				
 
