@@ -29,13 +29,10 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
-import org.apache.ivy.core.report.ArtifactDownloadReport;
-import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
-import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
@@ -342,21 +339,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 }
             }
             if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	// source artifact not found in resolved artifacts, 
-            	// try to see if a non declared one is available
-            	Map extraAtt = new HashMap(artifact.getExtraAttributes());
-            	extraAtt.put("classifier", "sources");
-            	Artifact sourceArtifact = new DefaultArtifact(
-            			artifact.getModuleRevisionId(),
-            			artifact.getPublicationDate(),
-            			artifact.getName(),
-            			"source",
-            			"jar",
-            			extraAtt
-            	);
-            	_ivy.getResolveEngine().download(sourceArtifact, _cacheMgr, false);
-            	File source = _cacheMgr.getArchiveFileInCache(sourceArtifact);
-            	return source.exists()?source:null;
+            	return getMetaArtifact(artifact, "source");
             } else {
             	return null;
             }
@@ -375,24 +358,48 @@ public class IvyClasspathContainer implements IClasspathContainer {
 				}
 			}
 			if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-				// javadoc artifact not found in resolved artifacts, 
-				// try to see if a non declared one is available
-				Map extraAtt = new HashMap(artifact.getExtraAttributes());
-				extraAtt.put("classifier", "javadocs");
-				Artifact javadocArtifact = new DefaultArtifact(
-						artifact.getModuleRevisionId(),
-						artifact.getPublicationDate(),
-						artifact.getName(),
-						"javadoc",
-						"jar",
-						extraAtt
-				);
-				_ivy.getResolveEngine().download(javadocArtifact, _cacheMgr, false);
-				File javadoc = _cacheMgr.getArchiveFileInCache(javadocArtifact);
-				return javadoc.exists()?javadoc:null;
+            	return getMetaArtifact(artifact, "javadoc");
 			} else {
             	return null;
             }
+		}
+
+		private File getMetaArtifact(Artifact artifact, String metaType) {
+			// meta artifact (source or javadoc) not found in resolved artifacts, 
+			// try to see if a non declared one is available
+			Map extraAtt = new HashMap(artifact.getExtraAttributes());
+			extraAtt.put("classifier", metaType+"s");
+			Artifact metaArtifact = new DefaultArtifact(
+					artifact.getModuleRevisionId(),
+					artifact.getPublicationDate(),
+					artifact.getName(),
+					metaType,
+					"jar",
+					extraAtt
+			);
+			File metaArtifactFile = _cacheMgr.getArchiveFileInCache(metaArtifact);
+			File attempt = new File(metaArtifactFile.getAbsolutePath()+".notfound");
+			if (metaArtifactFile.exists()) {
+				return metaArtifactFile;
+			} else if (attempt.exists()) {
+				return null;
+			} else {
+				Message.info("checking "+metaType+" for "+artifact);
+				_ivy.getResolveEngine().download(metaArtifact, _cacheMgr, false);
+				if (metaArtifactFile.exists()) {
+					return metaArtifactFile;
+				} else {
+					// source artifact not found, we store this information to avoid other attempts later
+					Message.info(metaType+" not found for "+artifact);
+					try {
+						attempt.getParentFile().mkdirs();
+						attempt.createNewFile();
+					} catch (IOException e) {
+			    		Message.error("impossible to create attempt file "+attempt+": "+e);
+					}
+					return null;
+				}
+			}
 		}
     }
     
