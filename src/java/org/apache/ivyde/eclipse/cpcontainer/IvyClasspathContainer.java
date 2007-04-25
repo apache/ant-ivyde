@@ -329,6 +329,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
 		private File getSourcesArtifact(Artifact artifact, Collection all)
 		{
+    		_monitor.subTask("searching sources for "+artifact);
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact a = (Artifact)iter.next();
                 if (a.getName().equals(artifact.getName()) &&
@@ -347,6 +348,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
 		private File getJavadocArtifact(Artifact artifact, Collection all)
 		{
+    		_monitor.subTask("searching javadoc for "+artifact);
 			for (Iterator iter = all.iterator(); iter.hasNext();) {
 				Artifact a = (Artifact)iter.next();
 				if (a.getName().equals(artifact.getName()) &&
@@ -377,7 +379,11 @@ public class IvyClasspathContainer implements IClasspathContainer {
 					"jar",
 					extraAtt
 			);
-			File metaArtifactFile = _cacheMgr.getArchiveFileInCache(metaArtifact);
+			// we search archive file in cache with origin == null, to be sure we don't use
+			// a badly saved artifact origin
+			// we could go back to _cacheMgr.getArchiveFileInCache(metaArtifact)
+			// when IVY-430 is resolved
+			File metaArtifactFile = _cacheMgr.getArchiveFileInCache(metaArtifact, null);
 			File attempt = new File(metaArtifactFile.getAbsolutePath()+".notfound");
 			if (metaArtifactFile.exists()) {
 				return metaArtifactFile;
