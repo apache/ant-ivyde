@@ -595,7 +595,10 @@ public class IvyClasspathContainer implements IClasspathContainer {
         
         if (url == null) {
         	try {
-        		url = new URL("jar:"+classpathItem.getJavadocArtifactPath().toFile().toURI().toURL().toExternalForm()+"!/");
+        		Path path = classpathItem.getJavadocArtifactPath();
+        		if (path != null) {
+        			url = new URL("jar:"+path.toFile().toURI().toURL().toExternalForm()+"!/");
+        		}
         	} catch (MalformedURLException e) {
         		// ignored
         	}
