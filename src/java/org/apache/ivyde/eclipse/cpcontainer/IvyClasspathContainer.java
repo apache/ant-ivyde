@@ -4,6 +4,7 @@ package org.apache.ivyde.eclipse.cpcontainer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -340,7 +341,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 }
             }
             if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	return getMetaArtifact(artifact, "source");
+            	return getMetaArtifact(artifact, "source", "sources");
             } else {
             	return null;
             }
@@ -360,17 +361,17 @@ public class IvyClasspathContainer implements IClasspathContainer {
 				}
 			}
 			if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	return getMetaArtifact(artifact, "javadoc");
+            	return getMetaArtifact(artifact, "javadoc", "javadoc");
 			} else {
             	return null;
             }
 		}
 
-		private File getMetaArtifact(Artifact artifact, String metaType) {
+		private File getMetaArtifact(Artifact artifact, String metaType, String metaClassifier) {
 			// meta artifact (source or javadoc) not found in resolved artifacts, 
 			// try to see if a non declared one is available
 			Map extraAtt = new HashMap(artifact.getExtraAttributes());
-			extraAtt.put("classifier", metaType+"s");
+			extraAtt.put("classifier", metaClassifier);
 			Artifact metaArtifact = new DefaultArtifact(
 					artifact.getModuleRevisionId(),
 					artifact.getPublicationDate(),
@@ -590,13 +591,18 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
     private IClasspathAttribute[] getExtraAttribute(ClasspathItem classpathItem) {
         List result  = new ArrayList();
-        IPath p = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getDocAttachment(classpathItem.getClasspathArtifactPath());
+        URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getDocAttachment(classpathItem.getClasspathArtifactPath());
         
-        if (p == null)
-        	p = classpathItem.getJavadocArtifactPath();
+        if (url == null) {
+        	try {
+        		url = new URL("jar:"+classpathItem.getJavadocArtifactPath().toFile().toURI().toURL().toExternalForm()+"!/");
+        	} catch (MalformedURLException e) {
+        		// ignored
+        	}
+        }
         	
-        if(p != null) {
-            result.add(new ClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, p.toPortableString()));
+        if(url != null) {
+        	result.add(new ClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url.toExternalForm()));
         }
         return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
     }

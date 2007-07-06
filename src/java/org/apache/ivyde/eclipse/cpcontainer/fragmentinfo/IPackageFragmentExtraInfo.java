@@ -10,7 +10,7 @@ public interface IPackageFragmentExtraInfo {
     
     public IPath getSourceAttachmentRoot(Path path);
     
-    public IPath getDocAttachment(Path path);
+    public URL getDocAttachment(Path path);
 
     public void setSourceAttachmentPath(IPath containerPath, String entryPath, IPath sourcePath);
 

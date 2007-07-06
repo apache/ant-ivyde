@@ -1,5 +1,6 @@
 package org.apache.ivyde.eclipse.cpcontainer.fragmentinfo;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -32,10 +33,14 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
         return null;
     }    
     
-    public IPath getDocAttachment(Path path) {
+    public URL getDocAttachment(Path path) {
         String srcPath = _preferenceStore.getString(path.toPortableString()+DOC_SUFFIX);
         if(!"".equals(srcPath)) {
-            return Path.fromPortableString(srcPath);
+            try {
+				return new URL(srcPath);
+			} catch (MalformedURLException e) {
+				return null;
+			}
         }
         return null;
     }
