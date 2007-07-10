@@ -58,7 +58,7 @@ public class CreateContainerAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	private void addCPContainer(IJavaProject project, IPath projectRelativePath, String confs) {
-		IvyClasspathUtil.getAddClasspathContainer().addCPContainer(project, projectRelativePath, confs);
+		IvyClasspathUtil.addCPContainer(project, projectRelativePath, confs);
 	}
 
 	/**

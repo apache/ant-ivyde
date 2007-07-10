@@ -1,6 +1,13 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import org.apache.ivyde.eclipse.cpcontainer.core.AddClasspathContainer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
@@ -14,10 +21,37 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 public class IvyClasspathUtil {
-	private static AddClasspathContainer addClasspathContainer = new AddClasspathContainer();
-	
-	public static AddClasspathContainer getAddClasspathContainer() {
-		return addClasspathContainer;
+	/**
+	 * Adds an IvyDE classpath container to the list of existing classpath entries in the 
+	 * given project.
+	 * 
+	 * @param project 
+	 * 			the project to which the cp container should be added
+	 * @param projectRelativePath 
+	 * 			the path relative to the project of the module descriptor file
+	 * 			to use for the classpath container
+	 * @param confs 
+	 * 			the configurations to use in the classpath container.
+	 */
+	public static void addCPContainer(
+			IJavaProject project, IPath projectRelativePath, String confs) {
+		try {
+			IClasspathEntry newEntry = JavaCore.newContainerEntry(
+					new Path(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID)
+					.append(projectRelativePath)
+					.append(confs));
+			
+			IClasspathEntry[] entries= project.getRawClasspath();
+			
+			List newEntries = new ArrayList(Arrays.asList(entries));
+			newEntries.add(newEntry);
+			entries = (IClasspathEntry[]) newEntries
+					.toArray(new IClasspathEntry[newEntries.size()]);
+			
+			project.setRawClasspath(entries, project.getOutputLocation(), null);
+		} catch (CoreException e) {
+			IvyPlugin.getDefault().log(e);
+		}
 	}
 	
     public static void refreshContainer() {
