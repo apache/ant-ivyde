@@ -269,7 +269,7 @@ public class IvyPlugin extends AbstractUIPlugin {
                         IProject project = javaProject.getProject();
                         File loc = project.getLocation().toFile();
                     	file = new File(loc,url.getPath());
-                    	Message.info("\n\nIVYDE: ivyconf from relative path: "+file.getAbsolutePath());
+                    	Message.info("\n\nIVYDE: ivysettings from relative path: "+file.getAbsolutePath());
                     }
 //                  END - JIRA: IVYDE-25
                     
@@ -284,7 +284,7 @@ public class IvyPlugin extends AbstractUIPlugin {
                             if (ic.configTime == -1) {
                                 Message.info("\n\n");
                             } else {
-                                Message.info("\n\nIVYDE: ivyconf has changed, configuring ivy again\n");
+                                Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
                             }
                             ic.ivy.configure(file);
                             ic.configTime = file.lastModified();
@@ -324,9 +324,9 @@ public class IvyPlugin extends AbstractUIPlugin {
                 _ivysByProject.put(javaProject, ivyConfig);
                 _ivysByConf.put("default", ivyConfig);
             } catch (Exception ex) {
-                MessageDialog.openWarning(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Impossible to configure Ivy", "Problem occured while configuring Ivy with its default configuration.\nPlease set an ivy conf url properly in the preference or in the project properties to be able to use IvyDE.\nException message: "+ex.getMessage());
-                log(IStatus.WARNING, "Problem occured while configuring Ivy with its default configuration.", ex);
-                Message.warn("IVYDE: Problem occured while configuring Ivy with its default configuration.. See error log for details");
+                MessageDialog.openWarning(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Impossible to configure Ivy", "Problem occured while configuring Ivy with its default settings.\nPlease set an ivy settings url properly in the preference or in the project properties to be able to use IvyDE.\nException message: "+ex.getMessage());
+                log(IStatus.WARNING, "Problem occured while configuring Ivy with its default settings.", ex);
+                Message.warn("IVYDE: Problem occured while configuring Ivy with its default settings. See error log for details");
             }
         }
         return ivy;

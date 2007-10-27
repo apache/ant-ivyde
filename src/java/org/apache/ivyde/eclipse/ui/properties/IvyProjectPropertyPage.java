@@ -25,7 +25,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class IvyProjectPropertyPage extends PropertyPage {
 
-	private static final String PATH_TITLE = "Ivy conf url:";
+	private static final String PATH_TITLE = "Ivy settings url:";
 	private static final String ACCEPTED_TYPES_TITLE = "Accepted types:";
 	private static final String SOURCES_TYPES_TITLE = "Sources types:";
 	private static final String JAVADOC_TYPES_TITLE = "Javadoc types:";
@@ -76,7 +76,7 @@ public class IvyProjectPropertyPage extends PropertyPage {
         new Label(composite, SWT.NONE); // space
         Label explanation = new Label(composite, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1));
-        explanation.setText("The url where your ivyconf file can be found. \nUse default to reference the default ivy configuration. \nUse [inherited] to use your general eclipse setting.");
+        explanation.setText("The url where your ivysettings file can be found. \nUse 'default' to reference the default ivy settings. \nUse '[inherited]' to use your general eclipse setting.\nRelative paths are handled relative to the project. Example: 'file://./ivysettings.xml'.");
         new Label(composite, SWT.NONE).setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 4, 1)); // space
         
         
