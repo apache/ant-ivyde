@@ -220,10 +220,14 @@ public class IvyClasspathContainer implements IClasspathContainer {
         						}
         					}
         				} catch (FileNotFoundException e) {
-        					status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, "ivy file not found: "+_ivyXmlFile+"\nPlease configure your IvyDE ClasspathContainer properly", e);
+        					String errorMsg = "ivy file not found: "+_ivyXmlFile+"\nPlease configure your IvyDE ClasspathContainer properly";
+            				Message.error(errorMsg);
+							status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
         					return;
         				} catch (ParseException e) {
-        					status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, "parse exception in: "+_ivyXmlFile+"\n"+e.getMessage(), e);
+        					String errorMsg = "parse exception in: "+_ivyXmlFile+"\n"+e.getMessage();
+            				Message.error(errorMsg);
+							status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
         					return;
         				} finally {
         					Thread.currentThread().setContextClassLoader(old);
@@ -244,7 +248,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
         					}
         				}
         			} catch (Exception e) {
-        				status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, "An internal error occured while resolving dependencies of "+_ivyXmlFile+"\nPlease see eclipse error log and IvyConsole for details", e);
+        				String errorMsg = "An internal error occured while resolving dependencies of "+_ivyXmlFile+"\nPlease see eclipse error log and IvyConsole for details";
+        				Message.error(errorMsg);
+						status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
         				return;
         			} finally {
         				_monitor.done();
@@ -528,8 +534,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 	        	return _job;
         	}
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Message.error(e.getMessage());
             return null;
         }        
     }
@@ -552,8 +557,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
 
     private void updateClasspathEntries(final boolean usePreviousResolveIfExist, boolean notify, final ClasspathItem[] classpathItems) {
+    	IClasspathEntry[] entries;
     	if(classpathItems != null) {
-	        IClasspathEntry[] entries = new IClasspathEntry[ classpathItems.length ];
+	        entries = new IClasspathEntry[ classpathItems.length ];
 	        
 	        for( int i=0; i<classpathItems.length; i++ ) {
 	            Path path = classpathItems[ i ].getClasspathArtifactPath();
@@ -564,13 +570,10 @@ public class IvyClasspathContainer implements IClasspathContainer {
 	                                                    getExtraAttribute(classpathItems[ i ]),
 	                                                    false);
 	        }
-	        setClasspathEntries(entries);
     	} else {
-            setClasspathEntries(new IClasspathEntry[0]);
+            entries = new IClasspathEntry[0];
     	}
-    	if (notify) {
-    		notifyUpdateClasspathEntries();
-    	}
+    	setClasspathEntries(entries, notify);
     }
 
     private IPath getSourceAttachment(ClasspathItem classpathItem) {
@@ -612,32 +615,30 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
 
 
-    private void setClasspathEntries(final IClasspathEntry[] entries) {
-        Display.getDefault().syncExec(new Runnable() {
+    private void setClasspathEntries(final IClasspathEntry[] entries, final boolean notify) {
+        Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 _classpathEntries = entries;
+                if (notify) {
+                	notifyUpdateClasspathEntries();
+                }
             }
         });
     }
 
-    private void notifyUpdateClasspathEntries() {
-        Display.getDefault().asyncExec(new Runnable() {
-            public void run() {
-                try {
-                    JavaModelManager manager = JavaModelManager.getJavaModelManager();
-                    manager.containerPut(_javaProject, _path, null);
-                    JavaCore.setClasspathContainer(
-                            _path,
-                            new IJavaProject[] {_javaProject},
-                            new IClasspathContainer[] {IvyClasspathContainer.this},
-                            null);
-                } catch (JavaModelException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }                    
-            }
-        });
-    }
+	private void notifyUpdateClasspathEntries() {
+		try {
+		    JavaModelManager manager = JavaModelManager.getJavaModelManager();
+		    manager.containerPut(_javaProject, _path, null);
+		    JavaCore.setClasspathContainer(
+		            _path,
+		            new IJavaProject[] {_javaProject},
+		            new IClasspathContainer[] {IvyClasspathContainer.this},
+		            null);
+		} catch (JavaModelException e) {
+		    Message.error(e.getMessage());
+		}
+	}
 
     public static String[] getConfigurations(IPath containerPath) {
         return containerPath.lastSegment().split(",");
@@ -680,7 +681,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 }
             }
         } catch (JavaModelException e) {
-            e.printStackTrace();
+            Message.error(e.getMessage());
         }
     }
 
@@ -702,7 +703,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 }
             }
         } catch (JavaModelException e) {
-            e.printStackTrace();
+            Message.error(e.getMessage());
         }
     }
 
