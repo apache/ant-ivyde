@@ -3,6 +3,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -53,6 +54,12 @@ public class IvyPreferencePage
 	 */
 	public void createFieldEditors() {
 		final Composite fieldParent = getFieldEditorParent();
+		
+        Label info = new Label(fieldParent, SWT.NONE);
+        info.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1));
+        info.setText("Apache Ivy version " + Ivy.getIvyVersion() + " - "
+                + Ivy.getIvyDate());
+        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1)); // space
         
         Label spacer = new Label(fieldParent, SWT.NONE);
         GridData spacerData = new GridData();
