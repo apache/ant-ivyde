@@ -150,7 +150,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
         	Thread resolver = new Thread() {
         		public void run() {
-        			IvyPlugin.setIvyContext(_javaProject);
+        			_ivy.pushContext();
         			_ivy.getEventManager().addIvyListener(IvyResolveJob.this);
 
         			_monitor.beginTask("resolving dependencies", 1000);

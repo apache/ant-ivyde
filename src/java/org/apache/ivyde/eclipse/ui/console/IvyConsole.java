@@ -6,8 +6,12 @@
  */
 package org.apache.ivyde.eclipse.ui.console;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.MessageImpl;
+import org.apache.ivy.util.MessageLogger;
+import org.apache.ivy.util.MessageLoggerHelper;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
@@ -24,7 +28,7 @@ import org.eclipse.ui.console.MessageConsoleStream;
  * CVSOutputConsole for its implementation
  * 
  */
-public class IvyConsole extends MessageConsole implements MessageImpl {
+public class IvyConsole extends MessageConsole implements MessageLogger {
     private MessageConsoleStream[] streams = new MessageConsoleStream[5];
     
     private ConsoleDocument document;
@@ -37,7 +41,7 @@ public class IvyConsole extends MessageConsole implements MessageImpl {
         super("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$
         consoleManager = ConsolePlugin.getDefault().getConsoleManager();
         document = new ConsoleDocument();
-        Message.init(this);
+        Message.setDefaultLogger(this);
     }
 
     public void endProgress(String msg) {
@@ -53,6 +57,8 @@ public class IvyConsole extends MessageConsole implements MessageImpl {
     public void rawlog(String msg, int level) {
         appendLine(level, msg);
     }
+    
+    
     
     /**
      * Used to notify this console of lifecycle methods <code>init()</code>
@@ -185,4 +191,118 @@ public class IvyConsole extends MessageConsole implements MessageImpl {
         
     }
 
+    // MessageLogger implementation
+    private List problems = new ArrayList();
+
+    private List warns = new ArrayList();
+
+    private List errors = new ArrayList();
+
+    private boolean showProgress = true;
+    
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#debug(java.lang.String)
+     */
+    public void debug(String msg) {
+        log(msg, Message.MSG_DEBUG);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#verbose(java.lang.String)
+     */
+    public void verbose(String msg) {
+        log(msg, Message.MSG_VERBOSE);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#deprecated(java.lang.String)
+     */
+    public void deprecated(String msg) {
+        log("DEPRECATED: " + msg, Message.MSG_WARN);
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#info(java.lang.String)
+     */
+    public void info(String msg) {
+        log(msg, Message.MSG_INFO);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#info(java.lang.String)
+     */
+    public void rawinfo(String msg) {
+        rawlog(msg, Message.MSG_INFO);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#warn(java.lang.String)
+     */
+    public void warn(String msg) {
+        log("WARN: " + msg, Message.MSG_VERBOSE);
+        problems.add("WARN:  " + msg);
+        getWarns().add(msg);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#error(java.lang.String)
+     */
+    public void error(String msg) {
+        // log in verbose mode because message is appended as a problem, and will be
+        // logged at the end at error level
+        log("ERROR: " + msg, Message.MSG_VERBOSE);
+        problems.add("\tERROR: " + msg);
+        getErrors().add(msg);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#getProblems()
+     */
+    public List getProblems() {
+        return problems;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#sumupProblems()
+     */
+    public void sumupProblems() {
+        MessageLoggerHelper.sumupProblems(this);
+        clearProblems();
+    }
+
+    public void clearProblems() {
+        problems.clear();
+        warns.clear();
+        errors.clear();
+    }
+
+    public List getErrors() {
+        return errors;
+    }
+
+    public List getWarns() {
+        return warns;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#endProgress()
+     */
+    public void endProgress() {
+        endProgress("");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#isShowProgress()
+     */
+    public boolean isShowProgress() {
+        return showProgress;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ivy.util.MessageLogger#setShowProgress(boolean)
+     */
+    public void setShowProgress(boolean progress) {
+        showProgress = progress;
+    }
 }

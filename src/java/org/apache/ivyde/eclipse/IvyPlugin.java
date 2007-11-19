@@ -182,13 +182,10 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private static class IvyConfig {
         Ivy ivy;
-        IvyContext context;
         long configTime = -1;
         public IvyConfig() {
-        	context = IvyContext.getContext();
         }
         public IvyConfig(Ivy ivy) {
-        	context = IvyContext.getContext();
             this.ivy = ivy;
         }
     }
@@ -207,17 +204,9 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public static Ivy getIvy(IJavaProject javaProject) {
         Ivy ivy = refreshIvyConfiguration(javaProject, getIvyconfURL(javaProject));
-        setIvyContext(javaProject);
         return ivy == null ? new Ivy() : ivy;
     }
     
-    public static void setIvyContext(IJavaProject javaProject) {
-    	IvyConfig ic = (IvyConfig)_ivysByProject.get(javaProject);
-        if (ic != null) {
-        	IvyContext.setContext(ic.context);
-        }
-	}
-
 	public static void ivyConfPathChanged() {
         try {
             IJavaProject[] projects = JavaModelManager.getJavaModelManager().getJavaModel().getJavaProjects();
