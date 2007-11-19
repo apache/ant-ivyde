@@ -1,8 +1,8 @@
-<project name="ivyde" default="resolve" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="ivyde" default="resolve" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<property environment="env"/>
 	<property file="build.properties"/>
-	
-	<property name="ivy.install.version" value="1.4" />
+
+	<property name="ivy.install.version" value="2.0.0-alpha2-incubating" />
 
 	<!-- =================================================================
                IVY AUTO INSTALL
@@ -13,76 +13,78 @@
 	<condition property="ivy.home" value="${env.IVY_HOME}">
 		<isset property="env.IVY_HOME" />
 	</condition>
-	<property name="ivy.home" value="${user.home}/.ivy" />
+	<property name="ivy.home" value="${user.home}/.ivy2" />
+	<property name="ivy.zip.dir" value="${ivy.home}/zip" />
 	<property name="ivy.jar.dir" value="${ivy.home}/jars" />
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 	
 	<target name="download-ivy" unless="offline">
     	<mkdir dir="${ivy.jar.dir}"/>
+    	<mkdir dir="${ivy.zip.dir}"/>
+    	<mkdir dir="${ivy.home}/tmp"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
-    	<get src="http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-    		 dest="${ivy.jar.file}" usetimestamp="true"/>
+    	<get src="http://people.apache.org/dist/incubator/ivy/${ivy.install.version}/apache-ivy-${ivy.install.version}-bin.zip"
+    		 dest="${ivy.zip.dir}/apache-ivy-${ivy.install.version}-bin.zip" usetimestamp="true"/>
+		<unzip src="${ivy.zip.dir}/apache-ivy-${ivy.install.version}-bin.zip" dest="${ivy.home}/tmp" />
+		<copy verbose="true" failonerror="true" file="${ivy.home}/tmp/apache-ivy-${ivy.install.version}/ivy-${ivy.install.version}.jar" tofile="${ivy.jar.file}"/>
+		<delete dir="${ivy.home}/tmp" />
 	</target>
-	
-	<target name="init-ivy" depends="download-ivy">
-    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
-    	      it into ant's lib dir (note that the latter copy will always take precedence).
-    	      We will not fail as long as local lib dir exists (it may be empty) and
-    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
-    	<path id="ivy.lib.path">
-    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-    	</path>
-    	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-    	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+
+	<property environment="env" />
+    <property file="version.properties" />
+    <property file="build.properties" />
+    
+    <target name="init-ivy-user-home" unless="ivy.use.local.home">
+        <condition property="ivy.home" value="${env.IVY_HOME}">
+            <isset property="env.IVY_HOME" />
+        </condition>
+        <property name="ivy.home" value="${user.home}/.ivy2" />
     </target>
-	
-	
-    <!-- =================================================================
-               PREPARATION, CLEANING AND FLAGS TASKS
-         ================================================================= -->
-	<target name="init">
-		<path id="build.classpath">
-			<fileset dir="${lib.dir}">
-				<include name="*.jar"/>
-			</fileset>
-		</path>
-		<path id="run.classpath">
-			<path refid="build.classpath"/>
-			<pathelement location="${classes.build.dir}"/>
-		</path>
-	</target>
-	
-	<target name="prepare" depends="init">
-	   <mkdir dir="${classes.build.dir}"/>
-	   <mkdir dir="${artifacts.build.dir}"/>
-	</target>
-	
-	<target name="clean">
-	   <delete dir="${classes.build.dir}"/>
-	   <delete dir="${artifacts.build.dir}"/>
-	   <delete dir="${build.dir}"/>
-	</target>
-	
+    
+    <target name="init-ivy-local-home" if="ivy.use.local.home">
+        <property name="ivy.home" value="${basedir}/.ivy2" />
+    </target>
+    
+    <target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home" />
+
+    <target name="init-ivy" depends="download-ivy">
+    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+    	    	      it into ant's lib dir (note that the latter copy will always take precedence).
+    	    	      We will not fail as long as local lib dir exists (it may be empty) and
+    	    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
+    	    	<path id="ivy.lib.path">
+    	    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    	    	</path>
+    	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+         <ivy:settings id="ivy.instance" />
+    </target>
+
+    <target name="clean-ivy-cache" depends="init-ivy-home">
+        <delete dir="${ivy.home}/cache" />
+    </target>
+
 	<target name="clean-lib">
     	<delete dir="${lib.dir}"/>
 	</target>
-	
-	<target name="clean-all" depends="clean, clean-lib"/>
-	
-	<target name="noresolve" description="use to skip dependency resolution">
-		<property name="no.resolve" value="true"/>
-	</target>
-	
-	<target name="offline" depends="noresolve" description="use to indicate no internet connection is available">
-		<property name="offline" value="true" />
-	</target>
-	
 
+	<target name="/noresolve" description="use to skip dependency resolution">
+        <property name="no.resolve" value="true" />
+    </target>
+    
+    <target name="/localivy" description="use a local ivy home">
+        <property name="ivy.use.local.home" value="true" />
+    </target>
+    
+    <target name="/offline" depends="/noresolve" description="use to indicate no internet connection is available">
+        <property name="offline" value="true" />
+    </target>
+    
     <!-- =================================================================
-               DEPENDENCY MNGT
+         DEPENDENCY MNGT, COMPILATION AND JAR
          ================================================================= -->
-	<target name="resolve" depends="init-ivy, prepare" unless="no.resolve">
-		<ivy:retrieve conf="*" pattern="${lib.dir}/[conf]/[artifact].[ext]" />
-	</target>
-	
+    <target name="resolve" depends="init-ivy" unless="no.resolve">
+    	<ivy:retrieve conf="*" pattern="${lib.dir}/[conf]/[artifact].[ext]" />
+    </target>
+
 </project>

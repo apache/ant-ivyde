@@ -3,6 +3,8 @@
 
   version in svn (not yet released)
 ===========================
+- NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevée) 
+
 - IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
 - IMPROVE: Support javadoc and sources even in modules where they are not declared (IVYDE-46)
 

@@ -9,6 +9,6 @@
     </configurations>
     <dependencies>
         <dependency org="apache" name="ivy" rev="latest.integration" conf="default->core,httpclient,oro,vfs,sftp;ant->default"/>
-        <dependency org="apache" name="commons-logging" rev="1.0.4" conf="default->default"/>
+        <dependency org="commons-logging" name="commons-logging" rev="1.0.4" conf="default->default"/>
     </dependencies>
 </ivy-module>
