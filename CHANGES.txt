@@ -10,6 +10,7 @@
 
 - FIX: "Add Ivy library" not working in eclipse 3.3 (IVYDE-57)
 - FIX: Automatic javadoc attachment is not working (IVYDE-55)
+- FIX: On startup IvyIDE can freeze eclipse (IVYDE-63) (thanks to Nicolas Lalevée)
 
 - moved to apache, packages renamed to org.apache.ivyde
   				

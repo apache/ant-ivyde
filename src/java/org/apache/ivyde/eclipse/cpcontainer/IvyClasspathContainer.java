@@ -43,7 +43,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -457,18 +456,31 @@ public class IvyClasspathContainer implements IClasspathContainer {
 	private IvyResolveJob _job;
 
 
-	public IvyClasspathContainer(IJavaProject javaProject, IPath path, String ivyFile, String[] confs ) {
+	/**
+     * Create an Ivy class path container from some predefined classpath entries. The provided class
+     * path entries should come from the default "persisted" classpath container. Note that no
+     * resolve nor resolve are exectued here, so some inconsistencies might exist between the
+     * ivy.xml and the provided classpath entries.
+     * 
+     * @param javaProject
+     *            the project of containing this container
+     * @param path
+     *            the path the project
+     * @param ivyFile
+     *            the path to the ivy file
+     * @param confs
+     *            the configuration that will be resolved
+     * @param classpathEntries
+     *            the entries to start with
+     */
+	public IvyClasspathContainer(IJavaProject javaProject, IPath path, String ivyFile, String[] confs, IClasspathEntry[] classpathEntries ) {
 		_javaProject = javaProject;
         _path = path;
 		
         _ivyXmlPath = ivyFile;
 		_ivyXmlFile = resolveFile( ivyFile );
-        _confs = confs;   
-        //do  execute this job in current thread 
-        computeClasspathEntries(true, false).run(new NullProgressMonitor());
-        if (_classpathEntries == null) {
-            _classpathEntries = new IClasspathEntry[0];
-        }
+        _confs = confs;
+        _classpathEntries = classpathEntries;
         IvyPlugin.getDefault().register(this);
 	}
 	
