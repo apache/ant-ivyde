@@ -3,7 +3,7 @@
 <plugin
    id="org.apache.ivyde.eclipse"
    name="IvyDE Eclipse Plug-in"
-   version="1.3.0.20070710103400"
+   version="1.3.0.20071119103400"
    provider-name="Apache"
    class="org.apache.ivyde.eclipse.IvyPlugin">
 

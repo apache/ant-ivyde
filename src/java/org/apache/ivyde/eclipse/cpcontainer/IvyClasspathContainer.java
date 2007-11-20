@@ -531,7 +531,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
      */
-    private IvyResolveJob computeClasspathEntries(final boolean usePreviousResolveIfExist, boolean notify) {
+    private IvyResolveJob computeClasspathEntries(final boolean usePreviousResolveIfExist, boolean notify, boolean isUser) {
         try {
         	Ivy ivy = IvyPlugin.getIvy(_javaProject);
 
@@ -541,7 +541,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 	        		return _job;
 	        	}
 	        	_job = new IvyResolveJob(ivy, usePreviousResolveIfExist, notify);
-	        	_job.setUser(true);
+	        	_job.setUser(isUser);
 	        	_job.setRule(RESOLVE_EVENT_RULE);
 	        	return _job;
         	}
@@ -557,14 +557,17 @@ public class IvyClasspathContainer implements IClasspathContainer {
      * @param monitor
      */
     public void resolve(IProgressMonitor monitor) {
-        computeClasspathEntries(false, true).run(monitor);
+        computeClasspathEntries(false, true, true).run(monitor);
     }
     
     public void resolve() {
-        computeClasspathEntries(false, true).schedule();
+        computeClasspathEntries(false, true, true).schedule();
+    }
+    public void refresh(boolean isUser) {
+        computeClasspathEntries(true, true, isUser).schedule();
     }
     public void refresh() {
-        computeClasspathEntries(true, true).schedule();
+        refresh(true);
     }
 
 

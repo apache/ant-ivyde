@@ -16,10 +16,8 @@ import org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Initializer the ivy class path container.
- * 
- * TODO : start the dependency resolving in the background, with the errors
- * popuping more than getting silently logged
+ * Initializer the ivy class path container. It will create a container from the persisted class
+ * path entries, and then schedule the refresh of the container.
  */
 public class IvyClasspathInitializer extends ClasspathContainerInitializer {
 
@@ -60,7 +58,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             }
 
             // now refresh the container to be synchronized with the ivy.xml
-            ((IvyClasspathContainer) container).refresh();
+            ((IvyClasspathContainer) container).refresh(false);
         }
     }
 
