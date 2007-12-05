@@ -1,8 +1,6 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,7 +27,6 @@ import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -59,10 +56,8 @@ import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.swt.widgets.Display;
 
-
 /**
- *   
- * 
+ * Eclipse classpath container that will contain the ivy resolved entries.
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
@@ -145,7 +140,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
             Message.info("resolving dependencies of "+_ivyXmlFile); 
         	_monitor = monitor;
         	final IStatus[] status = new IStatus[1];
-        	final ClasspathItem[][] classpathItems = new ClasspathItem[1][];
+        	final IClasspathEntry[][] classpathEntries = new IClasspathEntry[1][];
 
         	Thread resolver = new Thread() {
         		public void run() {
@@ -154,123 +149,121 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
         			_monitor.beginTask("resolving dependencies", 1000);
 					_monitor.setTaskName("resolving dependencies...");
-        			//context Classloader hook for commonlogging used by httpclient  
-        			ClassLoader old = Thread.currentThread().getContextClassLoader();
-        			List problemMessages = Collections.EMPTY_LIST;
-        			ModuleDescriptor md = null;
-        			try {
-        				Thread.currentThread().setContextClassLoader(IvyClasspathContainer.class.getClassLoader());
-        				final URL ivyURL = _ivyXmlFile.toURL();
-        				String[] confs;
-        				boolean resolved = false;
-        				try {
 
-        					if (_usePreviousResolveIfExist) {
-        						md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(_ivy.getSettings(), ivyURL, false);
-        						if (_confs.length == 1 && "*".equals(_confs[0])) {
-        							confs = md.getConfigurationsNames();
-        						} else {
-        							confs = _confs;
-        						}
+        			URL ivyURL;
+                    try {
+                        ivyURL = _ivyXmlFile.toURL();
+                    } catch (MalformedURLException e) {
+                        status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR,
+                                "The path of ivy.xml is not a valid URL", e);
+                        return;
+                    }
 
-        						// we check if all required configurations have been resolved
-        						for (int i = 0; i < confs.length; i++) {
-        							File report = 
-        									_cacheMgr
-        									.getConfigurationResolveReportInCache(
-        											ResolveOptions.getDefaultResolveId(md), 
-        											confs[i]);
-        							if (!report.exists()) {
-        								// no resolve previously done for at least one conf... we do it now
-        								Message.info("\n\nIVY DE: previous resolve of " + md.getModuleRevisionId().getModuleId() + " doesn't contain enough data: resolving again\n");
-        								ResolveReport r = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
-        								resolved = true;
-        								confs = r.getConfigurations();
-                						//eventually do a retrieve
-                						if(IvyPlugin.shouldDoRetrieve(_javaProject)) {
-                							_monitor.setTaskName("retrieving dependencies in "+IvyPlugin.getFullRetrievePatternHerited(_javaProject));
-                							_ivy.retrieve(
-                									md.getModuleRevisionId(), 
-                									IvyPlugin.getFullRetrievePatternHerited(_javaProject), 
-                									new RetrieveOptions().setConfs(confs));
-                						}
-        								break;
-        							}
-        						}
-        					} else {
-        						Message.info("\n\nIVYDE: calling resolve on " + ivyURL + "\n");
-        						ResolveReport report = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
-        						problemMessages = report.getAllProblemMessages();
-        						confs = report.getConfigurations();
-        						md = report.getModuleDescriptor();
-        						resolved = true;
+                    String[] confs;
+                    Collection all;
+                    List problemMessages;
+                    ModuleDescriptor md;
 
-        						if (_monitor.isCanceled()) {
-        							status[0] = Status.CANCEL_STATUS;
-        							return;
-        						}
-        						// call retrieve if required
-        						if(IvyPlugin.shouldDoRetrieve(_javaProject)) {
-        							_monitor.setTaskName("retrieving dependencies in "+IvyPlugin.getFullRetrievePatternHerited(_javaProject));
-        							_ivy.retrieve(
-        									md.getModuleRevisionId(), 
-        									IvyPlugin.getFullRetrievePatternHerited(_javaProject),
-        									new RetrieveOptions().setConfs(confs));
-        						}
-        					}
-        				} catch (FileNotFoundException e) {
-        					String errorMsg = "ivy file not found: "+_ivyXmlFile+"\nPlease configure your IvyDE ClasspathContainer properly";
-            				Message.error(errorMsg);
-							status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
-        					return;
-        				} catch (ParseException e) {
-        					String errorMsg = "parse exception in: "+_ivyXmlFile+"\n"+e.getMessage();
-            				Message.error(errorMsg);
-							status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
-        					return;
-        				} finally {
-        					Thread.currentThread().setContextClassLoader(old);
-        				}
-        				ModuleId mid = md.getModuleRevisionId().getModuleId();
+                    //context Classloader hook for commonlogging used by httpclient  
+                    ClassLoader old = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(IvyClasspathContainer.class.getClassLoader());
+                    try {
 
-        				try {
-        					if (!resolved) {
-        						Message.info("\n\nIVY DE: using cached data of previous resolve of "+md.getModuleRevisionId().getModuleId()+"\n");
-        					}
-        					classpathItems[0] = parseResolvedConfs(confs, mid);
-        				} catch (Exception ex) {
-        					if (!resolved) {
-        						//maybe this is a problem with the cache, we retry with an actual resolve
-        						Message.info("\n\nIVYDE: tryed to build classpath from cache, but files seemed to be corrupted... trying with an actual resolve");
-        						ResolveReport report = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
-        						classpathItems[0] = parseResolvedConfs(report.getConfigurations(), mid);
-        					}
-        				}
-        			} catch (Exception e) {
-        				String errorMsg = "An internal error occured while resolving dependencies of "+_ivyXmlFile+"\nPlease see eclipse error log and IvyConsole for details";
-        				Message.error(errorMsg);
-						status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
-        				return;
-        			} finally {
-        				_monitor.done();
-            			_ivy.getEventManager().removeIvyListener(IvyResolveJob.this);
-        			}
-        			
+                        if (_usePreviousResolveIfExist) {
+                            md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(_ivy.getSettings(),
+                                    ivyURL, false);
+                            if (_confs.length == 1 && "*".equals(_confs[0])) {
+                                confs = md.getConfigurationsNames();
+                            } else {
+                                confs = _confs;
+                            }
+
+                            all = new LinkedHashSet();
+
+                            problemMessages = new ArrayList();
+                            // we check if all required configurations have been
+                            // resolved
+                            for (int i = 0; i < confs.length; i++) {
+                                File report = _cacheMgr.getConfigurationResolveReportInCache(ResolveOptions
+                                        .getDefaultResolveId(md), confs[i]);
+                                boolean resolved = false;
+                                if (report.exists()) {
+                                    // found a report, try to parse it.
+                                    try {
+                                        XmlReportParser parser = new XmlReportParser();
+                                        parser.parse(report);
+                                        all.addAll(Arrays.asList(parser.getArtifacts()));
+                                        resolved = true;
+                                    } catch (ParseException e) {
+                                        Message.info("\n\nIVYDE: Error while parsing the report " 
+                                        		+ report + ". Falling back by doing a resolve again.");
+                                        // it fails, so let's try resolving
+                                    }
+                                }
+                                if (!resolved) {
+                                    // no resolve previously done for at least
+                                    // one conf... we do it now
+                                    Message.info("\n\nIVYDE: previous resolve of "
+                                            + md.getModuleRevisionId().getModuleId()
+                                            + " doesn't contain enough data: resolving again\n");
+                                    ResolveReport r = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
+                                    all.addAll(r.getArtifacts());
+                                    confs = r.getConfigurations();
+                                    problemMessages.addAll(r.getAllProblemMessages());
+                                    maybeRetrieve(md, confs);
+
+                                    break;
+                                }
+                            }
+                        } else {
+                            Message.info("\n\nIVYDE: calling resolve on " + ivyURL + "\n");
+                            ResolveReport report = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
+                            problemMessages = report.getAllProblemMessages();
+                            all = report.getArtifacts();
+                            confs = report.getConfigurations();
+                            md = report.getModuleDescriptor();
+
+                            if (_monitor.isCanceled()) {
+                                status[0] = Status.CANCEL_STATUS;
+                                return;
+                            }
+
+                            maybeRetrieve(md, confs);
+                        }
+
+                        classpathEntries[0] = artifacts2ClasspathEntries(all);
+                    } catch (ParseException e) {
+                        String errorMsg = "Error while parsing the ivy file " + _ivyXmlFile + "\n" + e.getMessage();
+                        Message.error(errorMsg);
+                        status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
+                        return;
+                    } catch (IOException e) {
+                        String errorMsg = "Error while resolving the artifacts for " + _ivyXmlFile + "\n" + e.getMessage();
+                        Message.error(errorMsg);
+                        status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
+                        return;
+                    } finally {
+                        Thread.currentThread().setContextClassLoader(old);
+                        _monitor.done();
+                        _ivy.getEventManager().removeIvyListener(IvyResolveJob.this);
+                    }
+
 	    			if (!problemMessages.isEmpty()) {
 	    				StringBuffer problems = new StringBuffer();
 	    				for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
 							String msg = (String) iter.next();
 							problems.append(msg).append("\n");
 						}
-	    				status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, "Impossible to resolve dependencies of "+md.getModuleRevisionId()+":\n"+problems+"\nSee IvyConsole for further details", null);
-	    				return;
-	    			} else {
-	    				status[0] = Status.OK_STATUS;
+	    				status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, 
+	    						"Impossible to resolve dependencies of "+md.getModuleRevisionId()
+	    						+":\n"+problems+"\nSee IvyConsole for further details", null);
 	    				return;
 	    			}
+
+	    			status[0] = Status.OK_STATUS;
         		}
         	};
-        	
+
         	try {
         		resolver.start();
         		while (true) {
@@ -291,7 +284,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         			}
         		}
         		if (status[0] == Status.OK_STATUS) {
-	    			updateClasspathEntries(_usePreviousResolveIfExist, _notify, classpathItems[0]);
+	    			updateClasspathEntries(_notify, classpathEntries[0]);
         		}
         		return status[0];
         	} finally {
@@ -300,41 +293,41 @@ public class IvyClasspathContainer implements IClasspathContainer {
 				}
                 IvyPlugin.log(IStatus.INFO, "resolved dependencies of "+_ivyXmlFile, null); 
         	}
-        	
-
         }
 
-		private ClasspathItem[] parseResolvedConfs(String[] confs, ModuleId mid) throws ParseException, IOException {
-			ClasspathItem[] classpathItems;
-            Collection all = new LinkedHashSet();
-            String resolveId = ResolveOptions.getDefaultResolveId(mid);
-            for (int i = 0; i < confs.length; i++) {
-            	XmlReportParser parser = new XmlReportParser();
-            	File report = _cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
-            	parser.parse(report);
-                Artifact[] artifacts = parser.getArtifacts();
-                all.addAll(Arrays.asList(artifacts));
+        private void maybeRetrieve(ModuleDescriptor md, String[] confs) throws IOException {
+            // call retrieve if required
+            if (IvyPlugin.shouldDoRetrieve(_javaProject)) {
+                _monitor.setTaskName("retrieving dependencies in "
+                        + IvyPlugin.getFullRetrievePatternHerited(_javaProject));
+                _ivy.retrieve(md.getModuleRevisionId(), IvyPlugin.getFullRetrievePatternHerited(_javaProject),
+                        new RetrieveOptions().setConfs(confs));
             }
-            Collection files = new LinkedHashSet();
+        }
+
+        private IClasspathEntry[] artifacts2ClasspathEntries(Collection all) {
+			IClasspathEntry[] classpathEntries;
+            Collection paths = new LinkedHashSet();
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
                 if (IvyPlugin.accept(_javaProject, artifact)) {
-                	File sourcesArtifact = getSourcesArtifact(artifact, all);
-                	File javadocArtifact = getJavadocArtifact(artifact, all);
-                	files.add(new ClasspathItem(
-                			_cacheMgr.getArchiveFileInCache(artifact),
-                			sourcesArtifact, 
-                			javadocArtifact
-                		));
+                    Path classpathArtifact = new Path(_cacheMgr.getArchiveFileInCache(artifact).getAbsolutePath()); 
+                	Path sourcesArtifact = getSourcesArtifactPath(artifact, all);
+                	Path javadocArtifact = getJavadocArtifactPath(artifact, all);
+                	paths.add(JavaCore.newLibraryEntry(classpathArtifact, 
+                	        getSourceAttachment(classpathArtifact, sourcesArtifact), 
+                	        getSourceAttachmentRoot(classpathArtifact, sourcesArtifact),
+                	        ClasspathEntry.NO_ACCESS_RULES,
+                	        getExtraAttribute(classpathArtifact, javadocArtifact),
+                	        false));
                 }
             }
-            classpathItems = (ClasspathItem[])files.toArray(new ClasspathItem[files.size()]);
+            classpathEntries = (IClasspathEntry[]) paths.toArray(new IClasspathEntry[paths.size()]);
             
-            return classpathItems;
+            return classpathEntries;
         }
 
-		private File getSourcesArtifact(Artifact artifact, Collection all)
-		{
+		private Path getSourcesArtifactPath(Artifact artifact, Collection all) {
     		_monitor.subTask("searching sources for "+artifact);
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact a = (Artifact)iter.next();
@@ -342,18 +335,17 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 		a.getId().getRevision().equals(artifact.getId().getRevision()) &&
                 		IvyPlugin.isSources(_javaProject, a))
                 {
-                	return _cacheMgr.getArchiveFileInCache(a);
+                	return new Path(_cacheMgr.getArchiveFileInCache(a).getAbsolutePath());
                 }
             }
             if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	return getMetaArtifact(artifact, "source", "sources");
+            	return getMetaArtifactPath(artifact, "source", "sources");
             } else {
             	return null;
             }
 		}
 
-		private File getJavadocArtifact(Artifact artifact, Collection all)
-		{
+		private Path getJavadocArtifactPath(Artifact artifact, Collection all) {
     		_monitor.subTask("searching javadoc for "+artifact);
 			for (Iterator iter = all.iterator(); iter.hasNext();) {
 				Artifact a = (Artifact)iter.next();
@@ -362,19 +354,21 @@ public class IvyClasspathContainer implements IClasspathContainer {
 						a.getId().equals(artifact.getId()) &&
 						IvyPlugin.isJavadoc(_javaProject, a))
 				{
-					return _cacheMgr.getArchiveFileInCache(a);
+					return new Path(_cacheMgr.getArchiveFileInCache(a).getAbsolutePath());
 				}
 			}
 			if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	return getMetaArtifact(artifact, "javadoc", "javadoc");
+            	return getMetaArtifactPath(artifact, "javadoc", "javadoc");
 			} else {
             	return null;
             }
 		}
 
-		private File getMetaArtifact(Artifact artifact, String metaType, String metaClassifier) {
-			// meta artifact (source or javadoc) not found in resolved artifacts, 
-			// try to see if a non declared one is available
+		/**
+		 * meta artifact (source or javadoc) not found in resolved artifacts,
+		 * try to see if a non declared one is available
+		 */
+		private Path getMetaArtifactPath(Artifact artifact, String metaType, String metaClassifier) {
 			Map extraAtt = new HashMap(artifact.getExtraAttributes());
 			extraAtt.put("classifier", metaClassifier);
 			Artifact metaArtifact = new DefaultArtifact(
@@ -392,14 +386,14 @@ public class IvyClasspathContainer implements IClasspathContainer {
 			File metaArtifactFile = _cacheMgr.getArchiveFileInCache(metaArtifact, null);
 			File attempt = new File(metaArtifactFile.getAbsolutePath()+".notfound");
 			if (metaArtifactFile.exists()) {
-				return metaArtifactFile;
+				return new Path(metaArtifactFile.getAbsolutePath());
 			} else if (attempt.exists()) {
 				return null;
 			} else {
 				Message.info("checking "+metaType+" for "+artifact);
 				_ivy.getResolveEngine().download(metaArtifact, _cacheMgr, false);
 				if (metaArtifactFile.exists()) {
-					return metaArtifactFile;
+					return new Path(metaArtifactFile.getAbsolutePath());
 				} else {
 					// source artifact not found, we store this information to avoid other attempts later
 					Message.info(metaType+" not found for "+artifact);
@@ -413,32 +407,47 @@ public class IvyClasspathContainer implements IClasspathContainer {
 				}
 			}
 		}
-    }
-    
-    public class ClasspathItem
-    {
-    	private File classpathArtifact;
-    	private File sourcesArtifact;
-    	private File javadocArtifact;
-    	
-    	public ClasspathItem(File classpathArtifact, File sourcesArtifact, File javadocArtifact)
-    	{
-    		this.classpathArtifact = classpathArtifact;
-    		this.sourcesArtifact = sourcesArtifact;
-    		this.javadocArtifact = javadocArtifact;
-    	}
-    	
-    	public Path getClasspathArtifactPath() {
-    		return new Path(classpathArtifact.getAbsolutePath());
-    	}
-    	
-    	public Path getSourcesArtifactPath() {
-    		return (sourcesArtifact != null) ? new Path(sourcesArtifact.getAbsolutePath()) : null;
-    	}
 
-    	public Path getJavadocArtifactPath() {
-    		return (javadocArtifact != null) ? new Path(javadocArtifact.getAbsolutePath()) : null;
-    	}
+		private IPath getSourceAttachment(Path classpathArtifact, Path sourcesArtifact) {
+            IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getSourceAttachment(
+                    classpathArtifact);
+            if (sourceAttachment == null) {
+                sourceAttachment = sourcesArtifact;
+            }
+            return sourceAttachment;
+        }
+
+        private IPath getSourceAttachmentRoot(Path classpathArtifact, Path sourcesArtifact) {
+            IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getSourceAttachmentRoot(
+                    classpathArtifact);
+            if (sourceAttachment == null && sourcesArtifact != null) {
+                sourceAttachment = sourcesArtifact;
+            }
+            return sourceAttachment;
+        }
+
+        private IClasspathAttribute[] getExtraAttribute(Path classpathArtifact, Path javadocArtifact) {
+            List result = new ArrayList();
+            URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getDocAttachment(classpathArtifact);
+
+            if (url == null) {
+                try {
+                    Path path = javadocArtifact;
+                    if (path != null) {
+                        url = new URL("jar:" + path.toFile().toURI().toURL().toExternalForm() + "!/");
+                    }
+                } catch (MalformedURLException e) {
+                    // ignored
+                }
+            }
+
+            if (url != null) {
+                result.add(new ClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url
+                        .toExternalForm()));
+            }
+            return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
+        }
+
     }
 
     public static final String IVY_CLASSPATH_CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
@@ -571,64 +580,15 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
 
-    private void updateClasspathEntries(final boolean usePreviousResolveIfExist, boolean notify, final ClasspathItem[] classpathItems) {
-    	IClasspathEntry[] entries;
-    	if(classpathItems != null) {
-	        entries = new IClasspathEntry[ classpathItems.length ];
-	        
-	        for( int i=0; i<classpathItems.length; i++ ) {
-	            Path path = classpathItems[ i ].getClasspathArtifactPath();
-	            entries[ i ] = JavaCore.newLibraryEntry(path, 
-	                                                    getSourceAttachment(classpathItems[ i ]), 
-	                                                    getSourceAttachmentRoot(classpathItems[ i ]),
-	                                                    ClasspathEntry.NO_ACCESS_RULES,
-	                                                    getExtraAttribute(classpathItems[ i ]),
-	                                                    false);
-	        }
-    	} else {
+    private void updateClasspathEntries(boolean notify, final IClasspathEntry[] classpathEntries) {
+        IClasspathEntry[] entries;
+        if (classpathEntries != null) {
+            entries = classpathEntries;
+        } else {
             entries = new IClasspathEntry[0];
-    	}
-    	setClasspathEntries(entries, notify);
-    }
-
-    private IPath getSourceAttachment(ClasspathItem classpathItem) {
-    	IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getSourceAttachment(classpathItem.getClasspathArtifactPath());
-    	if (sourceAttachment == null)
-    		sourceAttachment = classpathItem.getSourcesArtifactPath();
-    		
-    	return sourceAttachment;
-    }
-    
-    private IPath getSourceAttachmentRoot(ClasspathItem classpathItem) {
-    	IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getSourceAttachmentRoot(classpathItem.getClasspathArtifactPath());
-    	if (sourceAttachment == null)
-    		sourceAttachment = classpathItem.getSourcesArtifactPath();
-    		
-    	return sourceAttachment;
-    }
-
-    private IClasspathAttribute[] getExtraAttribute(ClasspathItem classpathItem) {
-        List result  = new ArrayList();
-        URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getDocAttachment(classpathItem.getClasspathArtifactPath());
-        
-        if (url == null) {
-        	try {
-        		Path path = classpathItem.getJavadocArtifactPath();
-        		if (path != null) {
-        			url = new URL("jar:"+path.toFile().toURI().toURL().toExternalForm()+"!/");
-        		}
-        	} catch (MalformedURLException e) {
-        		// ignored
-        	}
         }
-        	
-        if(url != null) {
-        	result.add(new ClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url.toExternalForm()));
-        }
-        return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
+        setClasspathEntries(entries, notify);
     }
-
-
 
     private void setClasspathEntries(final IClasspathEntry[] entries, final boolean notify) {
         Display.getDefault().asyncExec(new Runnable() {
