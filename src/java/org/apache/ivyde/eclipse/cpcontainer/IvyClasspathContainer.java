@@ -237,8 +237,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
                         Message.error(errorMsg);
                         status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
                         return;
-                    } catch (IOException e) {
-                        String errorMsg = "Error while resolving the artifacts for " + _ivyXmlFile + "\n" + e.getMessage();
+                    } catch (Exception e) {
+                        String errorMsg = "Error while resolving dependencies for " + _ivyXmlFile + "\n" + e.getMessage();
                         Message.error(errorMsg);
                         status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR, errorMsg, e);
                         return;
