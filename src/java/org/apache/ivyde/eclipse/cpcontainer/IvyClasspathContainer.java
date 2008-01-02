@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
 import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
@@ -27,6 +29,7 @@ import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -68,7 +71,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
         private IProgressMonitor _monitor;
         private IProgressMonitor _dlmonitor;
         private Ivy _ivy;
-        private CacheManager _cacheMgr;
         private boolean _usePreviousResolveIfExist;
         private int _workPerArtifact = 100;
         private boolean _notify;
@@ -76,7 +78,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
         public IvyResolveJob(Ivy ivy, boolean usePreviousResolveIfExist, boolean notify) {
         	super("Resolve "+_javaProject.getProject().getName()+"/"+_ivyXmlPath+" dependencies");
         	_ivy = ivy;
-        	_cacheMgr = CacheManager.getInstance(_ivy.getSettings());
         	_usePreviousResolveIfExist = usePreviousResolveIfExist;
         	_notify = notify;
         }
@@ -160,7 +161,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     }
 
                     String[] confs;
-                    Collection all;
+                    Collection/*<ArtifactDownloadReport>*/ all; 
                     List problemMessages;
                     ModuleDescriptor md;
 
@@ -184,7 +185,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
                             // we check if all required configurations have been
                             // resolved
                             for (int i = 0; i < confs.length; i++) {
-                                File report = _cacheMgr.getConfigurationResolveReportInCache(ResolveOptions
+                                File report = _ivy.getResolutionCacheManager()
+                                	.getConfigurationResolveReportInCache(ResolveOptions
                                         .getDefaultResolveId(md), confs[i]);
                                 boolean resolved = false;
                                 if (report.exists()) {
@@ -192,7 +194,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                                     try {
                                         XmlReportParser parser = new XmlReportParser();
                                         parser.parse(report);
-                                        all.addAll(Arrays.asList(parser.getArtifacts()));
+                                        all.addAll(Arrays.asList(parser.getArtifactReports()));
                                         resolved = true;
                                     } catch (ParseException e) {
                                         Message.info("\n\nIVYDE: Error while parsing the report " 
@@ -207,7 +209,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                                             + md.getModuleRevisionId().getModuleId()
                                             + " doesn't contain enough data: resolving again\n");
                                     ResolveReport r = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
-                                    all.addAll(r.getArtifacts());
+                                    all.addAll(Arrays.asList(r.getAllArtifactsReports()));
                                     confs = r.getConfigurations();
                                     problemMessages.addAll(r.getAllProblemMessages());
                                     maybeRetrieve(md, confs);
@@ -219,7 +221,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                             Message.info("\n\nIVYDE: calling resolve on " + ivyURL + "\n");
                             ResolveReport report = _ivy.resolve(ivyURL, new ResolveOptions().setConfs(_confs));
                             problemMessages = report.getAllProblemMessages();
-                            all = report.getArtifacts();
+                            all = new LinkedHashSet(Arrays.asList(report.getAllArtifactsReports()));
                             confs = report.getConfigurations();
                             md = report.getModuleDescriptor();
 
@@ -309,9 +311,10 @@ public class IvyClasspathContainer implements IClasspathContainer {
 			IClasspathEntry[] classpathEntries;
             Collection paths = new LinkedHashSet();
             for (Iterator iter = all.iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact)iter.next();
-                if (IvyPlugin.accept(_javaProject, artifact)) {
-                    Path classpathArtifact = new Path(_cacheMgr.getArchiveFileInCache(artifact).getAbsolutePath()); 
+                ArtifactDownloadReport artifact = (ArtifactDownloadReport)iter.next();
+                if (artifact.getLocalFile() != null &&
+                		IvyPlugin.accept(_javaProject, artifact.getArtifact())) {
+                    Path classpathArtifact = new Path(artifact.getLocalFile().getAbsolutePath()); 
                 	Path sourcesArtifact = getSourcesArtifactPath(artifact, all);
                 	Path javadocArtifact = getJavadocArtifactPath(artifact, all);
                 	paths.add(JavaCore.newLibraryEntry(classpathArtifact, 
@@ -327,38 +330,45 @@ public class IvyClasspathContainer implements IClasspathContainer {
             return classpathEntries;
         }
 
-		private Path getSourcesArtifactPath(Artifact artifact, Collection all) {
+		private Path getSourcesArtifactPath(
+				ArtifactDownloadReport adr, Collection all) {
+			Artifact artifact = adr.getArtifact();
     		_monitor.subTask("searching sources for "+artifact);
             for (Iterator iter = all.iterator(); iter.hasNext();) {
-                Artifact a = (Artifact)iter.next();
-                if (a.getName().equals(artifact.getName()) &&
-                		a.getId().getRevision().equals(artifact.getId().getRevision()) &&
-                		IvyPlugin.isSources(_javaProject, a))
-                {
-                	return new Path(_cacheMgr.getArchiveFileInCache(a).getAbsolutePath());
+                ArtifactDownloadReport otherAdr = (ArtifactDownloadReport)iter.next();
+                Artifact a = otherAdr.getArtifact();
+                if (otherAdr.getLocalFile() != null
+                		&& a.getName().equals(artifact.getName()) 
+                		&& a.getId().getRevision()
+                			.equals(artifact.getId().getRevision()) 
+                		&& IvyPlugin.isSources(_javaProject, a)) {
+                	return new Path(otherAdr.getLocalFile().getAbsolutePath());
                 }
             }
             if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	return getMetaArtifactPath(artifact, "source", "sources");
+            	return getMetaArtifactPath(adr, "source", "sources");
             } else {
             	return null;
             }
 		}
 
-		private Path getJavadocArtifactPath(Artifact artifact, Collection all) {
+		private Path getJavadocArtifactPath(
+				ArtifactDownloadReport adr, Collection all) {
+			Artifact artifact = adr.getArtifact();
     		_monitor.subTask("searching javadoc for "+artifact);
 			for (Iterator iter = all.iterator(); iter.hasNext();) {
-				Artifact a = (Artifact)iter.next();
-				if (a.getName().equals(artifact.getName()) &&
-						a.getModuleRevisionId().equals(artifact.getModuleRevisionId()) &&
-						a.getId().equals(artifact.getId()) &&
-						IvyPlugin.isJavadoc(_javaProject, a))
-				{
-					return new Path(_cacheMgr.getArchiveFileInCache(a).getAbsolutePath());
+				ArtifactDownloadReport otherAdr = (ArtifactDownloadReport)iter.next();
+				Artifact a = otherAdr.getArtifact();
+				if (otherAdr.getLocalFile() != null
+						&& a.getName().equals(artifact.getName()) 
+						&& a.getModuleRevisionId().equals(artifact.getModuleRevisionId()) 
+						&& a.getId().equals(artifact.getId()) 
+						&& IvyPlugin.isJavadoc(_javaProject, a)) {
+					return new Path(otherAdr.getLocalFile().getAbsolutePath());
 				}
 			}
 			if (IvyPlugin.shouldTestNonDeclaredSources(_javaProject)) {
-            	return getMetaArtifactPath(artifact, "javadoc", "javadoc");
+            	return getMetaArtifactPath(adr, "javadoc", "javadoc");
 			} else {
             	return null;
             }
@@ -368,7 +378,10 @@ public class IvyClasspathContainer implements IClasspathContainer {
 		 * meta artifact (source or javadoc) not found in resolved artifacts,
 		 * try to see if a non declared one is available
 		 */
-		private Path getMetaArtifactPath(Artifact artifact, String metaType, String metaClassifier) {
+		private Path getMetaArtifactPath(
+				ArtifactDownloadReport adr, 
+				String metaType, String metaClassifier) {
+			Artifact artifact = adr.getArtifact();
 			Map extraAtt = new HashMap(artifact.getExtraAttributes());
 			extraAtt.put("classifier", metaClassifier);
 			Artifact metaArtifact = new DefaultArtifact(
@@ -379,30 +392,41 @@ public class IvyClasspathContainer implements IClasspathContainer {
 					"jar",
 					extraAtt
 			);
-			// we search archive file in cache with origin == null, to be sure we don't use
-			// a badly saved artifact origin
-			// we could go back to _cacheMgr.getArchiveFileInCache(metaArtifact)
-			// when IVY-430 is resolved
-			File metaArtifactFile = _cacheMgr.getArchiveFileInCache(metaArtifact, null);
-			File attempt = new File(metaArtifactFile.getAbsolutePath()+".notfound");
-			if (metaArtifactFile.exists()) {
-				return new Path(metaArtifactFile.getAbsolutePath());
-			} else if (attempt.exists()) {
-				return null;
-			} else {
-				Message.info("checking "+metaType+" for "+artifact);
-				_ivy.getResolveEngine().download(metaArtifact, _cacheMgr, false);
+            RepositoryCacheManager cache = _ivy.getSettings()
+	    		.getResolver(artifact.getModuleRevisionId().getModuleId())
+	            .getRepositoryCacheManager();
+			if (cache instanceof DefaultRepositoryCacheManager) {
+				File metaArtifactFile = ((DefaultRepositoryCacheManager)cache).getArchiveFileInCache(metaArtifact);
+				File attempt = new File(metaArtifactFile.getAbsolutePath()+".notfound");
 				if (metaArtifactFile.exists()) {
 					return new Path(metaArtifactFile.getAbsolutePath());
+				} else if (attempt.exists()) {
+					return null;
 				} else {
-					// source artifact not found, we store this information to avoid other attempts later
-					Message.info(metaType+" not found for "+artifact);
-					try {
-						attempt.getParentFile().mkdirs();
-						attempt.createNewFile();
-					} catch (IOException e) {
-			    		Message.error("impossible to create attempt file "+attempt+": "+e);
+					Message.info("checking "+metaType+" for "+artifact);
+					_ivy.getResolveEngine().download(metaArtifact, false);
+					if (metaArtifactFile.exists()) {
+						return new Path(metaArtifactFile.getAbsolutePath());
+					} else {
+						// meta artifact not found, we store this information to avoid other attempts later
+						Message.info(metaType+" not found for "+artifact);
+						try {
+							attempt.getParentFile().mkdirs();
+							attempt.createNewFile();
+						} catch (IOException e) {
+							Message.error("impossible to create attempt file "+attempt+": "+e);
+						}
+						return null;
 					}
+				}
+			} else {
+				Message.info("checking "+metaType+" for "+artifact);
+				ArtifactDownloadReport metaAdr = _ivy.getResolveEngine().download(metaArtifact, false);
+				if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
+					return new Path(metaAdr.getLocalFile().getAbsolutePath());
+				} else {
+					Message.info(metaType+" not found for "+artifact);
+					Message.verbose("Attempt not stored in cache because a non Default cache implementation is used.");
 					return null;
 				}
 			}
@@ -692,7 +716,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     		URL ivyURL = _ivyXmlFile.toURL();
     		ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(), ivyURL, false);
     		String resolveId = ResolveOptions.getDefaultResolveId(md);
-    		return CacheManager.getInstance(ivy.getSettings())
+    		return ivy.getResolutionCacheManager()
     			.getConfigurationResolveReportInCache(
     					resolveId, 
     					md.getConfigurationsNames()[0]).toURL();
