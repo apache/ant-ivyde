@@ -466,8 +466,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
             }
 
             if (url != null) {
-                result.add(new ClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url
-                        .toExternalForm()));
+                result.add(JavaCore.newClasspathAttribute(
+                		IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url.toExternalForm()));
             }
             return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
         }

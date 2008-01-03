@@ -6,31 +6,24 @@
  */
 package org.apache.ivyde.eclipse.ui.actions;
 
-import java.io.File;
-
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
-import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.ide.DialogUtil;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.part.FileEditorInput;
 
 
@@ -49,38 +42,43 @@ public class OpenIvyFileAction  implements IWorkbenchWindowActionDelegate {
      * @see IWorkbenchWindowActionDelegate#run
      */
     public void run(IAction action) {
-        ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-        if (sel instanceof IStructuredSelection) {
-            IStructuredSelection s = (IStructuredSelection)sel;
-            Object o = s.getFirstElement();
-            if (o instanceof ClassPathContainer) {
-                IPath path = ((ClassPathContainer)o).getClasspathEntry().getPath();
-                IJavaProject project = ((ClassPathContainer)o).getJavaProject();
+        IvyClasspathContainer cp;
+        try {
+            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil.getSelectionInJavaPackageView());
+        } catch (JavaModelException e) {
+            Message.error(e.getMessage());
+            return;
+        }
+        if (cp != null) {
+            IFile file = cp.getIvyFile();
+            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            if (file != null) {
                 try {
-                    IClasspathContainer fContainer= JavaCore.getClasspathContainer(path, project);
-                    if (fContainer instanceof IvyClasspathContainer) {
-                        IvyClasspathContainer ivycp = (IvyClasspathContainer)fContainer;
-                        
-                        IFile file = ivycp.getIvyFile();
-                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        if (file != null) {
-                            try {
-                                String editorId = "org.apache.ivyde.editors.IvyEditor";
-                                page.openEditor(new FileEditorInput(file), editorId, true);
-                                // only remember the default editor if the open succeeds
-                                IDE.setDefaultEditor(file, editorId);
-                            } catch (PartInitException e) {
-                                DialogUtil.openError(page.getWorkbenchWindow().getShell(),
-                                        IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
-                                        e.getMessage(), e);
-                            }
-                        }
+                    String editorId = "org.apache.ivyde.editors.IvyEditor";
+                    page.openEditor(new FileEditorInput(file), editorId, true);
+                    // only remember the default editor if the open succeeds
+                    IDE.setDefaultEditor(file, editorId);
+                } catch (PartInitException e) {
+                    Shell parent = page.getWorkbenchWindow().getShell();
+                    String title = "Problems Opening Editor";
+                    String message  = e.getMessage();
+                    // Check for a nested CoreException
+                    CoreException nestedException = null;
+                    IStatus status = e.getStatus();
+                    if (status != null && status.getException() instanceof CoreException) {
+                        nestedException = (CoreException) status.getException();
                     }
-                } catch (Exception e) {  
-                    // TODO : log exc
-                    System.err.println(e.getMessage());
+                    if (nestedException != null) {
+                        // Open an error dialog and include the extra
+                        // status information from the nested CoreException
+                        ErrorDialog.openError(parent, title, message, nestedException
+                                .getStatus());
+                    } else {
+                        // Open a regular error dialog since there is no
+                        // extra information to display
+                        MessageDialog.openError(parent, title, message);
+                    }
                 }
-
             }
         }
     }

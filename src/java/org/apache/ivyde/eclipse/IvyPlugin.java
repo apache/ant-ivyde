@@ -15,7 +15,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -25,14 +24,16 @@ import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -59,9 +60,10 @@ public class IvyPlugin extends AbstractUIPlugin {
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
     private IvyConsole console;
-    
-	
-	/**
+
+    private IJavaModel javaModel;
+
+    /**
 	 * The constructor.
 	 */
 	public IvyPlugin() {
@@ -93,6 +95,7 @@ public class IvyPlugin extends AbstractUIPlugin {
                 }
             }
         });
+        javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
         log(IStatus.INFO, "IvyDE plugin started", null); 
 	}
 
@@ -209,7 +212,7 @@ public class IvyPlugin extends AbstractUIPlugin {
     
 	public static void ivyConfPathChanged() {
         try {
-            IJavaProject[] projects = JavaModelManager.getJavaModelManager().getJavaModel().getJavaProjects();
+            IJavaProject[] projects = plugin.javaModel.getJavaProjects();
             String defaultConfURL = getIvyconfURL();
             for (int i = 0; i < projects.length; i++) {
                 if (getStrictIvyconfURL(projects[i]) == null) {
@@ -222,7 +225,7 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public static void typesChanged(String typesCode) {
         try {
-            IJavaProject[] projects = JavaModelManager.getJavaModelManager().getJavaModel().getJavaProjects();
+            IJavaProject[] projects = plugin.javaModel.getJavaProjects();
             String defaultConfURL = getIvyconfURL();
             for (int i = 0; i < projects.length; i++) {
                 if ("[inherited]".equals(getTypesString(projects[i], typesCode))) {

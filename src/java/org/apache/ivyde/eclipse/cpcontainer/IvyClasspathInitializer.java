@@ -1,6 +1,7 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -89,7 +90,16 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             //force refresh of ivy classpath entry in ui thread 
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    IvyClasspathUtil.refreshContainer(project);
+                    IvyClasspathContainer ivycp;
+                    try {
+                        ivycp = IvyClasspathUtil.getIvyClassPathContainer(project);
+                    } catch (JavaModelException e) {
+                        Message.error(e.getMessage());
+                        return;
+                    }
+                    if (ivycp != null) {
+                        ivycp.refresh();
+                    }
                 }
             });
 	    }

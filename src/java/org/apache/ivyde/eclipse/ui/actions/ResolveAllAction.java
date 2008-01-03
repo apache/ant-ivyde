@@ -34,7 +34,7 @@ public class ResolveAllAction implements IWorkbenchWindowActionDelegate {
             protected IStatus run(IProgressMonitor monitor) {
                 Collection containers = IvyPlugin.getDefault().getAllContainers();
                 monitor.beginTask("Resolve all dependencies", containers.size());
-                for (Iterator iter = IvyPlugin.getDefault().getAllContainers().iterator(); iter.hasNext();) {
+                for (Iterator iter = containers.iterator(); iter.hasNext();) {
                     if (monitor.isCanceled()) {
                         return Status.CANCEL_STATUS;
                     }

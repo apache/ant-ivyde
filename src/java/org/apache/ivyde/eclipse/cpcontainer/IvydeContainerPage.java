@@ -18,11 +18,12 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -162,9 +164,23 @@ public class IvydeContainerPage extends NewElementWizardPage
         btn.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(Display.getDefault().getActiveShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-                Class[] acceptedClasses= new Class[] { IFile.class };
-                TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, true);
-                dialog.setValidator(validator);
+                dialog.setValidator(new ISelectionStatusValidator() {
+                    private final IStatus errorStatus = new Status(IStatus.ERROR, IvyPlugin.ID, 0, "", null); //$NON-NLS-1$
+
+                    public IStatus validate(Object[] selection) {
+                        if (selection.length == 0) {
+                            return errorStatus;
+                        }
+                        for (int i = 0; i < selection.length; i++) {
+                            Object o = selection[i];
+                            if (!(o instanceof IFile)) {
+                                return errorStatus;
+                            }
+                        }
+                        return Status.OK_STATUS;
+                    }
+
+                });
                 dialog.setTitle("choose ivy file"); 
                 dialog.setMessage("choose the ivy file to use to resolve dependencies"); 
                 dialog.setInput(_project.getProject());

@@ -1,19 +1,13 @@
 package org.apache.ivyde.eclipse.ui.actions;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 
 public class ResolveAction implements IWorkbenchWindowActionDelegate {
@@ -31,23 +25,15 @@ public class ResolveAction implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-        ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-        if (sel instanceof IStructuredSelection) {
-            IStructuredSelection s = (IStructuredSelection)sel;
-            Object o = s.getFirstElement();
-            if (o instanceof ClassPathContainer) {
-                IPath path = ((ClassPathContainer)o).getClasspathEntry().getPath();
-                IJavaProject project = ((ClassPathContainer)o).getJavaProject();
-                try {
-                    IClasspathContainer fContainer= JavaCore.getClasspathContainer(path, project);
-                    if (fContainer instanceof IvyClasspathContainer) {
-                        IvyClasspathContainer ivycp = (IvyClasspathContainer)fContainer;
-                        ivycp.resolve();
-                    }
-                } catch (JavaModelException e) {                    
-                }
-
-            }
+        IvyClasspathContainer cp;
+        try {
+            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil.getSelectionInJavaPackageView());
+        } catch (JavaModelException e) {
+            Message.error(e.getMessage());
+            return;
+        }
+        if (cp != null) {
+            cp.resolve();
         }
 	}
 

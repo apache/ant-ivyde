@@ -1,20 +1,13 @@
 package org.apache.ivyde.eclipse.ui.actions;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 
 public class RefreshAction implements IWorkbenchWindowActionDelegate {
@@ -32,9 +25,17 @@ public class RefreshAction implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-        IvyClasspathUtil.refreshContainer();
+	    IvyClasspathContainer cp;
+        try {
+            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil.getSelectionInJavaPackageView());
+        } catch (JavaModelException e) {
+            Message.error(e.getMessage());
+            return;
+        }
+	    if (cp != null) {
+	        cp.refresh();
+	    }
 	}
-
 
 	/**
 	 * Selection in the workbench has been changed. We 
