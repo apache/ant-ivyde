@@ -2,7 +2,7 @@
 	<property environment="env"/>
 	<property file="build.properties"/>
 
-	<property name="ivy.install.version" value="2.0.0-alpha2-incubating" />
+	<property name="ivy.install.version" value="2.0.0-beta1" />
 
 	<!-- =================================================================
                IVY AUTO INSTALL
@@ -23,7 +23,7 @@
     	<mkdir dir="${ivy.zip.dir}"/>
     	<mkdir dir="${ivy.home}/tmp"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
-    	<get src="http://people.apache.org/dist/incubator/ivy/${ivy.install.version}/apache-ivy-${ivy.install.version}-bin.zip"
+    	<get src="http://www.apache.org/dist/ant/ivy/${ivy.install.version}/apache-ivy-${ivy.install.version}-bin.zip"
     		 dest="${ivy.zip.dir}/apache-ivy-${ivy.install.version}-bin.zip" usetimestamp="true"/>
 		<unzip src="${ivy.zip.dir}/apache-ivy-${ivy.install.version}-bin.zip" dest="${ivy.home}/tmp" />
 		<copy verbose="true" failonerror="true" file="${ivy.home}/tmp/apache-ivy-${ivy.install.version}/ivy-${ivy.install.version}.jar" tofile="${ivy.jar.file}"/>
