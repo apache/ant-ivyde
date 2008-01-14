@@ -27,17 +27,18 @@ public class FileExtFilter extends ViewerFilter {
     public boolean select(Viewer viewer, Object parent, Object element) {
         if (element instanceof IFile) {
             for (int i = 0; i < fTargetExtension.length; i++) {
-                if (((IFile)element).getName().toLowerCase(Locale.ENGLISH).endsWith("." + fTargetExtension[i])) {
-                    return true; 
+                if (((IFile) element).getName().toLowerCase(Locale.ENGLISH).endsWith(
+                    "." + fTargetExtension[i])) {
+                    return true;
                 }
                 return false;
             }
         }
 
-        if (element instanceof IContainer){ // i.e. IProject, IFolder
+        if (element instanceof IContainer) { // i.e. IProject, IFolder
             try {
-                IResource[] resources = ((IContainer)element).members();
-                for (int i = 0; i < resources.length; i++){
+                IResource[] resources = ((IContainer) element).members();
+                for (int i = 0; i < resources.length; i++) {
                     if (select(viewer, parent, resources[i]))
                         return true;
                 }

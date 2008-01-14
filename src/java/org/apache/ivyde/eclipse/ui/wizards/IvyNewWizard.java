@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-
 public class IvyNewWizard extends Wizard implements INewWizard {
     private IvyNewWizardPage page;
 
@@ -55,7 +54,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     }
 
     /**
-     * This method is called when 'Finish' button is pressed in the wizard. We will create an operation and run it using wizard as execution context.
+     * This method is called when 'Finish' button is pressed in the wizard. We will create an
+     * operation and run it using wizard as execution context.
      */
     public boolean performFinish() {
         final String containerName = page.getContainerName();
@@ -67,14 +67,17 @@ public class IvyNewWizard extends Wizard implements INewWizard {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IResource resource = root.findMember(new Path(containerName));
         if (!resource.exists() || !(resource instanceof IContainer)) {
-            MessageDialog.openError(getShell(), "Error", "Container \"" + containerName + "\" does not exist.");
+            MessageDialog.openError(getShell(), "Error", "Container \"" + containerName
+                    + "\" does not exist.");
         }
         IContainer container = (IContainer) resource;
         final IFile file = container.getFile(new Path(fileName));
-        if (file.exists() && !MessageDialog.openConfirm(getShell(), "overwrite existing ?", "The file you selected already exist. Do you want to overwrite its content ?")) {
+        if (file.exists()
+                && !MessageDialog.openConfirm(getShell(), "overwrite existing ?",
+                    "The file you selected already exist. Do you want to overwrite its content ?")) {
             return false;
         }
-        
+
         IRunnableWithProgress op = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
@@ -99,10 +102,12 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     }
 
     /**
-     * The worker method. It will find the container, create the file if missing or just replace its contents, and open the editor on the newly created file.
+     * The worker method. It will find the container, create the file if missing or just replace its
+     * contents, and open the editor on the newly created file.
      */
 
-    private void doFinish(final IFile file, String org, String module, String status, final IProgressMonitor monitor) throws CoreException {
+    private void doFinish(final IFile file, String org, String module, String status,
+            final IProgressMonitor monitor) throws CoreException {
         // create a sample file
         monitor.beginTask("Creating " + file.getName(), 2);
         try {
@@ -128,10 +133,11 @@ public class IvyNewWizard extends Wizard implements INewWizard {
         monitor.setTaskName("Opening file for editing...");
         getShell().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                        .getActivePage();
                 try {
                     page.openEditor(new IvyFileEditorInput(file), IvyEditor.ID, true);
-//                    IDE.openEditor(page, file, IvyEditor.ID, true);
+                    // IDE.openEditor(page, file, IvyEditor.ID, true);
                 } catch (PartInitException e) {
                 }
             }
@@ -160,7 +166,7 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.selection = selection;
     }
-//    public Image getDefaultPageImage() {
-//        return IvyPlugin.getImageDescriptor("icons/logo16x16.gif").createImage();
-//    }
+    // public Image getDefaultPageImage() {
+    // return IvyPlugin.getImageDescriptor("icons/logo16x16.gif").createImage();
+    // }
 }

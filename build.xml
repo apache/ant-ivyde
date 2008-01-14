@@ -87,4 +87,27 @@
     	<ivy:retrieve conf="*" pattern="${lib.dir}/[conf]/[artifact].[ext]" />
     </target>
 
+	
+    <target name="fixcrlf">
+        <property name="eol.native.includes" 
+            value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css" />
+        <property name="eol.native.excludes" 
+            value="build/**,bin/**,lib/**" />
+
+        <fileset id="eol.native.fileset" 
+            dir="${basedir}" 
+            includes="${eol.native.includes}"
+            excludes="${eol.native.excludes}" />
+        
+        <fixcrlf srcdir="${basedir}" 
+            includes="${eol.native.includes}" 
+            excludes="${eol.native.excludes}" />
+        <apply executable="svn">
+            <fileset refid="eol.native.fileset" />
+            <arg value="propset" />
+            <arg value="svn:eol-style" />
+            <arg value='"native"' />
+        </apply>
+    </target>
+	
 </project>

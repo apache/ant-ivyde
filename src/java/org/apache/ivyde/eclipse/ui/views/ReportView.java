@@ -16,23 +16,23 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 public class ReportView extends ViewPart implements ISelectionListener {
-	private Browser _browser;
+    private Browser _browser;
 
-	public void createPartControl(Composite parent) {
-		_browser = new Browser(parent, SWT.NONE);
+    public void createPartControl(Composite parent) {
+        _browser = new Browser(parent, SWT.NONE);
 
-		// add myself as a global selection listener
-		getSite().getPage().addSelectionListener(this);
+        // add myself as a global selection listener
+        getSite().getPage().addSelectionListener(this);
 
-		// prime the selection
-		selectionChanged(null, getSite().getPage().getSelection());
+        // prime the selection
+        selectionChanged(null, getSite().getPage().getSelection());
 
-	}
+    }
 
-	public void setFocus() {
-	}
+    public void setFocus() {
+    }
 
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+    public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         if (sel instanceof IStructuredSelection) {
             IvyClasspathContainer ivycp;
             try {
@@ -47,7 +47,8 @@ public class ReportView extends ViewPart implements ISelectionListener {
                 if (report != null) {
                     if (!_browser.setUrl(report.toExternalForm())) {
                         _browser.setUrl("");
-                        Message.warn("impossible to set report view url to " + report.toExternalForm());
+                        Message.warn("impossible to set report view url to "
+                                + report.toExternalForm());
                     }
                 }
             }

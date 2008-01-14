@@ -1,15 +1,16 @@
 package org.apache.ivyde.eclipse.cpcontainer.fragmentinfo;
 
 import java.net.URL;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public interface IPackageFragmentExtraInfo {
-    
+
     public IPath getSourceAttachment(Path path);
-    
+
     public IPath getSourceAttachmentRoot(Path path);
-    
+
     public URL getDocAttachment(Path path);
 
     public void setSourceAttachmentPath(IPath containerPath, String entryPath, IPath sourcePath);

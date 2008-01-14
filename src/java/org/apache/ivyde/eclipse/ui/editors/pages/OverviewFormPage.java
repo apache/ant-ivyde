@@ -24,11 +24,11 @@ public class OverviewFormPage extends FormPage {
         super.createFormContent(managedForm);
         ScrolledForm form = managedForm.getForm();
         FormToolkit toolkit = managedForm.getToolkit();
-        form.setText("Overview");  
+        form.setText("Overview");
         fillBody(managedForm, toolkit);
         managedForm.refresh();
     }
-    
+
     private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
         Composite body = managedForm.getForm().getBody();
         TableWrapLayout layout = new TableWrapLayout();
@@ -37,7 +37,7 @@ public class OverviewFormPage extends FormPage {
         layout.leftMargin = 10;
         layout.rightMargin = 10;
         layout.numColumns = 2;
-        layout.makeColumnsEqualWidth =true;
+        layout.makeColumnsEqualWidth = true;
         layout.verticalSpacing = 30;
         layout.horizontalSpacing = 10;
         body.setLayout(layout);

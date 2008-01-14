@@ -27,7 +27,6 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.graphics.Point;
 
-
 public class IvyContentAssistProcessor implements IContentAssistProcessor {
     private IContextInformationValidator fValidator = new ContextInformationValidator(this);
 
@@ -36,7 +35,7 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
     private IFile file;
 
     private IvyModel _model;
-    
+
     /**
      * Call by viewer to retreive a list of ICompletionProposal
      */
@@ -54,7 +53,8 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
             return null;
         }
         IProject project = getProject();
-        IvyFile ivyfile = new IvyFile(project != null ? project.getName() : "", ivyFileString, documentOffset);
+        IvyFile ivyfile = new IvyFile(project != null ? project.getName() : "", ivyFileString,
+                documentOffset);
         if (ivyfile.inTag()) {
             String tagName = ivyfile.getTagName();
             if (ivyfile.readyForValue()) {
@@ -75,21 +75,25 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
         // Return the proposals
         return proposals;
     }
+
     /**
-     * Compute a list of possible attribute for the tag given in arguement.<br/>
-     * If attribute are already used in tag they are discard of the list
+     * Compute a list of possible attribute for the tag given in arguement.<br/> If attribute are
+     * already used in tag they are discard of the list
+     * 
      * @param tagName
      * @param doc
      * @param documentOffset
      * @param propList
      * @param selectedRange
      */
-    private void computeTagAttributeProposals(String tagName, IvyFile ivyfile, List propList, Point selectedRange) {
+    private void computeTagAttributeProposals(String tagName, IvyFile ivyfile, List propList,
+            Point selectedRange) {
         String qualifier = ivyfile.getQualifier();
         int qlen = qualifier.length();
-        if(qualifier.indexOf('/') >-1) {
+        if (qualifier.indexOf('/') > -1) {
             String text = "/>";
-            CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset() - qlen , qlen+selectedRange.y, text.length());
+            CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset() - qlen,
+                    qlen + selectedRange.y, text.length());
             propList.add(proposal);
         } else {
             String parent = ivyfile.getParentTagName();
@@ -108,16 +112,20 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
                     // Yes -- compute whole proposal text
                     String text = att.getName() + "=\"\"";
                     // Construct proposal
-                    CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset() - qlen , qlen+selectedRange.y, text.length()-1, null, att.getName(), null, att.getDoc());
+                    CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset()
+                            - qlen, qlen + selectedRange.y, text.length() - 1, null, att.getName(),
+                            null, att.getDoc());
                     // and add to result list
                     propList.add(proposal);
                 }
             }
         }
     }
+
     /**
      * Compute a list of possible values for the current attribute of the given tag.<br>
      * The list is retrieve by calling <code> IvyTag.getPossibleValuesForAttribute</code>
+     * 
      * @see IvyTag#getPossibleValuesForAttribute(String, Map, String)
      * @param tagName
      * @param doc
@@ -125,7 +133,8 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
      * @param propList
      * @param selection
      */
-    private void computeValueProposals(String tagName, IvyFile ivyfile, List propList, Point selection) {
+    private void computeValueProposals(String tagName, IvyFile ivyfile, List propList,
+            Point selection) {
         String parent = null;
         String tag = ivyfile.getTagName();
         if (tag != null) {
@@ -133,47 +142,56 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
         }
         IvyTag ivyTag = _model.getIvyTag(tag, parent);
         if (ivyTag != null) {
-            String[] values = ivyTag.getPossibleValuesForAttribute(ivyfile.getAttributeName(), ivyfile);
+            String[] values = ivyTag.getPossibleValuesForAttribute(ivyfile.getAttributeName(),
+                ivyfile);
             if (values != null) {
                 String qualifier = ivyfile.getAttributeValueQualifier();
                 int qlen = qualifier == null ? 0 : qualifier.length();
                 Arrays.sort(values);
                 for (int i = 0; i < values.length; i++) {
                     String val = values[i];
-                    CompletionProposal proposal = new CompletionProposal(val, ivyfile.getOffset() - qlen, qlen+selection.y, val.length());
+                    CompletionProposal proposal = new CompletionProposal(val, ivyfile.getOffset()
+                            - qlen, qlen + selection.y, val.length());
                     propList.add(proposal);
                 }
             }
         }
     }
+
     /**
-     * Compute xml structural proposition 
+     * Compute xml structural proposition
      */
     private void computeStructureProposals(IvyFile ivyfile, List propList, Point selectedRange) {
         String parent = ivyfile.getParentTagName();
         String qualifier = ivyfile.getQualifier();
         int qlen = qualifier.length();
-        if(parent != null && ivyfile.getOffset() >= 2+qualifier.length() && ivyfile.getString(ivyfile.getOffset()-2-qualifier.length(), ivyfile.getOffset()).startsWith("</")) {
-            //closing tag (already started)
-            String text = "</"+parent+">";
-            CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset() - qlen -2 , qlen+2+selectedRange.y, text.length());
+        if (parent != null
+                && ivyfile.getOffset() >= 2 + qualifier.length()
+                && ivyfile.getString(ivyfile.getOffset() - 2 - qualifier.length(),
+                    ivyfile.getOffset()).startsWith("</")) {
+            // closing tag (already started)
+            String text = "</" + parent + ">";
+            CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset() - qlen
+                    - 2, qlen + 2 + selectedRange.y, text.length());
             propList.add(proposal);
         } else {
             if (parent != null && qualifier.length() == 0) {
-                String text = "</"+parent+">";
+                String text = "</" + parent + ">";
                 int closingIndex = ivyfile.getStringIndexForward(text);
-                int openingIndex = ivyfile.getStringIndexForward("<"+parent);
+                int openingIndex = ivyfile.getStringIndexForward("<" + parent);
                 if (closingIndex == -1 || (openingIndex != -1 && closingIndex > openingIndex)) {
                     // suggest closing tag if tag not yet closed
-                    CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset(), selectedRange.y, text.length());
+                    CompletionProposal proposal = new CompletionProposal(text, ivyfile.getOffset(),
+                            selectedRange.y, text.length());
                     propList.add(proposal);
                 }
             }
-            
+
             List childs = null;
-            
+
             if (parent != null) {
-                String parentParent = ivyfile.getParentTagName(ivyfile.getStringIndexBackward("<" + parent));
+                String parentParent = ivyfile.getParentTagName(ivyfile.getStringIndexBackward("<"
+                        + parent));
                 IvyTag root = _model.getIvyTag(parent, parentParent);
                 if (root == null) {
                     errorMessage = "parent tag :" + parent + " not found in model:";
@@ -187,25 +205,28 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
             errorMessage = null;
             for (Iterator iter = childs.iterator(); iter.hasNext();) {
                 IvyTag child = (IvyTag) iter.next();
-    
+
                 // Check if proposal matches qualifier
                 if (child.getStartTag().startsWith(qualifier)) {
                     Proposal[] props = child.getProposals();
                     for (int i = 0; i < props.length; i++) {
                         // Construct proposal and add to result list
-                        propList.add(new CompletionProposal(props[i].getProposal(), ivyfile.getOffset() - qlen, qlen + selectedRange.y, props[i].getCursor(), null, null, null, props[i].getDoc()));
+                        propList.add(new CompletionProposal(props[i].getProposal(), ivyfile
+                                .getOffset()
+                                - qlen, qlen + selectedRange.y, props[i].getCursor(), null, null,
+                                null, props[i].getDoc()));
                     }
                 }
             }
         }
     }
- 
+
     public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         return null;
     }
 
     public char[] getCompletionProposalAutoActivationCharacters() {
-        return new char[] { '<', '"' };
+        return new char[] {'<', '"'};
     }
 
     public char[] getContextInformationAutoActivationCharacters() {
@@ -219,17 +240,19 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
     public IContextInformationValidator getContextInformationValidator() {
         return fValidator;
     }
+
     public IJavaProject getJavaProject() {
         IProject p = getProject();
         return JavaCore.create(p);
     }
+
     public IProject getProject() {
-        return file == null ? null :file.getProject();
+        return file == null ? null : file.getProject();
     }
-    
+
     public void setFile(IFile file) {
         this.file = file;
         _model = new IvyModel(getJavaProject());
     }
-    
+
 }

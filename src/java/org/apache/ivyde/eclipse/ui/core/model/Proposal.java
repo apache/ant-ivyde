@@ -7,7 +7,9 @@ package org.apache.ivyde.eclipse.ui.core.model;
 
 public class Proposal {
     private int _cursor;
+
     private String _proposal;
+
     private String _doc;
 
     public Proposal(String proposal, int cursor, String doc) {
@@ -19,7 +21,6 @@ public class Proposal {
     public int getCursor() {
         return _cursor;
     }
-    
 
     public String getProposal() {
         return _proposal;
@@ -28,8 +29,5 @@ public class Proposal {
     public String getDoc() {
         return _doc;
     }
-    
-    
-    
-    
+
 }

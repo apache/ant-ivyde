@@ -7,51 +7,50 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 
-
 public class IvyClasspathEntry implements IClasspathEntry {
 
     Path path_;
 
-    IvyClasspathEntry( Path path ) {
+    IvyClasspathEntry(Path path) {
         path_ = path;
     }
 
     public int getContentKind() {
         return IPackageFragmentRoot.K_BINARY;
     }
-    
+
     public int getEntryKind() {
         return CPE_LIBRARY;
     }
-    
+
     public IPath[] getExclusionPatterns() {
         return null;
     }
-    
+
     public IPath[] getInclusionPatterns() {
         return null;
     }
-    
+
     public IPath getOutputLocation() {
         return null;
     }
-    
+
     public IPath getPath() {
         return path_;
     }
-    
+
     public IClasspathEntry getResolvedEntry() {
         return this;
     }
-    
+
     public IPath getSourceAttachmentPath() {
         return null;
     }
-    
+
     public IPath getSourceAttachmentRootPath() {
         return null;
     }
-    
+
     public boolean isExported() {
         return false;
     }

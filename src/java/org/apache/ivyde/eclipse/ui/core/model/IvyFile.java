@@ -9,29 +9,41 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class IvyFile {
-    private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\"]*\"[\\s]*=[\\s]*([\\w\\-]+)");
+    private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern
+            .compile("[^\"]*\"[\\s]*=[\\s]*([\\w\\-]+)");
+
     private static final Pattern QUALIFIER_PATTERN = Pattern.compile("[\\w\\-<]*");
-    private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern.compile("([a-zA-Z0-9]+)[ ]*=[ ]*\"([^\"]*)\"");
+
+    private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern
+            .compile("([a-zA-Z0-9]+)[ ]*=[ ]*\"([^\"]*)\"");
+
     private static final Pattern CONF_PATTERN = Pattern.compile("<[\\s]*conf[^>]+name=\"([^\"]+)");
-    private static final Pattern CONFIGURATIONS_END_PATTERN = Pattern.compile("</[\\s]*configurations[\\s]*>");
-    private static final Pattern CONFIGURATIONS_START_PATTERN = Pattern.compile("<[\\s]*configurations[\\s]*>");
+
+    private static final Pattern CONFIGURATIONS_END_PATTERN = Pattern
+            .compile("</[\\s]*configurations[\\s]*>");
+
+    private static final Pattern CONFIGURATIONS_START_PATTERN = Pattern
+            .compile("<[\\s]*configurations[\\s]*>");
+
     private String _doc;
+
     private int _currentOffset;
 
     private String _reversed;
+
     private String _projectName;
-    
+
     public IvyFile(String projectName, String doc) {
         this(projectName, doc, 0);
     }
-    
+
     public IvyFile(String projectName, String doc, int currentOffset) {
         _projectName = projectName;
         _doc = doc;
         _reversed = new StringBuffer(doc).reverse().toString();
         _currentOffset = currentOffset;
     }
-    
+
     public String[] getConfigurationNames() {
         Pattern p = CONFIGURATIONS_START_PATTERN;
         Matcher m = p.matcher(_doc);
@@ -45,11 +57,11 @@ public class IvyFile {
             }
             p = CONF_PATTERN;
             m = p.matcher(_doc);
-            List ret = new ArrayList();            
+            List ret = new ArrayList();
             for (boolean found = m.find(start); found && m.end() < end; found = m.find()) {
                 ret.add(m.group(1));
             }
-            return (String[])ret.toArray(new String[ret.size()]);
+            return (String[]) ret.toArray(new String[ret.size()]);
         } else {
             return new String[] {"default"};
         }
@@ -58,6 +70,7 @@ public class IvyFile {
     public boolean inTag() {
         return inTag(_currentOffset);
     }
+
     public boolean inTag(int documentOffset) {
         int lastSpaceIndex = documentOffset;
         boolean hasSpace = false;
@@ -71,18 +84,21 @@ public class IvyFile {
                 hasSpace = true;
             if (c == '>' && (documentOffset == 0 || _doc.charAt(documentOffset - 1) != '-'))
                 return false;
-            if (c == '<' && (documentOffset+1 >= _doc.length() || (_doc.charAt(documentOffset + 1) != '!' && _doc.charAt(documentOffset + 1) != '?')))
+            if (c == '<'
+                    && (documentOffset + 1 >= _doc.length() || (_doc.charAt(documentOffset + 1) != '!' && _doc
+                            .charAt(documentOffset + 1) != '?')))
                 return hasSpace;
         }
     }
-    
+
     public String getTagName() {
         return getTagName(_currentOffset);
     }
-    
+
     /**
-     * Return the tag for the position.
-     * Note : the documentoffset is considered to be in a tag ie in &lt; &gt;
+     * Return the tag for the position. Note : the documentoffset is considered to be in a tag ie in
+     * &lt; &gt;
+     * 
      * @param documentOffset
      * @return
      */
@@ -104,10 +120,11 @@ public class IvyFile {
     public boolean readyForValue() {
         return readyForValue(_currentOffset);
     }
+
     public boolean readyForValue(int documentOffset) {
         return getAttributeName(documentOffset) != null;
     }
-    
+
     public int getStringIndexBackward(String string) {
         return getStringIndexBackward(string, _currentOffset);
     }
@@ -120,7 +137,7 @@ public class IvyFile {
         }
         return -1;
     }
-    
+
     public int getStringIndexForward(String string) {
         return getStringIndexForward(string, _currentOffset);
     }
@@ -132,14 +149,14 @@ public class IvyFile {
         }
         return -1;
     }
-    
+
     public Map getAllAttsValues() {
         return getAllAttsValues(_currentOffset);
     }
 
     public Map getAllAttsValues(int documentOffset) {
         Map result = new HashMap();
-        
+
         int offset = documentOffset;
         int start = _reversed.indexOf('<', getReverseOffset(documentOffset));
         if (start != -1) {
@@ -178,61 +195,60 @@ public class IvyFile {
         }
         return result;
     }
-    
-//    public Map getAllAttsValues(int documentOffset) {
-//        Map result = new HashMap();
-//        int offset = documentOffset;
-//        int start = -1;
-//        int end = -1;
-//        char c = ' ';
-//        // move cursor at the begining of the tag
-//        while (c != '<') {
-//            try {
-//                c = _doc.charAt(--offset);
-//            } catch (IndexOutOfBoundsException e) {
-//                offset = 0;
-//                break;
-//            }
-//        }
-//        start = offset;
-//        offset = documentOffset;
-//        while (c != '>') {
-//            try {
-//                c = _doc.charAt(++offset);
-//            } catch (IndexOutOfBoundsException e) {
-//                break;
-//            }
-//        }
-//        end = offset;
-//        Pattern regexp = ATTRIBUTE_VALUE_PATTERN;
-//        try {
-//            String tag = _doc.substring(start, end);
-//            tag = tag.substring(tag.indexOf(' '));
-//            Matcher m = regexp.matcher(tag);
-//            while (m.find()) {
-//                String key = m.group(1);
-//                String val = m.group(2);
-//                result.put(key, val);
-//                if (m.end() + m.group(0).length() < tag.length()) {
-//                    tag = tag.substring(m.end());
-//                    m = regexp.matcher(tag);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
-//    
+
+    // public Map getAllAttsValues(int documentOffset) {
+    // Map result = new HashMap();
+    // int offset = documentOffset;
+    // int start = -1;
+    // int end = -1;
+    // char c = ' ';
+    // // move cursor at the begining of the tag
+    // while (c != '<') {
+    // try {
+    // c = _doc.charAt(--offset);
+    // } catch (IndexOutOfBoundsException e) {
+    // offset = 0;
+    // break;
+    // }
+    // }
+    // start = offset;
+    // offset = documentOffset;
+    // while (c != '>') {
+    // try {
+    // c = _doc.charAt(++offset);
+    // } catch (IndexOutOfBoundsException e) {
+    // break;
+    // }
+    // }
+    // end = offset;
+    // Pattern regexp = ATTRIBUTE_VALUE_PATTERN;
+    // try {
+    // String tag = _doc.substring(start, end);
+    // tag = tag.substring(tag.indexOf(' '));
+    // Matcher m = regexp.matcher(tag);
+    // while (m.find()) {
+    // String key = m.group(1);
+    // String val = m.group(2);
+    // result.put(key, val);
+    // if (m.end() + m.group(0).length() < tag.length()) {
+    // tag = tag.substring(m.end());
+    // m = regexp.matcher(tag);
+    // }
+    // }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // return result;
+    // }
+    //    
     public String getQualifier() {
         return getQualifier(_currentOffset);
     }
-    
+
     /**
-     * Return the user typed string before calling completion
-     * stop on:<br>
-     * &lt; to match tag,<br/>
-     * space to found attribute name<br/>
+     * Return the user typed string before calling completion stop on:<br>
+     * &lt; to match tag,<br/> space to found attribute name<br/>
+     * 
      * @param documentOffset
      * @return
      */
@@ -245,15 +261,15 @@ public class IvyFile {
             return "";
         }
     }
-    
+
     public String getAttributeValueQualifier() {
         return getAttributeValueQualifier(_currentOffset);
     }
-    
+
     /**
-     * Return the user typed string before calling completion on attribute value
-     * stop on:<br>
-     * " to match value for attribute
+     * Return the user typed string before calling completion on attribute value stop on:<br> " to
+     * match value for attribute
+     * 
      * @param documentOffset
      * @return
      */
@@ -265,9 +281,10 @@ public class IvyFile {
             return _doc.substring(getReverseOffset(index), documentOffset);
         }
     }
-    
+
     /**
      * Returns the attribute name corresponding to the value currently edited
+     * 
      * @return null if current offset is not in an attibute value
      */
     public String getAttributeName() {
@@ -284,7 +301,7 @@ public class IvyFile {
             return null;
         }
     }
-    
+
     public String getParentTagName() {
         return getParentTagName(_currentOffset);
     }
@@ -302,11 +319,11 @@ public class IvyFile {
             return null;
         }
     }
-    
+
     public String getString(int start, int end) {
         return _doc.substring(start, end);
     }
-    
+
     public int[] getParentTagIndex(int documentOffset) {
         int offset = documentOffset;
         int lastSpaceIndex = offset;
@@ -319,11 +336,13 @@ public class IvyFile {
                 char c = _doc.charAt(--offset);
                 if (c == '>' && _doc.charAt(offset - 1) != '-') {
                     if (_doc.charAt(offset - 1) != '/') { // not a simple tag
-                        // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15, 15));
+                        // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
+                        // 15));
                         parentEndTagReached = true;
                         parentEndTagIndex = offset;
                         lastSpaceIndex = offset;
-                        // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15, 15));
+                        // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
+                        // 15));
                         continue;
                     } else { // simple tag
                         inSimpleTag = true;
@@ -339,16 +358,22 @@ public class IvyFile {
                             continue;
                         }
                     } else {// opening tag
-                        if (_doc.charAt(offset + 1) != '!' && _doc.charAt(offset + 1) != '?') {// not a doc tag or xml
+                        if (_doc.charAt(offset + 1) != '!' && _doc.charAt(offset + 1) != '?') {// not
+                            // a
+                            // doc
+                            // tag
+                            // or
+                            // xml
                             if (!stack.isEmpty()) { // we found the closing tag before
                                 String closedName = (String) stack.peek();
-                                if (closedName.equalsIgnoreCase(_doc.substring(offset + 1, offset +1+ closedName.length()))) {
+                                if (closedName.equalsIgnoreCase(_doc.substring(offset + 1, offset
+                                        + 1 + closedName.length()))) {
                                     stack.pop();
                                     continue;
                                 }
                             } else {
                                 if (parentEndTagReached) {
-                                    return new int[] {offset+1, lastSpaceIndex};
+                                    return new int[] {offset + 1, lastSpaceIndex};
                                 }
                             }
                         }
@@ -388,13 +413,14 @@ public class IvyFile {
         return null;
     }
 
-
     public String getDependencyOrganisation() {
         Map otherAttValues = getAllAttsValues();
         return getDependencyOrganisation(otherAttValues);
     }
 
     public String getDependencyOrganisation(Map otherAttValues) {
-        return otherAttValues != null && otherAttValues.get("org") != null ? (String)otherAttValues.get("org") : getOrganisation();
+        return otherAttValues != null && otherAttValues.get("org") != null ? (String) otherAttValues
+                .get("org")
+                : getOrganisation();
     }
 }

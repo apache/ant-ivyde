@@ -19,57 +19,51 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-
 /**
- * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
- * subclassing <samp>FieldEditorPreferencePage</samp>, we
- * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
- * save, restore and apply itself.
+ * This class represents a preference page that is contributed to the Preferences dialog. By
+ * subclassing <samp>FieldEditorPreferencePage</samp>, we can use the field support built into
+ * JFace that allows us to create a page that is small and knows how to save, restore and apply
+ * itself.
  * <p>
- * This page is used to modify preferences only. They
- * are stored in the preference store that belongs to
- * the main plug-in class. That way, preferences can
- * be accessed directly via the preference store.
+ * This page is used to modify preferences only. They are stored in the preference store that
+ * belongs to the main plug-in class. That way, preferences can be accessed directly via the
+ * preference store.
  */
 
-public class IvyPreferencePage
-	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
+public class IvyPreferencePage extends FieldEditorPreferencePage implements
+        IWorkbenchPreferencePage {
 
-	private StringFieldEditor _pattern;
+    private StringFieldEditor _pattern;
 
     public IvyPreferencePage() {
-		super(GRID);
-		setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
-		setDescription("");
-	}
-	
-	/**
-	 * Creates the field editors. Field editors are abstractions of
-	 * the common GUI blocks needed to manipulate various types
-	 * of preferences. Each field editor knows how to save and
-	 * restore itself.
-	 */
-	public void createFieldEditors() {
-		final Composite fieldParent = getFieldEditorParent();
-		
+        super(GRID);
+        setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
+        setDescription("");
+    }
+
+    /**
+     * Creates the field editors. Field editors are abstractions of the common GUI blocks needed to
+     * manipulate various types of preferences. Each field editor knows how to save and restore
+     * itself.
+     */
+    public void createFieldEditors() {
+        final Composite fieldParent = getFieldEditorParent();
+
         Label info = new Label(fieldParent, SWT.NONE);
         info.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1));
-        info.setText("Apache Ivy version " + Ivy.getIvyVersion() + " - "
-                + Ivy.getIvyDate());
-        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1)); // space
-        
+        info.setText("Apache Ivy version " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate());
+        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
+                GridData.BEGINNING, false, false, 3, 1)); // space
+
         Label spacer = new Label(fieldParent, SWT.NONE);
         GridData spacerData = new GridData();
         spacerData.horizontalSpan = 3;
         spacer.setLayoutData(spacerData);
         spacer.setText("Runtime option");
-        spacer = new Label(fieldParent,  SWT.SEPARATOR | SWT.HORIZONTAL );
+        spacer = new Label(fieldParent, SWT.SEPARATOR | SWT.HORIZONTAL);
         spacer.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
         addField(new FileFieldEditor(PreferenceConstants.IVYCONF_PATH, "&IvyConf URL:", fieldParent) {
-            /*Opens the file chooser dialog and returns the selected file as an url. */
+            /* Opens the file chooser dialog and returns the selected file as an url. */
             protected String changePressed() {
                 String f = super.changePressed();
                 if (f == null) {
@@ -83,20 +77,23 @@ public class IvyPreferencePage
                     }
                 }
             }
-            
+
             protected boolean checkState() {
                 return true;
             }
         });
-        
+
         new Label(fieldParent, SWT.NONE); // space
         Label explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-        explanation.setText("The url where your ivyconf file can be found. \nUse default to reference the default ivy configuration.");
-        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1)); // space
-        
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+                1));
+        explanation
+                .setText("The url where your ivyconf file can be found. \nUse default to reference the default ivy configuration.");
+        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
+                GridData.BEGINNING, false, false, 3, 1)); // space
 
-        BooleanFieldEditor doR = new BooleanFieldEditor(PreferenceConstants.DO_RETRIEVE, "Do a retrieve after resolve", fieldParent) {
+        BooleanFieldEditor doR = new BooleanFieldEditor(PreferenceConstants.DO_RETRIEVE,
+                "Do a retrieve after resolve", fieldParent) {
             protected void createControl(final Composite parent) {
                 super.createControl(parent);
                 final Button b = getChangeControl(parent);
@@ -107,59 +104,76 @@ public class IvyPreferencePage
                 });
             }
         };
-        _pattern = new StringFieldEditor(PreferenceConstants.RETRIEVE_PATTERN, "Pattern", fieldParent);
-        _pattern.setEnabled(getPreferenceStore().getBoolean(PreferenceConstants.DO_RETRIEVE), fieldParent);
+        _pattern = new StringFieldEditor(PreferenceConstants.RETRIEVE_PATTERN, "Pattern",
+                fieldParent);
+        _pattern.setEnabled(getPreferenceStore().getBoolean(PreferenceConstants.DO_RETRIEVE),
+            fieldParent);
         addField(doR);
         addField(_pattern);
-        
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-        explanation.setText("Pattern example: lib/[conf]/[artifact].[ext]\nTo copy artifacts in folder named lib without revision by folder named like configurations");
-        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1)); // space
-        
-        addField(new StringFieldEditor(PreferenceConstants.ACCEPTED_TYPES, "Accepted types", fieldParent));
-        
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-        explanation.setText("Comma separated list of artifact types to use in IvyDE Managed Dependencies Library\nExample: jar, zip");
-        
-        addField(new StringFieldEditor(PreferenceConstants.SOURCES_TYPES, "Sources types", fieldParent));
-        
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-        explanation.setText("Comma separated list of artifact types to be used as sources. \nExample: source, src");
 
-        addField(new StringFieldEditor(PreferenceConstants.JAVADOC_TYPES, "Javadoc types", fieldParent));
-        
         new Label(fieldParent, SWT.NONE); // space
         explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1));
-        explanation.setText("Comma separated list of artifact types to be used as javadoc. \nExample: javadoc");
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+                1));
+        explanation
+                .setText("Pattern example: lib/[conf]/[artifact].[ext]\nTo copy artifacts in folder named lib without revision by folder named like configurations");
+        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
+                GridData.BEGINNING, false, false, 3, 1)); // space
 
-        spacer = new Label(fieldParent,  SWT.NONE);
-        spacerData = new GridData();
-        spacerData.horizontalSpan = 3;
-        spacer.setLayoutData(spacerData);
-        
+        addField(new StringFieldEditor(PreferenceConstants.ACCEPTED_TYPES, "Accepted types",
+                fieldParent));
+
+        new Label(fieldParent, SWT.NONE); // space
+        explanation = new Label(fieldParent, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+                1));
+        explanation
+                .setText("Comma separated list of artifact types to use in IvyDE Managed Dependencies Library\nExample: jar, zip");
+
+        addField(new StringFieldEditor(PreferenceConstants.SOURCES_TYPES, "Sources types",
+                fieldParent));
+
+        new Label(fieldParent, SWT.NONE); // space
+        explanation = new Label(fieldParent, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+                1));
+        explanation
+                .setText("Comma separated list of artifact types to be used as sources. \nExample: source, src");
+
+        addField(new StringFieldEditor(PreferenceConstants.JAVADOC_TYPES, "Javadoc types",
+                fieldParent));
+
+        new Label(fieldParent, SWT.NONE); // space
+        explanation = new Label(fieldParent, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+                1));
+        explanation
+                .setText("Comma separated list of artifact types to be used as javadoc. \nExample: javadoc");
+
         spacer = new Label(fieldParent, SWT.NONE);
         spacerData = new GridData();
         spacerData.horizontalSpan = 3;
         spacer.setLayoutData(spacerData);
-        spacer.setText("Editor information"); 
-        spacer = new Label(fieldParent,  SWT.SEPARATOR | SWT.HORIZONTAL );
+
+        spacer = new Label(fieldParent, SWT.NONE);
+        spacerData = new GridData();
+        spacerData.horizontalSpan = 3;
+        spacer.setLayoutData(spacerData);
+        spacer.setText("Editor information");
+        spacer = new Label(fieldParent, SWT.SEPARATOR | SWT.HORIZONTAL);
         spacer.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
-        addField(new StringFieldEditor(PreferenceConstants.ORGANISATION, "&Organisation:", fieldParent));
-        addField(new StringFieldEditor(PreferenceConstants.ORGANISATION_URL, "Organisation &URL:", fieldParent));
-	}
+        addField(new StringFieldEditor(PreferenceConstants.ORGANISATION, "&Organisation:",
+                fieldParent));
+        addField(new StringFieldEditor(PreferenceConstants.ORGANISATION_URL, "Organisation &URL:",
+                fieldParent));
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+     */
+    public void init(IWorkbench workbench) {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
-	}
-	
 }

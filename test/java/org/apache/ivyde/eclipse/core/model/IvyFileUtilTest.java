@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
 
-import org.apache.ivyde.eclipse.ui.core.model.IvyFile;
-
-
 import junit.framework.TestCase;
+
+import org.apache.ivyde.eclipse.ui.core.model.IvyFile;
 
 public class IvyFileUtilTest extends TestCase {
     String hibContentStr;
@@ -17,8 +16,9 @@ public class IvyFileUtilTest extends TestCase {
         super(name);
         byte content[];
         try {
-            RandomAccessFile accessFile =new RandomAccessFile(getClass().getResource("/ivy-hibernate.xml").getFile(), "r");
-            content = new byte[(int)accessFile.length()];
+            RandomAccessFile accessFile = new RandomAccessFile(getClass().getResource(
+                "/ivy-hibernate.xml").getFile(), "r");
+            content = new byte[(int) accessFile.length()];
             accessFile.read(content);
             hibContentStr = new String(content);
         } catch (FileNotFoundException e) {
@@ -38,13 +38,13 @@ public class IvyFileUtilTest extends TestCase {
 
     public void testGetTagName() {
         IvyFile ivyFile = new IvyFile("", hibContentStr);
-        String  tag = ivyFile.getTagName(200);
+        String tag = ivyFile.getTagName(200);
         assertEquals("info", tag);
         tag = ivyFile.getTagName(864);
         assertEquals("description", tag);
-//        tag = IvyFileUtil.getTagName(1000);
+        // tag = IvyFileUtil.getTagName(1000);
     }
-    
+
     public void testGetAllAttsValues() {
         String test = "<test att1=\"value1\" att2 =\"value 2 \"  att3 =\" value3 \" att4   =   \"  4  \"";
         IvyFile ivyFile = new IvyFile("", test);
@@ -60,7 +60,7 @@ public class IvyFileUtilTest extends TestCase {
     public void testGetAttributeName() {
         String test = "<test nospace=\"\" 1Space =\"\"  2Space = \"\" lotofSpace   =   \"    \"";
         IvyFile ivyFile = new IvyFile("", test);
-        String  name = ivyFile.getAttributeName(15);
+        String name = ivyFile.getAttributeName(15);
         assertEquals("nospace", name);
         name = ivyFile.getAttributeName(28);
         assertEquals("1Space", name);
@@ -72,7 +72,7 @@ public class IvyFileUtilTest extends TestCase {
 
     public void testGetParentTagName() {
         IvyFile ivyFile = new IvyFile("", hibContentStr);
-        String  tag = ivyFile.getParentTagName(200);
+        String tag = ivyFile.getParentTagName(200);
         assertEquals("ivy-module", tag);
         tag = ivyFile.getParentTagName(2000);
         assertEquals("configurations", tag);
@@ -83,11 +83,13 @@ public class IvyFileUtilTest extends TestCase {
         tag = ivyFile.getParentTagName(5015);
         assertNull(tag);
     }
-    
+
     public void testReadyForValue() {
     }
+
     public void testGetStringIndex() {
     }
+
     public void testGetQualifier() {
     }
 }

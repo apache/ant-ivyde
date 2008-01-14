@@ -24,19 +24,22 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
- * This class is used to deal with ivy output, and is largely insprired of
- * CVSOutputConsole for its implementation
- * 
+ * This class is used to deal with ivy output, and is largely insprired of CVSOutputConsole for its
+ * implementation
  */
 public class IvyConsole extends MessageConsole implements MessageLogger {
     private MessageConsoleStream[] streams = new MessageConsoleStream[5];
-    
+
     private ConsoleDocument document;
+
     private boolean initialized;
+
     private boolean visible;
+
     private boolean showOnMessage;
+
     private IConsoleManager consoleManager;
-    
+
     public IvyConsole() {
         super("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$
         consoleManager = ConsolePlugin.getDefault().getConsoleManager();
@@ -52,17 +55,15 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     public void log(String msg, int level) {
         appendLine(level, msg);
-    }        
+    }
 
     public void rawlog(String msg, int level) {
         appendLine(level, msg);
     }
-    
-    
-    
+
     /**
-     * Used to notify this console of lifecycle methods <code>init()</code>
-     * and <code>dispose()</code>.
+     * Used to notify this console of lifecycle methods <code>init()</code> and
+     * <code>dispose()</code>.
      */
     public class MyLifecycle implements org.eclipse.ui.console.IConsoleListener {
         public void consolesAdded(IConsole[] consoles) {
@@ -74,6 +75,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             }
 
         }
+
         public void consolesRemoved(IConsole[] consoles) {
             for (int i = 0; i < consoles.length; i++) {
                 IConsole console = consoles[i];
@@ -85,14 +87,16 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.console.AbstractConsole#init()
      */
     protected void init() {
         // Called when console is added to the console view
-        super.init();   
-        
-        //  Ensure that initialization occurs in the ui thread
+        super.init();
+
+        // Ensure that initialization occurs in the ui thread
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 initializeStreams();
@@ -102,13 +106,12 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     }
 
     /*
-     * Initialize thre streams of the console. Must be 
-     * called from the UI thread.
+     * Initialize thre streams of the console. Must be called from the UI thread.
      */
     private void initializeStreams() {
-        synchronized(document) {
+        synchronized (document) {
             if (!initialized) {
-                for (int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     streams[i] = newMessageStream();
                 }
 
@@ -132,7 +135,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     }
 
     private void dump() {
-        synchronized(document) {
+        synchronized (document) {
             visible = true;
             ConsoleDocument.ConsoleLine[] lines = document.getLines();
             for (int i = 0; i < lines.length; i++) {
@@ -142,11 +145,11 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             document.clear();
         }
     }
-    
+
     private void appendLine(int level, String line) {
         showConsole();
-        synchronized(document) {
-            if(visible) {
+        synchronized (document) {
+            if (visible) {
                 streams[level].println(line);
             } else {
                 document.appendConsoleLine(level, line);
@@ -157,21 +160,22 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     private void showConsole() {
         show(false);
     }
-    
+
     /**
      * Returns a color instance based on data from a preference field.
      */
     private Color createColor(Display display, String preference) {
-        RGB rgb = PreferenceConverter.getColor(IvyPlugin.getDefault().getPreferenceStore(), preference);
+        RGB rgb = PreferenceConverter.getColor(IvyPlugin.getDefault().getPreferenceStore(),
+            preference);
         if (rgb == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
             if (IvyPlugin.PREF_CONSOLE_DEBUG_COLOR.equals(preference)) {
-                rgb = new RGB(180,180,255);
+                rgb = new RGB(180, 180, 255);
             } else if (IvyPlugin.PREF_CONSOLE_VERBOSE_COLOR.equals(preference)) {
-                rgb = new RGB(50,150,50);
+                rgb = new RGB(50, 150, 50);
             } else if (IvyPlugin.PREF_CONSOLE_WARN_COLOR.equals(preference)) {
-                rgb = new RGB(255,80,20);
+                rgb = new RGB(255, 80, 20);
             } else if (IvyPlugin.PREF_CONSOLE_ERROR_COLOR.equals(preference)) {
-                rgb = new RGB(255,0,0);
+                rgb = new RGB(255, 0, 0);
             }
         }
         return new Color(display, rgb);
@@ -179,16 +183,18 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     /**
      * Show the console.
-     * @param showNoMatterWhat ignore preferences if <code>true</code>
+     * 
+     * @param showNoMatterWhat
+     *            ignore preferences if <code>true</code>
      */
     public void show(boolean showNoMatterWhat) {
-        if(showNoMatterWhat || showOnMessage) {
-            if(!visible)
+        if (showNoMatterWhat || showOnMessage) {
+            if (!visible)
                 IvyConsoleFactory.showConsole();
             else
                 consoleManager.showConsoleView(this);
         }
-        
+
     }
 
     // MessageLogger implementation
@@ -199,44 +205,55 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     private List errors = new ArrayList();
 
     private boolean showProgress = true;
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#debug(java.lang.String)
      */
     public void debug(String msg) {
         log(msg, Message.MSG_DEBUG);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#verbose(java.lang.String)
      */
     public void verbose(String msg) {
         log(msg, Message.MSG_VERBOSE);
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#deprecated(java.lang.String)
      */
     public void deprecated(String msg) {
         log("DEPRECATED: " + msg, Message.MSG_WARN);
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#info(java.lang.String)
      */
     public void info(String msg) {
         log(msg, Message.MSG_INFO);
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#info(java.lang.String)
      */
     public void rawinfo(String msg) {
         rawlog(msg, Message.MSG_INFO);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#warn(java.lang.String)
      */
     public void warn(String msg) {
@@ -245,7 +262,9 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         getWarns().add(msg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#error(java.lang.String)
      */
     public void error(String msg) {
@@ -256,14 +275,18 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         getErrors().add(msg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#getProblems()
      */
     public List getProblems() {
         return problems;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#sumupProblems()
      */
     public void sumupProblems() {
@@ -285,21 +308,27 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         return warns;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#endProgress()
      */
     public void endProgress() {
         endProgress("");
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#isShowProgress()
      */
     public boolean isShowProgress() {
         return showProgress;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#setShowProgress(boolean)
      */
     public void setShowProgress(boolean progress) {

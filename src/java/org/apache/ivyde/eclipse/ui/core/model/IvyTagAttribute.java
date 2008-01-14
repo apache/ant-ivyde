@@ -2,10 +2,15 @@ package org.apache.ivyde.eclipse.ui.core.model;
 
 public class IvyTagAttribute {
     private IvyTag _container;
+
     private String _name;
+
     private String _doc = "";
+
     private boolean _mandatory = false;
+
     private IValueProvider _valueProvider = null;
+
     /**
      * @param name
      */
@@ -47,7 +52,7 @@ public class IvyTagAttribute {
     public void setName(String name) {
         _name = name;
     }
-    
+
     public String toString() {
         return _name;
     }

@@ -25,10 +25,11 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
-
 public class IvyEditor extends FormEditor implements IResourceChangeListener {
     public final static String ID = "org.apache.ivyde.editors.IvyEditor";
+
     private XMLEditor xmlEditor;
+
     private Browser _browser;
 
     /**
@@ -38,12 +39,12 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
         super();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
     }
-    
+
     protected void setInput(IEditorInput input) {
         IvyFileEditorInput ivyFileEditorInput = null;
         if (input instanceof FileEditorInput) {
             FileEditorInput fei = (FileEditorInput) input;
-            IFile file = ((FileEditorInput)input).getFile();
+            IFile file = ((FileEditorInput) input).getFile();
             ivyFileEditorInput = new IvyFileEditorInput(file);
         } else if (input instanceof IvyFileEditorInput) {
             ivyFileEditorInput = (IvyFileEditorInput) input;
@@ -54,18 +55,19 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
                 xmlEditor.setFile(ivyFileEditorInput.getFile());
             }
         }
-        //deprectated but we need retro compatibility
+        // deprectated but we need retro compatibility
         setTitle(ivyFileEditorInput.getFile().getName());
     }
-    
+
     void createPageXML() {
         try {
             xmlEditor = new XMLEditor();
-            xmlEditor.setFile(((IvyFileEditorInput)getEditorInput()).getFile());
+            xmlEditor.setFile(((IvyFileEditorInput) getEditorInput()).getFile());
             int index = addPage(xmlEditor, getEditorInput());
             setPageText(index, xmlEditor.getTitle());
         } catch (PartInitException e) {
-            ErrorDialog.openError(getSite().getShell(), "Error creating nested text editor", null, e.getStatus());
+            ErrorDialog.openError(getSite().getShell(), "Error creating nested text editor", null,
+                e.getStatus());
         }
     }
 
@@ -77,12 +79,12 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
 
     void createPagePreview() {
         _browser = new Browser(getContainer(), SWT.NONE);
-        _browser.setUrl(((IvyFileEditorInput)getEditorInput()).getPath().toOSString());
+        _browser.setUrl(((IvyFileEditorInput) getEditorInput()).getPath().toOSString());
         int index = addPage(_browser);
         setPageText(index, "Preview");
     }
@@ -91,13 +93,14 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
      * Creates the pages of the multi-page editor.
      */
     protected void addPages() {
-//        createPageOverView();
+        // createPageOverView();
         createPageXML();
-//        createPagePreview();
+        // createPagePreview();
     }
 
     /**
-     * The <code>MultiPageEditorPart</code> implementation of this <code>IWorkbenchPart</code> method disposes all nested editors. Subclasses may extend.
+     * The <code>MultiPageEditorPart</code> implementation of this <code>IWorkbenchPart</code>
+     * method disposes all nested editors. Subclasses may extend.
      */
     public void dispose() {
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -108,13 +111,14 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
      * Saves the multi-page editor's document.
      */
     public void doSave(IProgressMonitor monitor) {
-        xmlEditor.doSave(monitor);       
-        IFile file = ((IvyFileEditorInput)getEditorInput()).getFile();
+        xmlEditor.doSave(monitor);
+        IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
         IvyClasspathContainer.resolveIfNeeded(file);
     }
 
     /**
-     * Saves the multi-page editor's document as another file. Also updates the text for page 0's tab, and updates this multi-page editor's input to correspond to the nested editor's.
+     * Saves the multi-page editor's document as another file. Also updates the text for page 0's
+     * tab, and updates this multi-page editor's input to correspond to the nested editor's.
      */
     public void doSaveAs() {
         xmlEditor.doSaveAs();
@@ -131,7 +135,8 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
     }
 
     /**
-     * The <code>MultiPageEditorExample</code> implementation of this method checks that the input is an instance of <code>IFileEditorInput</code>.
+     * The <code>MultiPageEditorExample</code> implementation of this method checks that the input
+     * is an instance of <code>IFileEditorInput</code>.
      */
     public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
         if (!(editorInput instanceof IFileEditorInput))
@@ -166,8 +171,10 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
                 public void run() {
                     IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
                     for (int i = 0; i < pages.length; i++) {
-                        if (((FileEditorInput) xmlEditor.getEditorInput()).getFile().getProject().equals(res)) {
-                            IEditorPart editorPart = pages[i].findEditor(xmlEditor.getEditorInput());
+                        if (((FileEditorInput) xmlEditor.getEditorInput()).getFile().getProject()
+                                .equals(res)) {
+                            IEditorPart editorPart = pages[i]
+                                    .findEditor(xmlEditor.getEditorInput());
                             pages[i].closeEditor(editorPart, true);
                         }
                     }

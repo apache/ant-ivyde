@@ -26,9 +26,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
-
-public class OpenIvyFileAction  implements IWorkbenchWindowActionDelegate {
+public class OpenIvyFileAction implements IWorkbenchWindowActionDelegate {
     private IWorkbenchWindow window;
+
     /**
      * The constructor.
      */
@@ -36,22 +36,24 @@ public class OpenIvyFileAction  implements IWorkbenchWindowActionDelegate {
     }
 
     /**
-     * The action has been activated. The argument of the
-     * method represents the 'real' action sitting
-     * in the workbench UI.
+     * The action has been activated. The argument of the method represents the 'real' action
+     * sitting in the workbench UI.
+     * 
      * @see IWorkbenchWindowActionDelegate#run
      */
     public void run(IAction action) {
         IvyClasspathContainer cp;
         try {
-            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil.getSelectionInJavaPackageView());
+            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
+                    .getSelectionInJavaPackageView());
         } catch (JavaModelException e) {
             Message.error(e.getMessage());
             return;
         }
         if (cp != null) {
             IFile file = cp.getIvyFile();
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getActivePage();
             if (file != null) {
                 try {
                     String editorId = "org.apache.ivyde.editors.IvyEditor";
@@ -61,7 +63,7 @@ public class OpenIvyFileAction  implements IWorkbenchWindowActionDelegate {
                 } catch (PartInitException e) {
                     Shell parent = page.getWorkbenchWindow().getShell();
                     String title = "Problems Opening Editor";
-                    String message  = e.getMessage();
+                    String message = e.getMessage();
                     // Check for a nested CoreException
                     CoreException nestedException = null;
                     IStatus status = e.getStatus();
@@ -71,8 +73,7 @@ public class OpenIvyFileAction  implements IWorkbenchWindowActionDelegate {
                     if (nestedException != null) {
                         // Open an error dialog and include the extra
                         // status information from the nested CoreException
-                        ErrorDialog.openError(parent, title, message, nestedException
-                                .getStatus());
+                        ErrorDialog.openError(parent, title, message, nestedException.getStatus());
                     } else {
                         // Open a regular error dialog since there is no
                         // extra information to display
@@ -84,31 +85,30 @@ public class OpenIvyFileAction  implements IWorkbenchWindowActionDelegate {
     }
 
     /**
-     * Selection in the workbench has been changed. We 
-     * can change the state of the 'real' action here
-     * if we want, but this can only happen after 
-     * the delegate has been created.
+     * Selection in the workbench has been changed. We can change the state of the 'real' action
+     * here if we want, but this can only happen after the delegate has been created.
+     * 
      * @see IWorkbenchWindowActionDelegate#selectionChanged
      */
     public void selectionChanged(IAction action, ISelection selection) {
     }
 
     /**
-     * We can use this method to dispose of any system
-     * resources we previously allocated.
+     * We can use this method to dispose of any system resources we previously allocated.
+     * 
      * @see IWorkbenchWindowActionDelegate#dispose
      */
     public void dispose() {
     }
 
     /**
-     * We will cache window object in order to
-     * be able to provide parent shell for the message dialog.
+     * We will cache window object in order to be able to provide parent shell for the message
+     * dialog.
+     * 
      * @see IWorkbenchWindowActionDelegate#init
      */
     public void init(IWorkbenchWindow window) {
         this.window = window;
     }
-
 
 }

@@ -23,27 +23,29 @@ import org.eclipse.ui.PlatformUI;
 public class IvyClasspathUtil {
 
     /**
-     * Adds an Ivy classpath container to the list of existing classpath
-     * entries in the given project.
+     * Adds an Ivy classpath container to the list of existing classpath entries in the given
+     * project.
      * 
      * @param project
      *            the project to which the classpath container should be added
      * @param projectRelativePath
-     *            the path relative to the project of the module descriptor file
-     *            to use for the classpath container
+     *            the path relative to the project of the module descriptor file to use for the
+     *            classpath container
      * @param confs
      *            the configurations to use in the classpath container.
      */
     public static void addCPContainer(IJavaProject project, IPath projectRelativePath, String confs) {
         try {
             IClasspathEntry newEntry = JavaCore.newContainerEntry(new Path(
-                    IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID).append(projectRelativePath).append(confs));
+                    IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID).append(projectRelativePath)
+                    .append(confs));
 
             IClasspathEntry[] entries = project.getRawClasspath();
 
             List newEntries = new ArrayList(Arrays.asList(entries));
             newEntries.add(newEntry);
-            entries = (IClasspathEntry[]) newEntries.toArray(new IClasspathEntry[newEntries.size()]);
+            entries = (IClasspathEntry[]) newEntries
+                    .toArray(new IClasspathEntry[newEntries.size()]);
 
             project.setRawClasspath(entries, project.getOutputLocation(), null);
         } catch (CoreException e) {
@@ -57,33 +59,37 @@ public class IvyClasspathUtil {
      * @return the selection, <code>null</code> if unsuccessful
      */
     public static IStructuredSelection getSelectionInJavaPackageView() {
-        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow();
         if (activeWorkbenchWindow == null) {
             return null;
         }
-            ISelection sel = activeWorkbenchWindow.getSelectionService().getSelection();
+        ISelection sel = activeWorkbenchWindow.getSelectionService().getSelection();
         IStructuredSelection selection;
         if (sel instanceof IStructuredSelection) {
             selection = (IStructuredSelection) sel;
         } else {
-            sel = activeWorkbenchWindow.getSelectionService().getSelection("org.eclipse.jdt.ui.PackageExplorer");
+            sel = activeWorkbenchWindow.getSelectionService().getSelection(
+                "org.eclipse.jdt.ui.PackageExplorer");
             if (sel instanceof IStructuredSelection) {
                 selection = (IStructuredSelection) sel;
             } else {
                 return null;
             }
-        } 
+        }
         return selection;
     }
 
     /**
      * Get the Ivy classpath container from the selection in the Java package view
      * 
-     * @param selection the selection 
+     * @param selection
+     *            the selection
      * @return
      * @throws JavaModelException
      */
-    public static IvyClasspathContainer getIvyClasspathContainer(IStructuredSelection selection) throws JavaModelException {
+    public static IvyClasspathContainer getIvyClasspathContainer(IStructuredSelection selection)
+            throws JavaModelException {
         if (selection == null) {
             return null;
         }
@@ -97,9 +103,11 @@ public class IvyClasspathUtil {
                 return getIvyClassPathContainer((IJavaProject) element);
             }
             if (element instanceof IAdaptable) {
-                cp = (IvyClasspathContainer) ((IAdaptable) element).getAdapter(IvyClasspathContainer.class);
+                cp = (IvyClasspathContainer) ((IAdaptable) element)
+                        .getAdapter(IvyClasspathContainer.class);
                 if (cp == null) {
-                    IJavaProject p = (IJavaProject) ((IAdaptable) element).getAdapter(IJavaProject.class);
+                    IJavaProject p = (IJavaProject) ((IAdaptable) element)
+                            .getAdapter(IJavaProject.class);
                     if (p != null) {
                         cp = getIvyClassPathContainer(p);
                     }
@@ -109,7 +117,8 @@ public class IvyClasspathUtil {
                 return cp;
             }
             if (element instanceof ClassPathContainer) {
-                // we shouldn't check against internal JDT API but there are not adaptable to useful class
+                // we shouldn't check against internal JDT API but there are not adaptable to useful
+                // class
                 return getIvyClassPathContainer(((ClassPathContainer) element).getJavaProject());
             }
         }
@@ -119,16 +128,19 @@ public class IvyClasspathUtil {
     /**
      * Search the Ivy classpath container within the specified Java project
      * 
-     * @param javaProject the project to search into
+     * @param javaProject
+     *            the project to search into
      * @return the Ivy classpath container if found, otherwise return <code>null</code>
      * @throws JavaModelException
      */
-    public static IvyClasspathContainer getIvyClassPathContainer(IJavaProject javaProject) throws JavaModelException {
+    public static IvyClasspathContainer getIvyClassPathContainer(IJavaProject javaProject)
+            throws JavaModelException {
         IClasspathEntry[] cpe = javaProject.getRawClasspath();
         for (int i = 0; i < cpe.length; i++) {
             IClasspathEntry entry = cpe[i];
             if (IvyClasspathContainer.isIvyClasspathContainer(entry.getPath())) {
-                return (IvyClasspathContainer) JavaCore.getClasspathContainer(entry.getPath(), javaProject);
+                return (IvyClasspathContainer) JavaCore.getClasspathContainer(entry.getPath(),
+                    javaProject);
             }
         }
         return null;

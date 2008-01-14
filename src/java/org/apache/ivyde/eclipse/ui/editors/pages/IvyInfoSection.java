@@ -15,17 +15,18 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-
 public class IvyInfoSection extends SectionPart implements PropertyChangeListener {
     IFormPage page;
+
     private static int NUM_COLUMNS = 2;
-    
+
     public IvyInfoSection(IFormPage page, Composite parent, int style, boolean titleBar) {
-        super(parent, page.getManagedForm().getToolkit(), titleBar?(ExpandableComposite.TITLE_BAR | style): style);
+        super(parent, page.getManagedForm().getToolkit(),
+                titleBar ? (ExpandableComposite.TITLE_BAR | style) : style);
         this.page = page;
         createClient(getSection(), page.getEditor().getToolkit());
         getSection().setText("General Information");
-//        ((IvyFileEditorInput)page.getEditorInput()).addPropertyChangeListener(this);
+        // ((IvyFileEditorInput)page.getEditorInput()).addPropertyChangeListener(this);
     }
 
     protected void createClient(Section section, FormToolkit toolkit) {
@@ -38,45 +39,44 @@ public class IvyInfoSection extends SectionPart implements PropertyChangeListene
         layout.numColumns = 2;
         client.setLayout(layout);
         IvyFileEditorInput editorInput = (IvyFileEditorInput) page.getEditorInput();
-//        PresentationModel moduleModel = editorInput.getPresentationModel();
-//        PresentationModel revisionModel = new PresentationModel(moduleModel.getModel("resolvedModuleRevisionId"));
-//        PresentationModel moduleIdModel = new PresentationModel(moduleModel.getModel("moduleId"));
-        
+        // PresentationModel moduleModel = editorInput.getPresentationModel();
+        // PresentationModel revisionModel = new
+        // PresentationModel(moduleModel.getModel("resolvedModuleRevisionId"));
+        // PresentationModel moduleIdModel = new
+        // PresentationModel(moduleModel.getModel("moduleId"));
+
         toolkit.createLabel(client, "Organisation");
         Text org = toolkit.createText(client, "");
         org.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-       
-        
-//        SWTBindings.bind(org, moduleIdModel.getModel("organisation"), true);
-        
+
+        // SWTBindings.bind(org, moduleIdModel.getModel("organisation"), true);
+
         toolkit.createLabel(client, "Module");
         Text mod = toolkit.createText(client, "");
         mod.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-//        SWTBindings.bind(org, moduleIdModel.getModel("name"), true);
-        
+        // SWTBindings.bind(org, moduleIdModel.getModel("name"), true);
+
         toolkit.createLabel(client, "Status");
         Text status = toolkit.createText(client, "");
         status.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-//        SWTBindings.bind(org, moduleModel.getModel("status"), true);
-        
+        // SWTBindings.bind(org, moduleModel.getModel("status"), true);
+
         toolkit.paintBordersFor(client);
-        section.setClient(client);  
+        section.setClient(client);
         TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
         td.colspan = 2;
         section.setLayoutData(td);
     }
-   
-    
+
     private void createOrganisationEntry(Composite parent, FormToolkit toolkit) {
 
-        
     }
-    
+
     public void refresh() {
         super.refresh();
     }
-    
+
     public void propertyChange(PropertyChangeEvent evt) {
-        
+
     }
 }
