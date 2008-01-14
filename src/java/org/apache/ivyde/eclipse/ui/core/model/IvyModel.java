@@ -320,7 +320,7 @@ public class IvyModel {
                 ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, name, branch, rev, otherAtts);
                 DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                 try {
-                    DependencyResolver resolver = getIvySettings().getResolver(mrid.getModuleId());
+                    DependencyResolver resolver = getIvySettings().getResolver(mrid);
                     if (resolver == null) {
                         return null;
                     }
@@ -366,7 +366,7 @@ public class IvyModel {
                         ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, (String)otherAttValues.get("name"), (String)otherAttValues.get("rev"));
                         DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                         try {
-                            String[] confs = getIvySettings().getResolver(mrid.getModuleId()).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
+                            String[] confs = getIvySettings().getResolver(mrid).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
                             for (int i = 0; i < confs.length; i++) {
                                 confs[i] = base + confs[i];
                             }
@@ -399,7 +399,7 @@ public class IvyModel {
                             ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, (String)otherAttValues.get("name"), (String)otherAttValues.get("rev"));
                             DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                             try {
-                                String[] confs = getIvySettings().getResolver(mrid.getModuleId()).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
+                                String[] confs = getIvySettings().getResolver(mrid).getDependency(ddd, data).getDescriptor().getConfigurationsNames();
                                 List ret = new ArrayList(Arrays.asList(confs));
                                 ret.add("*");
                                 return (String[])ret.toArray(new String[ret.size()]);

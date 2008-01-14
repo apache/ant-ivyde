@@ -393,7 +393,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 					extraAtt
 			);
             RepositoryCacheManager cache = _ivy.getSettings()
-	    		.getResolver(artifact.getModuleRevisionId().getModuleId())
+	    		.getResolver(artifact.getModuleRevisionId())
 	            .getRepositoryCacheManager();
 			if (cache instanceof DefaultRepositoryCacheManager) {
 				File metaArtifactFile = ((DefaultRepositoryCacheManager)cache).getArchiveFileInCache(metaArtifact);
