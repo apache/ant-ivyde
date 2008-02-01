@@ -237,7 +237,7 @@ public class IvyPlugin extends AbstractUIPlugin {
             IJavaProject[] projects = plugin.javaModel.getJavaProjects();
             String defaultConfURL = getIvyconfURL();
             for (int i = 0; i < projects.length; i++) {
-                if ("[inherited]".equals(getTypesString(projects[i], typesCode))) {
+                if ("[inherited]".equals(getInheritablePreferenceString(projects[i], typesCode))) {
                     resolve(projects[i]);
                 }
             }
@@ -413,15 +413,15 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     private static Collection getAcceptedTypes(IJavaProject project) {
-        return getTypes(project, PreferenceConstants.ACCEPTED_TYPES, "jar");
+        return getInheritablePreferenceList(project, PreferenceConstants.ACCEPTED_TYPES, "jar");
     }
 
     public static String getAcceptedTypesString(IJavaProject project) {
-        return getTypesString(project, PreferenceConstants.ACCEPTED_TYPES);
+        return getInheritablePreferenceString(project, PreferenceConstants.ACCEPTED_TYPES);
     }
 
     public static void setAcceptedTypes(IJavaProject project, String types) {
-        setTypes(project, types, PreferenceConstants.ACCEPTED_TYPES);
+        setInheritablePreferenceString(project, types, PreferenceConstants.ACCEPTED_TYPES);
     }
 
     public static boolean isSources(IJavaProject project, Artifact artifact) {
@@ -429,15 +429,40 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     private static Collection getSourcesTypes(IJavaProject project) {
-        return getTypes(project, PreferenceConstants.SOURCES_TYPES, "source");
+        return getInheritablePreferenceList(project, PreferenceConstants.SOURCES_TYPES, "source");
     }
 
     public static String getSourcesTypesString(IJavaProject project) {
-        return getTypesString(project, PreferenceConstants.SOURCES_TYPES);
+        return getInheritablePreferenceString(project, PreferenceConstants.SOURCES_TYPES);
     }
 
     public static void setSourcesTypes(IJavaProject project, String types) {
-        setTypes(project, types, PreferenceConstants.SOURCES_TYPES);
+        setInheritablePreferenceString(project, types, PreferenceConstants.SOURCES_TYPES);
+    }
+
+    public static boolean isSourceArtifactName(IJavaProject project, String jar, String source) {
+        if (source.equals(jar)) {
+            return true;
+        }
+        Iterator it = getSourcesSuffixes(project).iterator();
+        while (it.hasNext()) {
+            if (source.equals(jar + it.next())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Collection getSourcesSuffixes(IJavaProject project) {
+        return getInheritablePreferenceList(project, PreferenceConstants.SOURCES_SUFFIXES, "-source, -sources, -src");
+    }
+
+    public static String getSourcesSuffixesString(IJavaProject project) {
+        return getInheritablePreferenceString(project, PreferenceConstants.SOURCES_SUFFIXES);
+    }
+
+    public static void setSourcesSuffixes(IJavaProject project, String types) {
+        setInheritablePreferenceString(project, types, PreferenceConstants.SOURCES_SUFFIXES);
     }
 
     public static boolean isJavadoc(IJavaProject project, Artifact artifact) {
@@ -445,25 +470,50 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     private static Collection getJavadocTypes(IJavaProject project) {
-        return getTypes(project, PreferenceConstants.JAVADOC_TYPES, "javadoc");
+        return getInheritablePreferenceList(project, PreferenceConstants.JAVADOC_TYPES, "javadoc");
     }
 
     public static String getJavadocTypesString(IJavaProject project) {
-        return getTypesString(project, PreferenceConstants.JAVADOC_TYPES);
+        return getInheritablePreferenceString(project, PreferenceConstants.JAVADOC_TYPES);
     }
 
     public static void setJavadocTypes(IJavaProject project, String types) {
-        setTypes(project, types, PreferenceConstants.JAVADOC_TYPES);
+        setInheritablePreferenceString(project, types, PreferenceConstants.JAVADOC_TYPES);
     }
 
-    private static Collection getTypes(IJavaProject project, String typesCode, String defaultTypes) {
-        String types = getTypesString(project, typesCode);
+    public static boolean isJavadocArtifactName(IJavaProject project, String jar, String javadoc) {
+        if (javadoc.equals(jar)) {
+            return true;
+        }
+        Iterator it = getJavadocSuffixes(project).iterator();
+        while (it.hasNext()) {
+            if (javadoc.equals(jar + it.next())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Collection getJavadocSuffixes(IJavaProject project) {
+        return getInheritablePreferenceList(project, PreferenceConstants.JAVADOC_SUFFIXES, "-javadoc, -javadocs, -doc, -docs");
+    }
+
+    public static String getJavadocSuffixesString(IJavaProject project) {
+        return getInheritablePreferenceString(project, PreferenceConstants.JAVADOC_SUFFIXES);
+    }
+
+    public static void setJavadocSuffixes(IJavaProject project, String types) {
+        setInheritablePreferenceString(project, types, PreferenceConstants.JAVADOC_SUFFIXES);
+    }
+
+    private static Collection getInheritablePreferenceList(IJavaProject project, String code, String defaultValues) {
+        String types = getInheritablePreferenceString(project, code);
 
         if ("[inherited]".equals(types)) {
             String workspaceTypes = IvyPlugin.getDefault().getPreferenceStore()
-                    .getString(typesCode);
+                    .getString(code);
             if (workspaceTypes == null || workspaceTypes.trim().length() == 0) {
-                types = defaultTypes;
+                types = defaultValues;
             } else {
                 types = workspaceTypes.trim();
             }
@@ -471,19 +521,19 @@ public class IvyPlugin extends AbstractUIPlugin {
         return split(types);
     }
 
-    private static String getTypesString(IJavaProject project, String typesCode) {
-        String types = IvyPlugin.getDefault().getProjectPreferences(project).get(typesCode, null);
-        if (types == null || types.trim().length() == 0) {
+    private static String getInheritablePreferenceString(IJavaProject project, String code) {
+        String values = IvyPlugin.getDefault().getProjectPreferences(project).get(code, null);
+        if (values == null || values.trim().length() == 0) {
             return "[inherited]";
         }
-        return types.trim();
+        return values.trim();
     }
 
-    private static void setTypes(IJavaProject project, String types, String typesCode) {
-        if (types == null || types.trim().length() == 0 || types.trim().startsWith("[inherited]")) {
-            IvyPlugin.getDefault().getProjectPreferences(project).put(typesCode, "[inherited]");
+    private static void setInheritablePreferenceString(IJavaProject project, String values, String code) {
+        if (values == null || values.trim().length() == 0 || values.trim().startsWith("[inherited]")) {
+            IvyPlugin.getDefault().getProjectPreferences(project).put(code, "[inherited]");
         } else {
-            IvyPlugin.getDefault().getProjectPreferences(project).put(typesCode, types);
+            IvyPlugin.getDefault().getProjectPreferences(project).put(code, values);
         }
         flushProjectPreferences(project);
         resolve(project);

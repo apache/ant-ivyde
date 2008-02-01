@@ -353,7 +353,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
                 Artifact a = otherAdr.getArtifact();
-                if (otherAdr.getLocalFile() != null && a.getName().equals(artifact.getName())
+                if (otherAdr.getLocalFile() != null
+                        && IvyPlugin.isSourceArtifactName(_javaProject, artifact.getName(), a.getName())
                         && a.getId().getRevision().equals(artifact.getId().getRevision())
                         && IvyPlugin.isSources(_javaProject, a)) {
                     return new Path(otherAdr.getLocalFile().getAbsolutePath());
@@ -372,7 +373,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
                 Artifact a = otherAdr.getArtifact();
-                if (otherAdr.getLocalFile() != null && a.getName().equals(artifact.getName())
+                if (otherAdr.getLocalFile() != null
+                        && IvyPlugin.isJavadocArtifactName(_javaProject, artifact.getName(), a.getName())
                         && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                         && a.getId().equals(artifact.getId())
                         && IvyPlugin.isJavadoc(_javaProject, a)) {

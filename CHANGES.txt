@@ -5,6 +5,7 @@
 ===========================
 - NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevée) 
 
+- IMPROVE: Recognize more source and javadoc artifacts names (IVYDE-66) (thanks to Nicolas Lalevée)
 - IMPROVE: Use Ivy Bundle instead of packaging ivy.jar in IvyDE bundle (IVYDE-67)
 - IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
 - IMPROVE: Support javadoc and sources even in modules where they are not declared (IVYDE-46)

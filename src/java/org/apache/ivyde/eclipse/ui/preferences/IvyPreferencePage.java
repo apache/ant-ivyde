@@ -140,6 +140,16 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         explanation
                 .setText("Comma separated list of artifact types to be used as sources. \nExample: source, src");
 
+        addField(new StringFieldEditor(PreferenceConstants.SOURCES_SUFFIXES, "Sources suffixes",
+            fieldParent));
+
+        new Label(fieldParent, SWT.NONE); // space
+        explanation = new Label(fieldParent, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+            1));
+        explanation
+            .setText("Comma separated list of suffixes to match sources and artifacts. \nExample: -source, -src");
+
         addField(new StringFieldEditor(PreferenceConstants.JAVADOC_TYPES, "Javadoc types",
                 fieldParent));
 
@@ -149,6 +159,16 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 1));
         explanation
                 .setText("Comma separated list of artifact types to be used as javadoc. \nExample: javadoc");
+
+        addField(new StringFieldEditor(PreferenceConstants.JAVADOC_SUFFIXES, "Javadoc suffixes",
+            fieldParent));
+
+        new Label(fieldParent, SWT.NONE); // space
+        explanation = new Label(fieldParent, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
+            1));
+        explanation
+            .setText("Comma separated list of suffixes to match javadocs and artifacts. \nExample: -javadoc, -doc");
 
         spacer = new Label(fieldParent, SWT.NONE);
         spacerData = new GridData();

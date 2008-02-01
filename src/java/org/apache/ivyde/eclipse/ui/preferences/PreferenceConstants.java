@@ -15,7 +15,11 @@ public class PreferenceConstants {
 
     public static final String SOURCES_TYPES = "sourceTypes";
 
+    public static final String SOURCES_SUFFIXES = "sourceSuffixes";
+
     public static final String JAVADOC_TYPES = "javadocTypes";
+
+    public static final String JAVADOC_SUFFIXES = "javadocSuffixes";
 
     public static final String P_BOOLEAN = "booleanPreference";
 

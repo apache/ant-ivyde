@@ -30,7 +30,11 @@ public class IvyProjectPropertyPage extends PropertyPage {
 
     private static final String SOURCES_TYPES_TITLE = "Sources types:";
 
+    private static final String SOURCES_SUFFIXES_TITLE = "Sources suffixes:";
+
     private static final String JAVADOC_TYPES_TITLE = "Javadoc types:";
+
+    private static final String JAVADOC_SUFFIXES_TITLE = "Javadoc suffixes:";
 
     private Text _pathValueText;
 
@@ -43,6 +47,10 @@ public class IvyProjectPropertyPage extends PropertyPage {
     private Text _sourcesTypesText;
 
     private Text _javadocTypesText;
+
+    private Text _sourcesSuffixesText;
+
+    private Text _javadocSuffixesText;
 
     public IvyProjectPropertyPage() {
         super();
@@ -118,6 +126,22 @@ public class IvyProjectPropertyPage extends PropertyPage {
                 1));
         explanation.setText("Comma separated list of artifact types to be used as sources.");
 
+        Label sourcesSuffixesLabel = new Label(composite, SWT.NONE);
+        sourcesSuffixesLabel.setText(SOURCES_SUFFIXES_TITLE);
+
+        _sourcesSuffixesText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        _sourcesSuffixesText.setText(IvyPlugin.getSourcesSuffixesString(getJavaProject()));
+        _sourcesSuffixesText
+                .setToolTipText("Example: -source, -src\nUse [inherited] to use your general eclise setting.");
+        _sourcesSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true,
+                false, 3, 1));
+
+        new Label(composite, SWT.NONE); // space
+        explanation = new Label(composite, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3,
+                1));
+        explanation.setText("Comma separated list of suffixes to match sources to artifacts.");
+
         Label javadocTypesLabel = new Label(composite, SWT.NONE);
         javadocTypesLabel.setText(JAVADOC_TYPES_TITLE);
 
@@ -133,6 +157,22 @@ public class IvyProjectPropertyPage extends PropertyPage {
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3,
                 1));
         explanation.setText("Comma separated list of artifact types to be used as javadoc.");
+
+        Label javadocSuffixesLabel = new Label(composite, SWT.NONE);
+        javadocSuffixesLabel.setText(JAVADOC_TYPES_TITLE);
+
+        _javadocSuffixesText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        _javadocSuffixesText.setText(IvyPlugin.getJavadocSuffixesString(getJavaProject()));
+        _javadocSuffixesText
+                .setToolTipText("Example: -javadoc, -doc\nUse [inherited] to use your general eclise setting.");
+        _javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true,
+                false, 3, 1));
+
+        new Label(composite, SWT.NONE); // space
+        explanation = new Label(composite, SWT.NONE);
+        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3,
+                1));
+        explanation.setText("Comma separated list of suffixes to match javadocs to artifacts.");
 
         new Label(composite, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
                 GridData.BEGINNING, false, false, 4, 1)); // space
@@ -243,7 +283,9 @@ public class IvyProjectPropertyPage extends PropertyPage {
         _patternT.setText("");
         _acceptedTypesText.setText("[inherited]");
         _sourcesTypesText.setText("[inherited]");
+        _sourcesSuffixesText.setText("[inherited]");
         _javadocTypesText.setText("[inherited]");
+        _javadocSuffixesText.setText("[inherited]");
     }
 
     private String getDefaultIvyconfURLForDisplay() {
@@ -269,7 +311,9 @@ public class IvyProjectPropertyPage extends PropertyPage {
 
             IvyPlugin.setAcceptedTypes(getJavaProject(), _acceptedTypesText.getText());
             IvyPlugin.setSourcesTypes(getJavaProject(), _sourcesTypesText.getText());
+            IvyPlugin.setSourcesSuffixes(getJavaProject(), _sourcesSuffixesText.getText());
             IvyPlugin.setJavadocTypes(getJavaProject(), _javadocTypesText.getText());
+            IvyPlugin.setJavadocSuffixes(getJavaProject(), _javadocSuffixesText.getText());
             return true;
         } finally {
             IvyPlugin.commitChanges();
