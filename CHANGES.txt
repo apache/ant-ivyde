@@ -11,6 +11,7 @@
 - IMPROVE: Support javadoc and sources even in modules where they are not declared (IVYDE-46)
 - IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevée) 
 
+- FIX: IvyDE resolve also evicted artifacts (IVYDE-76) (thanks to Nicolas Lalevée)
 - FIX: IvyDE is using some internal classes of Eclipse (IVYDE-68) (thanks to Nicolas Lalevée) 
 - FIX: "Add Ivy library" not working in eclipse 3.3 (IVYDE-57)
 - FIX: Automatic javadoc attachment is not working (IVYDE-55)

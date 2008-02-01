@@ -406,6 +406,15 @@ public class IvyPlugin extends AbstractUIPlugin {
         resolve(project);
     }
 
+    /**
+     * Check if the artifact is an artifact which can be added to the classpath container
+     * 
+     * @param project
+     *            the project containing the ivy container
+     * @param artifact
+     *            the artifact to check
+     * @return <code>true</code> if the artifact can be added
+     */
     public static boolean accept(IJavaProject project, Artifact artifact) {
         return getAcceptedTypes(project).contains(artifact.getType())
                 && !getSourcesTypes(project).contains(artifact.getType())

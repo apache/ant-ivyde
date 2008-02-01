@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
@@ -27,6 +29,8 @@ import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -218,7 +222,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                                             + " doesn't contain enough data: resolving again\n");
                                     ResolveReport r = _ivy.resolve(ivyURL, new ResolveOptions()
                                             .setConfs(_confs));
-                                    all.addAll(Arrays.asList(r.getAllArtifactsReports()));
+                                    all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
                                     confs = r.getConfigurations();
                                     problemMessages.addAll(r.getAllProblemMessages());
                                     maybeRetrieve(md, confs);
@@ -231,7 +235,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
                             ResolveReport report = _ivy.resolve(ivyURL, new ResolveOptions()
                                     .setConfs(_confs));
                             problemMessages = report.getAllProblemMessages();
-                            all = new LinkedHashSet(Arrays.asList(report.getAllArtifactsReports()));
+                            all = new LinkedHashSet(Arrays.asList(report.getArtifactsReports(null,
+                                false)));
                             confs = report.getConfigurations();
                             md = report.getModuleDescriptor();
 
@@ -242,6 +247,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
                             maybeRetrieve(md, confs);
                         }
+
+                        warnIfDuplicates(all);
 
                         classpathEntries[0] = artifacts2ClasspathEntries(all);
                     } catch (ParseException e) {
@@ -312,6 +319,53 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     _job = null;
                 }
                 IvyPlugin.log(IStatus.INFO, "resolved dependencies of " + _ivyXmlFile, null);
+            }
+        }
+
+        /**
+         * Trigger a warn if there are duplicates entries due to configuration conflict.
+         * <p>
+         * TODO: the algorithm can be more clever and find which configuration are conflicting.
+         * 
+         * @param all
+         *            the resolved artifacts
+         */
+        private void warnIfDuplicates(Collection/* <ArtifactDownloadReport> */all) {
+            ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) all
+                    .toArray(new ArtifactDownloadReport[all.size()]);
+            Set duplicates = new HashSet();
+            for (int i = 0; i < reports.length - 1; i++) {
+                if (IvyPlugin.accept(_javaProject, reports[i].getArtifact())) {
+                    ModuleRevisionId mrid1 = reports[i].getArtifact().getModuleRevisionId();
+                    for (int j = i + 1; j < reports.length; j++) {
+                        if (IvyPlugin.accept(_javaProject, reports[j].getArtifact())) {
+                            ModuleRevisionId mrid2 = reports[j].getArtifact().getModuleRevisionId();
+                            if (mrid1.getModuleId().equals(mrid2.getModuleId()) && !mrid1.getRevision().equals(mrid2.getRevision())) {
+                                duplicates.add(mrid1.getModuleId());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!duplicates.isEmpty()) {
+                StringBuffer buffer = new StringBuffer(
+                        "There are some duplicates entries due to conflicts between the resolved configurations (");
+                for (int i = 0; i < _confs.length; i++) {
+                    buffer.append(_confs[i]);
+                    if (i < _confs.length - 1) {
+                        buffer.append(", ");
+                    }
+                }
+                buffer.append("):\n  - ");
+                Iterator it = duplicates.iterator();
+                while (it.hasNext()) {
+                    buffer.append(it.next());
+                    if (it.hasNext()) {
+                        buffer.append("\n  - ");
+                    }
+                }
+                _ivy.getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
             }
         }
 
