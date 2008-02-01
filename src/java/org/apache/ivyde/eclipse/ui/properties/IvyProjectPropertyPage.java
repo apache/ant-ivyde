@@ -52,6 +52,8 @@ public class IvyProjectPropertyPage extends PropertyPage {
 
     private Text _javadocSuffixesText;
 
+    private Button _alphaOrder;
+    
     public IvyProjectPropertyPage() {
         super();
     }
@@ -200,6 +202,16 @@ public class IvyProjectPropertyPage extends PropertyPage {
                 1));
         explanation
                 .setText("Example: lib/[conf]/[artifact].[ext]\nTo copy artifacts in folder named lib without revision by folder named like configurations\nUse [inherited] to use your general eclipse setting.");
+
+        new Label(composite, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
+                GridData.BEGINNING, false, false, 4, 1)); // space
+
+        _alphaOrder = new Button(composite, SWT.CHECK);
+        _alphaOrder.setText("Order alphabetically the artifacts in the classpath container");
+        _alphaOrder
+                .setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 4, 1));
+        _alphaOrder.setSelection(IvyPlugin.isAlphaOrder(getJavaProject()));
+
         new Label(composite, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
                 GridData.BEGINNING, false, false, 4, 1)); // space
     }
@@ -280,6 +292,7 @@ public class IvyProjectPropertyPage extends PropertyPage {
     protected void performDefaults() {
         _pathValueText.setText(getDefaultIvyconfURLForDisplay());
         _retreiveB.setSelection(false);
+        _alphaOrder.setSelection(false);
         _patternT.setText("");
         _acceptedTypesText.setText("[inherited]");
         _sourcesTypesText.setText("[inherited]");
@@ -309,6 +322,7 @@ public class IvyProjectPropertyPage extends PropertyPage {
                 IvyPlugin.setRetreivePattern(getJavaProject(), "");
             }
 
+            IvyPlugin.setAlphaOrder(getJavaProject(), _alphaOrder.getSelection());
             IvyPlugin.setAcceptedTypes(getJavaProject(), _acceptedTypesText.getText());
             IvyPlugin.setSourcesTypes(getJavaProject(), _sourcesTypesText.getText());
             IvyPlugin.setSourcesSuffixes(getJavaProject(), _sourcesSuffixesText.getText());

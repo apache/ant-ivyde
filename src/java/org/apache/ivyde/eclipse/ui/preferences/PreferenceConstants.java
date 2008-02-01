@@ -31,4 +31,6 @@ public class PreferenceConstants {
 
     public static final String RETRIEVE_PATTERN = "retreive.pattern";
 
+    public static final String APHABETICAL_ORDER = "order.alphabetical";
+
 }

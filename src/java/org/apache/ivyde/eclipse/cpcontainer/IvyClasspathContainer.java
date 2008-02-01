@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -699,6 +700,13 @@ public class IvyClasspathContainer implements IClasspathContainer {
     private void setClasspathEntries(final IClasspathEntry[] entries, final boolean notify) {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
+                if (IvyPlugin.isAlphaOrder(_javaProject)) {
+                    Arrays.sort(entries, new Comparator() {
+                        public int compare(Object o1, Object o2) {
+                            return ((IClasspathEntry) o1).getPath().lastSegment().compareTo(((IClasspathEntry) o2).getPath().lastSegment());
+                        }
+                    });
+                }
                 _classpathEntries = entries;
                 if (notify) {
                     notifyUpdateClasspathEntries();

@@ -640,6 +640,16 @@ public class IvyPlugin extends AbstractUIPlugin {
         return !"".equals(getRetrievePatternHerited(project));
     }
 
+    public static boolean isAlphaOrder(IJavaProject javaProject) {
+        return IvyPlugin.getDefault().getProjectPreferences(javaProject).getBoolean(
+            PreferenceConstants.APHABETICAL_ORDER, false);
+    }
+
+    public static void setAlphaOrder(IJavaProject project, boolean alphaOrder) {
+        IvyPlugin.getDefault().getProjectPreferences(project).putBoolean(
+            PreferenceConstants.APHABETICAL_ORDER, alphaOrder);
+    }
+
     public static boolean shouldTestNonDeclaredSources(IJavaProject project) {
         return true; // TODO: add settings for that
     }
