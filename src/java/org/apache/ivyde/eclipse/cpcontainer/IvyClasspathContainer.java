@@ -34,6 +34,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -466,7 +467,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     return null;
                 } else {
                     Message.info("checking " + metaType + " for " + artifact);
-                    _ivy.getResolveEngine().download(metaArtifact, false);
+                    _ivy.getResolveEngine().download(metaArtifact, new DownloadOptions());
                     if (metaArtifactFile.exists()) {
                         return new Path(metaArtifactFile.getAbsolutePath());
                     } else {
