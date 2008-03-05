@@ -153,22 +153,6 @@
 		   class="org.apache.ivyde.eclipse.ui.views.ReportView">
 		</view>
 	</extension>
-	
-   <!-- uncomment to enable fixed search
-   <extension
-         point="org.eclipse.search.searchPages">
-      <page
-            showScopeSection="true"
-            canSearchEnclosingProjects="true"
-            label="(f)Java Search"
-            icon="icons/jsearch_obj.gif"
-            extensions="java:90, jav:90"
-            class="org.apache.ivyde.eclipse.ui.search.FixedJavaSearchPage"
-            sizeHint="460,160"
-            id="org.apache.ivyde.eclipse.ui.search.FixedJavaSearchPage">
-      </page>
-   </extension>
-   -->
 
    <extension point = "org.eclipse.ui.actionSets">
 	   <actionSet id="org.apache.ivyde.eclipse.ui.actions.actionSet"

@@ -21,7 +21,6 @@ Export-Package: .,
  org.apache.ivyde.eclipse.ui.editors.xml,
  org.apache.ivyde.eclipse.ui.preferences,
  org.apache.ivyde.eclipse.ui.properties,
- org.apache.ivyde.eclipse.ui.search,
  org.apache.ivyde.eclipse.ui.views,
  org.apache.ivyde.eclipse.ui.wizards
 Require-Bundle: org.eclipse.ui,
