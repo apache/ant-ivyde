@@ -113,31 +113,6 @@
       </initializer>
    </extension>
    
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            class="org.apache.ivyde.eclipse.ui.properties.IvyProjectPropertyPage"
-            id="org.apache.ivyde.eclipse.properties.ivyProjectPropertyPage"
-            name="Ivy">
-         <filter
-               name="nature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <keywordReference id="org.eclipse.jdt.ui.buildpath"/>
-      </page>
-      <page
-            objectClass="org.eclipse.jdt.core.IJavaProject"
-            class="org.apache.ivyde.eclipse.ui.properties.IvyProjectPropertyPage"
-            id="org.apache.ivyde.eclipse.properties.ivyProjectPropertyPage"
-            name="Ivy">
-         <filter
-               name="nature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <keywordReference id="org.eclipse.jdt.ui.buildpath"/>
-      </page>
-   </extension>
    
 	<extension 
 	   point="org.eclipse.ui.views">

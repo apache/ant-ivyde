@@ -1,15 +1,35 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -138,11 +158,68 @@ public class IvyClasspathUtil {
         IClasspathEntry[] cpe = javaProject.getRawClasspath();
         for (int i = 0; i < cpe.length; i++) {
             IClasspathEntry entry = cpe[i];
-            if (IvyClasspathContainer.isIvyClasspathContainer(entry.getPath())) {
+            if (isIvyClasspathContainer(entry.getPath())) {
                 return (IvyClasspathContainer) JavaCore.getClasspathContainer(entry.getPath(),
                     javaProject);
             }
         }
         return null;
     }
+
+    public static boolean isIvyClasspathContainer(IPath containerPath) {
+        return containerPath.segment(0).equals(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID);
+    }
+
+//    public static void scheduleResolve(IJavaProject javaProject) {
+//        IvyClasspathContainer cp = getIvyClasspathContainer(javaProject);
+//        if (cp != null) {
+//            cp.scheduleResolve();
+//        }
+//    }
+
+    public static IvyClasspathContainer getIvyClasspathContainer(IJavaProject javaProject) {
+        try {
+            IClasspathEntry[] entries = javaProject.getRawClasspath();
+            for (int i = 0; i < entries.length; i++) {
+                IClasspathEntry entry = entries[i];
+                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+                    IPath path = entry.getPath();
+                    if (isIvyClasspathContainer(path)) {
+                        IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
+                        if (cp instanceof IvyClasspathContainer) {
+                            return (IvyClasspathContainer) cp;
+                        }
+                    }
+                }
+            }
+        } catch (JavaModelException e) {
+            Message.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public static List split(String str) {
+        String[] terms = str.split(",");
+        List ret = new ArrayList();
+        for (int i = 0; i < terms.length; i++) {
+            String t = terms[i].trim();
+            if (t.length() > 0) {
+                ret.add(t);
+            }
+        }
+        return ret;
+    }
+
+    public static String concat(Collection/* <String> */list) {
+        StringBuffer b = new StringBuffer();
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            b.append(it.next());
+            if (it.hasNext()) {
+                b.append(",");
+            }
+        }
+        return b.toString();
+    }
+
 }

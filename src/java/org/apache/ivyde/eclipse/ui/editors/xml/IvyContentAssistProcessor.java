@@ -37,7 +37,7 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
     private IvyModel _model;
 
     /**
-     * Call by viewer to retreive a list of ICompletionProposal
+     * Call by viewer to retrieve a list of ICompletionProposal
      */
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
         // Retrieve current document

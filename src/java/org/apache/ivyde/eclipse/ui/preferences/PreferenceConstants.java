@@ -5,7 +5,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
  */
 public class PreferenceConstants {
 
-    public static final String IVYCONF_PATH = "ivy_conf_path";
+    public static final String IVYSETTINGS_PATH = "ivy_conf_path";
 
     public static final String ORGANISATION = "ivy_org";
 
@@ -31,6 +31,6 @@ public class PreferenceConstants {
 
     public static final String RETRIEVE_PATTERN = "retreive.pattern";
 
-    public static final String APHABETICAL_ORDER = "order.alphabetical";
+    public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
 }

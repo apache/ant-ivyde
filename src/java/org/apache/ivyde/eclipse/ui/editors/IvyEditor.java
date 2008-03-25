@@ -1,6 +1,24 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package org.apache.ivyde.eclipse.ui.editors;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
 import org.apache.ivyde.eclipse.ui.editors.pages.OverviewFormPage;
 import org.apache.ivyde.eclipse.ui.editors.xml.XMLEditor;
@@ -11,6 +29,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -113,7 +133,11 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
-        IvyClasspathContainer.resolveIfNeeded(file);
+        IJavaProject project = JavaCore.create(file.getProject());
+        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
+        if (cp.getConf().getIvyXmlPath().equals(file.getProjectRelativePath().toString())) {
+            cp.scheduleResolve();
+        }
     }
 
     /**

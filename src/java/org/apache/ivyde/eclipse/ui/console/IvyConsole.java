@@ -28,6 +28,17 @@ import org.eclipse.ui.console.MessageConsoleStream;
  * implementation
  */
 public class IvyConsole extends MessageConsole implements MessageLogger {
+
+    public static final String PREF_CONSOLE_DEBUG_COLOR = IvyPlugin.ID + ".console.color.debug";
+
+    public static final String PREF_CONSOLE_VERBOSE_COLOR = IvyPlugin.ID + ".console.color.verbose";
+
+    public static final String PREF_CONSOLE_INFO_COLOR = IvyPlugin.ID + ".console.color.info";
+
+    public static final String PREF_CONSOLE_WARN_COLOR = IvyPlugin.ID + ".console.color.warn";
+
+    public static final String PREF_CONSOLE_ERROR_COLOR = IvyPlugin.ID + ".console.color.error";
+
     private MessageConsoleStream[] streams = new MessageConsoleStream[5];
 
     private ConsoleDocument document;
@@ -118,15 +129,15 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
                 // install colors
                 Color color;
 
-                color = createColor(Display.getDefault(), IvyPlugin.PREF_CONSOLE_DEBUG_COLOR);
+                color = createColor(Display.getDefault(), PREF_CONSOLE_DEBUG_COLOR);
                 streams[Message.MSG_DEBUG].setColor(color);
-                color = createColor(Display.getDefault(), IvyPlugin.PREF_CONSOLE_VERBOSE_COLOR);
+                color = createColor(Display.getDefault(), PREF_CONSOLE_VERBOSE_COLOR);
                 streams[Message.MSG_VERBOSE].setColor(color);
-                color = createColor(Display.getDefault(), IvyPlugin.PREF_CONSOLE_INFO_COLOR);
+                color = createColor(Display.getDefault(), PREF_CONSOLE_INFO_COLOR);
                 streams[Message.MSG_INFO].setColor(color);
-                color = createColor(Display.getDefault(), IvyPlugin.PREF_CONSOLE_WARN_COLOR);
+                color = createColor(Display.getDefault(), PREF_CONSOLE_WARN_COLOR);
                 streams[Message.MSG_WARN].setColor(color);
-                color = createColor(Display.getDefault(), IvyPlugin.PREF_CONSOLE_ERROR_COLOR);
+                color = createColor(Display.getDefault(), PREF_CONSOLE_ERROR_COLOR);
                 streams[Message.MSG_ERR].setColor(color);
 
                 initialized = true;
@@ -168,13 +179,13 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         RGB rgb = PreferenceConverter.getColor(IvyPlugin.getDefault().getPreferenceStore(),
             preference);
         if (rgb == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-            if (IvyPlugin.PREF_CONSOLE_DEBUG_COLOR.equals(preference)) {
+            if (PREF_CONSOLE_DEBUG_COLOR.equals(preference)) {
                 rgb = new RGB(180, 180, 255);
-            } else if (IvyPlugin.PREF_CONSOLE_VERBOSE_COLOR.equals(preference)) {
+            } else if (PREF_CONSOLE_VERBOSE_COLOR.equals(preference)) {
                 rgb = new RGB(50, 150, 50);
-            } else if (IvyPlugin.PREF_CONSOLE_WARN_COLOR.equals(preference)) {
+            } else if (PREF_CONSOLE_WARN_COLOR.equals(preference)) {
                 rgb = new RGB(255, 80, 20);
-            } else if (IvyPlugin.PREF_CONSOLE_ERROR_COLOR.equals(preference)) {
+            } else if (PREF_CONSOLE_ERROR_COLOR.equals(preference)) {
                 rgb = new RGB(255, 0, 0);
             }
         }

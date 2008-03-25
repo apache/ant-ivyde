@@ -1,3 +1,20 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import org.apache.ivy.util.Message;
@@ -26,9 +43,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
      * refresh
      */
     public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
-        if (IvyClasspathContainer.isIvyClasspathContainer(containerPath)) {
-            String ivyFilePath = IvyClasspathContainer.getIvyFilePath(containerPath);
-            String[] confs = IvyClasspathContainer.getConfigurations(containerPath);
+        if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
 
             // try to get an existing one
             IClasspathContainer container = null;
@@ -41,12 +56,12 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             }
 
             if (container == null) {
-                container = new IvyClasspathContainer(project, containerPath, ivyFilePath, confs,
+                container = new IvyClasspathContainer(project, containerPath,
                         new IClasspathEntry[0]);
             } else if (!(container instanceof IvyClasspathContainer)) {
                 // this might be the persisted one : reuse the persisted entries
-                container = new IvyClasspathContainer(project, containerPath, ivyFilePath, confs,
-                        container.getClasspathEntries());
+                container = new IvyClasspathContainer(project, containerPath, container
+                        .getClasspathEntries());
             }
 
             try {
@@ -58,7 +73,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             }
 
             // now refresh the container to be synchronized with the ivy.xml
-            ((IvyClasspathContainer) container).refresh(false);
+            ((IvyClasspathContainer) container).scheduleRefresh(false);
         }
     }
 
@@ -78,7 +93,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
      */
     public void requestClasspathContainerUpdate(IPath containerPath, final IJavaProject project,
             IClasspathContainer containerSuggestion) throws CoreException {
-        if (IvyClasspathContainer.isIvyClasspathContainer(containerPath)) {
+        if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
             IClasspathEntry ice[] = containerSuggestion.getClasspathEntries();
             IPackageFragmentExtraInfo ei = IvyPlugin.getDefault().getPackageFragmentExtraInfo();
             for (int i = 0; i < ice.length; i++) {
@@ -101,7 +116,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                         return;
                     }
                     if (ivycp != null) {
-                        ivycp.refresh();
+                        ivycp.scheduleRefresh(true);
                     }
                 }
             });

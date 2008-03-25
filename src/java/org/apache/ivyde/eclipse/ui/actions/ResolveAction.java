@@ -34,7 +34,7 @@ public class ResolveAction implements IWorkbenchWindowActionDelegate {
             return;
         }
         if (cp != null) {
-            cp.resolve();
+            cp.scheduleResolve();
         }
     }
 

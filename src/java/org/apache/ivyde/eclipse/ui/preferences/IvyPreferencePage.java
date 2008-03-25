@@ -1,3 +1,20 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package org.apache.ivyde.eclipse.ui.preferences;
 
 import java.io.File;
@@ -33,6 +50,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class IvyPreferencePage extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {
 
+    /** the ID of the preference page */
+    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
+
     private StringFieldEditor _pattern;
 
     public IvyPreferencePage() {
@@ -62,7 +82,8 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         spacer.setText("Runtime option");
         spacer = new Label(fieldParent, SWT.SEPARATOR | SWT.HORIZONTAL);
         spacer.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
-        addField(new FileFieldEditor(PreferenceConstants.IVYCONF_PATH, "&IvyConf URL:", fieldParent) {
+        addField(new FileFieldEditor(PreferenceConstants.IVYSETTINGS_PATH, "&Ivy settings URL:",
+                fieldParent) {
             /* Opens the file chooser dialog and returns the selected file as an url. */
             protected String changePressed() {
                 String f = super.changePressed();
@@ -87,8 +108,8 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         Label explanation = new Label(fieldParent, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
                 1));
-        explanation
-                .setText("The url where your ivyconf file can be found. \nUse default to reference the default ivy configuration.");
+        explanation.setText("The url where your ivyconf file can be found. \n"
+                + "Leave empty to reference the default ivy configuration.");
         new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
                 GridData.BEGINNING, false, false, 3, 1)); // space
 
@@ -116,7 +137,8 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
                 1));
         explanation
-                .setText("Pattern example: lib/[conf]/[artifact].[ext]\nTo copy artifacts in folder named lib without revision by folder named like configurations");
+                .setText("Pattern example: lib/[conf]/[artifact].[ext]\n"
+                        + "To copy artifacts in folder named lib without revision by folder named like configurations");
         new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
                 GridData.BEGINNING, false, false, 3, 1)); // space
 
@@ -128,7 +150,8 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
                 1));
         explanation
-                .setText("Comma separated list of artifact types to use in IvyDE Managed Dependencies Library\nExample: jar, zip");
+                .setText("Comma separated list of artifact types to use in IvyDE Managed Dependencies Library\n"
+                        + "Example: jar, zip");
 
         addField(new StringFieldEditor(PreferenceConstants.SOURCES_TYPES, "Sources types",
                 fieldParent));
@@ -137,18 +160,18 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         explanation = new Label(fieldParent, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
                 1));
-        explanation
-                .setText("Comma separated list of artifact types to be used as sources. \nExample: source, src");
+        explanation.setText("Comma separated list of artifact types to be used as sources. \n"
+                + "Example: source, src");
 
         addField(new StringFieldEditor(PreferenceConstants.SOURCES_SUFFIXES, "Sources suffixes",
-            fieldParent));
+                fieldParent));
 
         new Label(fieldParent, SWT.NONE); // space
         explanation = new Label(fieldParent, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-            1));
-        explanation
-            .setText("Comma separated list of suffixes to match sources and artifacts. \nExample: -source, -src");
+                1));
+        explanation.setText("Comma separated list of suffixes to match sources and artifacts. \n"
+                + "Example: -source, -src");
 
         addField(new StringFieldEditor(PreferenceConstants.JAVADOC_TYPES, "Javadoc types",
                 fieldParent));
@@ -157,18 +180,27 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         explanation = new Label(fieldParent, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
                 1));
-        explanation
-                .setText("Comma separated list of artifact types to be used as javadoc. \nExample: javadoc");
+        explanation.setText("Comma separated list of artifact types to be used as javadoc. \n"
+                + "Example: javadoc");
 
         addField(new StringFieldEditor(PreferenceConstants.JAVADOC_SUFFIXES, "Javadoc suffixes",
-            fieldParent));
+                fieldParent));
 
         new Label(fieldParent, SWT.NONE); // space
         explanation = new Label(fieldParent, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-            1));
-        explanation
-            .setText("Comma separated list of suffixes to match javadocs and artifacts. \nExample: -javadoc, -doc");
+                1));
+        explanation.setText("Comma separated list of suffixes to match javadocs and artifacts. \n"
+                + "Example: -javadoc, -doc");
+
+        spacer = new Label(fieldParent, SWT.NONE);
+        spacerData = new GridData();
+        spacerData.horizontalSpan = 3;
+        spacer.setLayoutData(spacerData);
+
+        BooleanFieldEditor alphaOrder = new BooleanFieldEditor(PreferenceConstants.ALPHABETICAL_ORDER,
+            "Order alphabetically the artifacts in the classpath container", fieldParent);
+        addField(alphaOrder);
 
         spacer = new Label(fieldParent, SWT.NONE);
         spacerData = new GridData();

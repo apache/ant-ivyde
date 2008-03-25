@@ -34,7 +34,7 @@ public class RefreshAction implements IWorkbenchWindowActionDelegate {
             return;
         }
         if (cp != null) {
-            cp.refresh();
+            cp.scheduleRefresh(true);
         }
     }
 
