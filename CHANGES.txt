@@ -20,6 +20,7 @@
 - FIX: The project ivy configuration is not taken into account on the first run: the configuration is no longer stored in the preferences but in the .classpath (IVYDE-70)
 - FIX: An error occurs when closing a project while the ivy editor is opened (IVYDE-81)
 - FIX: Compilation fails on Europa due to API change (IVYDE-58)
+- FIX: No debug info in console (IVYDE-39)
 
 - moved to apache, packages renamed to org.apache.ivyde
   				
