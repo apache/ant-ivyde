@@ -195,7 +195,7 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
                 public void run() {
                     IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
                     for (int i = 0; i < pages.length; i++) {
-                        if (((FileEditorInput) xmlEditor.getEditorInput()).getFile().getProject()
+                        if (((IFileEditorInput) xmlEditor.getEditorInput()).getFile().getProject()
                                 .equals(res)) {
                             IEditorPart editorPart = pages[i]
                                     .findEditor(xmlEditor.getEditorInput());

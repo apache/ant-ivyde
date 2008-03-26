@@ -18,6 +18,7 @@
 - FIX: Automatic javadoc attachment is not working (IVYDE-55)
 - FIX: On startup IvyIDE can freeze eclipse (IVYDE-63) (thanks to Nicolas Lalevée)
 - FIX: The project ivy configuration is not taken into account on the first run: the configuration is no longer stored in the preferences but in the .classpath (IVYDE-70)
+- FIX: An error occurs when closing a project while the ivy editor is opened (IVYDE-81)
 
 - moved to apache, packages renamed to org.apache.ivyde
   				
