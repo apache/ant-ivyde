@@ -319,6 +319,13 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 }
             };
 
+            resolver.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                public void uncaughtException(Thread t, Throwable e) {
+                    status[0] = new Status(Status.ERROR, IvyPlugin.ID, Status.ERROR,
+                            "The resolve job has unexpectedly stopped", e);
+                }
+            });
+
             try {
                 resolver.start();
                 while (true) {
