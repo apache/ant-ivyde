@@ -1,0 +1,6 @@
+{
+	jira: {ids: ['IVYDE'], url: 'http://issues.apache.org/jira'}, 
+	shortcuts: {
+		svn: {pre: 'https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk/'}
+	}
+}

@@ -1,0 +1,45 @@
+{
+  "children": [
+      {
+        "id":"index",
+        "title":"Home",
+        "children": [
+            {
+              "id":"editor",
+              "title":"Editor",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"cp_container",
+              "title":"Classpath Container",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"maven",
+              "title":"Use with maven poms",
+              "children": [
+
+                ]
+            }
+          ]
+      },
+      {
+        "id":"download",
+        "title":"Download",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"issues",
+        "title":"Issue Tracking",
+        "children": [
+
+          ]
+      }
+    ]
+}
