@@ -11,6 +11,7 @@
 - IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
 - IMPROVE: Support javadoc and sources even in modules where they are not declared (IVYDE-46)
 - IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevée) 
+- IMPROVE: Add new target to build.xml to build the plugin with Ant (IVYDE-88)
 
 - FIX: IvyDE resolve also evicted artifacts (IVYDE-76) (thanks to Nicolas Lalevée)
 - FIX: IvyDE is using some internal classes of Eclipse (IVYDE-68) (thanks to Nicolas Lalevée) 
