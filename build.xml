@@ -61,12 +61,12 @@
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
             <arg line="-application org.eclipse.pde.build.Build" />
-            <arg line="-DbaseLocation=${baseLocation}" />
-            <arg line="-Dbuilder=${basedir}/builder/component" />
-            <arg line="-DmapsPath=${basedir}/builder/maps" />
-            <arg line="-DbuildDirectory=${basedir}/work" />
-            <arg line="-DDSTAMP=${DSTAMP}" />
-            <arg line="-DTSTAMP=${TSTAMP}" />
+            <sysproperty key="baseLocation" value="${baseLocation}"/>
+            <sysproperty key="builder" path="${basedir}/builder/component"/>
+            <sysproperty key="mapsPath" path="${basedir}/builder/maps"/>
+            <sysproperty key="buildDirectory" path="${basedir}/work" />
+            <sysproperty key="DSTAMP" value="${DSTAMP}" />
+            <sysproperty key="TSTAMP" value="${TSTAMP}" />
         </java>
         <echo>
 Zip archive can be found here:
