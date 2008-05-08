@@ -2,7 +2,7 @@
   "children": [
       {
         "id":"index",
-        "title":"Home",
+        "title":"Documentation",
         "children": [
             {
               "id":"editor",
@@ -25,20 +25,6 @@
 
                 ]
             }
-          ]
-      },
-      {
-        "id":"download",
-        "title":"Download",
-        "children": [
-
-          ]
-      },
-      {
-        "id":"issues",
-        "title":"Issue Tracking",
-        "children": [
-
           ]
       }
     ]
