@@ -22,9 +22,11 @@
 <title>${title} | IvyDE</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="style/style.css" />
-
-  <!-- for tree, see if it would better go in xooki.js -->
-  <link rel="stylesheet" type="text/css" href="xooki/tree/simpletree.css" />
+  <script src="js/jquery.pack.js" type="text/javascript"></script>
+  <script src="js/jquery.treeview.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  $(document).ready(function(){$("#treemenu").Treeview({speed: "fast",store: true});});
+  </script>
 </head>
 
 <body>
@@ -60,7 +62,7 @@
 	<tr>
 		<td id="sidebar-left">
 		<div class="block block-book" id="block-book-0">
-		<h2>Ivy</h2>
+		<h2>IvyDE</h2>
 
 		<div class="content">${menu}</div>
 
