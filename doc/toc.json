@@ -1,0 +1,31 @@
+{
+  "children": [
+      {
+        "id":"index",
+        "title":"Documentation",
+        "children": [
+            {
+              "id":"editor",
+              "title":"Editor",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"cp_container",
+              "title":"Classpath Container",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"maven",
+              "title":"Use with maven poms",
+              "children": [
+
+                ]
+            }
+          ]
+      }
+    ]
+}
