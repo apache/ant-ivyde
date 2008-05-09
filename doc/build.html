@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+This page describes how to build the IvyDE plugin from the source. The build is based on the Eclipse build system so it requires an Eclipse install. You also need to have an Ivy bundle installed.
+
+<h1>Setup of the build</h1>
+
+<h2>Eclipse installation</h2>
+
+You need first an Eclipse install. We will refer to the eclipse installation path in the documentation as $ECLIPSE_HOME. In that $ECLIPSE_HOME folder you should have the plugins and features folders. The current build have been successfully tested with:
+<ul>
+<li>Eclipse 3.2 under Linux</li>
+<li>Eclipse 3.3.1 under Linux and Windows</li>
+<li>Eclipse 3.4M5 under Linux</li>
+</ul>
+If it does work for your unlisted configuration, please send us an email on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev mailing list</a>.
+<h2>The Ivy bundle</h2>
+
+The IvyDE plugins depends on the Ivy 2 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build.
+
+You can get an officially released version of Ivy. Go to the <a href="http://ant.apache.org/ivy/download.html">Ivy download page</a> and get the binary distribution. You will find in the zip the jar ivy-2.X.Y-Z.jar.
+
+You can also build it from the sources (from <a href="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/">subversion</a> or from the <a href="http://ant.apache.org/ivy/download.html">releases</a>). In the build/artifact folder you should then find the bundle org.apache.ivy_2.X.Y-Z.jar.
+
+Actually every Ivy jar is an OSGi bundle. So just copy it in your Eclipse install:
+<code>cp XXXXXX.jar $ECLIPSE_HOME/plugins/org.apache.ivy_2.X.Y-Z.jar</code>
+
+<h1>Building</h1>
+
+First somehow you got some sources, for instance from <a href="https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk/">subversion</a>.
+And go into the root folder of the sources. In that folder you should see the builder, org.apache.ivyde.eclipse and org.apache.ivyde.feature folders.
+
+And run the build:
+<code>ant build -DbaseLocation=$ECLIPSE_HOME</code>
+
+The baseLocation property is mandatory: it defines the path of you Eclipse install you want to build with.
+
+Note that it is not recommended to have your Eclipse started when you build IvyDE. The build clean the Eclipse cache of installed plugins, so your running Eclipse might be confused.
+
+Then in the created directory "work" you will find a timestamped directory (something like 200804171513) in which you will find the zip archive ready to be unzipped in an Eclipse install.
+
+<h1>Install</h1>
+
+After a successful build you should have a zip file at work/$TIMESTAMP/org.apache.ivyde.feature-$TIMESTAMP.zip. The zip file contains an "eclipse" directory, so you probably cannot unzip it directly as your Eclipse install directory may not be "eclipse". So here would be the process:
+<code>
+unzip work/$TIMESTAMP/org.apache.ivyde.feature-$TIMESTAMP.zip -d /tmp
+cp -r /tmp/eclipse/* $ECLIPSE_HOME
+</code>
+
+Then start your Eclipse and enjoy !
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
