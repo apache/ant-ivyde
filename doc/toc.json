@@ -26,6 +26,13 @@
                 ]
             },
             {
+              "id":"console",
+              "title":"Ivy Console",
+              "children": [
+
+                ]
+            },
+            {
               "id":"build",
               "title":"Building IvyDE",
               "children": [

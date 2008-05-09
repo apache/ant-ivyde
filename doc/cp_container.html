@@ -35,32 +35,25 @@ Indeed, <a href="index.html">IvyDE</a> can manage for you all your dependencies,
 </tr>
 </table>
 </div>
-<h1>Content</h1>
-<ul>
-<li><a href="#start">Start with IvyDE</a></li>
-<li><a href="#inlife">IvyDE in Project Life</a></li>
-<li><a href="#console">Ivy Console</a></li>
-<li><a href="maven.html">Using IvyDE with a maven pom ...</a></li>
-</ul>
 
-<h1><a name="start"></a>Start with IvyDE</h1>
+<h1><a name="start"></a>Create the container</h1>
 
 You've just installed the IvyDE plugin from our <a href="../../download.html">updatesite</a>, and now you want to enjoy it quickly!<br/>
 Nothing easier, just follow these steps:
 <ul>
-<li>Ensure the ivyconf URL is set in your <a href="index.html#project_pref">project properties</a> or <a href="index.html#pref">eclipse preferences</a>.<br/><br/></li>
 <li>Ensure the ivy.xml file or <a href="maven.html">maven pom.xml</a> can be accessed under the project folder of your eclipse "Navigator" view.<br/><br/></li>
 <li>Open the "Add Library" form of Eclipse (In package Explorer, in popup menu of your project choose : [Build Path]/[Add Libraries]).<br/><br/><center><img src="images/build_path_menu.jpg"/></center><br/><br/></li>
 <li>Select "IvyDE Managed Dependencies" item.<br/><br/><center><img src="images/add_lib.jpg"/></center><br/><br/></li>
-<li>Select an ivy.xml file or a <a href="maven.html">maven pom.xml</a> and the desired configurations.<br/><br/><center><img src="images/ivy_file_def.jpg"/></center></li>
+<li>Select an ivy.xml file or a <a href="maven.html">maven pom.xml</a> and the desired configurations.<br/><br/><center><img src="images/ivy_file_def.jpg"/></center><br/><br/></li>
+<li><a name="localconf"></a>You then might want to have a special configuration for your project, a configuration different from the <a href="index.html#pref">global one</a>. Then select the "Advanced" panel and click on "Enable project specific settings". Every configuration entry behaves exactly is the same way as the <a href="index.html#pref">global ones</a>.<br/><br/><center><img src="images/cp_advanced_conf.jpg"/></center></li>
 </ul><br/>
 Your class path is set and you can see all dependencies in one unique folder of the package explorer (folder name = &amp;amp;lt;ivy file name&amp;amp;gt;[&amp;amp;lt;configuration&amp;amp;gt;]).<br/><br/>
 <center> 
 <img src="images/cp_node.jpg">
 </center>
 
+<h1><a name="inlife"></a>Edit the container configuration</h1>
 
-<h1><a name="inlife"></a>IvyDE in project life</h1>
 <h2>Configure Ivy file and configuration</h2>
 During life of your project you can change the ivy.xml file or <a href="maven.html">maven pom.xml</a> and change the configuration you want
 to use.<br/>
@@ -68,19 +61,19 @@ These properties can be accessed by contextual menu of the IvyDE class path cont
 <br/><br/>
 <center><img src="images/cp_configuration.jpg"></center>
 <br/>
+You can also edit it via the build path configuration. Open the build path configuration dialog, select the "Libraries" panel and select the IvyDE classpath container. Then you will be able to click on the button "Edit": the IvyDE classpath container configuration dialog will pop up.
+This is particularly useful when Eclipse hides the empty classpath containers (since Eclipse 3.3), and then this is only way to trigger a resolve.
+<br/><br/>
+<center><img src="images/build_path_edit.jpg"></center>
+<br/>
 <h2>Resolve dependencies</h2>
 You can explicitly ask for a dependencies resolution from your class path container.
-<br/>This command will invoke the "resolve" ivy task and update your class path container.
-<br/><br/>
-<center><img src="images/cp_resolve.jpg"></center>
 
-<h1><a name="console"></a>The Ivy Console</h1>
-The Ivy console provide you all the Ivy working traces that you were used to see in your command console. This view will be really useful to understand what Ivy and IvyDE are performing for you.<br/>
-The Ivy Console can be accessed with your eclipse Console view, selecting the "Ivy Console" item.<br/>
-<br/>
-<center><img src="images/ivy_console_selection.jpg"></center><br/>
-<br/>
-<center><img src="images/ivy_console.jpg"></center><br/>
+This command will invoke the "resolve" ivy task and update your class path container.
+
+There is also a "refresh" action: this action is similar to the resolve one, it just doesn't do a full resolve if a report already exists in the cache. This is particularly useful if you work also with ant and a command line so you won't do two full resolve.
+<br/><br/>
+<center><img src="images/cp_resolve.jpg"></center><br/>
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

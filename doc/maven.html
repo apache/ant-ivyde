@@ -33,7 +33,7 @@
 </ul>
 <h1><a name="one"></a>Maven1 Sample</h1>
 <p>This sample presents a simple use case of maven pom for IvyDE class path container. We are going to create an eclipse project on commons-httpclient sources.</p>
-<p><b> - Download the <a href="">commons httpclient sources</a></b></p>
+<p><b> - Download the <a href="http://archive.apache.org/dist/httpcomponents/commons-httpclient/3.0/source/commons-httpclient-3.0-src.zip">commons httpclient sources</a></b></p>
 <p><b> - Unzip this file (c:/tmp/commons-httpclient/)</b></p>
 <p><b> - Create a new Eclipse java project based on the unzipped sources (c:/tmp/commons-httpclient/)</b><br />
 <center><img src="images/httpProject_errors.jpg"><br/><br />
@@ -50,21 +50,21 @@
 <h1><a name="two"></a>Maven2 Sample</h1>
 <p>This sample shows that IvyDE Class path container on a Maven2 pom can handle transitive dependancies.</p>
 <p><b> - Create a new empty java project in eclipse.</b></p>
-<p><b> - In your Ivy project configuration, set the ivy conf file below (Project/Properties/Ivy):</b></p>
-<code><ivyconf>
-	<conf defaultResolver="ibiblio-maven2"/>
+<p><b> - In your Ivy project configuration, set the ivy settings file below (Project/Properties/Ivy):</b></p>
+<code><ivysettings>
+	<conf defaultResolver="ibiblio"/>
 	<resolvers>
-		<ibiblio name="ibiblio-maven2" m2compatible="true" />
+		<ibiblio name="ibiblio" />
 	</resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 <p>Using the m2compatible attribute, you can benefit from Maven2 repository compatibility.<br/><br />
 <b> - Add the pom below in your project and select it for an IvyDE class path container choosing "compile" and "runtime" configurations.</b><br/></p>
 <code>
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>fr.jayasoft</groupId>
-  <artifactId>maven2sample</artifactId>
+  <groupId>com.mycompany</groupId>
+  <artifactId>myproject</artifactId>
   <version>1.0-SNAPSHOT</version>
   <dependencies>
     <dependency>
