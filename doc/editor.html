@@ -38,8 +38,8 @@ Choose an organisation and browse thru its projects and revisions.<br/>
 </ul>
 
 
-<h1><a name="wizard">Wizard</a></h1>
-IvyDE comes with a wizard that allows you to create an ivy file for your project.<br/>
+<h1><a name="wizard"></a>Wizard</h1>
+IvyDE comes with a wizard that allows you to create an ivy.xml file for your project.<br/>
 To open the wizard choose File->New->Other in the Eclipse menu (Ctrl+N by default)<br/>
 The Ivy wizard is accessible in the category Other. Select it then click Next<br/><br/>
 <img src="images/wizard1.jpg"/><br/><br/>
@@ -48,19 +48,19 @@ The wizard contains only one page, and is very simple.<br/><br/>
 <ol><b>Wizard fields:</b>
 	<li> Container: you have to select the targeted project. (This is already set if you access the wizard thanks right click menu on your project root folder)</li>
 	<li> File name: the ivy file name. (ivy.xml by default and its better to keep it in most of case)</li>
-	<li> Organisation: the component owner name. (your company name or the company that provides the component if you are writing ivy file for 3rd party jars). Note this value can be set in the <a href="../ivyde.html#pref">ivy preference page</a></li>
+	<li> Organisation: the component owner name. (your company name or the company that provides the component if you are writing ivy.xml file for 3rd party jars). Note this value can be set in the <a href="index.html#pref">Ivy preference page</a></li>
 	<li> Module name: the component name.</li>
-	<li> Status: the status of the project. (integration by default since we have just created its ivy file :-). Please refer to <a href="http://ant.apache.org/ivy/history/latest-milestone/index.html">Ivy documentation for more details</a>)</li>
+	<li> Status: the status of the project. (integration by default since we have just created its ivy file :-). Please refer to <a href="../../../history/latest-milestone/index.html">Ivy documentation for more details</a>)</li>
 </ol>
-When the form is correctly filled you can press Finish button. Eclipse will automatically open the Ivy <a href="editor.html#editor">editor</a>.<br/>
+When the form is correctly filled you can press Finish button. Eclipse will automatically open the Ivy <a href="#editor">editor</a>.<br/>
 
-<h1><a name="editor">Ivy Editor</a></h1>
+<h1><a name="editor"></a>Ivy Editor</h1>
 
-<h2><a name="xmleditor">Xml Editor</a></h2><br/>
+<h2><a name="xmleditor"></a>Xml Editor</h2><br/>
 <img src="images/editor1.jpg"/><br/><br/>
 The Ivy's eclipse editor provides xml syntax coloration, tag completion, tag's attribute names completion, and for dependency and configuration tag value completion.<br/>
-Completion comes with contextual help. The completion popup is displayed when hitting simultaneously the CTRL and the SPACE keys.</br>  
-<ul><b>Available completions:</b>
+Completion comes with contextual help. The completion popup is displayed when hitting simultaneously the CTRL and the SPACE keys.<br/><br/>  
+<b>Available completions:</b><ul>
 	<li><b>Xml structure</b>: allows you quickly to insert the good tag at its right place. If the tag can have nested children both notations, simple tag and open tag, are proposed<br/><br/><img src="images/completion1.jpg"/></li>
 	<li><b>Tag attributes</b>: when your cursor is placed in a tag bracket the completion show available attributes for the enclosing tag.<br/><br/><img src="images/completion2.jpg"/></li>
 	<li><b>Attributes values</b>: when your cursor is placed in the quote of an attribute value the completion shows available values for the matching attribute.
@@ -79,7 +79,7 @@ Completion comes with contextual help. The completion popup is displayed when hi
 	</li>
 </ul>
 
-<h2><a name="htmlrendering">Html rendering</a></h2><br/>
+<h2><a name="htmlrendering"></a>Html rendering</h2><br/>
 Ivy editor is a multi tabs editor. Located on the bottom of the editor you will found a tab named preview that allows to view the ivy file as an html file.<br/>
 Note : for now, as we let the browser do the XSLT processing on a remote file this feature only work with IE. Mozilla browser will display a blank page due its security policy. (If you know a workaround please put it on the mailing list)<br/><br/>
 <img src="images/preview.jpg"/>
