@@ -137,8 +137,8 @@ public class IvyClasspathUtil {
                 return cp;
             }
             if (element instanceof ClassPathContainer) {
-                // we shouldn't check against internal JDT API but there are not adaptable to useful
-                // class
+                // FIXME: we shouldn't check against internal JDT API but there are not adaptable to
+                // useful class
                 return getIvyClassPathContainer(((ClassPathContainer) element).getJavaProject());
             }
         }
@@ -169,13 +169,6 @@ public class IvyClasspathUtil {
     public static boolean isIvyClasspathContainer(IPath containerPath) {
         return containerPath.segment(0).equals(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID);
     }
-
-//    public static void scheduleResolve(IJavaProject javaProject) {
-//        IvyClasspathContainer cp = getIvyClasspathContainer(javaProject);
-//        if (cp != null) {
-//            cp.scheduleResolve();
-//        }
-//    }
 
     public static IvyClasspathContainer getIvyClasspathContainer(IJavaProject javaProject) {
         try {
