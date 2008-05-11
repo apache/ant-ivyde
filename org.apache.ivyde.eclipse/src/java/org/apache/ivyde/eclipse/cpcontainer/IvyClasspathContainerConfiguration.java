@@ -44,23 +44,23 @@ import org.eclipse.jdt.core.IJavaProject;
  */
 public class IvyClasspathContainerConfiguration {
 
-    public IJavaProject javaProject;
+    IJavaProject javaProject;
 
-    public String ivyXmlPath;
+    String ivyXmlPath;
 
-    public List/* <String> */confs = Arrays.asList(new String[] {"default"});
+    List/* <String> */confs = Arrays.asList(new String[] {"default"});
 
-    public String ivySettingsPath;
+    String ivySettingsPath;
 
-    public List/* <String> */acceptedTypes;
+    List/* <String> */acceptedTypes;
 
-    public List/* <String> */sourceTypes;
+    List/* <String> */sourceTypes;
 
-    public List/* <String> */javadocTypes;
+    List/* <String> */javadocTypes;
 
-    public List/* <String> */sourceSuffixes;
+    List/* <String> */sourceSuffixes;
 
-    public List/* <String> */javadocSuffixes;
+    List/* <String> */javadocSuffixes;
 
     boolean doRetrieve;
 
@@ -68,7 +68,7 @@ public class IvyClasspathContainerConfiguration {
 
     boolean alphaOrder;
 
-    public ModuleDescriptor md;
+    ModuleDescriptor md;
 
     public IvyClasspathContainerConfiguration(IJavaProject javaProject, String ivyXmlPath,
             List confs) {
@@ -228,6 +228,10 @@ public class IvyClasspathContainerConfiguration {
         return new Path(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID).append(path.toString());
     }
 
+    public String getIvyXmlPath() {
+        return ivyXmlPath;
+    }
+
     public String getInheritedIvySettingsPath() {
         if (ivySettingsPath == null) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
@@ -298,51 +302,6 @@ public class IvyClasspathContainerConfiguration {
         }
         return alphaOrder;
     }
-
-    //
-    // public List getAcceptedTypes() {
-    // return acceptedTypes;
-    // }
-    //
-    // public List getConfs() {
-    // return confs;
-    // }
-    //
-    // public boolean getDoRetrieve() {
-    // return doRetrieve;
-    // }
-    //
-    // public String getIvySettingsPath() {
-    // return ivySettingsPath;
-    // }
-    //
-    // public String getIvyXmlPath() {
-    // return ivyXmlPath;
-    // }
-    //
-    // public List getJavadocSuffixes() {
-    // return javadocSuffixes;
-    // }
-    //
-    // public List getJavadocTypes() {
-    // return javadocTypes;
-    // }
-    //
-    // public boolean isAlphaOrder() {
-    // return alphaOrder;
-    // }
-    //
-    // public String getRetrievePattern() {
-    // return retrievePattern;
-    // }
-    //
-    // public List getSourceSuffixes() {
-    // return sourceSuffixes;
-    // }
-    //
-    // public List getSourceTypes() {
-    // return sourceTypes;
-    // }
 
     public boolean isProjectSpecific() {
         return ivySettingsPath != null;

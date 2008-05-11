@@ -135,7 +135,7 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
         IJavaProject project = JavaCore.create(file.getProject());
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
-        if (cp.getConf().ivyXmlPath.equals(file.getProjectRelativePath().toString())) {
+        if (cp != null && cp.getConf().getIvyXmlPath().equals(file.getProjectRelativePath().toString())) {
             cp.scheduleResolve();
         }
     }
