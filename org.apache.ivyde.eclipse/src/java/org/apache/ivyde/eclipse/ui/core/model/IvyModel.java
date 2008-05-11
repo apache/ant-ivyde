@@ -35,9 +35,10 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -351,7 +352,7 @@ public class IvyModel {
                     String org = ivyFile.getDependencyOrganisation();
                     Map otherAttValues = ivyFile.getAllAttsValues();
                     if (org != null && otherAttValues != null && otherAttValues.get("name") != null
-                            && otherAttValues.get("rev") != null && getIvy() != null) {
+                            && otherAttValues.get("rev") != null) {
                         otherAttValues.remove("org");
                         String branch = (String) otherAttValues.remove("branch");
                         otherAttValues.remove("conf");
@@ -392,6 +393,10 @@ public class IvyModel {
 
             private String[] getDependencyConfs(String org, String name, String branch, String rev,
                     Map otherAtts, String qualifier, StringBuffer base, int arrowIndex) {
+                Ivy ivy = getIvy();
+                if (ivy == null) {
+                    return null;
+                }
                 base.append(qualifier.substring(0, arrowIndex + 2));
                 qualifier = qualifier.substring(arrowIndex + 2);
                 // search for word after last comma
@@ -402,13 +407,12 @@ public class IvyModel {
                     base.append(' ');
                     qualifier = qualifier.substring(1);
                 }
-                ResolveData data = new ResolveData(getIvy().getResolveEngine(),
-                        new ResolveOptions());
+                ResolveData data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
                 ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, name, branch, rev,
                     otherAtts);
                 DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                 try {
-                    DependencyResolver resolver = getIvySettings().getResolver(mrid);
+                    DependencyResolver resolver = ivy.getSettings().getResolver(mrid);
                     if (resolver == null) {
                         return null;
                     }
@@ -442,14 +446,14 @@ public class IvyModel {
                         "a comma separated list of dependency configurations \nto which this master configuration should be mapped",
                         false, new IValueProvider() {
                             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                                Ivy ivy = getIvy();
                                 int[] indexes = ivyFile.getParentTagIndex();
-                                if (indexes != null) {
+                                if (indexes != null && ivy != null) {
                                     Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
                                     String org = ivyFile.getDependencyOrganisation(otherAttValues);
                                     if (org != null && otherAttValues != null
                                             && otherAttValues.get("name") != null
-                                            && otherAttValues.get("rev") != null
-                                            && getIvy() != null) {
+                                            && otherAttValues.get("rev") != null) {
                                         StringBuffer base = new StringBuffer();
                                         String qualifier = ivyFile.getAttributeValueQualifier();
                                         // search for word after last comma
@@ -460,15 +464,15 @@ public class IvyModel {
                                             base.append(' ');
                                             qualifier = qualifier.substring(1);
                                         }
-                                        ResolveData data = new ResolveData(getIvy()
-                                                .getResolveEngine(), new ResolveOptions());
+                                        ResolveData data = new ResolveData(ivy.getResolveEngine(),
+                                                new ResolveOptions());
                                         ModuleRevisionId mrid = ModuleRevisionId.newInstance(org,
                                             (String) otherAttValues.get("name"),
                                             (String) otherAttValues.get("rev"));
                                         DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(
                                                 mrid, false);
                                         try {
-                                            String[] confs = getIvySettings().getResolver(mrid)
+                                            String[] confs = ivy.getSettings().getResolver(mrid)
                                                     .getDependency(ddd, data).getDescriptor()
                                                     .getConfigurationsNames();
                                             for (int i = 0; i < confs.length; i++) {
@@ -496,8 +500,9 @@ public class IvyModel {
                         "the name of the dependency configuration mapped. \n'*' wildcard can be used to designate all configurations of this module",
                         true, new IValueProvider() {
                             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                                Ivy ivy = getIvy();
                                 int[] indexes = ivyFile.getParentTagIndex();
-                                if (indexes != null) {
+                                if (indexes != null && ivy != null) {
                                     indexes = ivyFile.getParentTagIndex(indexes[0]);
                                     if (indexes != null) {
                                         Map otherAttValues = ivyFile
@@ -506,9 +511,8 @@ public class IvyModel {
                                                 .getDependencyOrganisation(otherAttValues);
                                         if (org != null && otherAttValues != null
                                                 && otherAttValues.get("name") != null
-                                                && otherAttValues.get("rev") != null
-                                                && getIvy() != null) {
-                                            ResolveData data = new ResolveData(getIvy()
+                                                && otherAttValues.get("rev") != null) {
+                                            ResolveData data = new ResolveData(ivy
                                                     .getResolveEngine(), new ResolveOptions());
                                             ModuleRevisionId mrid = ModuleRevisionId.newInstance(
                                                 org, (String) otherAttValues.get("name"),
@@ -516,9 +520,9 @@ public class IvyModel {
                                             DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(
                                                     mrid, false);
                                             try {
-                                                String[] confs = getIvySettings().getResolver(mrid)
-                                                        .getDependency(ddd, data).getDescriptor()
-                                                        .getConfigurationsNames();
+                                                String[] confs = ivy.getSettings()
+                                                        .getResolver(mrid).getDependency(ddd, data)
+                                                        .getDescriptor().getConfigurationsNames();
                                                 List ret = new ArrayList(Arrays.asList(confs));
                                                 ret.add("*");
                                                 return (String[]) ret
@@ -537,8 +541,12 @@ public class IvyModel {
         conf3.addChildIvyTag(mapped);
         MODEL.put(mapped.getName(), mapped);
 
-        ListValueProvider matcherNamesProvider = new ListValueProvider((String[]) getIvy()
-                .getSettings().getMatcherNames().toArray(new String[0]));
+        String[] matcherNames = new String[0];
+        Ivy ivy = getIvy();
+        if (ivy != null) {
+            matcherNames = (String[]) ivy.getSettings().getMatcherNames().toArray(new String[0]);
+        }
+        ListValueProvider matcherNamesProvider = new ListValueProvider(matcherNames);
 
         IvyTag artifact2 = new IvyTag("artifact",
                 "defines artifacts restriction \nuse only if you do not control dependency ivy file");
@@ -713,12 +721,8 @@ public class IvyModel {
         return (IvyTag) MODEL.get("ivy-module");
     }
 
-    private Ivy getIvy() {
+    Ivy getIvy() {
         return IvyPlugin.getIvy(_javaProject);
-    }
-
-    private IvySettings getIvySettings() {
-        return getIvy().getSettings();
     }
 
     private List listDependencyTokenValues(String att, IvyFile ivyfile) {
@@ -732,19 +736,20 @@ public class IvyModel {
 
     private List listDependencyTokenValues(String att, Map otherAttValues) {
         List ret = new ArrayList();
-        if (getIvy() != null) {
+        Ivy ivy = getIvy();
+        if (ivy != null) {
             replaceToken(otherAttValues, "org", IvyPatternHelper.ORGANISATION_KEY);
             replaceToken(otherAttValues, "name", IvyPatternHelper.MODULE_KEY);
             replaceToken(otherAttValues, "rev", IvyPatternHelper.REVISION_KEY);
 
             if (!otherAttValues.containsKey(IvyPatternHelper.BRANCH_KEY)) {
-                otherAttValues
-                        .put(IvyPatternHelper.BRANCH_KEY, getIvySettings().getDefaultBranch());
+                otherAttValues.put(IvyPatternHelper.BRANCH_KEY, ivy.getSettings()
+                        .getDefaultBranch());
             }
 
             String stdAtt = standardiseDependencyAttribute(att);
             otherAttValues.remove(stdAtt);
-            String[] revs = getIvy().listTokenValues(stdAtt, otherAttValues);
+            String[] revs = ivy.listTokenValues(stdAtt, otherAttValues);
             if (revs != null) {
                 ret.addAll(Arrays.asList(revs));
             }

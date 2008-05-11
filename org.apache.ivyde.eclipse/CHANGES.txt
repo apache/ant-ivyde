@@ -13,6 +13,7 @@
 - IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevée) 
 - IMPROVE: Add new target to build.xml to build the plugin with Ant (IVYDE-88)
 
+- FIX: Error while trying to edit an ivy.xml without a configured container (IVYDE-83)
 - FIX: IvyDE resolve also evicted artifacts (IVYDE-76) (thanks to Nicolas Lalevée)
 - FIX: IvyDE is using some internal classes of Eclipse (IVYDE-68) (thanks to Nicolas Lalevée) 
 - FIX: "Add Ivy library" not working in eclipse 3.3 (IVYDE-57)
