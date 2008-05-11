@@ -302,7 +302,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         if (cp == null) {
             return null;
         }
-        return getIvy(javaProject, cp.getConf().getIvySettingsPath());
+        return getIvy(cp.getConf().getInheritedIvySettingsPath());
     }
 
     /**
@@ -316,7 +316,7 @@ public class IvyPlugin extends AbstractUIPlugin {
      * @return the configured Ivy instance, <code>null</code> if it failed
      */
     // TODO: check that every caller of this function can properly handle a returned null
-    public static synchronized Ivy getIvy(IJavaProject javaProject, String ivySettingsPath) {
+    public static synchronized Ivy getIvy(/*IJavaProject javaProject, */String ivySettingsPath) {
         IvyConfig ic;
         try {
             if (ivySettingsPath == null || ivySettingsPath.trim().length() == 0) {
@@ -335,18 +335,6 @@ public class IvyPlugin extends AbstractUIPlugin {
             URL url = new URL(ivySettingsPath);
             if (url.getProtocol().startsWith("file")) {
                 File file = new File(url.getPath());
-
-                // BEGIN - JIRA: IVYDE-25 by Peter Chanthamynavong
-                // Getting an Absolute Filename Path from a Relative Filename Path for the
-                // current project
-                if (!file.exists()) {
-                    IProject project = javaProject.getProject();
-                    File loc = project.getLocation().toFile();
-                    file = new File(loc, url.getPath());
-                    Message.info("\n\nIVYDE: ivysettings from relative path: "
-                            + file.getAbsolutePath());
-                }
-                // END - JIRA: IVYDE-25
 
                 if (!file.exists()) {
                     MessageDialog

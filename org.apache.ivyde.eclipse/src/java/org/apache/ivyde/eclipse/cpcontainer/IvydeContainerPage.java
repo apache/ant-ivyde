@@ -18,15 +18,14 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
@@ -52,8 +51,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -64,6 +61,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -114,13 +112,15 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     Composite configComposite;
 
-    private IvyClasspathContainerConfiguration conf;
+    IvyClasspathContainerConfiguration conf;
 
     private IClasspathEntry entry;
 
+    private String ivyXmlError;
+
     /**
      * Constructor
-     *
+     * 
      */
     public IvydeContainerPage() {
         super("IvyDE Container");
@@ -129,8 +129,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     void checkCompleted() {
         String error;
         if (ivyFilePathText.getText().length() == 0) {
-            error = "Choose a valid ivy file";
-        } else if (confTableViewer.getCheckedElements().length == 0) {
+            error = "Choose an ivy file";
+        } else if (ivyXmlError != null) {
+            error = ivyXmlError;
+        } else if (confTableViewer.getCheckedElements().length == 0 && conf.md != null
+                && conf.md.getConfigurations().length != 0) {
             error = "Choose at least one configuration";
         } else {
             error = null;
@@ -140,8 +143,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     public boolean finish() {
-        conf.ivyXmlPath = ivyFilePathText.getText();
-        conf.confs = getConfigurations();
+        conf.confs = getSelectedConfigurations();
         if (projectSpecificButton.getSelection()) {
             conf.ivySettingsPath = settingsText.getText();
             conf.acceptedTypes = IvyClasspathUtil.split(acceptedTypesText.getText());
@@ -174,14 +176,14 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     public void setSelection(IClasspathEntry entry) {
         if (entry == null) {
-            conf = new IvyClasspathContainerConfiguration("ivy.xml", Arrays
+            conf = new IvyClasspathContainerConfiguration(project, "ivy.xml", Arrays
                     .asList(new String[] {"*"}));
         } else {
-            conf = new IvyClasspathContainerConfiguration(entry.getPath());
+            conf = new IvyClasspathContainerConfiguration(project, entry.getPath());
         }
     }
 
-    private List getConfigurations() {
+    private List getSelectedConfigurations() {
         Object[] confs = confTableViewer.getCheckedElements();
         int total = confTableViewer.getTable().getItemCount();
         if (confs.length == total) {
@@ -213,6 +215,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         setControl(tabs);
 
         loadFromConf();
+        checkCompleted();
     }
 
     private Control createMainTab(Composite parent) {
@@ -226,13 +229,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         ivyFilePathText = new Text(composite, SWT.SINGLE | SWT.BORDER);
         ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        ivyFilePathText.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                refreshConfigurationTable();
-            }
-        });
         ivyFilePathText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
+                conf.ivyXmlPath = ivyFilePathText.getText();
+                checkIvyXmlFile();
+                refreshConfigurationTable();
                 checkCompleted();
             }
         });
@@ -241,39 +242,53 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         btn.setText("Browse");
         btn.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display
-                        .getDefault().getActiveShell(), new WorkbenchLabelProvider(),
-                        new WorkbenchContentProvider());
-                dialog.setValidator(new ISelectionStatusValidator() {
-                    private final IStatus errorStatus = new Status(IStatus.ERROR, IvyPlugin.ID, 0,
-                            "", null);
+                String path = null;
+                if (project != null) {
+                    ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display
+                            .getDefault().getActiveShell(), new WorkbenchLabelProvider(),
+                            new WorkbenchContentProvider());
+                    dialog.setValidator(new ISelectionStatusValidator() {
+                        private final IStatus errorStatus = new Status(IStatus.ERROR, IvyPlugin.ID,
+                                0, "", null);
 
-                    public IStatus validate(Object[] selection) {
-                        if (selection.length == 0) {
-                            return errorStatus;
-                        }
-                        for (int i = 0; i < selection.length; i++) {
-                            Object o = selection[i];
-                            if (!(o instanceof IFile)) {
+                        public IStatus validate(Object[] selection) {
+                            if (selection.length == 0) {
                                 return errorStatus;
                             }
+                            for (int i = 0; i < selection.length; i++) {
+                                Object o = selection[i];
+                                if (!(o instanceof IFile)) {
+                                    return errorStatus;
+                                }
+                            }
+                            return Status.OK_STATUS;
                         }
-                        return Status.OK_STATUS;
-                    }
 
-                });
-                dialog.setTitle("choose ivy file");
-                dialog.setMessage("choose the ivy file to use to resolve dependencies");
-                dialog.setInput(project.getProject());
-                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+                    });
+                    dialog.setTitle("choose ivy file");
+                    dialog.setMessage("choose the ivy file to use to resolve dependencies");
+                    dialog.setInput(project.getProject());
+                    dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
-                if (dialog.open() == Window.OK) {
-                    Object[] elements = dialog.getResult();
-                    if (elements.length > 0 && elements[0] instanceof IFile) {
-                        IPath p = ((IFile) elements[0]).getProjectRelativePath();
-                        ivyFilePathText.setText(p.toString());
-                        refreshConfigurationTable();
+                    if (dialog.open() == Window.OK) {
+                        Object[] elements = dialog.getResult();
+                        if (elements.length > 0 && elements[0] instanceof IFile) {
+                            IPath p = ((IFile) elements[0]).getProjectRelativePath();
+                            path = p.toString();
+                        }
                     }
+                } else {
+                    FileDialog dialog = new FileDialog(IvyPlugin.getActiveWorkbenchShell(), SWT.OPEN);
+                    dialog.setText("Choose an ivy.xml");
+                    path = dialog.open();
+                }
+
+                if (path != null) {
+                    conf.ivyXmlPath = path;
+                    ivyFilePathText.setText(path);
+                    checkIvyXmlFile();
+                    refreshConfigurationTable();
+                    checkCompleted();
                 }
             }
         });
@@ -297,8 +312,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             new GridData(GridData.FILL, GridData.FILL, true, true));
         confTableViewer.setContentProvider(new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
-                if (inputElement != null && !"".equals(inputElement)) {
-                    return getConfigurations((String) inputElement);
+                if (conf.md != null) {
+                    return conf.md.getConfigurations();
                 }
                 return new Configuration[0];
             }
@@ -334,9 +349,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         select.setText("<A>All</A>/<A>None</A>");
         select.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (e.text.equals("All")) {
-                    confTableViewer
-                            .setCheckedElements(getConfigurations(ivyFilePathText.getText()));
+                if (e.text.equals("All") && conf.md != null) {
+                    confTableViewer.setCheckedElements(conf.md.getConfigurations());
                 } else {
                     confTableViewer.setCheckedElements(new Configuration[0]);
                 }
@@ -472,10 +486,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         });
 
         alphaOrderCheck = new Button(configComposite, SWT.CHECK);
-        alphaOrderCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+        alphaOrderCheck
+                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
         alphaOrderCheck.setText("Order alphabetically the classpath entries");
-        alphaOrderCheck.setToolTipText(
-            "Order alphabetically the artifacts in the classpath container");
+        alphaOrderCheck
+                .setToolTipText("Order alphabetically the artifacts in the classpath container");
 
         return composite;
     }
@@ -483,8 +498,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private void loadFromConf() {
         ivyFilePathText.setText(conf.ivyXmlPath);
 
+        checkIvyXmlFile();
+
         confTableViewer.setInput(conf.ivyXmlPath);
-        initTableSelection(conf.ivyXmlPath, conf.confs);
+        initTableSelection();
 
         if (conf.isProjectSpecific()) {
             projectSpecificButton.setSelection(true);
@@ -545,17 +562,31 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return null;
     }
 
+    void checkIvyXmlFile() {
+        try {
+            ivyXmlError = null;
+            conf.resolveModuleDescriptor();
+        } catch (MalformedURLException e) {
+            ivyXmlError = "The path of the ivy.xml is not a valid URL";
+        } catch (ParseException e) {
+            ivyXmlError = "The ivy.xml has a syntax error: " + e.getMessage();
+        } catch (IOException e) {
+            ivyXmlError = "The ivy.xml could not be read: " + e.getMessage();
+        }
+    }
+
     /**
      * @param ivyFile
      */
-    private void initTableSelection(final String ivyFile, List confs) {
-        if ("*".equals(confs.get(0))) {
-            confTableViewer.setCheckedElements(getConfigurations(ivyFile));
-        } else {
-            ModuleDescriptor md = getModuleDescriptor(ivyFile);
-            if (md != null) {
-                for (int i = 0; i < confs.size(); i++) {
-                    Configuration configuration = md.getConfiguration((String) confs.get(i));
+    private void initTableSelection() {
+        if (conf.md != null) {
+            Configuration[] configurations = conf.md.getConfigurations();
+            if ("*".equals(conf.confs.get(0))) {
+                confTableViewer.setCheckedElements(configurations);
+            } else {
+                for (int i = 0; i < conf.confs.size(); i++) {
+                    Configuration configuration = conf.md.getConfiguration((String) conf.confs
+                            .get(i));
                     if (configuration != null) {
                         confTableViewer.setChecked(configuration, true);
                     }
@@ -573,36 +604,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 || !confTableViewer.getInput().equals(ivyFilePathText.getText())) {
             confTableViewer.setInput(ivyFilePathText.getText());
         }
-    }
-
-    Configuration[] getConfigurations(String ivyfile) {
-        try {
-            ModuleDescriptor moduleDescriptor = getModuleDescriptor(ivyfile);
-            if (moduleDescriptor != null) {
-                return moduleDescriptor.getConfigurations();
-            }
-        } catch (Exception e) {
-            // TODO handle it or log it
-        }
-        return new Configuration[0];
-    }
-
-    private ModuleDescriptor getModuleDescriptor(String ivyfile) {
-        try {
-            IFile file = project.getProject().getFile(ivyfile);
-            URL url = new File(file.getLocation().toOSString()).toURL();
-            String ivySettingsPath;
-            if (projectSpecificButton.getSelection()) {
-                ivySettingsPath = settingsText.getText();
-            } else {
-                ivySettingsPath = IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
-            }
-            return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
-                IvyPlugin.getIvy(project, ivySettingsPath).getSettings(), url, false);
-        } catch (Exception e) {
-            // TODO hanle it or log it
-        }
-        return null;
     }
 
     static class ConfigurationLabelProvider extends LabelProvider implements ITableLabelProvider {

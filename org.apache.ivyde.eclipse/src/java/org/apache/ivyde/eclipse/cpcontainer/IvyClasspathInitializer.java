@@ -23,6 +23,7 @@ import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraIn
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -55,25 +56,25 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 return;
             }
 
-            if (container == null) {
-                container = new IvyClasspathContainer(project, containerPath,
-                        new IClasspathEntry[0]);
-            } else if (!(container instanceof IvyClasspathContainer)) {
-                // this might be the persisted one : reuse the persisted entries
-                container = new IvyClasspathContainer(project, containerPath, container
-                        .getClasspathEntries());
-            }
-
             try {
+                if (container == null) {
+                    container = new IvyClasspathContainer(project, containerPath,
+                            new IClasspathEntry[0]);
+                } else if (!(container instanceof IvyClasspathContainer)) {
+                    // this might be the persisted one : reuse the persisted entries
+                    container = new IvyClasspathContainer(project, containerPath, container
+                            .getClasspathEntries());
+                }
                 JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project},
                     new IClasspathContainer[] {container}, null);
-            } catch (JavaModelException ex) {
-                IvyPlugin.log(IStatus.ERROR, "Unable to set container for "
-                        + containerPath.toString(), ex);
-            }
 
-            // now refresh the container to be synchronized with the ivy.xml
-            ((IvyClasspathContainer) container).scheduleRefresh(false);
+                // now refresh the container to be synchronized with the ivy.xml
+                ((IvyClasspathContainer) container).scheduleRefresh(false);
+            } catch (Exception ex) {
+                IStatus status = new Status(IStatus.ERROR, IvyPlugin.ID,
+                        "Unable to set container for " + containerPath.toString(), ex);
+                throw new CoreException(status);
+            }
         }
     }
 

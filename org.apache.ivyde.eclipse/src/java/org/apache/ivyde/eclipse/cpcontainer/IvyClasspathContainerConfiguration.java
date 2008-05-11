@@ -17,16 +17,26 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * path:
@@ -34,21 +44,23 @@ import org.eclipse.core.runtime.Path;
  */
 public class IvyClasspathContainerConfiguration {
 
-    String ivyXmlPath;
+    public IJavaProject javaProject;
 
-    List/* <String> */confs = Arrays.asList(new String[] {"default"});
+    public String ivyXmlPath;
 
-    String ivySettingsPath;
+    public List/* <String> */confs = Arrays.asList(new String[] {"default"});
 
-    List/* <String> */acceptedTypes;
+    public String ivySettingsPath;
 
-    List/* <String> */sourceTypes;
+    public List/* <String> */acceptedTypes;
 
-    List/* <String> */javadocTypes;
+    public List/* <String> */sourceTypes;
 
-    List/* <String> */sourceSuffixes;
+    public List/* <String> */javadocTypes;
 
-    List/* <String> */javadocSuffixes;
+    public List/* <String> */sourceSuffixes;
+
+    public List/* <String> */javadocSuffixes;
 
     boolean doRetrieve;
 
@@ -56,12 +68,17 @@ public class IvyClasspathContainerConfiguration {
 
     boolean alphaOrder;
 
-    public IvyClasspathContainerConfiguration(String ivyXmlPath, List confs) {
+    public ModuleDescriptor md;
+
+    public IvyClasspathContainerConfiguration(IJavaProject javaProject, String ivyXmlPath,
+            List confs) {
+        this.javaProject = javaProject;
         this.ivyXmlPath = ivyXmlPath;
         this.confs = confs;
     }
 
-    public IvyClasspathContainerConfiguration(IPath path) {
+    public IvyClasspathContainerConfiguration(IJavaProject javaProject, IPath path) {
+        this.javaProject = javaProject;
         if (path.segmentCount() > 2) {
             loadV0(path);
         } else {
@@ -215,7 +232,12 @@ public class IvyClasspathContainerConfiguration {
         if (ivySettingsPath == null) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
         }
-        return ivySettingsPath;
+        if (javaProject == null) {
+            return ivySettingsPath;
+        }
+        IProject project = javaProject.getProject();
+        File loc = project.getLocation().toFile();
+        return new File(loc, ivySettingsPath).getAbsolutePath();
     }
 
     public Collection getInheritedAcceptedTypes() {
@@ -254,6 +276,9 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public boolean getInheritedDoRetrieve() {
+        if (javaProject == null) {
+            return false;
+        }
         if (ivySettingsPath == null) {
             return IvyPlugin.getPreferenceStoreHelper().getDoRetrieve();
         }
@@ -274,49 +299,50 @@ public class IvyClasspathContainerConfiguration {
         return alphaOrder;
     }
 
-    public List getAcceptedTypes() {
-        return acceptedTypes;
-    }
-
-    public List getConfs() {
-        return confs;
-    }
-
-    public boolean getDoRetrieve() {
-        return doRetrieve;
-    }
-
-    public String getIvySettingsPath() {
-        return ivySettingsPath;
-    }
-
-    public String getIvyXmlPath() {
-        return ivyXmlPath;
-    }
-
-    public List getJavadocSuffixes() {
-        return javadocSuffixes;
-    }
-
-    public List getJavadocTypes() {
-        return javadocTypes;
-    }
-
-    public boolean isAlphaOrder() {
-        return alphaOrder;
-    }
-
-    public String getRetrievePattern() {
-        return retrievePattern;
-    }
-
-    public List getSourceSuffixes() {
-        return sourceSuffixes;
-    }
-
-    public List getSourceTypes() {
-        return sourceTypes;
-    }
+    //
+    // public List getAcceptedTypes() {
+    // return acceptedTypes;
+    // }
+    //
+    // public List getConfs() {
+    // return confs;
+    // }
+    //
+    // public boolean getDoRetrieve() {
+    // return doRetrieve;
+    // }
+    //
+    // public String getIvySettingsPath() {
+    // return ivySettingsPath;
+    // }
+    //
+    // public String getIvyXmlPath() {
+    // return ivyXmlPath;
+    // }
+    //
+    // public List getJavadocSuffixes() {
+    // return javadocSuffixes;
+    // }
+    //
+    // public List getJavadocTypes() {
+    // return javadocTypes;
+    // }
+    //
+    // public boolean isAlphaOrder() {
+    // return alphaOrder;
+    // }
+    //
+    // public String getRetrievePattern() {
+    // return retrievePattern;
+    // }
+    //
+    // public List getSourceSuffixes() {
+    // return sourceSuffixes;
+    // }
+    //
+    // public List getSourceTypes() {
+    // return sourceTypes;
+    // }
 
     public boolean isProjectSpecific() {
         return ivySettingsPath != null;
@@ -334,6 +360,19 @@ public class IvyClasspathContainerConfiguration {
             return null;
         }
         return IvyClasspathUtil.split(values);
+    }
+
+    public void resolveModuleDescriptor() throws ParseException, MalformedURLException, IOException {
+        URL url;
+        md = null;
+        if (javaProject != null) {
+            IFile file = javaProject.getProject().getFile(ivyXmlPath);
+            url = new File(file.getLocation().toOSString()).toURL();
+        } else {
+            url = new File(ivyXmlPath).toURL();
+        }
+        md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+            IvyPlugin.getIvy(getInheritedIvySettingsPath()).getSettings(), url, false);
     }
 
 }
