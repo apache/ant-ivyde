@@ -239,9 +239,25 @@ public class IvyClasspathContainerConfiguration {
         if (javaProject == null) {
             return ivySettingsPath;
         }
+        URL url;
+        try {
+            url = new URL(ivySettingsPath);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        File file = new File(url.getPath());
+        if (file.exists()) {
+            return ivySettingsPath;
+        }
+        // the file doesn't exist, so try to find out if it is a relative path to the project.
         IProject project = javaProject.getProject();
         File loc = project.getLocation().toFile();
-        return new File(loc, ivySettingsPath).getAbsolutePath();
+        file = new File(loc, url.getPath());
+        try {
+            return file.toURL().toString();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Collection getInheritedAcceptedTypes() {
