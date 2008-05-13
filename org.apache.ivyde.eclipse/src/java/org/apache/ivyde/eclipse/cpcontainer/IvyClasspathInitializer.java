@@ -71,7 +71,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 // now refresh the container to be synchronized with the ivy.xml
                 ((IvyClasspathContainer) container).scheduleRefresh(false);
             } catch (Exception ex) {
-                IStatus status = new Status(IStatus.ERROR, IvyPlugin.ID,
+                IStatus status = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.OK,
                         "Unable to set container for " + containerPath.toString(), ex);
                 throw new CoreException(status);
             }
