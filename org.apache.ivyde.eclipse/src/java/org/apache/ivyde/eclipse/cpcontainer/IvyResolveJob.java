@@ -88,24 +88,24 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private boolean _notify;
 
-    private Ivy ivy;
+    private final Ivy ivy;
 
     private final IvyClasspathContainerConfiguration conf;
 
     private final IvyClasspathContainer container;
 
     public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist,
-            boolean notify, IvyClasspathContainerConfiguration conf) throws FileNotFoundException,
+            boolean notify, IvyClasspathContainerConfiguration conf, Ivy ivy) throws FileNotFoundException,
             ParseException, IOException {
         super("Resolve "
                 + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
                         .getName()
                         + "/") + conf.ivyXmlPath + " dependencies");
         this.container = container;
+        this.ivy = ivy;
         _usePreviousResolveIfExist = usePreviousResolveIfExist;
         _notify = notify;
         this.conf = conf;
-        ivy = IvyPlugin.getIvy(conf.getInheritedIvySettingsPath());
     }
 
     public void transferProgress(TransferEvent evt) {

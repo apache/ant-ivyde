@@ -182,7 +182,11 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     // resolve job already running
                     return job;
                 }
-                job = new IvyResolveJob(this, usePreviousResolveIfExist, notify, conf);
+                Ivy ivy = IvyPlugin.getIvy(conf.getInheritedIvySettingsPath());
+                if (ivy == null) {
+                    return null;
+                }
+                job = new IvyResolveJob(this, usePreviousResolveIfExist, notify, conf, ivy);
                 job.setUser(isUser);
                 job.setRule(RESOLVE_EVENT_RULE);
                 return job;
