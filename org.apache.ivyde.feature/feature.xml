@@ -19,7 +19,7 @@
 -->
 <feature
       id="org.apache.ivyde.feature"
-      label="Apache IvyDE Feature"
+      label="Apache IvyDE"
       version="2.0.0.qualifier"
       provider-name="Apache Software Foundation">
 
