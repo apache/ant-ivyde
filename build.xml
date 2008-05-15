@@ -67,6 +67,7 @@
             <sysproperty key="buildDirectory" path="${basedir}/work" />
             <sysproperty key="DSTAMP" value="${DSTAMP}" />
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
+            <sysproperty key="javacDebugInfo" value="true"/>
         </java>
         <echo>
 Zip archive can be found here:
