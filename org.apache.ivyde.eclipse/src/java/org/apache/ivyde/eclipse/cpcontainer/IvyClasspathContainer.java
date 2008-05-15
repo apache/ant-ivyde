@@ -35,12 +35,21 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.DeltaProcessingState;
+import org.eclipse.jdt.internal.core.JavaElementDelta;
+import org.eclipse.jdt.internal.core.JavaModelManager;
+import org.eclipse.jdt.internal.ui.packageview.PackageExplorerContentProvider;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 
 /**
  * Eclipse classpath container that will contain the ivy resolved entries.
@@ -79,12 +88,13 @@ public class IvyClasspathContainer implements IClasspathContainer {
      *            the configuration that will be resolved
      * @param classpathEntries
      *            the entries to start with
-     * @throws IOException 
-     * @throws ParseException 
-     * @throws MalformedURLException 
+     * @throws IOException
+     * @throws ParseException
+     * @throws MalformedURLException
      */
     public IvyClasspathContainer(IJavaProject javaProject, IPath path,
-            IClasspathEntry[] classpathEntries) throws MalformedURLException, ParseException, IOException {
+            IClasspathEntry[] classpathEntries) throws MalformedURLException, ParseException,
+            IOException {
         this.javaProject = javaProject;
         this.path = path;
         conf = new IvyClasspathContainerConfiguration(javaProject, path);
@@ -236,9 +246,50 @@ public class IvyClasspathContainer implements IClasspathContainer {
             JavaCore.setClasspathContainer(path, new IJavaProject[] {javaProject},
                 new IClasspathContainer[] {new IvyClasspathContainer(IvyClasspathContainer.this)},
                 null);
+
+            // the following code was imported from:
+            // http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide/eclipse/embedder/BuildPathManager.java
+            // revision: 370; function setClasspathContainer; line 215
+
+            // XXX In Eclipse 3.3, changes to resolved classpath are not announced by JDT Core
+            // and PackageExplorer does not properly refresh when we update Ivy
+            // classpath container.
+            // As a temporary workaround, send F_CLASSPATH_CHANGED notifications
+            // to all PackageExplorerContentProvider instances listening to
+            // java ElementChangedEvent.
+            // Note that even with this hack, build clean is sometimes necessary to
+            // reconcile PackageExplorer with actual classpath
+            // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154071
+            if (getJDTVersion().startsWith("3.3")) {
+                DeltaProcessingState state = JavaModelManager.getJavaModelManager().deltaState;
+                synchronized (state) {
+                    IElementChangedListener[] listeners = state.elementChangedListeners;
+                    for (int i = 0; i < listeners.length; i++) {
+                        if (listeners[i] instanceof PackageExplorerContentProvider) {
+                            JavaElementDelta delta = new JavaElementDelta(javaProject);
+                            delta.changed(IJavaElementDelta.F_CLASSPATH_CHANGED);
+                            listeners[i].elementChanged(new ElementChangedEvent(delta,
+                                    ElementChangedEvent.POST_CHANGE));
+                        }
+                    }
+                }
+            }
         } catch (JavaModelException e) {
             Message.error(e.getMessage());
         }
+    }
+
+    private synchronized String getJDTVersion() {
+        if (jdtVersion == null) {
+            Bundle[] bundles = IvyPlugin.getDefault().getBundleContext().getBundles();
+            for (int i = 0; i < bundles.length; i++) {
+                if (JavaCore.PLUGIN_ID.equals(bundles[i].getSymbolicName())) {
+                    jdtVersion = (String) bundles[i].getHeaders().get(Constants.BUNDLE_VERSION);
+                    break;
+                }
+            }
+        }
+        return jdtVersion;
     }
 
     public URL getReportUrl() {
