@@ -20,7 +20,9 @@ package org.apache.ivyde.eclipse.cpcontainer.fragmentinfo;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -59,6 +61,7 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
             try {
                 return new URL(srcPath);
             } catch (MalformedURLException e) {
+                IvyPlugin.log(IStatus.WARNING, "The path for the doc attachement is not a valid URL", e);
                 return null;
             }
         }

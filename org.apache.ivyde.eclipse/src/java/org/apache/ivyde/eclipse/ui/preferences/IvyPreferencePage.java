@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -89,13 +90,14 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 String f = super.changePressed();
                 if (f == null) {
                     return null;
-                } else {
-                    File d = new File(f);
-                    try {
-                        return d.toURL().toExternalForm();
-                    } catch (MalformedURLException e) {
-                        return null;
-                    }
+                }
+                File d = new File(f);
+                try {
+                    return d.toURL().toExternalForm();
+                } catch (MalformedURLException e) {
+                    // should never happen
+                    IvyPlugin.log(IStatus.ERROR, "A file from the file chooser is not an URL", e);
+                    return null;
                 }
             }
 
@@ -198,8 +200,9 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         spacerData.horizontalSpan = 3;
         spacer.setLayoutData(spacerData);
 
-        BooleanFieldEditor alphaOrder = new BooleanFieldEditor(PreferenceConstants.ALPHABETICAL_ORDER,
-            "Order alphabetically the artifacts in the classpath container", fieldParent);
+        BooleanFieldEditor alphaOrder = new BooleanFieldEditor(
+                PreferenceConstants.ALPHABETICAL_ORDER,
+                "Order alphabetically the artifacts in the classpath container", fieldParent);
         addField(alphaOrder);
 
         spacer = new Label(fieldParent, SWT.NONE);

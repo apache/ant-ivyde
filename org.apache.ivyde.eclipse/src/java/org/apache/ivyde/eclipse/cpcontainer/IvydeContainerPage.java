@@ -61,7 +61,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -164,8 +163,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 ((IvyClasspathContainer) cp).scheduleResolve();
             }
         } catch (JavaModelException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // unless there are issues with the JDT, this should never happen
+            IvyPlugin.log(e);
         }
         return true;
     }
@@ -176,8 +175,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     public void setSelection(IClasspathEntry entry) {
         if (entry == null) {
-            conf = new IvyClasspathContainerConfiguration(project, "ivy.xml", Arrays
-                    .asList(new String[] {"*"}));
+            conf = new IvyClasspathContainerConfiguration(project, "ivy.xml");
         } else {
             conf = new IvyClasspathContainerConfiguration(project, entry.getPath());
         }
@@ -232,7 +230,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         ivyFilePathText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 conf.ivyXmlPath = ivyFilePathText.getText();
-                checkIvyXmlFile();
+                resolveModuleDescriptor();
                 refreshConfigurationTable();
                 checkCompleted();
             }
@@ -278,7 +276,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                         }
                     }
                 } else {
-                    FileDialog dialog = new FileDialog(IvyPlugin.getActiveWorkbenchShell(), SWT.OPEN);
+                    FileDialog dialog = new FileDialog(IvyPlugin.getActiveWorkbenchShell(),
+                            SWT.OPEN);
                     dialog.setText("Choose an ivy.xml");
                     path = dialog.open();
                 }
@@ -286,7 +285,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 if (path != null) {
                     conf.ivyXmlPath = path;
                     ivyFilePathText.setText(path);
-                    checkIvyXmlFile();
+                    resolveModuleDescriptor();
                     refreshConfigurationTable();
                     checkCompleted();
                 }
@@ -312,6 +311,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             new GridData(GridData.FILL, GridData.FILL, true, true));
         confTableViewer.setContentProvider(new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
+                resolveModuleDescriptor();
                 if (conf.md != null) {
                     return conf.md.getConfigurations();
                 }
@@ -374,6 +374,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         projectSpecificButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateFieldsStatus();
+                conf.ivySettingsPath = settingsText.getText();
+                checkCompleted();
             }
         });
 
@@ -403,6 +405,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         settingsText
                 .setToolTipText("The url where your ivysettings file can be found. \nUse 'default' to reference the default ivy settings. \nRelative paths are handled relative to the project. Example: 'file://./ivysettings.xml'.");
         settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        settingsText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                conf.ivySettingsPath = settingsText.getText();
+                checkCompleted();
+            }
+        });
 
         browse = new Button(configComposite, SWT.NONE);
         browse.setText("Browse");
@@ -413,7 +421,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                     try {
                         settingsText.setText(f.toURL().toExternalForm());
                     } catch (MalformedURLException ex) {
-                        // this cannot happend
+                        // this cannot happen
+                        IvyPlugin.log(IStatus.ERROR,
+                            "The file got from the file browser has not a valid URL", ex);
                     }
                 }
             }
@@ -498,7 +508,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private void loadFromConf() {
         ivyFilePathText.setText(conf.ivyXmlPath);
 
-        checkIvyXmlFile();
+        resolveModuleDescriptor();
 
         confTableViewer.setInput(conf.ivyXmlPath);
         initTableSelection();
@@ -562,7 +572,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return null;
     }
 
-    void checkIvyXmlFile() {
+    void resolveModuleDescriptor() {
         try {
             ivyXmlError = null;
             conf.resolveModuleDescriptor();

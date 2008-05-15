@@ -27,10 +27,6 @@ final class PreferenceValueProvider implements IValueProvider {
     }
 
     public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-        try {
-            return new String[] {IvyPlugin.getDefault().getPreferenceStore().getString(_name)};
-        } catch (Exception e) {
-            return null;
-        }
+        return new String[] {IvyPlugin.getDefault().getPreferenceStore().getString(_name)};
     }
 }

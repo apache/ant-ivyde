@@ -50,8 +50,9 @@ public class FileExtFilter extends ViewerFilter {
             try {
                 IResource[] resources = ((IContainer) element).members();
                 for (int i = 0; i < resources.length; i++) {
-                    if (select(viewer, parent, resources[i]))
+                    if (select(viewer, parent, resources[i])) {
                         return true;
+                    }
                 }
             } catch (CoreException e) {
                 IvyPlugin.log(e);

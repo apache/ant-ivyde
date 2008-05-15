@@ -25,6 +25,9 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.IStatus;
+
 public class IvyFile {
     private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern
             .compile("[^\"]*\"[\\s]*=[\\s]*([\\w\\-]+)");
@@ -147,12 +150,8 @@ public class IvyFile {
     }
 
     public int getStringIndexBackward(String string, int documentOffset) {
-        try {
-            String text = _doc.substring(0, documentOffset);
-            return text.lastIndexOf(string);
-        } catch (Exception e) {
-        }
-        return -1;
+        String text = _doc.substring(0, documentOffset);
+        return text.lastIndexOf(string);
     }
 
     public int getStringIndexForward(String string) {
@@ -160,11 +159,7 @@ public class IvyFile {
     }
 
     public int getStringIndexForward(String string, int documentOffset) {
-        try {
-            return _doc.indexOf(string, documentOffset);
-        } catch (Exception e) {
-        }
-        return -1;
+        return _doc.indexOf(string, documentOffset);
     }
 
     public Map getAllAttsValues() {
@@ -208,7 +203,8 @@ public class IvyFile {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // FIXME : what is really catched here ?
+            IvyPlugin.log(IStatus.WARNING, "Something bad happened", e);
         }
         return result;
     }
@@ -400,6 +396,8 @@ public class IvyFile {
                     continue;
                 }
             } catch (IndexOutOfBoundsException e) {
+                // FIXME hu ? need some comments
+                IvyPlugin.log(IStatus.WARNING, "Something bad happened", e);
                 return null;
             }
         }

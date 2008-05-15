@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.core.model.IvyFile;
 import org.apache.ivyde.eclipse.ui.core.model.IvyModel;
 import org.apache.ivyde.eclipse.ui.core.model.IvyTag;
@@ -31,6 +32,7 @@ import org.apache.ivyde.eclipse.ui.core.model.IvyTagAttribute;
 import org.apache.ivyde.eclipse.ui.core.model.Proposal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.BadLocationException;
@@ -66,7 +68,9 @@ public class IvyContentAssistProcessor implements IContentAssistProcessor {
         try {
             ivyFileString = doc.get(0, doc.getLength());
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            // Unless there is a bug in JFace, this should never never happen
+            IvyPlugin.log(IStatus.ERROR, "Getting the content of the document " + doc.toString()
+                    + " failed", e);
             return null;
         }
         IProject project = getProject();

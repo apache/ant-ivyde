@@ -18,7 +18,10 @@
 package org.apache.ivyde.eclipse;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,7 +38,6 @@ import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -236,7 +238,8 @@ public class IvyPlugin extends AbstractUIPlugin {
     public ResourceBundle getResourceBundle() {
         try {
             if (resourceBundle == null)
-                resourceBundle = ResourceBundle.getBundle("org.apache.ivyde.eclipse.IvyPluginResources");
+                resourceBundle = ResourceBundle
+                        .getBundle("org.apache.ivyde.eclipse.IvyPluginResources");
         } catch (MissingResourceException x) {
             resourceBundle = new ResourceBundle() {
                 protected Object handleGetObject(String key) {
@@ -281,24 +284,17 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Get the Ivy instance for the specified project and the settings of the configured container
-     * on the project.
+     * Get the Ivy instance for the specified project.
      * 
      * @param javaProject
      *            the Java project
-     * @param ivySettingsPath
-     *            the settings to use
-     * @return the configured Ivy instance, <code>null</code> if it failed
+     * @return the configured Ivy instance, <code>null</code> if there is no Ivy for this project
+     * @throws IOException
+     * @throws ParseException
+     * @throws FileNotFoundException
      */
-    // TODO: check that every caller of this function can properly handle a returned null
     public static synchronized Ivy getIvy(IJavaProject javaProject) {
-        IvyClasspathContainer cp;
-        try {
-            cp = IvyClasspathUtil.getIvyClassPathContainer(javaProject);
-        } catch (JavaModelException e) {
-            // TODO log and better handle the error
-            return null;
-        }
+        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
         if (cp == null) {
             return null;
         }
@@ -309,14 +305,11 @@ public class IvyPlugin extends AbstractUIPlugin {
      * Get the Ivy instance for the specified project and the specified settings
      * <p>
      * 
-     * @param javaProject
-     *            the Java project
      * @param ivySettingsPath
      *            the settings to use
      * @return the configured Ivy instance, <code>null</code> if it failed
      */
-    // TODO: check that every caller of this function can properly handle a returned null
-    public static synchronized Ivy getIvy(/*IJavaProject javaProject, */String ivySettingsPath) {
+    public static synchronized Ivy getIvy(String ivySettingsPath) {
         IvyConfig ic;
         try {
             if (ivySettingsPath == null || ivySettingsPath.trim().length() == 0) {
@@ -422,6 +415,6 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     public BundleContext getBundleContext() {
-      return this.bundleContext;
+        return this.bundleContext;
     }
 }

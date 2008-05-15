@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
 import org.apache.ivyde.eclipse.ui.editors.IvyEditor;
 import org.eclipse.core.resources.IContainer;
@@ -145,6 +146,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
             }
             stream.close();
         } catch (IOException e) {
+            throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID,
+                    "The ivy.xml could not be created", e));
         }
         monitor.worked(1);
         monitor.setTaskName("Opening file for editing...");
@@ -156,6 +159,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
                     page.openEditor(new IvyFileEditorInput(file), IvyEditor.ID, true);
                     // IDE.openEditor(page, file, IvyEditor.ID, true);
                 } catch (PartInitException e) {
+                    // this should not happen
+                    IvyPlugin.log(IStatus.ERROR, "The editor could not be opened", e);
                 }
             }
         });

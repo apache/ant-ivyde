@@ -29,26 +29,31 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
- * path:
- * org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/ivy.xml/conf/ivysetting.xml/acceptedTypes/sourceTypes/javadocTypes/sourceSuffixes/javadocSuffixes/doRetrieve/retrievePattern/order
+ * path: org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER? ivyXmlPath=ivy.xml &confs=default
+ * &ivySettingsPath=file:///ivysetting.xml &acceptedTypes=jar &sourceTypes=source
+ * &javadocTypes=javadoc &sourceSuffixes=-sources,-source,-src
+ * &javadocSuffixes=-javadocs,-javadoc,-doc,-docs &doRetrieve=true
+ * &retrievePattern=lib/[conf]/[artifact].[ext] &alphaOrder=true
  */
 public class IvyClasspathContainerConfiguration {
 
-    IJavaProject javaProject;
+    final IJavaProject javaProject;
 
     String ivyXmlPath;
 
-    List/* <String> */confs = Arrays.asList(new String[] {"default"});
+    List/* <String> */confs = Arrays.asList(new String[] {"*"});
 
     String ivySettingsPath;
 
@@ -70,13 +75,29 @@ public class IvyClasspathContainerConfiguration {
 
     ModuleDescriptor md;
 
-    public IvyClasspathContainerConfiguration(IJavaProject javaProject, String ivyXmlPath,
-            List confs) {
+    /**
+     * Constructor
+     * 
+     * @param javaProject
+     *            the classpath container's Java project, <code>null</code> is not bind to a
+     *            project
+     * @param ivyXmlPath
+     *            the path to the ivy.xml
+     */
+    public IvyClasspathContainerConfiguration(IJavaProject javaProject, String ivyXmlPath) {
         this.javaProject = javaProject;
         this.ivyXmlPath = ivyXmlPath;
-        this.confs = confs;
     }
 
+    /**
+     * Constructor
+     * 
+     * @param javaProject
+     *            the classpath container's Java project, <code>null</code> is not bind to a
+     *            project
+     * @param path
+     *            the path of the classpath container
+     */
     public IvyClasspathContainerConfiguration(IJavaProject javaProject, IPath path) {
         this.javaProject = javaProject;
         if (path.segmentCount() > 2) {
@@ -119,10 +140,10 @@ public class IvyClasspathContainerConfiguration {
             try {
                 value = parameter.length > 1 ? URLDecoder.decode(parameter[1], "UTF-8") : "";
             } catch (UnsupportedEncodingException e) {
-                // TODO this should not happend, but if it happend it can break eclipse, a project
-                // can be displayed abnormally. This exception should be raised at the UI level,
-                // either in the error log or in an popup to the user
-                throw new RuntimeException(e);
+                // this should never never happen
+                String message = "The UTF-8 encoding support is required is decode the path of the container.";
+                IvyPlugin.log(IStatus.ERROR, message, e);
+                throw new RuntimeException(message, e);
             }
             if (parameter[0].equals("ivyXmlPath")) {
                 ivyXmlPath = value;
@@ -162,7 +183,7 @@ public class IvyClasspathContainerConfiguration {
             }
         }
         if (isProjectSpecific) {
-            // in this V1 version, it is just some paranoïd check
+            // in this V1 version, it is just some paranoid check
             checkNonNullConf();
         }
     }
@@ -220,10 +241,9 @@ public class IvyClasspathContainerConfiguration {
                 path.append(URLEncoder.encode(Boolean.toString(alphaOrder), "UTF-8"));
             }
         } catch (UnsupportedEncodingException e) {
-            // TODO this should not happend, but if it happend it can break eclipse, a project
-            // can be displayed abnormally. This exception should be raised at the UI level,
-            // either in the error log or in an popup to the user
-            throw new RuntimeException(e);
+            String message = "The UTF-8 encoding support is required is endecode the path of the container.";
+            IvyPlugin.log(IStatus.ERROR, message, e);
+            throw new RuntimeException(message, e);
         }
         return new Path(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID).append(path.toString());
     }
@@ -232,11 +252,15 @@ public class IvyClasspathContainerConfiguration {
         return ivyXmlPath;
     }
 
+    public IJavaProject getJavaProject() {
+        return javaProject;
+    }
+
     public String getInheritedIvySettingsPath() {
         if (ivySettingsPath == null) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
         }
-        if (javaProject == null) {
+        if (javaProject == null || ivySettingsPath.trim().length() == 0) {
             return ivySettingsPath;
         }
         URL url;
@@ -297,6 +321,7 @@ public class IvyClasspathContainerConfiguration {
 
     public boolean getInheritedDoRetrieve() {
         if (javaProject == null) {
+            // no project means no retrieve possible
             return false;
         }
         if (ivySettingsPath == null) {
@@ -338,16 +363,20 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public void resolveModuleDescriptor() throws ParseException, MalformedURLException, IOException {
-        URL url;
         md = null;
+        URL url;
         if (javaProject != null) {
             IFile file = javaProject.getProject().getFile(ivyXmlPath);
             url = new File(file.getLocation().toOSString()).toURL();
         } else {
             url = new File(ivyXmlPath).toURL();
         }
-        md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
-            IvyPlugin.getIvy(getInheritedIvySettingsPath()).getSettings(), url, false);
+        Ivy ivy = IvyPlugin.getIvy(getInheritedIvySettingsPath());
+        if (ivy == null) {
+            return;
+        }
+        md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(), url,
+            false);
     }
 
 }

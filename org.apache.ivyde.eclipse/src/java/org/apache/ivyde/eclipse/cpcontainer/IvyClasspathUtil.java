@@ -17,13 +17,15 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -69,6 +71,7 @@ public class IvyClasspathUtil {
 
             project.setRawClasspath(entries, project.getOutputLocation(), null);
         } catch (CoreException e) {
+            // unless there are issues with the JDT, this should never happen
             IvyPlugin.log(e);
         }
     }
@@ -108,8 +111,7 @@ public class IvyClasspathUtil {
      * @return
      * @throws JavaModelException
      */
-    public static IvyClasspathContainer getIvyClasspathContainer(IStructuredSelection selection)
-            throws JavaModelException {
+    public static IvyClasspathContainer getIvyClasspathContainer(IStructuredSelection selection) {
         if (selection == null) {
             return null;
         }
@@ -120,7 +122,7 @@ public class IvyClasspathUtil {
                 return (IvyClasspathContainer) element;
             }
             if (element instanceof IJavaProject) {
-                return getIvyClassPathContainer((IJavaProject) element);
+                return getIvyClasspathContainer((IJavaProject) element);
             }
             if (element instanceof IAdaptable) {
                 cp = (IvyClasspathContainer) ((IAdaptable) element)
@@ -129,7 +131,7 @@ public class IvyClasspathUtil {
                     IJavaProject p = (IJavaProject) ((IAdaptable) element)
                             .getAdapter(IJavaProject.class);
                     if (p != null) {
-                        cp = getIvyClassPathContainer(p);
+                        cp = getIvyClasspathContainer(p);
                     }
                 }
             }
@@ -139,28 +141,7 @@ public class IvyClasspathUtil {
             if (element instanceof ClassPathContainer) {
                 // FIXME: we shouldn't check against internal JDT API but there are not adaptable to
                 // useful class
-                return getIvyClassPathContainer(((ClassPathContainer) element).getJavaProject());
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Search the Ivy classpath container within the specified Java project
-     * 
-     * @param javaProject
-     *            the project to search into
-     * @return the Ivy classpath container if found, otherwise return <code>null</code>
-     * @throws JavaModelException
-     */
-    public static IvyClasspathContainer getIvyClassPathContainer(IJavaProject javaProject)
-            throws JavaModelException {
-        IClasspathEntry[] cpe = javaProject.getRawClasspath();
-        for (int i = 0; i < cpe.length; i++) {
-            IClasspathEntry entry = cpe[i];
-            if (isIvyClasspathContainer(entry.getPath())) {
-                return (IvyClasspathContainer) JavaCore.getClasspathContainer(entry.getPath(),
-                    javaProject);
+                return getIvyClasspathContainer(((ClassPathContainer) element).getJavaProject());
             }
         }
         return null;
@@ -170,6 +151,13 @@ public class IvyClasspathUtil {
         return containerPath.segment(0).equals(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID);
     }
 
+    /**
+     * Search the Ivy classpath container within the specified Java project
+     * 
+     * @param javaProject
+     *            the project to search into
+     * @return the Ivy classpath container if found, otherwise return <code>null</code>
+     */
     public static IvyClasspathContainer getIvyClasspathContainer(IJavaProject javaProject) {
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();
@@ -186,7 +174,8 @@ public class IvyClasspathUtil {
                 }
             }
         } catch (JavaModelException e) {
-            Message.error(e.getMessage());
+            // unless there are issues with the JDT, this should never happen
+            IvyPlugin.log(e);
         }
         return null;
     }

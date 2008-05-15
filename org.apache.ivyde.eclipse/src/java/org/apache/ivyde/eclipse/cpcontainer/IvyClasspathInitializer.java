@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -51,6 +50,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             try {
                 container = JavaCore.getClasspathContainer(containerPath, project);
             } catch (JavaModelException ex) {
+                // unless there are issues with the JDT, this should never happen
                 IvyPlugin.log(IStatus.ERROR, "Unable to get container for "
                         + containerPath.toString(), ex);
                 return;
@@ -109,13 +109,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             // force refresh of ivy classpath entry in ui thread
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    IvyClasspathContainer ivycp;
-                    try {
-                        ivycp = IvyClasspathUtil.getIvyClassPathContainer(project);
-                    } catch (JavaModelException e) {
-                        Message.error(e.getMessage());
-                        return;
-                    }
+                    IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(project);
                     if (ivycp != null) {
                         ivycp.scheduleRefresh(true);
                     }

@@ -17,6 +17,8 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -103,6 +105,8 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
                 return new Region(start, end - start);
 
             } catch (BadLocationException x) {
+                // FIXME hu ? needs some comment
+                IvyPlugin.log(IStatus.WARNING, "Something bad happened", x);
             }
         }
 

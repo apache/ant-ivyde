@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.editors;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
@@ -29,6 +30,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -96,8 +98,8 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
             int index = addPage(new OverviewFormPage(this));
             setPageText(index, "Information");
         } catch (PartInitException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // Should not happen
+            IvyPlugin.log(IStatus.ERROR, "The overview page could not be created", e);
         }
 
     }

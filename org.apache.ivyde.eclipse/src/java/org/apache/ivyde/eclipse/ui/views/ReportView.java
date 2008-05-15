@@ -22,7 +22,6 @@ import java.net.URL;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -51,13 +50,8 @@ public class ReportView extends ViewPart implements ISelectionListener {
 
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         if (sel instanceof IStructuredSelection) {
-            IvyClasspathContainer ivycp;
-            try {
-                ivycp = IvyClasspathUtil.getIvyClasspathContainer((IStructuredSelection) sel);
-            } catch (JavaModelException e) {
-                Message.error(e.getMessage());
-                return;
-            }
+            IvyClasspathContainer ivycp = IvyClasspathUtil
+                    .getIvyClasspathContainer((IStructuredSelection) sel);
             if (ivycp != null) {
                 _browser.setUrl("");
                 URL report = ivycp.getReportUrl();

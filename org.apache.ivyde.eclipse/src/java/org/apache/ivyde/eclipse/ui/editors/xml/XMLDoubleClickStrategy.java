@@ -17,6 +17,8 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -82,6 +84,8 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
             fText.setSelectedRange(offset, len);
             return true;
         } catch (BadLocationException x) {
+            // FIXME hu ? needs some comment
+            IvyPlugin.log(IStatus.WARNING, "Something bad happened", x);
         }
 
         return false;
@@ -121,6 +125,8 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
             return true;
 
         } catch (BadLocationException x) {
+            // FIXME hu ? needs some comment
+            IvyPlugin.log(IStatus.WARNING, "Something bad happened", x);
         }
 
         return false;

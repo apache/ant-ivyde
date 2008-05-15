@@ -40,6 +40,7 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 
 public class IvyModel {
@@ -285,11 +286,8 @@ public class IvyModel {
         orgAtt.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 List ret = listDependencyTokenValues(att.getName(), ivyFile);
-                try {
-                    ret.add(IvyPlugin.getDefault().getPreferenceStore().getString(
-                        PreferenceConstants.ORGANISATION));
-                } catch (Exception ex) {
-                }
+                ret.add(IvyPlugin.getDefault().getPreferenceStore().getString(
+                    PreferenceConstants.ORGANISATION));
                 String org = ivyFile.getOrganisation();
                 if (org != null) {
                     ret.add(org);
@@ -428,7 +426,8 @@ public class IvyModel {
                     ret.add("*");
                     return (String[]) ret.toArray(new String[ret.size()]);
                 } catch (ParseException e) {
-                    System.err.println(e);
+                    IvyPlugin.log(IStatus.ERROR, "The dependencies of " + mrid
+                            + " could not be parsed", e);
                     return null;
                 }
             }
@@ -482,7 +481,8 @@ public class IvyModel {
                                             ret.add("*");
                                             return (String[]) ret.toArray(new String[ret.size()]);
                                         } catch (ParseException e) {
-                                            System.err.println(e);
+                                            IvyPlugin.log(IStatus.ERROR, "The dependencies of "
+                                                    + mrid + " could not be parsed", e);
                                             return new String[] {"*"};
                                         }
                                     }
@@ -528,7 +528,8 @@ public class IvyModel {
                                                 return (String[]) ret
                                                         .toArray(new String[ret.size()]);
                                             } catch (ParseException e) {
-                                                System.err.println(e);
+                                                IvyPlugin.log(IStatus.ERROR, "The dependencies of "
+                                                        + mrid + " could not be parsed", e);
                                                 return new String[] {"*"};
                                             }
                                         }
@@ -713,7 +714,8 @@ public class IvyModel {
         try {
             _defaults.load(IvyModel.class.getResourceAsStream("defaults.properties"));
         } catch (IOException e) {
-            e.printStackTrace();
+            // should never never happen
+            IvyPlugin.log(IStatus.ERROR, "The default properties could not be loaded", e);
         }
     }
 
@@ -725,7 +727,7 @@ public class IvyModel {
         return IvyPlugin.getIvy(_javaProject);
     }
 
-    private List listDependencyTokenValues(String att, IvyFile ivyfile) {
+    List listDependencyTokenValues(String att, IvyFile ivyfile) {
         Map allAttsValues = ivyfile.getAllAttsValues();
         String org = ivyfile.getOrganisation();
         if (org != null && !allAttsValues.containsKey("org")) {

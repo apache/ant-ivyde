@@ -18,6 +18,7 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,7 +53,6 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
-import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
@@ -94,9 +94,13 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private final IvyClasspathContainer container;
 
-    public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist, boolean notify, IvyClasspathContainerConfiguration conf, IJavaProject javaProject) {
-        super("Resolve " + (javaProject == null ? "" : javaProject.getProject().getName() + "/") + conf.ivyXmlPath
-                + " dependencies");
+    public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist,
+            boolean notify, IvyClasspathContainerConfiguration conf) throws FileNotFoundException,
+            ParseException, IOException {
+        super("Resolve "
+                + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
+                        .getName()
+                        + "/") + conf.ivyXmlPath + " dependencies");
         this.container = container;
         _usePreviousResolveIfExist = usePreviousResolveIfExist;
         _notify = notify;
@@ -276,9 +280,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         problems.append(msg).append("\n");
                     }
                     status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                            "Impossible to resolve dependencies of " + conf.md.getModuleRevisionId()
-                                    + ":\n" + problems + "\nSee IvyConsole for further details",
-                            null);
+                            "Impossible to resolve dependencies of "
+                                    + conf.md.getModuleRevisionId() + ":\n" + problems
+                                    + "\nSee IvyConsole for further details", null);
                     return;
                 }
 
@@ -445,8 +449,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         extraAtt.put("classifier", metaClassifier);
         Artifact metaArtifact = new DefaultArtifact(artifact.getModuleRevisionId(), artifact
                 .getPublicationDate(), artifact.getName(), metaType, "jar", extraAtt);
-        RepositoryCacheManager cache = ivy.getSettings().getResolver(
-            artifact.getModuleRevisionId()).getRepositoryCacheManager();
+        RepositoryCacheManager cache = ivy.getSettings()
+                .getResolver(artifact.getModuleRevisionId()).getRepositoryCacheManager();
         if (cache instanceof DefaultRepositoryCacheManager) {
             File metaArtifactFile = ((DefaultRepositoryCacheManager) cache)
                     .getArchiveFileInCache(metaArtifact);
@@ -460,32 +464,29 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 ivy.getResolveEngine().download(metaArtifact, new DownloadOptions());
                 if (metaArtifactFile.exists()) {
                     return new Path(metaArtifactFile.getAbsolutePath());
-                } else {
-                    // meta artifact not found, we store this information to avoid other
-                    // attempts later
-                    Message.info(metaType + " not found for " + artifact);
-                    try {
-                        attempt.getParentFile().mkdirs();
-                        attempt.createNewFile();
-                    } catch (IOException e) {
-                        Message.error("impossible to create attempt file " + attempt + ": " + e);
-                    }
-                    return null;
                 }
-            }
-        } else {
-            Message.info("checking " + metaType + " for " + artifact);
-            ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
-                new DownloadOptions());
-            if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-                return new Path(metaAdr.getLocalFile().getAbsolutePath());
-            } else {
+                // meta artifact not found, we store this information to avoid other
+                // attempts later
                 Message.info(metaType + " not found for " + artifact);
-                Message
-                        .verbose("Attempt not stored in cache because a non Default cache implementation is used.");
+                try {
+                    attempt.getParentFile().mkdirs();
+                    attempt.createNewFile();
+                } catch (IOException e) {
+                    Message.error("impossible to create attempt file " + attempt + ": " + e);
+                }
                 return null;
             }
         }
+        Message.info("checking " + metaType + " for " + artifact);
+        ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
+            new DownloadOptions());
+        if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
+            return new Path(metaAdr.getLocalFile().getAbsolutePath());
+        }
+        Message.info(metaType + " not found for " + artifact);
+        Message
+                .verbose("Attempt not stored in cache because a non Default cache implementation is used.");
+        return null;
     }
 
     private IPath getSourceAttachment(Path classpathArtifact, Path sourcesArtifact) {
@@ -512,13 +513,22 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             classpathArtifact);
 
         if (url == null) {
-            try {
-                Path path = javadocArtifact;
-                if (path != null) {
-                    url = new URL("jar:" + path.toFile().toURI().toURL().toExternalForm() + "!/");
+            Path path = javadocArtifact;
+            if (path != null) {
+                String u;
+                try {
+                    u = "jar:" + path.toFile().toURI().toURL().toExternalForm() + "!/";
+                    try {
+                        url = new URL(u);
+                    } catch (MalformedURLException e) {
+                        // this should not happen
+                        IvyPlugin.log(IStatus.ERROR,
+                            "The jar URL for the javadoc is not formed correctly " + u, e);
+                    }
+                } catch (MalformedURLException e) {
+                    // this should not happen
+                    IvyPlugin.log(IStatus.ERROR, "The path has not a correct URL: " + path, e);
                 }
-            } catch (MalformedURLException e) {
-                // ignored
             }
         }
 

@@ -17,10 +17,8 @@
  */
 package org.apache.ivyde.eclipse.ui.actions;
 
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -42,14 +40,8 @@ public class RefreshAction implements IWorkbenchWindowActionDelegate {
      * @see IWorkbenchWindowActionDelegate#run
      */
     public void run(IAction action) {
-        IvyClasspathContainer cp;
-        try {
-            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
-                    .getSelectionInJavaPackageView());
-        } catch (JavaModelException e) {
-            Message.error(e.getMessage());
-            return;
-        }
+        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
+                .getSelectionInJavaPackageView());
         if (cp != null) {
             cp.scheduleRefresh(true);
         }

@@ -17,13 +17,11 @@
  */
 package org.apache.ivyde.eclipse.ui.actions;
 
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -53,14 +51,8 @@ public class OpenIvyFileAction implements IWorkbenchWindowActionDelegate {
      * @see IWorkbenchWindowActionDelegate#run
      */
     public void run(IAction action) {
-        IvyClasspathContainer cp;
-        try {
-            cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
-                    .getSelectionInJavaPackageView());
-        } catch (JavaModelException e) {
-            Message.error(e.getMessage());
-            return;
-        }
+        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
+                .getSelectionInJavaPackageView());
         if (cp != null) {
             IFile file = cp.getIvyFile();
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
