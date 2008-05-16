@@ -46,10 +46,6 @@
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.apache.ant"/>
-      <import plugin="org.apache.oro"/>
-      <import plugin="org.apache.commons.vfs"/>
-      <import plugin="org.apache.commons.net"/>
-      <import plugin="org.apache.commons.httpclient"/>
       <import plugin="com.jcraft.jsch"/>
    </requires>
 
