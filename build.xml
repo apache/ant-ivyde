@@ -60,6 +60,7 @@
         <tstamp />
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
+            <arg value="-consolelog" />
             <arg line="-application org.eclipse.pde.build.Build" />
             <sysproperty key="baseLocation" value="${baseLocation}"/>
             <sysproperty key="builder" path="${basedir}/builder/component"/>
