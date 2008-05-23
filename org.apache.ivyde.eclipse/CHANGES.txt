@@ -13,6 +13,7 @@
 - IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevée) 
 - IMPROVE: Add new target to build.xml to build the plugin with Ant (IVYDE-88)
 
+- FIX: no support of organization spelling (IVYDE-19)
 - FIX: NPE when setting a bad file for the ivy setting path in the global configuration panel (IVYDE-91)
 - FIX: IvyDE 1.0.3 "Run configuration" problem with Eclipse 3.x (IVYDE-32)
 - FIX: Error while trying to edit an ivy.xml without a configured container (IVYDE-83)
