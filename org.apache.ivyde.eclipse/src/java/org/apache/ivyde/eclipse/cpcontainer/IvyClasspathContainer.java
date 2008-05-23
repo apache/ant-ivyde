@@ -208,15 +208,24 @@ public class IvyClasspathContainer implements IClasspathContainer {
      * @param monitor
      */
     public void resolve(IProgressMonitor monitor) {
-        computeClasspathEntries(false, true, true).run(monitor);
+        IvyResolveJob j = computeClasspathEntries(false, true, true);
+        if (j != null) {
+            j.run(monitor);
+        }
     }
 
     public void scheduleResolve() {
-        computeClasspathEntries(false, true, true).schedule();
+        IvyResolveJob j = computeClasspathEntries(false, true, true);
+        if (j != null) {
+            j.schedule();
+        }
     }
 
     public void scheduleRefresh(boolean isUser) {
-        computeClasspathEntries(true, true, isUser).schedule();
+        IvyResolveJob j = computeClasspathEntries(true, true, isUser);
+        if (j != null) {
+            j.schedule();
+        }
     }
 
     void updateClasspathEntries(boolean notify, final IClasspathEntry[] newEntries) {
