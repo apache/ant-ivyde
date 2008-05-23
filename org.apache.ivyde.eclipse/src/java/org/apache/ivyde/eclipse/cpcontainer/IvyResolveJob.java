@@ -18,7 +18,6 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,7 +66,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 /**
@@ -88,21 +86,23 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private boolean _notify;
 
-    private final Ivy ivy;
+    final Ivy ivy;
 
-    private final IvyClasspathContainerConfiguration conf;
+    final IvyClasspathContainerConfiguration conf;
 
     private final IvyClasspathContainer container;
 
+    final ModuleDescriptor md;
+
     public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist,
-            boolean notify, IvyClasspathContainerConfiguration conf, Ivy ivy) throws FileNotFoundException,
-            ParseException, IOException {
+            boolean notify, IvyClasspathContainerConfiguration conf, Ivy ivy, ModuleDescriptor md) {
         super("Resolve "
                 + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
                         .getName()
                         + "/") + conf.ivyXmlPath + " dependencies");
         this.container = container;
         this.ivy = ivy;
+        this.md = md;
         _usePreviousResolveIfExist = usePreviousResolveIfExist;
         _notify = notify;
         this.conf = conf;
@@ -189,7 +189,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
                     if (_usePreviousResolveIfExist) {
                         if (conf.confs.size() == 1 && "*".equals(conf.confs.get(0))) {
-                            confs = conf.md.getConfigurationsNames();
+                            confs = md.getConfigurationsNames();
                         } else {
                             confs = (String[]) conf.confs.toArray(new String[conf.confs.size()]);
                         }
@@ -202,7 +202,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         for (int i = 0; i < confs.length; i++) {
                             File report = ivy.getResolutionCacheManager()
                                     .getConfigurationResolveReportInCache(
-                                        ResolveOptions.getDefaultResolveId(conf.md), confs[i]);
+                                        ResolveOptions.getDefaultResolveId(md), confs[i]);
                             boolean resolved = false;
                             if (report.exists()) {
                                 // found a report, try to parse it.
@@ -221,22 +221,22 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                 // no resolve previously done for at least
                                 // one conf... we do it now
                                 Message.info("\n\nIVYDE: previous resolve of "
-                                        + conf.md.getModuleRevisionId().getModuleId()
+                                        + md.getModuleRevisionId().getModuleId()
                                         + " doesn't contain enough data: resolving again\n");
-                                ResolveReport r = ivy.resolve(conf.md, new ResolveOptions()
+                                ResolveReport r = ivy.resolve(md, new ResolveOptions()
                                         .setConfs((String[]) conf.confs
                                                 .toArray(new String[conf.confs.size()])));
                                 all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
                                 confs = r.getConfigurations();
                                 problemMessages.addAll(r.getAllProblemMessages());
-                                maybeRetrieve(conf.md, confs);
+                                maybeRetrieve(md, confs);
 
                                 break;
                             }
                         }
                     } else {
                         Message.info("\n\nIVYDE: calling resolve on " + conf.ivyXmlPath + "\n");
-                        ResolveReport report = ivy.resolve(conf.md, new ResolveOptions()
+                        ResolveReport report = ivy.resolve(md, new ResolveOptions()
                                 .setConfs((String[]) conf.confs.toArray(new String[conf.confs
                                         .size()])));
                         problemMessages = report.getAllProblemMessages();
@@ -249,7 +249,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                             return;
                         }
 
-                        maybeRetrieve(conf.md, confs);
+                        maybeRetrieve(md, confs);
                     }
 
                     warnIfDuplicates(all);
@@ -280,9 +280,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         problems.append(msg).append("\n");
                     }
                     status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                            "Impossible to resolve dependencies of "
-                                    + conf.md.getModuleRevisionId() + ":\n" + problems
-                                    + "\nSee IvyConsole for further details", null);
+                            "Impossible to resolve dependencies of " + md.getModuleRevisionId()
+                                    + ":\n" + problems + "\nSee IvyConsole for further details",
+                            null);
                     return;
                 }
 

@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * path: org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER? ivyXmlPath=ivy.xml &confs=default
@@ -72,8 +73,6 @@ public class IvyClasspathContainerConfiguration {
     String retrievePattern;
 
     boolean alphaOrder;
-
-    ModuleDescriptor md;
 
     /**
      * Constructor
@@ -362,21 +361,48 @@ public class IvyClasspathContainerConfiguration {
         return IvyClasspathUtil.split(values);
     }
 
-    public void resolveModuleDescriptor() throws ParseException, MalformedURLException, IOException {
-        md = null;
-        URL url;
+    File getIvyFile() {
+        File file;
         if (javaProject != null) {
-            IFile file = javaProject.getProject().getFile(ivyXmlPath);
-            url = new File(file.getLocation().toOSString()).toURL();
+            IFile f = javaProject.getProject().getFile(ivyXmlPath);
+            file = new File(f.getLocation().toOSString());
         } else {
-            url = new File(ivyXmlPath).toURL();
+            file = new File(ivyXmlPath);
         }
-        Ivy ivy = IvyPlugin.getIvy(getInheritedIvySettingsPath());
-        if (ivy == null) {
-            return;
+        return file;
+    }
+
+    public ModuleDescriptor getModuleDescriptorSafely(Ivy ivy) {
+        File file = getIvyFile();
+        try {
+            return getModuleDescriptor(ivy);
+        } catch (MalformedURLException e) {
+            MessageDialog.openWarning(IvyPlugin.getActiveWorkbenchShell(), "Incorrect path",
+                "The path to the ivy.xml file is incorrect: '" + file.getAbsolutePath()
+                        + "'. \nError:" + e.getMessage());
+            return null;
+        } catch (ParseException e) {
+            MessageDialog.openWarning(IvyPlugin.getActiveWorkbenchShell(), "Incorrect ivy file",
+                "The ivy file '" + file.getAbsolutePath() + "' could not be parsed. \nError:"
+                        + e.getMessage());
+            return null;
+        } catch (IOException e) {
+            MessageDialog.openWarning(IvyPlugin.getActiveWorkbenchShell(), "Read error",
+                "The ivy file '" + file.getAbsolutePath() + "' could not be read. \nError:"
+                        + e.getMessage());
+            return null;
         }
-        md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(), url,
-            false);
+    }
+
+    public ModuleDescriptor getModuleDescriptor(Ivy ivy) throws MalformedURLException,
+            ParseException, IOException {
+        return getModuleDescriptor(ivy, getIvyFile());
+    }
+
+    public ModuleDescriptor getModuleDescriptor(Ivy ivy, File ivyFile)
+            throws MalformedURLException, ParseException, IOException {
+        return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(),
+            ivyFile.toURL(), false);
     }
 
 }

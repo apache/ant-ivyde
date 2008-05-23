@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
@@ -117,6 +119,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private String ivyXmlError;
 
+    private ModuleDescriptor md;
+
     /**
      * Constructor
      * 
@@ -131,8 +135,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             error = "Choose an ivy file";
         } else if (ivyXmlError != null) {
             error = ivyXmlError;
-        } else if (confTableViewer.getCheckedElements().length == 0 && conf.md != null
-                && conf.md.getConfigurations().length != 0) {
+        } else if (confTableViewer.getCheckedElements().length == 0 && md != null
+                && md.getConfigurations().length != 0) {
             error = "Choose at least one configuration";
         } else {
             error = null;
@@ -312,8 +316,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         confTableViewer.setContentProvider(new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
                 resolveModuleDescriptor();
-                if (conf.md != null) {
-                    return conf.md.getConfigurations();
+                if (md != null) {
+                    return md.getConfigurations();
                 }
                 return new Configuration[0];
             }
@@ -349,8 +353,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         select.setText("<A>All</A>/<A>None</A>");
         select.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (e.text.equals("All") && conf.md != null) {
-                    confTableViewer.setCheckedElements(conf.md.getConfigurations());
+                if (e.text.equals("All") && md != null) {
+                    confTableViewer.setCheckedElements(md.getConfigurations());
                 } else {
                     confTableViewer.setCheckedElements(new Configuration[0]);
                 }
@@ -573,9 +577,15 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     void resolveModuleDescriptor() {
+        ivyXmlError = null;
+        md = null;
+        Ivy ivy = IvyPlugin.getIvy(conf.getInheritedIvySettingsPath());
+        if (ivy == null) {
+            ivyXmlError = "Error while confiuraing Ivy";
+            return;
+        }
         try {
-            ivyXmlError = null;
-            conf.resolveModuleDescriptor();
+            md = conf.getModuleDescriptor(ivy);
         } catch (MalformedURLException e) {
             ivyXmlError = "The path of the ivy.xml is not a valid URL";
         } catch (ParseException e) {
@@ -589,14 +599,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
      * @param ivyFile
      */
     private void initTableSelection() {
-        if (conf.md != null) {
-            Configuration[] configurations = conf.md.getConfigurations();
+        if (md != null) {
+            Configuration[] configurations = md.getConfigurations();
             if ("*".equals(conf.confs.get(0))) {
                 confTableViewer.setCheckedElements(configurations);
             } else {
                 for (int i = 0; i < conf.confs.size(); i++) {
-                    Configuration configuration = conf.md.getConfiguration((String) conf.confs
-                            .get(i));
+                    Configuration configuration = md.getConfiguration((String) conf.confs.get(i));
                     if (configuration != null) {
                         confTableViewer.setChecked(configuration, true);
                     }
