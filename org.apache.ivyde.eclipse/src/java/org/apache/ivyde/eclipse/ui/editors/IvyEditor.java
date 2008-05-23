@@ -34,7 +34,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -105,10 +107,19 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
     }
 
     void createPagePreview() {
-        _browser = new Browser(getContainer(), SWT.NONE);
-        _browser.setUrl(((IvyFileEditorInput) getEditorInput()).getPath().toOSString());
-        int index = addPage(_browser);
-        setPageText(index, "Preview");
+        try {
+            _browser = new Browser(getContainer(), SWT.NONE);
+            _browser.setUrl(((IvyFileEditorInput) getEditorInput()).getPath().toOSString());
+            int index = addPage(_browser);
+            setPageText(index, "Preview");
+        } catch (SWTError e) {
+            // IVYDE-10: under Linux if MOZILLA_FIVE_HOME is not set, it fails badly
+            MessageDialog.openError(IvyPlugin.getActiveWorkbenchShell(),
+                "Fail to create the preview", "The page preview could not be created :"
+                        + e.getMessage());
+            IvyPlugin.log(IStatus.ERROR,
+                "The preview page in the ivy.xml editor could not be created", e);
+        }
     }
 
     /**
@@ -137,7 +148,8 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
         IJavaProject project = JavaCore.create(file.getProject());
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
-        if (cp != null && cp.getConf().getIvyXmlPath().equals(file.getProjectRelativePath().toString())) {
+        if (cp != null
+                && cp.getConf().getIvyXmlPath().equals(file.getProjectRelativePath().toString())) {
             cp.scheduleResolve();
         }
     }
