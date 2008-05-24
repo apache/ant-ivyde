@@ -17,9 +17,8 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -202,6 +202,37 @@ public class IvyClasspathUtil {
             }
         }
         return b.toString();
+    }
+
+    /**
+     * Just a verbatim copy of the internal Eclipse function:
+     * {@link JavaDocLocations#getLibraryJavadocLocation(IClasspathEntry)}
+     * 
+     * @param entry
+     * @return
+     */
+    public static URL getLibraryJavadocLocation(IClasspathEntry entry) {
+        if (entry == null) {
+            throw new IllegalArgumentException("Entry must not be null"); //$NON-NLS-1$
+        }
+
+        int kind = entry.getEntryKind();
+        if (kind != IClasspathEntry.CPE_LIBRARY && kind != IClasspathEntry.CPE_VARIABLE) {
+            throw new IllegalArgumentException("Entry must be of kind CPE_LIBRARY or CPE_VARIABLE"); //$NON-NLS-1$
+        }
+
+        IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
+        for (int i = 0; i < extraAttributes.length; i++) {
+            IClasspathAttribute attrib = extraAttributes[i];
+            if (IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME.equals(attrib.getName())) {
+                try {
+                    return new URL(attrib.getValue());
+                } catch (MalformedURLException e) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
 }

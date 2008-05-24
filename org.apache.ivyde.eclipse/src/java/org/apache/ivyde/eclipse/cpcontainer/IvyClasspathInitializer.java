@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -103,13 +102,14 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 String entryPath = entry.getPath().toPortableString();
                 ei.setSourceAttachmentPath(containerPath, entryPath, path);
                 ei.setSourceAttachmentRootPath(containerPath, entryPath, path);
-                ei.setJavaDocLocation(containerPath, entryPath, JavaDocLocations
+                ei.setJavaDocLocation(containerPath, entryPath, IvyClasspathUtil
                         .getLibraryJavadocLocation(entry));
             }
             // force refresh of ivy classpath entry in ui thread
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(project);
+                    IvyClasspathContainer ivycp = IvyClasspathUtil
+                            .getIvyClasspathContainer(project);
                     if (ivycp != null) {
                         ivycp.scheduleRefresh(true);
                     }
