@@ -60,6 +60,7 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -274,15 +275,14 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 }
 
                 if (!problemMessages.isEmpty()) {
-                    StringBuffer problems = new StringBuffer();
-                    for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
-                        String msg = (String) iter.next();
-                        problems.append(msg).append("\n");
-                    }
-                    status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                            "Impossible to resolve dependencies of " + md.getModuleRevisionId()
-                                    + ":\n" + problems + "\nSee IvyConsole for further details",
+                    MultiStatus multiStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
+                            "Impossible to resolve dependencies of " + md.getModuleRevisionId(),
                             null);
+                    for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
+                        multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, (String) iter
+                                .next()));
+                    }
+                    status[0] = multiStatus;
                     return;
                 }
 

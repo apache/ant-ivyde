@@ -6,6 +6,7 @@
 - NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevée) 
 - NEW: Order alphabetically the entries in the class path container (IVYDE-69) (thanks to Nicolas Lalevée)
 
+- IMPROVE: The dialog box opened for resolve failure should show the status message on several lines (IVYDE-95)
 - IMPROVE: Recognize more source and javadoc artifacts names (IVYDE-66) (thanks to Nicolas Lalevée)
 - IMPROVE: Use Ivy Bundle instead of packaging ivy.jar in IvyDE bundle (IVYDE-67)
 - IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
