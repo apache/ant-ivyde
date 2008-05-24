@@ -358,7 +358,9 @@ public class IvyPlugin extends AbstractUIPlugin {
                 }
             }
             return ic.ivy;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            // catching Throwable in case of class path errors, some NoClassDefFoundError can be
+            // raised (IVYDE-85)
             MessageDialog
                     .openWarning(
                         getActiveWorkbenchShell(),

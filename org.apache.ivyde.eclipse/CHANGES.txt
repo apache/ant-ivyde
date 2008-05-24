@@ -13,6 +13,7 @@
 - IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevée) 
 - IMPROVE: Add new target to build.xml to build the plugin with Ant (IVYDE-88)
 
+- FIX: On classpath issues the user is not notified (IVYDE-85)
 - FIX: Loading config causes BuildException and eclipse freaks out (IVYDE-79)
 - FIX: NPE that break eclipse: the Java project becomes empty (IVYDE-84)
 - FIX: IvyDE is dependant on environment variable MOZILLA_FIVE_HOME (IVYDE-10)
