@@ -31,7 +31,7 @@ This page describes how to build the IvyDE plugin from the source. The build is 
 
 <h2>Eclipse installation</h2>
 
-You need first an Eclipse install. We will refer to the eclipse installation path in the documentation as $ECLIPSE_HOME. In that $ECLIPSE_HOME folder you should have the plugins and features folders. The current build have been successfully tested with:
+You need first an Eclipse install which contains the PDE plugins (by default included in the "SDK" and "Classic" versions). We will refer to the eclipse installation path in the documentation as $ECLIPSE_HOME. In that $ECLIPSE_HOME folder you should have the plugins and features folders. The current build have been successfully tested with:
 <ul>
 <li>Eclipse 3.2 under Linux</li>
 <li>Eclipse 3.3.1 under Linux and Windows</li>
@@ -43,6 +43,7 @@ If it does work for your unlisted configuration, please send us an email on the 
 The IvyDE plugins depends on the Ivy 2 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build.
 
 You can get an officially released version of Ivy. Go to the <a href="http://ant.apache.org/ivy/download.html">Ivy download page</a> and get the binary distribution. You will find in the zip the jar ivy-2.X.Y-Z.jar.
+Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy will be "0.0.0". On the other hand it doesn't prevent IvyDE to runs correctly.
 
 You can also build it from the sources (from <a href="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/">subversion</a> or from the <a href="http://ant.apache.org/ivy/download.html">releases</a>). In the build/artifact folder you should then find the bundle org.apache.ivy_2.X.Y-Z.jar.
 
@@ -57,7 +58,7 @@ And go into the root folder of the sources. In that folder you should see the bu
 And run the build:
 <code>ant build -DbaseLocation=$ECLIPSE_HOME</code>
 
-The baseLocation property is mandatory: it defines the path of you Eclipse install you want to build with.
+The baseLocation property is mandatory: it defines the path of your Eclipse install you want to build with.
 
 Note that it is not recommended to have your Eclipse started when you build IvyDE. The build clean the Eclipse cache of installed plugins, so your running Eclipse might be confused.
 
