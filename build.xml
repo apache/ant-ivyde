@@ -38,6 +38,10 @@
         <property name="generateFeatureVersionSuffix" value="false" />
 	</target>
 
+    <target name="/updatesite" description="Make the feature zip package deployable in an update site">
+        <property name="outputUpdateJars" value="true" />
+	</target>
+
     <target name="all" depends="build,sources" description="Build the sources and binaries artifacts"/>
 
     <target name="eclipse-startup-check">
@@ -97,6 +101,7 @@
 	</target>
 
     <target name="build" depends="eclipse-startup-classpath,eclipse-launcher-classpath,compute-version" description="Build the plugin distribution binaries">
+        <property name="outputUpdateJars" value="false" />
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
             <arg value="-consolelog" />
@@ -109,6 +114,7 @@
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
             <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
             <sysproperty key="generateFeatureVersionSuffix" value="${generateFeatureVersionSuffix}" />
+            <sysproperty key="outputUpdateJars" value="${outputUpdateJars}" />
             <sysproperty key="build.version" value="${build.version}" />
             <sysproperty key="javacDebugInfo" value="true"/>
         </java>
