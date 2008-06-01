@@ -16,7 +16,29 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project name="ivyde" basedir="." default="build">
+<!--
+   This build script expects two properties:
+- version.qualifier : defines which version append to the version defined in the manifests.
+                      It will probably be "alpha1", "beta4", "RC1" or even "patch-4".
+- baseLocation      : the full path to the SDK version of Eclipse in order to build the binary jars.
+
+   Properties could be set in the two files :
+- build.properties       : properties shared between developers, so under version control.
+                           The version.qualifier property should be set there.
+- local.build.properties : properties handled by developers, ignored by subversion.
+                           The baseLocation property should be set there.
+-->
+<project name="ivyde" basedir="." default="all">
+
+    <property file="local.build.properties" />
+    <property file="build.properties" />
+
+    <target name="/release" description="Make the build artifacts tagged with the release version">
+        <property name="forceContextQualifier" value="${version.qualifier}" />
+        <property name="generateFeatureVersionSuffix" value="false" />
+	</target>
+
+    <target name="all" depends="build,sources" description="Build the sources and binaries artifacts"/>
 
     <target name="eclipse-startup-check">
         <fail message="An Eclipse install is needed to run the build. Set your Eclipse install dir into the baseLocation property." unless="baseLocation" />
@@ -56,8 +78,25 @@
         <property name="eclipse.classpath" value="${equinox.launcher.jar.location}" />
     </target>
 
-    <target name="build" depends="eclipse-startup-classpath,eclipse-launcher-classpath">
-        <tstamp />
+    <target name="timestamp">
+	    <tstamp />
+	</target>
+
+    <target name="compute-version" depends="timestamp">
+        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}"/>
+        <property name="generateFeatureVersionSuffix" value="true" />
+        <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
+            <filterchain>
+                <linecontainsregexp>
+                    <regexp pattern="Bundle-Version:.*"/>
+                </linecontainsregexp>
+                <replaceregex pattern="Bundle-Version: (.*)qualifier" replace="\1${forceContextQualifier}"/>
+                <striplinebreaks/>
+            </filterchain>
+        </loadfile>
+	</target>
+
+    <target name="build" depends="eclipse-startup-classpath,eclipse-launcher-classpath,compute-version" description="Build the plugin distribution binaries">
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
             <arg value="-consolelog" />
@@ -68,13 +107,45 @@
             <sysproperty key="buildDirectory" path="${basedir}/work" />
             <sysproperty key="DSTAMP" value="${DSTAMP}" />
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
+            <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
+            <sysproperty key="generateFeatureVersionSuffix" value="${generateFeatureVersionSuffix}" />
+            <sysproperty key="build.version" value="${build.version}" />
             <sysproperty key="javacDebugInfo" value="true"/>
         </java>
         <echo>
 Zip archive can be found here:
-  ${basedir}/work/${DSTAMP}${TSTAMP}/org.apache.ivyde.feature-${DSTAMP}${TSTAMP}.zip
+  ${basedir}/work/${build.version}/org.apache.ivyde.feature-${build.version}.zip
         </echo>
     </target>
+
+    <target name="sources" depends="compute-version" description="Create source archive files">
+    	<mkdir dir="${basedir}/work/${build.version}"/>
+        <jar destfile="${basedir}/work/${build.version}/apache-ivyde-sources-${build.version}.jar">
+            <manifest>
+                <attribute name="Specification-Title" value="Apache IvyDE sources" />
+                <attribute name="Specification-Version" value="${build.version}" />
+                <attribute name="Specification-Vendor" value="Apache Software Foundation" />
+            </manifest>
+            <fileset dir=".">
+	            <include name="build.xml" />
+                <include name="builder/**" />
+                <include name="org.apache.ivyde.eclipse/plugin.xml"/>
+                <include name="org.apache.ivyde.eclipse/build.properties"/>
+                <include name="org.apache.ivyde.eclipse/**/*.java"/>
+                <include name="org.apache.ivyde.eclipse/icons/**"/>
+                <include name="org.apache.ivyde.eclipse/META_INF/**"/>
+                <include name="org.apache.ivyde.eclipse/CHANGES.txt"/>
+                <include name="org.apache.ivyde.eclipse/LICENCE.txt"/>
+                <include name="org.apache.ivyde.eclipse/.project"/>
+                <include name="org.apache.ivyde.eclipse/.classpath"/>
+                <include name="org.apache.ivyde.eclipse/.settings/**"/>
+                <include name="org.apache.ivyde.feature/feature.xml"/>
+                <include name="org.apache.ivyde.feature/build.properties"/>
+                <include name="org.apache.ivyde.feature/.project"/>
+                <include name="org.apache.ivyde.feature/.classpath"/>
+	        </fileset>
+        </jar>
+	</target>
 
     <target name="clean">
         <delete dir="${basedir}/work" />
