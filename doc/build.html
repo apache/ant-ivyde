@@ -34,7 +34,7 @@ This page describes how to build the IvyDE plugin from the source. The build is 
 You need first an Eclipse install which contains the PDE plugins (by default included in the "SDK" and "Classic" versions). We will refer to the eclipse installation path in the documentation as $ECLIPSE_HOME. In that $ECLIPSE_HOME folder you should have the plugins and features folders. The current build have been successfully tested with:
 <ul>
 <li>Eclipse 3.2 under Linux</li>
-<li>Eclipse 3.3.1 under Linux and Windows</li>
+<li>Eclipse 3.3 under Linux, Windows and MacOS</li>
 <li>Eclipse 3.4M5 under Linux</li>
 </ul>
 If it does work for your unlisted configuration, please send us an email on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev mailing list</a>.
@@ -43,12 +43,13 @@ If it does work for your unlisted configuration, please send us an email on the 
 The IvyDE plugins depends on the Ivy 2 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build.
 
 You can get an officially released version of Ivy. Go to the <a href="http://ant.apache.org/ivy/download.html">Ivy download page</a> and get the binary distribution. You will find in the zip the jar ivy-2.X.Y-Z.jar.
-Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy will be "0.0.0". On the other hand it doesn't prevent IvyDE to runs correctly.
 
 You can also build it from the sources (from <a href="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/">subversion</a> or from the <a href="http://ant.apache.org/ivy/download.html">releases</a>). In the build/artifact folder you should then find the bundle org.apache.ivy_2.X.Y-Z.jar.
 
 Actually every Ivy jar is an OSGi bundle. So just copy it in your Eclipse install:
 <code>cp XXXXXX.jar $ECLIPSE_HOME/plugins/org.apache.ivy_2.X.Y-Z.jar</code>
+
+Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy will be "0.0.0" for every version older than the 2.0.0-RC1. So when the Eclipse build system will create the feature zip, there will be an org.apache.ivy_0.0.0.jar. Actually this will be the exact same jar you put into the Eclipse install. On the other hand it doesn't prevent IvyDE to runs correctly.
 
 <h1>Building</h1>
 
@@ -58,18 +59,18 @@ And go into the root folder of the sources. In that folder you should see the bu
 And run the build:
 <code>ant build -DbaseLocation=$ECLIPSE_HOME</code>
 
-The baseLocation property is mandatory: it defines the path of your Eclipse install you want to build with.
+The baseLocation property is mandatory: it defines the path of your Eclipse install you want to build with. You can put this property in your local.build.properties so you don't have to specify it each time you run the build. The file local.build.properties have to be next to the build.xml.
 
-Note that it is not recommended to have your Eclipse started when you build IvyDE. The build clean the Eclipse cache of installed plugins, so your running Eclipse might be confused.
+Note that it is not recommended to have your Eclipse started when you build IvyDE. The build clean the Eclipse cache of installed plugins, so a running Eclipse might be confused.
 
-Then in the created directory "work" you will find a timestamped directory (something like 200804171513) in which you will find the zip archive ready to be unzipped in an Eclipse install.
+Then in the created directory "work" you will find a directory (something like 2.0.0.alpha1-200804171513) in which you will find the zip archive ready to be unzipped in an Eclipse install.
 
 <h1>Install</h1>
 
-After a successful build you should have a zip file at work/$TIMESTAMP/org.apache.ivyde.feature-$TIMESTAMP.zip. The zip file contains an "eclipse" directory, so you probably cannot unzip it directly as your Eclipse install directory may not be "eclipse". So here would be the process:
+After a successful build you should have a zip file at work/$VERSION/org.apache.ivyde.feature-$VERSION.zip. The zip file contains the "plugins" and "features" folders ready to be unzipped in an Eclipse install. So here is the process:
 <code>
-unzip work/$TIMESTAMP/org.apache.ivyde.feature-$TIMESTAMP.zip -d /tmp
-cp -r /tmp/eclipse/* $ECLIPSE_HOME
+cd $ECLIPSE_HOME
+unzip ...../work/$VERSION/org.apache.ivyde.feature-$VERSION.zip
 </code>
 
 Then start your Eclipse and enjoy !
