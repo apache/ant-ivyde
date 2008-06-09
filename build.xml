@@ -33,16 +33,24 @@
     <property file="local.build.properties" />
     <property file="build.properties" />
 
+    <property name="work.dir" value="${basedir}/work"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <property name="forceContextQualifier" value="${version.qualifier}" />
         <property name="generateFeatureVersionSuffix" value="false" />
-	</target>
+    </target>
 
     <target name="/updatesite" description="Make the feature zip package deployable in an update site">
         <property name="outputUpdateJars" value="true" />
-	</target>
+    </target>
 
     <target name="all" depends="build,sources" description="Build the sources and binaries artifacts"/>
+
+    <target name="clean" description="Remove every build artifacts">
+        <delete dir="${work.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
 
     <target name="eclipse-startup-check">
         <fail message="An Eclipse install is needed to run the build. Set your Eclipse install dir into the baseLocation property." unless="baseLocation" />
@@ -63,9 +71,9 @@
                 <sort>
                     <fileset dir="${baseLocation}/plugins" includes="**/org.eclipse.equinox.launcher_*.jar" />
                     <!-- Seems the default order is oldest > newest so we must reverse it.
-	                   The 'reverse' and 'date' comparators are in the internal antlib
-	                   org.apache.tools.ant.types.resources.comparators.
-	                -->
+                       The 'reverse' and 'date' comparators are in the internal antlib
+                       org.apache.tools.ant.types.resources.comparators.
+                    -->
                     <reverse xmlns="antlib:org.apache.tools.ant.types.resources.comparators">
                         <!-- 'date' inherits 'reverse's namespace -->
                         <date />
@@ -75,18 +83,15 @@
         </path>
 
         <!-- turn the path into a property -->
-        <property name="equinox.launcher.jar.location" refid="newest.equinox.launcher.path.id" />
-        <!-- you can now reference the jar through the property ${equinox.launcher.jar.location} -->
-        <echo message="Using equinox launcher jar: ${equinox.launcher.jar.location}" />
-
-        <property name="eclipse.classpath" value="${equinox.launcher.jar.location}" />
+        <property name="eclipse.classpath" refid="newest.equinox.launcher.path.id" />
     </target>
 
-    <target name="timestamp">
-	    <tstamp />
-	</target>
+    <target name="eclipse-classpath" depends="eclipse-startup-classpath,eclipse-launcher-classpath">
+        <echo message="Using equinox launcher jar: ${eclipse.classpath}" />
+    </target>
 
-    <target name="compute-version" depends="timestamp">
+    <target name="compute-version">
+        <tstamp />
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}"/>
         <property name="generateFeatureVersionSuffix" value="true" />
         <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
@@ -98,9 +103,10 @@
                 <striplinebreaks/>
             </filterchain>
         </loadfile>
-	</target>
+        <echo message="Building version ${build.version}" />
+    </target>
 
-    <target name="build" depends="eclipse-startup-classpath,eclipse-launcher-classpath,compute-version" description="Build the plugin distribution binaries">
+    <target name="build" depends="eclipse-classpath,compute-version" description="Build the plugin distribution binaries">
         <property name="outputUpdateJars" value="false" />
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
@@ -109,7 +115,7 @@
             <sysproperty key="baseLocation" value="${baseLocation}"/>
             <sysproperty key="builder" path="${basedir}/builder/component"/>
             <sysproperty key="mapsPath" path="${basedir}/builder/maps"/>
-            <sysproperty key="buildDirectory" path="${basedir}/work" />
+            <sysproperty key="buildDirectory" path="${work.dir}" />
             <sysproperty key="DSTAMP" value="${DSTAMP}" />
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
             <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
@@ -118,22 +124,21 @@
             <sysproperty key="build.version" value="${build.version}" />
             <sysproperty key="javacDebugInfo" value="true"/>
         </java>
-        <echo>
-Zip archive can be found here:
-  ${basedir}/work/${build.version}/org.apache.ivyde.feature-${build.version}.zip
-        </echo>
+        <mkdir dir="${dist.dir}"/>
+        <move file="${work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" todir="${dist.dir}"/>
     </target>
 
     <target name="sources" depends="compute-version" description="Create source archive files">
-    	<mkdir dir="${basedir}/work/${build.version}"/>
-        <jar destfile="${basedir}/work/${build.version}/apache-ivyde-sources-${build.version}.jar">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.jar">
             <manifest>
                 <attribute name="Specification-Title" value="Apache IvyDE sources" />
                 <attribute name="Specification-Version" value="${build.version}" />
                 <attribute name="Specification-Vendor" value="Apache Software Foundation" />
             </manifest>
-            <fileset dir=".">
-	            <include name="build.xml" />
+            <fileset dir="${basedir}">
+                <include name="build.xml" />
+                <include name="build.properties" />
                 <include name="builder/**" />
                 <include name="org.apache.ivyde.eclipse/plugin.xml"/>
                 <include name="org.apache.ivyde.eclipse/build.properties"/>
@@ -141,19 +146,39 @@ Zip archive can be found here:
                 <include name="org.apache.ivyde.eclipse/icons/**"/>
                 <include name="org.apache.ivyde.eclipse/META_INF/**"/>
                 <include name="org.apache.ivyde.eclipse/CHANGES.txt"/>
-                <include name="org.apache.ivyde.eclipse/LICENCE.txt"/>
                 <include name="org.apache.ivyde.eclipse/.project"/>
                 <include name="org.apache.ivyde.eclipse/.classpath"/>
                 <include name="org.apache.ivyde.eclipse/.settings/**"/>
                 <include name="org.apache.ivyde.feature/feature.xml"/>
                 <include name="org.apache.ivyde.feature/build.properties"/>
                 <include name="org.apache.ivyde.feature/.project"/>
-                <include name="org.apache.ivyde.feature/.classpath"/>
-	        </fileset>
+                <include name="org.apache.ivyde.feature/LICENCE"/>
+                <include name="org.apache.ivyde.feature/NOTICE"/>
+            </fileset>
         </jar>
-	</target>
+    </target>
 
-    <target name="clean">
-        <delete dir="${basedir}/work" />
+    <target name="build-updatesite" depends="/updatesite,build" description="Build the distribution binaries and put them into the update-site">
+        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="updatesite" />
+    </target>
+
+    <target name="optimize-updatesite" depends="pack-jars,build-digest" description="Optimize the update site" />
+
+    <target name="pack-jars" depends="eclipse-classpath">
+        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <arg line="-application org.eclipse.update.core.siteOptimizer"/>
+            <arg line="-jarProcessor -verbose -processAll -pack"/>
+            <arg line="-outputDir updatesite/plugins"/>
+            <arg line="updatesite/plugins"/>
+        </java>
+    </target>
+
+    <target name="build-digest" depends="eclipse-classpath">
+        <!-- see http://wiki.eclipse.org/Update_Site_Optimization -->
+        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <arg line="-application org.eclipse.update.core.siteOptimizer"/>
+            <arg line="-digestBuilder -digestOutputDir=${basedir}/updatesite"/>
+            <arg line="-siteXML=${basedir}/updatesite/site.xml"/>
+        </java>
     </target>
 </project>
