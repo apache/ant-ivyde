@@ -35,7 +35,6 @@
 
     <property name="work.dir" value="${basedir}/work"/>
     <property name="dist.dir" value="${basedir}/dist"/>
-    <property name="updatesite.dir" value="${basedir}/updatesite"/>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <property name="forceContextQualifier" value="${version.qualifier}" />
@@ -131,13 +130,9 @@
 
     <target name="sources" depends="compute-version" description="Create source archive files">
         <mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.jar">
-            <manifest>
-                <attribute name="Specification-Title" value="Apache IvyDE sources" />
-                <attribute name="Specification-Version" value="${build.version}" />
-                <attribute name="Specification-Vendor" value="Apache Software Foundation" />
-            </manifest>
+        <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip">
             <fileset dir="${basedir}">
+                <include name="site.xml" />
                 <include name="build.xml" />
                 <include name="build.properties" />
                 <include name="builder/**" />
@@ -156,7 +151,7 @@
                 <include name="org.apache.ivyde.feature/LICENCE"/>
                 <include name="org.apache.ivyde.feature/NOTICE"/>
             </fileset>
-        </jar>
+        </zip>
     </target>
 
     <target name="updatesite:build" depends="/updatesite,build" description="Build the distribution binaries and put them into the update-site">
@@ -197,7 +192,7 @@
                 <include name="updatesite/feature/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
-                <include name="apache-ivyde-sources-*.jar" />
+                <include name="apache-ivyde-sources-*.zip" />
             </fileset>
         </checksum>
         <checksum algorithm="SHA" fileext=".sha1">
@@ -212,7 +207,7 @@
                 <include name="updatesite/feature/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
-                <include name="apache-ivyde-sources-*.jar" />
+                <include name="apache-ivyde-sources-*.zip" />
             </fileset>
         </checksum>
     </target>
