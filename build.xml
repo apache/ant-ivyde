@@ -195,7 +195,7 @@
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
         </checksum>
-        <checksum algorithm="SHA" fileext=".sha1">
+        <checksum algorithm="SHA" fileext=".sha">
             <fileset dir="${dist.dir}">
                 <include name="updatesite/plugins/org.apache.ivyde.*.jar" />
                 <include name="updatesite/plugins/org.apache.ivyde.*.jar.pack.gz" />
