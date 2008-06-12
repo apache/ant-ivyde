@@ -17,10 +17,14 @@
    specific language governing permissions and limitations
    under the License.    
 -->
+<!--
+  publishing this files means copying it into the ivyde website at:
+    svn.apache.org/repos/asf/ant/ivy/site/ivyde/updatesite/site.xml
+-->
 <site pack200="true"
       digestURL="http://www.apache.org/dist/ant/ivy/ivyde/updatesite/digest.zip/"
-      mirrorsURL="http://www.apache.org/ant/ivy/ivyde/mirrors-support/ivyde-eclipse-update--xml.cgi">
-   <description url="http://www.apache.org/dist/ant/ivy/ivyde/updatesite">
+      mirrorsURL="http://www.apache.org/ant/ivy/ivyde/updatesite/eclipse-update--xml.cgi">
+   <description url="http://www.apache.org/ant/ivy/ivyde/updatesite">
       Eclipse update site for Apache IvyDE.
    </description>
 

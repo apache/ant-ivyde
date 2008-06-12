@@ -28,13 +28,14 @@
 - local.build.properties : properties handled by developers, ignored by subversion.
                            The baseLocation property should be set there.
 -->
-<project name="ivyde" basedir="." default="all">
+<project name="ivyde" basedir="." default="build">
 
     <property file="local.build.properties" />
     <property file="build.properties" />
 
     <property name="work.dir" value="${basedir}/work"/>
     <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="updatesite.dir" value="${basedir}/updatesite"/>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <property name="forceContextQualifier" value="${version.qualifier}" />
@@ -45,7 +46,7 @@
         <property name="outputUpdateJars" value="true" />
     </target>
 
-    <target name="all" depends="build,sources" description="Build the sources and binaries artifacts"/>
+    <target name="dist" depends="/updatesite,build,sources,updatesite:build,updatesite:optimize,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -158,27 +159,62 @@
         </jar>
     </target>
 
-    <target name="build-updatesite" depends="/updatesite,build" description="Build the distribution binaries and put them into the update-site">
-        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="updatesite" />
+    <target name="updatesite:build" depends="/updatesite,build" description="Build the distribution binaries and put them into the update-site">
+        <mkdir dir="${dist.dir}/updatesite" />
+        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.dir}/updatesite" />
     </target>
 
-    <target name="optimize-updatesite" depends="pack-jars,build-digest" description="Optimize the update site" />
+    <target name="updatesite:optimize" depends="updatesite:pack-jars,updatesite:build-digest" description="Optimize the update site" />
 
-    <target name="pack-jars" depends="eclipse-classpath">
+    <target name="updatesite:pack-jars" depends="eclipse-classpath">
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg line="-application org.eclipse.update.core.siteOptimizer"/>
             <arg line="-jarProcessor -verbose -processAll -pack"/>
-            <arg line="-outputDir updatesite/plugins"/>
-            <arg line="updatesite/plugins"/>
+            <arg line="-outputDir ${dist.dir}/updatesite/plugins"/>
+            <arg line="${dist.dir}/updatesite/plugins"/>
         </java>
     </target>
 
-    <target name="build-digest" depends="eclipse-classpath">
+    <target name="updatesite:build-digest" depends="eclipse-classpath">
         <!-- see http://wiki.eclipse.org/Update_Site_Optimization -->
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg line="-application org.eclipse.update.core.siteOptimizer"/>
-            <arg line="-digestBuilder -digestOutputDir=${basedir}/updatesite"/>
-            <arg line="-siteXML=${basedir}/updatesite/site.xml"/>
+            <arg line="-digestBuilder -digestOutputDir=${dist.dir}/updatesite"/>
+            <arg line="-siteXML=site.xml"/>
         </java>
     </target>
+
+    <target name="checksum" description="Compute the checksum for every artifact to distribute">
+        <checksum algorithm="MD5" fileext=".md5">
+            <fileset dir="${dist.dir}">
+                <include name="updatesite/plugins/org.apache.ivyde.*.jar" />
+                <include name="updatesite/plugins/org.apache.ivyde.*.jar.pack.gz" />
+                <include name="updatesite/feature/org.apache.ivyde.*.jar" />
+                <include name="updatesite/feature/org.apache.ivyde.*.jar.pack.gz" />
+                <include name="updatesite/plugins/org.apache.ivy*.jar" />
+                <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/feature/org.apache.ivy*.jar" />
+                <include name="updatesite/feature/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/digest.zip" />
+                <include name="org.apache.ivyde.feature-*.zip" />
+                <include name="apache-ivyde-sources-*.jar" />
+            </fileset>
+        </checksum>
+        <checksum algorithm="SHA" fileext=".sha1">
+            <fileset dir="${dist.dir}">
+                <include name="updatesite/plugins/org.apache.ivyde.*.jar" />
+                <include name="updatesite/plugins/org.apache.ivyde.*.jar.pack.gz" />
+                <include name="updatesite/feature/org.apache.ivyde.*.jar" />
+                <include name="updatesite/feature/org.apache.ivyde.*.jar.pack.gz" />
+                <include name="updatesite/plugins/org.apache.ivy*.jar" />
+                <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/feature/org.apache.ivy*.jar" />
+                <include name="updatesite/feature/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/digest.zip" />
+                <include name="org.apache.ivyde.feature-*.zip" />
+                <include name="apache-ivyde-sources-*.jar" />
+            </fileset>
+        </checksum>
+    </target>
+
 </project>
