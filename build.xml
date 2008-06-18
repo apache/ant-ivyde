@@ -182,14 +182,10 @@
     <target name="checksum" description="Compute the checksum for every artifact to distribute">
         <checksum algorithm="MD5" fileext=".md5">
             <fileset dir="${dist.dir}">
-                <include name="updatesite/plugins/org.apache.ivyde.*.jar" />
-                <include name="updatesite/plugins/org.apache.ivyde.*.jar.pack.gz" />
-                <include name="updatesite/feature/org.apache.ivyde.*.jar" />
-                <include name="updatesite/feature/org.apache.ivyde.*.jar.pack.gz" />
                 <include name="updatesite/plugins/org.apache.ivy*.jar" />
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/feature/org.apache.ivy*.jar" />
-                <include name="updatesite/feature/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/features/org.apache.ivy*.jar" />
+                <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
@@ -197,14 +193,10 @@
         </checksum>
         <checksum algorithm="SHA" fileext=".sha">
             <fileset dir="${dist.dir}">
-                <include name="updatesite/plugins/org.apache.ivyde.*.jar" />
-                <include name="updatesite/plugins/org.apache.ivyde.*.jar.pack.gz" />
-                <include name="updatesite/feature/org.apache.ivyde.*.jar" />
-                <include name="updatesite/feature/org.apache.ivyde.*.jar.pack.gz" />
                 <include name="updatesite/plugins/org.apache.ivy*.jar" />
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/feature/org.apache.ivy*.jar" />
-                <include name="updatesite/feature/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/features/org.apache.ivy*.jar" />
+                <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
