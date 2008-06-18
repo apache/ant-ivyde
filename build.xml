@@ -206,7 +206,7 @@
         </checksum>
     </target>
 
-    <target name="build-ivy-feature">
+    <target name="build-ivy-feature" description="Build the feature of Ivy">
         <mkdir dir="${dist.dir}/updatesite/features" />
         <jar destfile="${dist.dir}/updatesite/features/org.apache.ivy.feature_2.0.0.beta2.jar">
             <fileset dir="org.apache.ivy.feature">
@@ -218,7 +218,7 @@
         </jar>
     </target>
 
-    <target name="copy-ivy-bundle">
+    <target name="copy-ivy-bundle" description="Put the Ivy bundle into the update site">
         <mkdir dir="${dist.dir}/updatesite/plugins" />
         <copy file="${baseLocation}/plugins/org.apache.ivy_2.0.0.beta2.jar" tofile="${dist.dir}/updatesite/plugins/org.apache.ivy_2.0.0.beta2.jar" />
     </target>
