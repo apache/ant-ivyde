@@ -32,5 +32,9 @@
       <category name="ivyde"/>
    </feature>
 
+   <feature url="features/org.apache.ivy.feature_2.0.0.beta2.jar" id="org.apache.ivy.feature" version="2.0.0.beta2">
+      <category name="ivyde"/>
+   </feature>
+
    <category-def name="ivyde" label="Apache IvyDE Eclipse plugins"/>
 </site>

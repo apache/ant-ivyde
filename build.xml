@@ -45,7 +45,7 @@
         <property name="outputUpdateJars" value="true" />
     </target>
 
-    <target name="dist" depends="/updatesite,build,sources,updatesite:build,updatesite:optimize,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="build-ivy-feature,copy-ivy-bundle,/updatesite,build,sources,updatesite:build,updatesite:optimize,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -163,6 +163,7 @@
 
     <target name="updatesite:pack-jars" depends="eclipse-classpath">
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <arg value="-consolelog" />
             <arg line="-application org.eclipse.update.core.siteOptimizer"/>
             <arg line="-jarProcessor -verbose -processAll -pack"/>
             <arg line="-outputDir ${dist.dir}/updatesite/plugins"/>
@@ -171,11 +172,14 @@
     </target>
 
     <target name="updatesite:build-digest" depends="eclipse-classpath">
+        <mkdir dir="${dist.dir}/updatesite/" />
+        <copy file="${basedir}/site.xml" tofile="${dist.dir}/updatesite/site.xml" />
         <!-- see http://wiki.eclipse.org/Update_Site_Optimization -->
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <arg value="-consolelog" />
             <arg line="-application org.eclipse.update.core.siteOptimizer"/>
-            <arg line="-digestBuilder -digestOutputDir=${dist.dir}/updatesite"/>
-            <arg line="-siteXML=site.xml"/>
+            <arg line="-digestBuilder -digestOutputDir=${dist.dir}/updatesite/"/>
+            <arg line="-siteXML=${dist.dir}/updatesite/site.xml"/>
         </java>
     </target>
 
@@ -186,7 +190,6 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
@@ -197,11 +200,27 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
         </checksum>
+    </target>
+
+    <target name="build-ivy-feature">
+        <mkdir dir="${dist.dir}/updatesite/features" />
+        <jar destfile="${dist.dir}/updatesite/features/org.apache.ivy.feature_2.0.0.beta2.jar">
+            <fileset dir="org.apache.ivy.feature">
+                <include name="feature.properties" />
+                <include name="feature.xml"/>
+                <include name="LICENCE"/>
+                <include name="NOTICE"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="copy-ivy-bundle">
+        <mkdir dir="${dist.dir}/updatesite/plugins" />
+        <copy file="${baseLocation}/plugins/org.apache.ivy_2.0.0.beta2.jar" tofile="${dist.dir}/updatesite/plugins/org.apache.ivy_2.0.0.beta2.jar" />
     </target>
 
 </project>
