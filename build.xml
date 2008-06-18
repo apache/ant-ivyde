@@ -223,4 +223,17 @@
         <copy file="${baseLocation}/plugins/org.apache.ivy_2.0.0.beta2.jar" tofile="${dist.dir}/updatesite/plugins/org.apache.ivy_2.0.0.beta2.jar" />
     </target>
 
+    <!-- due to a bug in the packaging of Ivy, some repackaging is needed (IVY-828,IVY-802) -->
+    <target name="install-ivy">
+        <get src="http://apache.org/dist/ant/ivy/2.0.0-beta2/apache-ivy-2.0.0-beta2-bin.zip" usetimestamp="true" dest="apache-ivy-2.0.0-beta2-bin.zip" />
+        <mkdir dir="work-ivy/orig" />
+        <unzip overwrite="true" src="apache-ivy-2.0.0-beta2-bin.zip" dest="ivy-work/orig" />
+        <unzip overwrite="true" src="ivy-work/orig/apache-ivy-2.0.0-beta2/ivy-2.0.0-beta2.jar" dest="ivy-work/unpacked" />
+        <replaceregexp file="ivy-work/unpacked/META-INF/MANIFEST.MF" match="Bundle-Version: 0\.0\.0" replace="Bundle-Version: 2.0.0.beta2" byline="true"/>
+        <jar destfile="${baseLocation}/plugins/org.apache.ivy_2.0.0.beta2.jar" manifest="ivy-work/unpacked/META-INF/MANIFEST.MF">
+            <fileset dir="ivy-work/unpacked/" />
+        </jar>
+        <delete dir="work-ivy" />
+    </target>
+
 </project>
