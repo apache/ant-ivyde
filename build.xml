@@ -136,6 +136,12 @@
                 <include name="build.xml" />
                 <include name="build.properties" />
                 <include name="builder/**" />
+                <include name="org.apache.ivy.feature/build.properties" />
+                <include name="org.apache.ivy.feature/feature.properties" />
+                <include name="org.apache.ivy.feature/feature.xml" />
+                <include name="org.apache.ivy.feature/LICENSE" />
+                <include name="org.apache.ivy.feature/NOTICE" />
+                <include name="org.apache.ivy.feature/.project"/>
                 <include name="org.apache.ivyde.eclipse/plugin.xml"/>
                 <include name="org.apache.ivyde.eclipse/build.properties"/>
                 <include name="org.apache.ivyde.eclipse/**/*.java"/>
@@ -146,10 +152,13 @@
                 <include name="org.apache.ivyde.eclipse/.classpath"/>
                 <include name="org.apache.ivyde.eclipse/.settings/**"/>
                 <include name="org.apache.ivyde.feature/feature.xml"/>
+                <include name="org.apache.ivyde.feature/feature.properties" />
                 <include name="org.apache.ivyde.feature/build.properties"/>
                 <include name="org.apache.ivyde.feature/.project"/>
                 <include name="org.apache.ivyde.feature/LICENCE"/>
                 <include name="org.apache.ivyde.feature/NOTICE"/>
+                <include name="signArtifacts.sh"/>
+                <include name="verifyArtifacts.sh"/>
             </fileset>
         </zip>
     </target>
