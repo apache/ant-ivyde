@@ -146,7 +146,7 @@
                 <include name="org.apache.ivyde.eclipse/build.properties"/>
                 <include name="org.apache.ivyde.eclipse/**/*.java"/>
                 <include name="org.apache.ivyde.eclipse/icons/**"/>
-                <include name="org.apache.ivyde.eclipse/META_INF/**"/>
+                <include name="org.apache.ivyde.eclipse/META-INF/**"/>
                 <include name="org.apache.ivyde.eclipse/CHANGES.txt"/>
                 <include name="org.apache.ivyde.eclipse/.project"/>
                 <include name="org.apache.ivyde.eclipse/.classpath"/>
