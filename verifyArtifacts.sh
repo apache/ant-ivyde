@@ -21,5 +21,6 @@ for i in dist/updatesite/features/org.apache.ivy*.jar; do gpg --verify $i.asc; d
 for i in dist/updatesite/plugins/org.apache.ivy*.jar;  do gpg --verify $i.asc; done
 for i in dist/updatesite/plugins/org.apache.ivy*.jar.pack.gz;  do gpg --verify $i.asc; done
 for i in dist/apache-ivyde-sources-*.zip; do gpg --verify $i.asc; done
+for i in dist/org.apache.ivy.feature-*.zip; do gpg --verify $i.asc; done
 for i in dist/org.apache.ivyde.feature-*.zip; do gpg --verify $i.asc; done
 

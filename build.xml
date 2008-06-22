@@ -45,7 +45,7 @@
         <property name="outputUpdateJars" value="true" />
     </target>
 
-    <target name="dist" depends="build-ivy-feature,copy-ivy-bundle,/updatesite,build,sources,updatesite:build,updatesite:optimize,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="build-ivy-feature-zip,/updatesite,build,sources,updatesite:build,updatesite:optimize,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -199,6 +199,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
@@ -209,6 +210,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
@@ -225,6 +227,15 @@
                 <include name="NOTICE"/>
             </fileset>
         </jar>
+    </target>
+
+    <target name="build-ivy-feature-zip" depends="copy-ivy-bundle,build-ivy-feature" description="Build the zip distribution of the Ivy feature">
+        <zip destfile="${dist.dir}/org.apache.ivy.feature-2.0.0.beta2.zip">
+            <fileset dir="${dist.dir}/updatesite/">
+                <include name="features/org.apache.ivy.feature_2.0.0.beta2.jar" />
+                <include name="plugins/org.apache.ivy_2.0.0.beta2.jar"/>
+            </fileset>
+        </zip>
     </target>
 
     <target name="copy-ivy-bundle" description="Put the Ivy bundle into the update site">
@@ -252,6 +263,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
@@ -268,6 +280,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
