@@ -40,16 +40,15 @@ You need first an Eclipse install which contains the PDE plugins (by default inc
 If it does work for your unlisted configuration, please send us an email on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev mailing list</a>.
 <h2>The Ivy bundle</h2>
 
-The IvyDE plugins depends on the Ivy 2 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build.
+The IvyDE plugins depends on the Ivy 2.0 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build.
 
-You can get an officially released version of Ivy. Go to the <a href="http://ant.apache.org/ivy/download.html">Ivy download page</a> and get the binary distribution. You will find in the zip the jar ivy-2.X.Y-Z.jar.
+You can get an officially released version of Ivy. Go to the <a href="http://ant.apache.org/ivy/download.cgi">Ivy download page</a> and get the binary distribution. You will find in the zip the jar ivy-2.X.Y-Z.jar.
+Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy is "0.0.0" for every version older than the 2.0.0-RC1. So a repackaging is needed. If you get the sources (which includes the build system), you can automatically install the repackaged 2.0.0-beta2 into you Eclipse install by running <code>ant install-ivy</code>.
 
-You can also build it from the sources (from <a href="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/">subversion</a> or from the <a href="http://ant.apache.org/ivy/download.html">releases</a>). In the build/artifact folder you should then find the bundle org.apache.ivy_2.X.Y-Z.jar.
+You can also build it from the sources (from <a href="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/">subversion</a> or from the <a href="http://ant.apache.org/ivy/download.cgi">releases</a>). In the build/artifact folder you should then find the bundle org.apache.ivy_2.X.Y-Z.jar.
 
 Actually every Ivy jar is an OSGi bundle. So just copy it in your Eclipse install:
 <code>cp XXXXXX.jar $ECLIPSE_HOME/plugins/org.apache.ivy_2.X.Y-Z.jar</code>
-
-Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy will be "0.0.0" for every version older than the 2.0.0-RC1. So when the Eclipse build system will create the feature zip, there will be an org.apache.ivy_0.0.0.jar. Actually this will be the exact same jar you put into the Eclipse install. On the other hand it doesn't prevent IvyDE to runs correctly.
 
 <h1>Building</h1>
 
