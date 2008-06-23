@@ -1,7 +1,7 @@
 				IvyDE 
 				============================================
 
-  version in svn (not yet released)
+  version 2.0.0 alpha1
 ===========================
 - NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevée) 
 - NEW: Order alphabetically the entries in the class path container (IVYDE-69) (thanks to Nicolas Lalevée)
