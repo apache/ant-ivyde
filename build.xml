@@ -199,6 +199,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
@@ -210,6 +211,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
@@ -263,6 +265,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
@@ -280,6 +283,7 @@
                 <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
                 <include name="updatesite/features/org.apache.ivy*.jar" />
                 <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
+                <include name="updatesite/digest.zip" />
                 <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
