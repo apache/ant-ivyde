@@ -56,6 +56,8 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
 
     private StringFieldEditor _pattern;
 
+    private BooleanFieldEditor _retreiveSync;
+
     public IvyPreferencePage() {
         super(GRID);
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
@@ -123,6 +125,7 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 b.addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e) {
                         _pattern.setEnabled(b.getSelection(), parent);
+                        _retreiveSync.setEnabled(b.getSelection(), parent);
                     }
                 });
             }
@@ -131,8 +134,11 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 fieldParent);
         _pattern.setEnabled(getPreferenceStore().getBoolean(PreferenceConstants.DO_RETRIEVE),
             fieldParent);
+        _retreiveSync = new BooleanFieldEditor(PreferenceConstants.RETRIEVE_SYNC,
+                "Delete old retrieved artifacts", fieldParent);
         addField(doR);
         addField(_pattern);
+        addField(_retreiveSync);
 
         new Label(fieldParent, SWT.NONE); // space
         explanation = new Label(fieldParent, SWT.NONE);

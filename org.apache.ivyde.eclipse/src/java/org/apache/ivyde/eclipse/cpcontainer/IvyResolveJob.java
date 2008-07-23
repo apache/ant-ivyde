@@ -374,7 +374,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             String pattern = conf.javaProject.getProject().getLocation().toPortableString() + "/"
                     + conf.getInheritedRetrievePattern();
             _monitor.setTaskName("retrieving dependencies in " + pattern);
-            ivy.retrieve(md.getModuleRevisionId(), pattern, new RetrieveOptions().setConfs(confs));
+            RetrieveOptions c = new RetrieveOptions().setConfs(confs);
+            c.setSync(conf.getInheritedRetrieveSync());
+            ivy.retrieve(md.getModuleRevisionId(), pattern, c);
         }
     }
 

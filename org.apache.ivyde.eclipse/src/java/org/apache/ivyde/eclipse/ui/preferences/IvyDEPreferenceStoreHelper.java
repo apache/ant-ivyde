@@ -85,6 +85,10 @@ public class IvyDEPreferenceStoreHelper {
         return prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN);
     }
 
+    public boolean getRetrieveSync() {
+        return prefStore.getBoolean(PreferenceConstants.RETRIEVE_SYNC);
+    }
+
     public boolean isAlphOrder() {
         return prefStore.getBoolean(PreferenceConstants.ALPHABETICAL_ORDER);
     }

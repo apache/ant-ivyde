@@ -72,6 +72,8 @@ public class IvyClasspathContainerConfiguration {
 
     String retrievePattern;
 
+    boolean retrieveSync = false;
+
     boolean alphaOrder;
 
     /**
@@ -174,6 +176,9 @@ public class IvyClasspathContainerConfiguration {
             } else if (parameter[0].equals("retrievePattern")) {
                 retrievePattern = value;
                 isProjectSpecific = true;
+            } else if (parameter[0].equals("retrieveSync")) {
+                retrieveSync = Boolean.valueOf(value);
+                isProjectSpecific = true;
             } else if (parameter[0].equals("alphaOrder")) {
                 // if the value is not actually "true" or "false", the Boolean class ensure to
                 // return false, so it is fine
@@ -236,6 +241,8 @@ public class IvyClasspathContainerConfiguration {
                 path.append(URLEncoder.encode(Boolean.toString(doRetrieve), "UTF-8"));
                 path.append("&retrievePattern=");
                 path.append(URLEncoder.encode(retrievePattern, "UTF-8"));
+                path.append("&retrieveSync=");
+                path.append(URLEncoder.encode(Boolean.toString(retrieveSync), "UTF-8"));
                 path.append("&alphaOrder=");
                 path.append(URLEncoder.encode(Boolean.toString(alphaOrder), "UTF-8"));
             }
@@ -334,6 +341,13 @@ public class IvyClasspathContainerConfiguration {
             return IvyPlugin.getPreferenceStoreHelper().getRetrievePattern();
         }
         return retrievePattern;
+    }
+
+    public boolean getInheritedRetrieveSync() {
+        if (ivySettingsPath == null) {
+            return IvyPlugin.getPreferenceStoreHelper().getRetrieveSync();
+        }
+        return retrieveSync;
     }
 
     public boolean isInheritedAlphaOrder() {

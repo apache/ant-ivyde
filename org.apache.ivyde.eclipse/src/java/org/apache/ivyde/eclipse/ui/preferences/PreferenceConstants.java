@@ -48,6 +48,8 @@ public class PreferenceConstants {
 
     public static final String RETRIEVE_PATTERN = "retreive.pattern";
 
+    public static final String RETRIEVE_SYNC = "retreive.sync";
+
     public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
 }

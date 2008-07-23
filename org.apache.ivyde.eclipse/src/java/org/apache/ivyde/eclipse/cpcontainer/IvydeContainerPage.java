@@ -121,6 +121,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private ModuleDescriptor md;
 
+    private Button retrieveSyncButton;
+
     /**
      * Constructor
      * 
@@ -156,6 +158,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.javadocSuffixes = IvyClasspathUtil.split(javadocSuffixesText.getText());
             conf.doRetrieve = doRetrieveButton.getSelection();
             conf.retrievePattern = retrievePatternText.getText();
+            conf.retrieveSync = retrieveSyncButton.getSelection();
             conf.alphaOrder = alphaOrderCheck.getSelection();
         } else {
             conf.ivySettingsPath = null;
@@ -493,9 +496,15 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         retrievePatternText
                 .setToolTipText("Example: lib/[conf]/[artifact].[ext]\nTo copy artifacts in folder named lib without revision by folder named like configurations");
 
+        retrieveSyncButton = new Button(configComposite, SWT.CHECK);
+        retrieveSyncButton.setText("Delete old retrieved artifacts");
+        retrieveSyncButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 2, 1));
+        retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
+
         doRetrieveButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 retrievePatternText.setEnabled(doRetrieveButton.getSelection());
+                retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
             }
         });
 
@@ -527,6 +536,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             javadocSuffixesText.setText(IvyClasspathUtil.concat(conf.javadocSuffixes));
             doRetrieveButton.setSelection(conf.doRetrieve);
             retrievePatternText.setText(conf.retrievePattern);
+            retrieveSyncButton.setSelection(conf.retrieveSync);
             alphaOrderCheck.setSelection(conf.alphaOrder);
         } else {
             projectSpecificButton.setSelection(false);
@@ -539,6 +549,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             javadocSuffixesText.setText(IvyClasspathUtil.concat(helper.getJavadocSuffixes()));
             doRetrieveButton.setSelection(helper.getDoRetrieve());
             retrievePatternText.setText(helper.getRetrievePattern());
+            retrieveSyncButton.setSelection(helper.getRetrieveSync());
             alphaOrderCheck.setSelection(helper.isAlphOrder());
         }
 
@@ -557,6 +568,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         javadocSuffixesText.setEnabled(projectSpecific);
         doRetrieveButton.setEnabled(projectSpecific);
         retrievePatternText.setEnabled(doRetrieveButton.getSelection() && projectSpecific);
+        retrieveSyncButton.setEnabled(doRetrieveButton.getSelection() && projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
     }
 
