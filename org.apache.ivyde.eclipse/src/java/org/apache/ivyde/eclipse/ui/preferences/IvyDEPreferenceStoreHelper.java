@@ -40,8 +40,26 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setDefault(PreferenceConstants.JAVADOC_TYPES, "javadoc");
         prefStore.setDefault(PreferenceConstants.SOURCES_SUFFIXES, "-source,-sources,-src");
         prefStore.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, "-javadoc,-javadocs,-doc,-docs");
+
         prefStore.setDefault(PreferenceConstants.DO_RETRIEVE, false);
+        boolean b = prefStore.getBoolean(PreferenceConstants.DO_RETRIEVE_DEPRECATED);
+        if (b) {
+            // not the default value, so it has been set
+            // erase the deprecated preference and store the new one
+            prefStore.setValue(PreferenceConstants.DO_RETRIEVE_DEPRECATED, null);
+            prefStore.setValue(PreferenceConstants.DO_RETRIEVE, true);
+        }
+
         prefStore.setDefault(PreferenceConstants.RETRIEVE_PATTERN, "lib/[conf]/[artifact].[ext]");
+        String s = prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED);
+        if (s != null && s.length() != 0) {
+            // not the default value, so it has been set
+            // erase the deprecated preference and store the new one
+            prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED, null);
+            prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN, s);
+        }
+
+        prefStore.setDefault(PreferenceConstants.RETRIEVE_SYNC, false);
         prefStore.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, false);
     }
 

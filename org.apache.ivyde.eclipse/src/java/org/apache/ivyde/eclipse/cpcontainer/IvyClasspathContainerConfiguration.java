@@ -177,7 +177,7 @@ public class IvyClasspathContainerConfiguration {
                 retrievePattern = value;
                 isProjectSpecific = true;
             } else if (parameter[0].equals("retrieveSync")) {
-                retrieveSync = Boolean.valueOf(value);
+                retrieveSync = Boolean.valueOf(value).booleanValue();
                 isProjectSpecific = true;
             } else if (parameter[0].equals("alphaOrder")) {
                 // if the value is not actually "true" or "false", the Boolean class ensure to

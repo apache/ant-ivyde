@@ -111,8 +111,11 @@ public class IvyPlugin extends AbstractUIPlugin {
                             || event.getProperty() == PreferenceConstants.JAVADOC_TYPES
                             || event.getProperty() == PreferenceConstants.SOURCES_SUFFIXES
                             || event.getProperty() == PreferenceConstants.JAVADOC_SUFFIXES
+                            || event.getProperty() == PreferenceConstants.DO_RETRIEVE_DEPRECATED
+                            || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED
                             || event.getProperty() == PreferenceConstants.DO_RETRIEVE
                             || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN
+                            || event.getProperty() == PreferenceConstants.RETRIEVE_SYNC
                             || event.getProperty() == PreferenceConstants.ALPHABETICAL_ORDER) {
                         prefStoreChanged();
                     }

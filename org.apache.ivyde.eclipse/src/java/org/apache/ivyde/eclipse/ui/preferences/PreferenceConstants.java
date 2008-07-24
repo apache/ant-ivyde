@@ -44,11 +44,15 @@ public class PreferenceConstants {
 
     public static final String P_STRING = "stringPreference";
 
-    public static final String DO_RETRIEVE = "do.retreive";
+    public static final String DO_RETRIEVE_DEPRECATED = "do.retreive";
 
-    public static final String RETRIEVE_PATTERN = "retreive.pattern";
+    public static final String RETRIEVE_PATTERN_DEPRECATED = "retreive.pattern";
 
-    public static final String RETRIEVE_SYNC = "retreive.sync";
+    public static final String DO_RETRIEVE = "do.retrieve";
+
+    public static final String RETRIEVE_PATTERN = "retrieve.pattern";
+
+    public static final String RETRIEVE_SYNC = "retrieve.sync";
 
     public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
