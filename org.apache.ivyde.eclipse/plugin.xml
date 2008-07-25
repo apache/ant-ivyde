@@ -101,6 +101,14 @@
             id="org.apache.ivyde.editors.IvyEditor"
             name="Ivy Editor">
       </editor>
+      <editor
+            class="org.apache.ivyde.eclipse.ui.editors.IvySettingsEditor"
+            contributorClass="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
+            filenames="ivysettings.xml"
+            icon="icons/logo16x16.gif"
+            id="org.apache.ivyde.editors.IvySettingsEditor"
+            name="Ivy Settings Editor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

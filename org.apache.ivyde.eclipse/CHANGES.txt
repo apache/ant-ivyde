@@ -3,6 +3,8 @@
 
   next
 ==========================
+- NEW: settings files code completion support (IVYDE-22)
+
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
 
 
