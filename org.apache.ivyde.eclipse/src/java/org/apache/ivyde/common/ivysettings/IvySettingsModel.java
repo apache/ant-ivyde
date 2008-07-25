@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.common.ivysettings;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -44,15 +45,14 @@ import org.apache.ivyde.common.model.IvyModelSettings;
 import org.apache.ivyde.common.model.IvyReferenceTag;
 import org.apache.ivyde.common.model.IvyTag;
 import org.apache.ivyde.common.model.IvyTagAttribute;
-import org.eclipse.core.resources.IFile;
 
 public class IvySettingsModel extends IvyModel {
     private String loaded = null;
-    private IFile file;
+    private File file;
     private ClassLoader cl;
     private Map typedefClasses;
 
-    public IvySettingsModel(IvyModelSettings settings, IFile file) {
+    public IvySettingsModel(IvyModelSettings settings, File file) {
         super(settings);
         this.file = file;
     }

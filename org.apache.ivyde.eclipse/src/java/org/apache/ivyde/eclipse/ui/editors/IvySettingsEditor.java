@@ -85,7 +85,7 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
                 protected IvyModel newCompletionModel(IFile file) {
                     return new IvySettingsModel(
                         new EclipseIvyModelSettings(getJavaProject()),
-                        file);
+                        file.getFullPath().toFile());
                 }
             });
             xmlEditor.setFile(((IvyFileEditorInput) getEditorInput()).getFile());

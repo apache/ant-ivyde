@@ -34,7 +34,6 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivyde.common.model.IvyFile;
 import org.apache.ivyde.common.model.IvyModelSettings;
-import org.eclipse.core.resources.IFile;
 
 public class IvySettingsFile extends IvyFile {
     private static final Pattern CLASSPATH_URL_PATTERN = Pattern.compile("<[\\s]*classpath[^>]+url=\"([^\"]+)");
@@ -43,10 +42,10 @@ public class IvySettingsFile extends IvyFile {
     private static final Pattern TYPEDEF_PATTERN = Pattern.compile(
         "<[\\s]*typedef[^>]+name=\"([^\"]+)\"[^>]+classname=\"([^\"]+)");
     
-    private IFile file;
+    private File file;
 
 
-    public IvySettingsFile(IvyModelSettings settings, IFile file, String projectName, String doc,
+    public IvySettingsFile(IvyModelSettings settings, File file, String projectName, String doc,
             int currentOffset) {
         super(settings, projectName, doc, currentOffset);
         this.file = file;
@@ -79,8 +78,8 @@ public class IvySettingsFile extends IvyFile {
 
     private String substitute(String str) {
         Map variables = new HashMap();
-        URI settingsDirUri = file.getParent().getLocationURI();
-        if (settingsDirUri != null) {
+        if (file.getParentFile() != null) {
+            URI settingsDirUri = file.getParentFile().toURI();
             variables.put("ivy.settings.dir", settingsDirUri.toString());
         }
         return IvyPatternHelper.substituteVariables(str, variables);
