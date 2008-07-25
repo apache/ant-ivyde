@@ -86,16 +86,21 @@ public class IvySettingsFile extends IvyFile {
     }
 
     public Map/*<String,String>*/ getTypedefs() {
+        Map p = getDefaultTypedefs();
+        Matcher m = TYPEDEF_PATTERN.matcher(getDoc());
+        while (m.find()) {
+            p.put(substitute(m.group(1)), substitute(m.group(2)));
+        }
+        return p;
+    }
+
+    public static Map/*<String,String>*/ getDefaultTypedefs() {
         Properties p = new Properties();
         try {
             p.load(XmlSettingsParser.class.getResourceAsStream("typedef.properties"));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        Matcher m = TYPEDEF_PATTERN.matcher(getDoc());
-        while (m.find()) {
-            p.put(substitute(m.group(1)), substitute(m.group(2)));
         }
         return p;
     }

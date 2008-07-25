@@ -55,6 +55,9 @@ public class IvySettingsModel extends IvyModel {
     public IvySettingsModel(IvyModelSettings settings, File file) {
         super(settings);
         this.file = file;
+        this.cl = Ivy.class.getClassLoader();
+        this.typedefClasses = getTypedefClasses(this.cl, IvySettingsFile.getDefaultTypedefs());
+        doLoadModel();
     }
 
     public void refreshIfNeeded(IvyFile file) {
@@ -75,6 +78,11 @@ public class IvySettingsModel extends IvyModel {
         cl = getClassLoader(sfile);
         typedefClasses = getTypedefClasses(sfile, cl);
 
+        doLoadModel();
+        loaded = toLoad;
+    }
+
+    private void doLoadModel() {
         IvyTag ivyTag = new IvyTag("ivysettings", "Root tag of Ivy settings file");
 
         ivyTag.addChildIvyTag(new IvyTag("property",  
@@ -215,7 +223,6 @@ public class IvySettingsModel extends IvyModel {
         ivyTag.addChildIvyTag(tag);
 
         addTag(ivyTag);
-        loaded = toLoad;
     }
 
     private void addTypedefChildren(IvyTag tag, Map children) {
@@ -249,40 +256,52 @@ public class IvySettingsModel extends IvyModel {
             
             private void init() {
                 if (!init) {
-                    Method[] methods = clazz.getMethods();
-                    for (int i = 0; i < methods.length; i++) {
-                        Method m = methods[i];
-                        if (m.getName().startsWith("create") && m.getParameterTypes().length == 0
-                                && isSupportedChildType(m.getReturnType())) {
-                            String name = StringUtils
-                                    .uncapitalize(m.getName().substring("create".length()));
-                            if (name.length() == 0) {
-                                continue;
+                    try {
+                        Method[] methods = clazz.getMethods();
+                        for (int i = 0; i < methods.length; i++) {
+                            Method m = methods[i];
+                            if (m.getName().startsWith("create") && m.getParameterTypes().length == 0
+                                    && isSupportedChildType(m.getReturnType())) {
+                                String name = StringUtils
+                                .uncapitalize(m.getName().substring("create".length()));
+                                if (name.length() == 0) {
+                                    continue;
+                                }
+                                addChildIvyTag(typedefedTag(name, m.getReturnType()));
+                            } else if (m.getName().startsWith("add")
+                                    && m.getParameterTypes().length == 1
+                                    && isSupportedChildType(m.getParameterTypes()[0])
+                                    && Void.TYPE.equals(m.getReturnType())) {
+                                String name = StringUtils.uncapitalize(m.getName().substring(
+                                    m.getName().startsWith("addConfigured") ? 
+                                            "addConfigured".length() : "add".length()));
+                                if (name.length() == 0) {
+                                    addTypedefChildren(this, getChildClasses(typedefClasses, m.getParameterTypes()[0]));
+                                } else {
+                                    addChildIvyTag(typedefedTag(name, m.getParameterTypes()[0]));
+                                }
+                            } else if (m.getName().startsWith("set") 
+                                    && Void.TYPE.equals(m.getReturnType())
+                                    && m.getParameterTypes().length == 1
+                                    && isSupportedAttributeType(m.getParameterTypes()[0])) {
+                                IvyTagAttribute att = new IvyTagAttribute(
+                                    StringUtils.uncapitalize(m.getName().substring(3)));
+                                if (m.getParameterTypes()[0] == boolean.class) {
+                                    att.setValueProvider(IvyBooleanTagAttribute.VALUE_PROVIDER);
+                                }
+                                addAttribute(att);
                             }
-                            addChildIvyTag(typedefedTag(name, m.getReturnType()));
-                        } else if (m.getName().startsWith("add")
-                                && m.getParameterTypes().length == 1
-                                && isSupportedChildType(m.getParameterTypes()[0])
-                                && Void.TYPE.equals(m.getReturnType())) {
-                            String name = StringUtils.uncapitalize(m.getName().substring(
-                                        m.getName().startsWith("addConfigured") ? 
-                                                "addConfigured".length() : "add".length()));
-                            if (name.length() == 0) {
-                                addTypedefChildren(this, getChildClasses(typedefClasses, m.getParameterTypes()[0]));
-                            } else {
-                                addChildIvyTag(typedefedTag(name, m.getParameterTypes()[0]));
-                            }
-                        } else if (m.getName().startsWith("set") 
-                                && Void.TYPE.equals(m.getReturnType())
-                                && m.getParameterTypes().length == 1
-                                && isSupportedAttributeType(m.getParameterTypes()[0])) {
-                            IvyTagAttribute att = new IvyTagAttribute(
-                                        StringUtils.uncapitalize(m.getName().substring(3)));
-                            if (m.getParameterTypes()[0] == boolean.class) {
-                                att.setValueProvider(IvyBooleanTagAttribute.VALUE_PROVIDER);
-                            }
-                            addAttribute(att);
                         }
+                    } catch (NoClassDefFoundError e) {
+                        // we catch this because listing methods may raise a NoClassDefFoundError
+                        // if the class relies on a dependency which is not available in classpath
+                        getSettings().logError(
+                            "impossible to init tag for " + clazz + ": " + e,
+                            null);
+                    } catch (Exception e) {
+                        getSettings().logError(
+                            "error occured while initializing tag for " + clazz + ": " + e,
+                            e);
                     }
                     init = true;
                 }
@@ -331,8 +350,12 @@ public class IvySettingsModel extends IvyModel {
     }
 
     private Map/*<String,Class>*/ getTypedefClasses(IvySettingsFile file, ClassLoader cl) {
-        Map/*<String,Class>*/ classes = new LinkedHashMap();
         Map typedefs = file.getTypedefs();
+        return getTypedefClasses(cl, typedefs);
+    }
+
+    private Map getTypedefClasses(ClassLoader cl, Map typedefs) {
+        Map/*<String,Class>*/ classes = new LinkedHashMap();
         for (Iterator it = typedefs.entrySet().iterator(); it.hasNext();) {
             Entry entry = (Entry) it.next();
             try {
