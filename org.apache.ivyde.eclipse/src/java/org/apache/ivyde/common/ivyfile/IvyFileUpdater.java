@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.FileUtil;
 
@@ -37,6 +38,11 @@ public class IvyFileUpdater {
         String suffix = "";
     }
     
+    public void addDependency(File ivyFile, String org, String name, String revision, String confMapping) throws IOException {
+        ModuleRevisionId depId = new ModuleRevisionId(new ModuleId(org,name), revision);
+        addDependency(ivyFile, depId, confMapping);
+    }
+        
     public void addDependency(File ivyFile, ModuleRevisionId depId, String confMapping) throws IOException {
         String content = FileUtil.readEntirely(ivyFile);
         
@@ -76,15 +82,13 @@ public class IvyFileUpdater {
     private UpdateInfo findUpdateInfoToAddDependency(String content) {
         UpdateInfo info = new UpdateInfo();
         
-        String reversed = new StringBuffer(content).reverse().toString();
-        int length = content.length();
-        
         Pattern dependenciesClose = Pattern.compile("<\\s*/dependencies");
         Matcher depsCloseMatcher = dependenciesClose.matcher(content);
         if (depsCloseMatcher.find()) {
             info.insertFromIndex = findLastDependencyEnd(content, depsCloseMatcher.start());
             if (info.insertFromIndex == -1) {
-                info.insertFromIndex = getLastEndIndex(Pattern.compile("<\\s*dependencies.*?>"), content, depsCloseMatcher.start());
+                info.insertFromIndex = getLastEndIndex(Pattern.compile("<\\s*dependencies.*?>"), 
+                                                        content, depsCloseMatcher.start());
                 if (info.insertFromIndex == -1) {
                     info.insertFromIndex = depsCloseMatcher.start();
                 } else {
@@ -134,10 +138,6 @@ public class IvyFileUpdater {
             }
         }
         return index;
-    }
-
-    private int reverse(int index, int length) {
-        return length - index;
     }
 
 }
