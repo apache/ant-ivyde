@@ -15,20 +15,15 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.runtime.IStatus;
-
-public class IvyFile {
+public abstract class IvyFile {
     private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern
             .compile("[^\"]*\"[\\s]*=[\\s]*([\\w\\-]+)");
 
@@ -36,14 +31,6 @@ public class IvyFile {
 
     private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern
             .compile("([a-zA-Z0-9]+)[ ]*=[ ]*\"([^\"]*)\"");
-
-    private static final Pattern CONF_PATTERN = Pattern.compile("<[\\s]*conf[^>]+name=\"([^\"]+)");
-
-    private static final Pattern CONFIGURATIONS_END_PATTERN = Pattern
-            .compile("</[\\s]*configurations[\\s]*>");
-
-    private static final Pattern CONFIGURATIONS_START_PATTERN = Pattern
-            .compile("<[\\s]*configurations[\\s]*>");
 
     private String _doc;
 
@@ -53,38 +40,30 @@ public class IvyFile {
 
     private String _projectName;
 
-    public IvyFile(String projectName, String doc) {
-        this(projectName, doc, 0);
+    private IvyModelSettings settings;
+
+    public IvyFile(IvyModelSettings settings, String projectName, String doc) {
+        this(settings, projectName, doc, 0);
     }
 
-    public IvyFile(String projectName, String doc, int currentOffset) {
+    public IvyFile(IvyModelSettings settings, String projectName, String doc, int currentOffset) {
+        this.settings = settings;
         _projectName = projectName;
         _doc = doc;
         _reversed = new StringBuffer(doc).reverse().toString();
         _currentOffset = currentOffset;
     }
 
-    public String[] getConfigurationNames() {
-        Pattern p = CONFIGURATIONS_START_PATTERN;
-        Matcher m = p.matcher(_doc);
-        if (m.find()) {
-            int start = m.end();
-            p = CONFIGURATIONS_END_PATTERN;
-            m = p.matcher(_doc);
-            int end = _doc.length();
-            if (m.find(start)) {
-                end = m.start();
-            }
-            p = CONF_PATTERN;
-            m = p.matcher(_doc);
-            List ret = new ArrayList();
-            for (boolean found = m.find(start); found && m.end() < end; found = m.find()) {
-                ret.add(m.group(1));
-            }
-            return (String[]) ret.toArray(new String[ret.size()]);
-        } else {
-            return new String[] {"default"};
-        }
+    protected String getDoc() {
+        return _doc;
+    }
+    
+    protected int getCurrentOffset() {
+        return _currentOffset;
+    }
+    
+    protected String getReversedDoc() {
+        return _reversed;
     }
 
     public boolean inTag() {
@@ -204,56 +183,13 @@ public class IvyFile {
             }
         } catch (Exception e) {
             // FIXME : what is really catched here ?
-            IvyPlugin.log(IStatus.WARNING, "Something bad happened", e);
+            if (settings != null) {
+                settings.logError("Something bad happened", e);
+            }
         }
         return result;
     }
 
-    // public Map getAllAttsValues(int documentOffset) {
-    // Map result = new HashMap();
-    // int offset = documentOffset;
-    // int start = -1;
-    // int end = -1;
-    // char c = ' ';
-    // // move cursor at the begining of the tag
-    // while (c != '<') {
-    // try {
-    // c = _doc.charAt(--offset);
-    // } catch (IndexOutOfBoundsException e) {
-    // offset = 0;
-    // break;
-    // }
-    // }
-    // start = offset;
-    // offset = documentOffset;
-    // while (c != '>') {
-    // try {
-    // c = _doc.charAt(++offset);
-    // } catch (IndexOutOfBoundsException e) {
-    // break;
-    // }
-    // }
-    // end = offset;
-    // Pattern regexp = ATTRIBUTE_VALUE_PATTERN;
-    // try {
-    // String tag = _doc.substring(start, end);
-    // tag = tag.substring(tag.indexOf(' '));
-    // Matcher m = regexp.matcher(tag);
-    // while (m.find()) {
-    // String key = m.group(1);
-    // String val = m.group(2);
-    // result.put(key, val);
-    // if (m.end() + m.group(0).length() < tag.length()) {
-    // tag = tag.substring(m.end());
-    // m = regexp.matcher(tag);
-    // }
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // return result;
-    // }
-    //    
     public String getQualifier() {
         return getQualifier(_currentOffset);
     }
@@ -397,7 +333,9 @@ public class IvyFile {
                 }
             } catch (IndexOutOfBoundsException e) {
                 // FIXME hu ? need some comments
-                IvyPlugin.log(IStatus.WARNING, "Something bad happened", e);
+                if (settings != null) {
+                    settings.logError("Something bad happened", e);
+                }
                 return null;
             }
         }
@@ -417,25 +355,5 @@ public class IvyFile {
 
     public String getProjectName() {
         return _projectName;
-    }
-
-    public String getOrganisation() {
-        Pattern p = Pattern.compile("<[\\s]*info[^>]*organisation[\\s]*=[\\s]*\"([^\"]+)");
-        Matcher m = p.matcher(_doc);
-        if (m.find()) {
-            return m.group(1);
-        }
-        return null;
-    }
-
-    public String getDependencyOrganisation() {
-        Map otherAttValues = getAllAttsValues();
-        return getDependencyOrganisation(otherAttValues);
-    }
-
-    public String getDependencyOrganisation(Map otherAttValues) {
-        return otherAttValues != null && otherAttValues.get("org") != null ? (String) otherAttValues
-                .get("org")
-                : getOrganisation();
     }
 }

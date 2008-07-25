@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
 public class IvyBooleanTagAttribute extends IvyTagAttribute {
 
     protected static final String[] BOOLEAN_VALUES = new String[] {"true", "false"};
 
-    private static final IValueProvider VALUE_PROVIDER = new IValueProvider() {
+    public static final IValueProvider VALUE_PROVIDER = new IValueProvider() {
         public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
             return BOOLEAN_VALUES;
         }

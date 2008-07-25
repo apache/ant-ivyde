@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
 public class ListValueProvider implements IValueProvider {
 

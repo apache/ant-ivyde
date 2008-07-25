@@ -15,16 +15,23 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 public class IvyTag {
+    private final static ResourceBundle doc = ResourceBundle.getBundle(
+        IvyTag.class.getPackage().getName() + ".tagsdoc");
+    
     private IvyTag _parent;
 
     private String _name;
@@ -79,9 +86,10 @@ public class IvyTag {
         _attributes.put(attribute.getName(), attribute);
     }
 
-    public void addChildIvyTag(IvyTag att) {
+    public IvyTag addChildIvyTag(IvyTag att) {
         att.setParent(this);
         _childs.add(att);
+        return this;
     }
 
     public boolean hasChild() {
@@ -109,7 +117,21 @@ public class IvyTag {
     }
 
     public String getDoc() {
+        if (_doc == null) {
+            try {
+                _doc = doc.getString(getId());
+            } catch (MissingResourceException ex) {
+                _doc = "";
+            }
+        }
         return _doc;
+    }
+
+    public String getId() {
+        if (getParent() != null) {
+            return getParent().getId() + "." + getName();
+        }
+        return getName();
     }
 
     public void setDoc(String doc) {

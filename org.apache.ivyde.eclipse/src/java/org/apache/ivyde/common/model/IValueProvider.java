@@ -15,10 +15,8 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
-public class SingleValueProvider extends ListValueProvider {
-    public SingleValueProvider(String value) {
-        super(new String[] {value});
-    }
+public interface IValueProvider {
+    String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile);
 }

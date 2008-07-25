@@ -17,11 +17,15 @@
  */
 package org.apache.ivyde.eclipse.ui.editors;
 
+import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
+import org.apache.ivyde.common.model.IvyModel;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
 import org.apache.ivyde.eclipse.ui.editors.pages.OverviewFormPage;
+import org.apache.ivyde.eclipse.ui.editors.xml.EclipseIvyModelSettings;
+import org.apache.ivyde.eclipse.ui.editors.xml.IvyContentAssistProcessor;
 import org.apache.ivyde.eclipse.ui.editors.xml.XMLEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -49,7 +53,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class IvyEditor extends FormEditor implements IResourceChangeListener {
+public class IvyModuleDescriptorEditor extends FormEditor implements IResourceChangeListener {
     public final static String ID = "org.apache.ivyde.editors.IvyEditor";
 
     private XMLEditor xmlEditor;
@@ -59,7 +63,7 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
     /**
      * Creates a multi-page editor example.
      */
-    public IvyEditor() {
+    public IvyModuleDescriptorEditor() {
         super();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
     }
@@ -85,7 +89,12 @@ public class IvyEditor extends FormEditor implements IResourceChangeListener {
 
     void createPageXML() {
         try {
-            xmlEditor = new XMLEditor();
+            xmlEditor = new XMLEditor(new IvyContentAssistProcessor() {
+                protected IvyModel newCompletionModel(IFile file) {
+                    return new IvyModuleDescriptorModel(
+                        new EclipseIvyModelSettings(getJavaProject()));
+                }
+            });
             xmlEditor.setFile(((IvyFileEditorInput) getEditorInput()).getFile());
             int index = addPage(xmlEditor, getEditorInput());
             setPageText(index, xmlEditor.getTitle());

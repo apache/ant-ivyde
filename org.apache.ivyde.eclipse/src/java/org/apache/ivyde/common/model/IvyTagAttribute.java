@@ -15,14 +15,20 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class IvyTagAttribute {
+    private final static ResourceBundle doc = ResourceBundle.getBundle(
+        IvyTagAttribute.class.getPackage().getName() + ".tagsdoc");
+    
     private IvyTag _container;
 
     private String _name;
 
-    private String _doc = "";
+    private String _doc;
 
     private boolean _mandatory = false;
 
@@ -46,6 +52,11 @@ public class IvyTagAttribute {
         super();
         _name = name;
         _doc = doc;
+    }
+
+    public IvyTagAttribute(String name, boolean mandatory) {
+        _name = name;
+        _mandatory = mandatory;
     }
 
     public IvyTagAttribute(String name, String doc, boolean mandatory) {
@@ -75,7 +86,21 @@ public class IvyTagAttribute {
     }
 
     public String getDoc() {
+        if (_doc == null) {
+            try {
+                _doc = doc.getString(getId());
+            } catch (MissingResourceException ex) {
+                _doc = "";
+            }
+        }
         return _doc;
+    }
+
+    private String getId() {
+        if (getContainer() != null) {
+            return getContainer().getId() + ".@" + getName();
+        }
+        return "@" + getName();
     }
 
     public void setDoc(String doc) {

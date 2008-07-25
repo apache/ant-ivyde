@@ -15,18 +15,14 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.ivyfile;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -36,42 +32,47 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.core.IJavaProject;
+import org.apache.ivyde.common.model.IValueProvider;
+import org.apache.ivyde.common.model.IvyBooleanTagAttribute;
+import org.apache.ivyde.common.model.IvyFile;
+import org.apache.ivyde.common.model.IvyModel;
+import org.apache.ivyde.common.model.IvyModelSettings;
+import org.apache.ivyde.common.model.IvyTag;
+import org.apache.ivyde.common.model.IvyTagAttribute;
+import org.apache.ivyde.common.model.ListValueProvider;
 
-public class IvyModel {
-    private IJavaProject _javaProject;
-
-    private final Map MODEL = new HashMap();
-
-    private Properties _defaults;
-
-    public IvyModel(IJavaProject javaProject) {
-        _javaProject = javaProject;
-
-        loadDefaults();
+public class IvyModuleDescriptorModel extends IvyModel {
+    public IvyModuleDescriptorModel(IvyModelSettings settings) {
+        super(settings);
+        
         // ivy-module
         IvyTag ivyTag = new IvyTag("ivy-module", "root tag of ivy file");
         ivyTag.setDoc("Root tag of any ivy-file.");
-        ivyTag
-                .addAttribute(new IvyTagAttribute(
+        ivyTag.addAttribute(new IvyTagAttribute(
                         "version",
-                        "The version of the ivy file specification \nshould be '1.0' with current version of ivy",
+                        "The version of the ivy file specification \n"
+                        + "should be '2.0' with current version of ivy",
                         true));
-        MODEL.put(ivyTag.getName(), ivyTag);
+        addTag(ivyTag);
+
+        IValueProvider defaultOrganizationProvider = new IValueProvider() {
+            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                return new String[] {getSettings().getDefaultOrganization()};
+            }
+        };
+        IValueProvider defaultOrganizationURLProvider = new IValueProvider() {
+            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                return new String[] {getSettings().getDefaultOrganizationURL()};
+            }
+        };
 
         // info
         IvyTagAttribute orgTagAttribute = new IvyTagAttribute("organisation",
                 "the name of the organisation that is the owner of this module.", true);
-        orgTagAttribute.setValueProvider(new PreferenceValueProvider(
-                PreferenceConstants.ORGANISATION));
+        orgTagAttribute.setValueProvider(defaultOrganizationProvider);
         IvyTagAttribute statusTagAttribute = new IvyTagAttribute("status",
                 "the status of this module.");
-        statusTagAttribute.setValueProvider(new ListValueProvider(_defaults.getProperty("status")));
+        statusTagAttribute.setValueProvider(new ListValueProvider(getDefault("status")));
         IvyTagAttribute pubTagAttribute = new IvyTagAttribute("publication",
                 "the date of publication of this module. \nIt should be given in this format: yyyyMMddHHmmss");
         pubTagAttribute.setValueProvider(new IValueProvider() {
@@ -92,27 +93,27 @@ public class IvyModel {
                         new IvyTagAttribute("branch", "the branch of this module."),
                         new IvyTagAttribute("revision", "the revision of this module."),
                         statusTagAttribute, pubTagAttribute});
-        MODEL.put(info.getName(), info);
+        addTag(info);
         IvyTag child = new IvyTag("license",
                 "gives information about the licenses of the described module");
         child
                 .addAttribute(new IvyTagAttribute(
                         "name",
                         "the name of the license. \nTry to respect spelling when using a classical license.",
-                        true, new ListValueProvider(_defaults.getProperty("license"))));
+                        true, new ListValueProvider(getDefault("license"))));
         child
                 .addAttribute(new IvyTagAttribute("url", "an url pointing to the license text.",
                         false));
-        MODEL.put(child.getName(), child);
+        addTag(child);
         info.addChildIvyTag(child);
         child = new IvyTag("ivyauthor", "describes who has contributed to write the ivy file");
         child.addAttribute(new IvyTagAttribute("name",
                 "the name of the author, as a person or a company.", true,
-                new PreferenceValueProvider(PreferenceConstants.ORGANISATION)));
+                defaultOrganizationProvider));
         child.addAttribute(new IvyTagAttribute("url",
                 "an url pointing to where the author can be reached.", false,
-                new PreferenceValueProvider(PreferenceConstants.ORGANISATION_URL)));
-        MODEL.put(child.getName(), child);
+                defaultOrganizationURLProvider));
+        addTag(child);
         info.addChildIvyTag(child);
         child = new IvyTag("repository",
                 "describes on which public repositories this module can be found");
@@ -162,12 +163,12 @@ public class IvyModel {
                 "true if ivy file can be found on this repository", false));
         child.addAttribute(new IvyBooleanTagAttribute("artifacts",
                 "true if module artifacts can be found on this repository", false));
-        MODEL.put(child.getName(), child);
+        addTag(child);
         info.addChildIvyTag(child);
         child = new IvyTag("description", "gives general description about the module");
         child.addAttribute(new IvyTagAttribute("homepage", "the url of the homepage of the module",
-                false, new PreferenceValueProvider(PreferenceConstants.ORGANISATION_URL)));
-        MODEL.put(child.getName(), child);
+                false, defaultOrganizationURLProvider));
+        addTag(child);
         info.addChildIvyTag(child);
         ivyTag.addChildIvyTag(info);
 
@@ -203,7 +204,7 @@ public class IvyModel {
                     base.append(' ');
                     qualifier = qualifier.substring(1);
                 }
-                String[] confs = ivyFile.getConfigurationNames();
+                String[] confs = ((IvyModuleDescriptorFile) ivyFile).getConfigurationNames();
                 for (int i = 0; i < confs.length; i++) {
                     confs[i] = base + confs[i];
                 }
@@ -212,7 +213,7 @@ public class IvyModel {
         };
         IValueProvider masterConfValueProvider = new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                return ivyFile.getConfigurationNames();
+                return ((IvyModuleDescriptorFile) ivyFile).getConfigurationNames();
             }
         };
         confExtTagAttribute.setValueProvider(masterConfsValueProvider);
@@ -230,9 +231,9 @@ public class IvyModel {
         configurations.addChildIvyTag(conf);
         List allConf = new ArrayList();
         allConf.add(conf);
-        MODEL.put(conf.getName(), allConf);
+        addTag(conf.getName(), allConf);
         ivyTag.addChildIvyTag(configurations);
-        MODEL.put(configurations.getName(), configurations);
+        addTag(configurations);
 
         // configurations
         IvyTag publications = new IvyTag("publications",
@@ -245,9 +246,9 @@ public class IvyModel {
                 .addAttribute(new IvyTagAttribute(
                         "type",
                         "the type of the published artifact. \nIt's usually its extension, but not necessarily. \nFor instance, ivy files are of type 'ivy' but have 'xml' extension",
-                        true, new ListValueProvider(_defaults.getProperty("type"))));
+                        true, new ListValueProvider(getDefault("type"))));
         artifact.addAttribute(new IvyTagAttribute("ext", "the extension of the published artifact",
-                false, new ListValueProvider(_defaults.getProperty("ext"))));
+                false, new ListValueProvider(getDefault("ext"))));
         artifact
                 .addAttribute(new IvyTagAttribute(
                         "conf",
@@ -263,8 +264,8 @@ public class IvyModel {
         allConf.add(conf2);
         artifact.addChildIvyTag(conf2);
         publications.addChildIvyTag(artifact);
-        MODEL.put(publications.getName(), publications);
-        MODEL.put(artifact.getName(), artifact);
+        addTag(publications);
+        addTag(artifact);
         ivyTag.addChildIvyTag(publications);
 
         // dependencies
@@ -286,9 +287,8 @@ public class IvyModel {
         orgAtt.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 List ret = listDependencyTokenValues(att.getName(), ivyFile);
-                ret.add(IvyPlugin.getDefault().getPreferenceStore().getString(
-                    PreferenceConstants.ORGANISATION));
-                String org = ivyFile.getOrganisation();
+                ret.add(getSettings().getDefaultOrganization());
+                String org = ((IvyModuleDescriptorFile) ivyFile).getOrganisation();
                 if (org != null) {
                     ret.add(org);
                 }
@@ -347,7 +347,7 @@ public class IvyModel {
                 int arrowIndex = qualifier.indexOf("->");
                 if (arrowIndex > -1) {
                     // we are looking for a dep conf
-                    String org = ivyFile.getDependencyOrganisation();
+                    String org = ((IvyModuleDescriptorFile) ivyFile).getDependencyOrganisation();
                     Map otherAttValues = ivyFile.getAllAttsValues();
                     if (org != null && otherAttValues != null && otherAttValues.get("name") != null
                             && otherAttValues.get("rev") != null) {
@@ -380,7 +380,7 @@ public class IvyModel {
                     base.append(' ');
                     qualifier = qualifier.substring(1);
                 }
-                String[] confs = ivyFile.getConfigurationNames();
+                String[] confs = ((IvyModuleDescriptorFile) ivyFile).getConfigurationNames();
                 for (int i = 0; i < confs.length; i++) {
                     confs[i] = base + confs[i];
                 }
@@ -426,7 +426,7 @@ public class IvyModel {
                     ret.add("*");
                     return (String[]) ret.toArray(new String[ret.size()]);
                 } catch (ParseException e) {
-                    IvyPlugin.log(IStatus.ERROR, "The dependencies of " + mrid
+                    getSettings().logError("The dependencies of " + mrid
                             + " could not be parsed", e);
                     return null;
                 }
@@ -449,7 +449,8 @@ public class IvyModel {
                                 int[] indexes = ivyFile.getParentTagIndex();
                                 if (indexes != null && ivy != null) {
                                     Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
-                                    String org = ivyFile.getDependencyOrganisation(otherAttValues);
+                                    String org = ((IvyModuleDescriptorFile) ivyFile)
+                                                    .getDependencyOrganisation(otherAttValues);
                                     if (org != null && otherAttValues != null
                                             && otherAttValues.get("name") != null
                                             && otherAttValues.get("rev") != null) {
@@ -481,7 +482,7 @@ public class IvyModel {
                                             ret.add("*");
                                             return (String[]) ret.toArray(new String[ret.size()]);
                                         } catch (ParseException e) {
-                                            IvyPlugin.log(IStatus.ERROR, "The dependencies of "
+                                            getSettings().logError("The dependencies of "
                                                     + mrid + " could not be parsed", e);
                                             return new String[] {"*"};
                                         }
@@ -507,7 +508,7 @@ public class IvyModel {
                                     if (indexes != null) {
                                         Map otherAttValues = ivyFile
                                                 .getAllAttsValues(indexes[0] + 1);
-                                        String org = ivyFile
+                                        String org = ((IvyModuleDescriptorFile) ivyFile)
                                                 .getDependencyOrganisation(otherAttValues);
                                         if (org != null && otherAttValues != null
                                                 && otherAttValues.get("name") != null
@@ -528,7 +529,8 @@ public class IvyModel {
                                                 return (String[]) ret
                                                         .toArray(new String[ret.size()]);
                                             } catch (ParseException e) {
-                                                IvyPlugin.log(IStatus.ERROR, "The dependencies of "
+                                                getSettings().logError(
+                                                    "The dependencies of "
                                                         + mrid + " could not be parsed", e);
                                                 return new String[] {"*"};
                                             }
@@ -540,7 +542,7 @@ public class IvyModel {
 
                         }));
         conf3.addChildIvyTag(mapped);
-        MODEL.put(mapped.getName(), mapped);
+        addTag(mapped);
 
         String[] matcherNames = new String[0];
         Ivy ivy = getIvy();
@@ -560,12 +562,12 @@ public class IvyModel {
                 .addAttribute(new IvyTagAttribute(
                         "type",
                         "the type of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(_defaults.getProperty("type"))));
+                        false, new ListValueProvider(getDefault("type"))));
         artifact2
                 .addAttribute(new IvyTagAttribute(
                         "ext",
                         "the extension of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(_defaults.getProperty("ext"))));
+                        false, new ListValueProvider(getDefault("ext"))));
         artifact2
                 .addAttribute(new IvyTagAttribute(
                         "url",
@@ -584,7 +586,7 @@ public class IvyModel {
                         true, masterConfValueProvider));
         allConf.add(conf4);
         artifact2.addChildIvyTag(conf4);
-        MODEL.put(artifact2.getName(), artifact2);
+        addTag(artifact2);
         IvyTag include = new IvyTag("include",
                 "defines artifacts restriction \nuse only if you do not control dependency ivy file");
         include
@@ -596,12 +598,12 @@ public class IvyModel {
                 .addAttribute(new IvyTagAttribute(
                         "type",
                         "the type of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(_defaults.getProperty("type"))));
+                        false, new ListValueProvider(getDefault("type"))));
         include
                 .addAttribute(new IvyTagAttribute(
                         "ext",
                         "the extension of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(_defaults.getProperty("ext"))));
+                        false, new ListValueProvider(getDefault("ext"))));
         include.addAttribute(new IvyTagAttribute("matcher",
                 "the matcher to use to match the modules to include", false, matcherNamesProvider));
         include
@@ -616,7 +618,7 @@ public class IvyModel {
                         "the name of the master configuration in which \nthe enclosing artifact should be included",
                         true, masterConfValueProvider));
         include.addChildIvyTag(conf5);
-        MODEL.put(include.getName(), include);
+        addTag(include);
         allConf.add(conf5);
         IvyTag exclude = new IvyTag("exclude",
                 "defines artifacts restriction \nuse only if you do not control dependency ivy file");
@@ -639,12 +641,12 @@ public class IvyModel {
                 .addAttribute(new IvyTagAttribute(
                         "type",
                         "the type of the artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name",
-                        false, new ListValueProvider(_defaults.getProperty("type"))));
+                        false, new ListValueProvider(getDefault("type"))));
         exclude
                 .addAttribute(new IvyTagAttribute(
                         "ext",
                         "the extension of the artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name",
-                        false, new ListValueProvider(_defaults.getProperty("ext"))));
+                        false, new ListValueProvider(getDefault("ext"))));
         exclude.addAttribute(new IvyTagAttribute("matcher",
                 "the matcher to use to match the modules to include", false, matcherNamesProvider));
         exclude
@@ -660,15 +662,15 @@ public class IvyModel {
                         true, masterConfValueProvider));
         allConf.add(conf6);
         exclude.addChildIvyTag(conf6);
-        MODEL.put(exclude.getName(), exclude);
+        addTag(exclude);
         dependency.addChildIvyTag(conf3);
         dependency.addChildIvyTag(artifact2);
         dependency.addChildIvyTag(include);
         dependency.addChildIvyTag(exclude);
         dependencies.addChildIvyTag(dependency);
         ivyTag.addChildIvyTag(dependencies);
-        MODEL.put(dependency.getName(), dependency);
-        MODEL.put(dependencies.getName(), dependencies);
+        addTag(dependency);
+        addTag(dependencies);
 
         // dependencies
 
@@ -690,46 +692,17 @@ public class IvyModel {
                 "a comma separated list of revisions this conflict manager should select", false));
         conflicts.addChildIvyTag(manager);
         ivyTag.addChildIvyTag(conflicts);
-        MODEL.put(conflicts.getName(), conflicts);
-        MODEL.put(manager.getName(), manager);
+        addTag(conflicts);
+        addTag(manager);
     }
 
-    public IvyTag getIvyTag(String tagName, String parentName) {
-        Object tag = MODEL.get(tagName);
-        if (tag instanceof List) {
-            List all = (List) tag;
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                IvyTag t = (IvyTag) iter.next();
-                if (t.getParent() != null && t.getParent().getName().equals(parentName)) {
-                    return t;
-                }
-            }
-            return null;
-        }
-        return (IvyTag) tag;
-    }
-
-    private void loadDefaults() {
-        _defaults = new Properties();
-        try {
-            _defaults.load(IvyModel.class.getResourceAsStream("defaults.properties"));
-        } catch (IOException e) {
-            // should never never happen
-            IvyPlugin.log(IStatus.ERROR, "The default properties could not be loaded", e);
-        }
-    }
-
-    public IvyTag getRootIvyTag() {
-        return (IvyTag) MODEL.get("ivy-module");
-    }
-
-    Ivy getIvy() {
-        return IvyPlugin.getIvy(_javaProject);
+    protected String getRootIvyTagName() {
+        return "ivy-module";
     }
 
     List listDependencyTokenValues(String att, IvyFile ivyfile) {
         Map allAttsValues = ivyfile.getAllAttsValues();
-        String org = ivyfile.getOrganisation();
+        String org = ((IvyModuleDescriptorFile) ivyfile).getOrganisation();
         if (org != null && !allAttsValues.containsKey("org")) {
             allAttsValues.put("org", org);
         }
@@ -777,6 +750,10 @@ public class IvyModel {
             return IvyPatternHelper.REVISION_KEY;
         }
         return att;
+    }
+
+    public IvyFile newIvyFile(String name, String content, int documentOffset) {
+        return new IvyModuleDescriptorFile(getSettings(), name, content, documentOffset);
     }
 
 }

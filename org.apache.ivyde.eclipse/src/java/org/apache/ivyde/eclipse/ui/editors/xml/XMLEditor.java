@@ -29,10 +29,10 @@ public class XMLEditor extends TextEditor {
 
     private ColorManager colorManager;
 
-    public XMLEditor() {
+    public XMLEditor(IvyContentAssistProcessor processor) {
         super();
         colorManager = new ColorManager();
-        _configuration = new XMLConfiguration(colorManager);
+        _configuration = new XMLConfiguration(colorManager, processor);
         setSourceViewerConfiguration(_configuration);
         setDocumentProvider(new XMLDocumentProvider());
 

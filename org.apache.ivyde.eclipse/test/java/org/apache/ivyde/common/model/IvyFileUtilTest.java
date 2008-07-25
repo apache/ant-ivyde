@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.core.model;
+package org.apache.ivyde.common.model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,7 +24,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.ivyde.eclipse.ui.core.model.IvyFile;
+import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorFile;
+import org.apache.ivyde.common.model.IvyFile;
 
 public class IvyFileUtilTest extends TestCase {
     String hibContentStr;
@@ -48,13 +49,13 @@ public class IvyFileUtilTest extends TestCase {
     }
 
     public void testInTag() {
-        IvyFile ivyFile = new IvyFile("", hibContentStr);
+        IvyFile ivyFile = new IvyModuleDescriptorFile(null, "", hibContentStr);
         boolean b = ivyFile.inTag(200);
         assertEquals(b, true);
     }
 
     public void testGetTagName() {
-        IvyFile ivyFile = new IvyFile("", hibContentStr);
+        IvyFile ivyFile = new IvyModuleDescriptorFile(null, "", hibContentStr);
         String tag = ivyFile.getTagName(200);
         assertEquals("info", tag);
         tag = ivyFile.getTagName(864);
@@ -64,7 +65,7 @@ public class IvyFileUtilTest extends TestCase {
 
     public void testGetAllAttsValues() {
         String test = "<test att1=\"value1\" att2 =\"value 2 \"  att3 =\" value3 \" att4   =   \"  4  \"";
-        IvyFile ivyFile = new IvyFile("", test);
+        IvyFile ivyFile = new IvyModuleDescriptorFile(null, "", test);
         Map all = ivyFile.getAllAttsValues(1);
         assertNotNull(all);
         assertEquals(4, all.size());
@@ -76,7 +77,7 @@ public class IvyFileUtilTest extends TestCase {
 
     public void testGetAttributeName() {
         String test = "<test nospace=\"\" 1Space =\"\"  2Space = \"\" lotofSpace   =   \"    \"";
-        IvyFile ivyFile = new IvyFile("", test);
+        IvyFile ivyFile = new IvyModuleDescriptorFile(null, "", test);
         String name = ivyFile.getAttributeName(15);
         assertEquals("nospace", name);
         name = ivyFile.getAttributeName(28);
@@ -88,7 +89,7 @@ public class IvyFileUtilTest extends TestCase {
     }
 
     public void testGetParentTagName() {
-        IvyFile ivyFile = new IvyFile("", hibContentStr);
+        IvyFile ivyFile = new IvyModuleDescriptorFile(null, "", hibContentStr);
         String tag = ivyFile.getParentTagName(200);
         assertEquals("ivy-module", tag);
         tag = ivyFile.getParentTagName(2000);

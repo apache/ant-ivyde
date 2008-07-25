@@ -33,14 +33,14 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  * the redirection of global actions to the active editor. Multi-page contributor replaces the
  * contributors for the individual editors in the multi-page editor.
  */
-public class IvyEditorContributor extends MultiPageEditorActionBarContributor {
+public class IvyModuleDescriptorEditorContributor extends MultiPageEditorActionBarContributor {
     private IEditorPart activeEditorPart;
 
     // private Action sampleAction;
     /**
      * Creates a multi-page contributor.
      */
-    public IvyEditorContributor() {
+    public IvyModuleDescriptorEditorContributor() {
         super();
         createActions();
     }

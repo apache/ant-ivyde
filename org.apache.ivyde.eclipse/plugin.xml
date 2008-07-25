@@ -94,8 +94,8 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.apache.ivyde.eclipse.ui.editors.IvyEditor"
-            contributorClass="org.apache.ivyde.eclipse.ui.editors.IvyEditorContributor"
+            class="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditor"
+            contributorClass="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
             filenames="ivy.xml,ivy-dev.xml,ivy-snapshot.xml"
             icon="icons/logo16x16.gif"
             id="org.apache.ivyde.editors.IvyEditor"

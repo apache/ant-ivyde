@@ -15,8 +15,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
-public interface IValueProvider {
-    String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile);
+import org.apache.ivy.Ivy;
+
+public interface IvyModelSettings {
+    public String getDefaultOrganization();
+    public String getDefaultOrganizationURL();
+    public Ivy getIvyInstance();
+    public void logError(String message, Exception e);
 }

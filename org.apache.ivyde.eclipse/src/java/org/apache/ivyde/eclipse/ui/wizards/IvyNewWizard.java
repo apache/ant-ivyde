@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
-import org.apache.ivyde.eclipse.ui.editors.IvyEditor;
+import org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -156,7 +156,7 @@ public class IvyNewWizard extends Wizard implements INewWizard {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                         .getActivePage();
                 try {
-                    page.openEditor(new IvyFileEditorInput(file), IvyEditor.ID, true);
+                    page.openEditor(new IvyFileEditorInput(file), IvyModuleDescriptorEditor.ID, true);
                     // IDE.openEditor(page, file, IvyEditor.ID, true);
                 } catch (PartInitException e) {
                     // this should not happen

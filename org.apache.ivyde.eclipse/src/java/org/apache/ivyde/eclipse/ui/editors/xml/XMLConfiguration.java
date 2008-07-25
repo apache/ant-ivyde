@@ -50,8 +50,9 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
     private IFile _file;
 
-    public XMLConfiguration(ColorManager colorManager) {
+    public XMLConfiguration(ColorManager colorManager, IvyContentAssistProcessor processor) {
         this.colorManager = colorManager;
+        this._processor = processor;
     }
 
     public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
@@ -114,7 +115,6 @@ public class XMLConfiguration extends SourceViewerConfiguration {
             }
         });
 
-        _processor = new IvyContentAssistProcessor();
         _processor.setFile(_file);
         // Set this processor for each supported content type
         assistant.setContentAssistProcessor(_processor, XMLPartitionScanner.XML_TAG);

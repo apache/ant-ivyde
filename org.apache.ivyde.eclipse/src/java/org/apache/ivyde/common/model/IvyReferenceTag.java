@@ -15,18 +15,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.core.model;
+package org.apache.ivyde.common.model;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+public class IvyReferenceTag extends IvyTag {
 
-final class PreferenceValueProvider implements IValueProvider {
-    private String _name;
-
-    public PreferenceValueProvider(String name) {
-        _name = name;
+    public IvyReferenceTag(String name) {
+        super(name);
+        addAttribute(new IvyTagAttribute("ref"));
     }
 
-    public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-        return new String[] {IvyPlugin.getDefault().getPreferenceStore().getString(_name)};
-    }
 }
