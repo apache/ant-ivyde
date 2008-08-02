@@ -279,8 +279,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                             "Impossible to resolve dependencies of " + md.getModuleRevisionId(),
                             null);
                     for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
-                        multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, (String) iter
-                                .next()));
+                        multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                                (String) iter.next(), null));
                     }
                     status[0] = multiStatus;
                     return;
