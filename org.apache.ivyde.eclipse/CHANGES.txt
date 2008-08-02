@@ -10,15 +10,15 @@
 
   version 2.0.0 alpha1
 ===========================
-- NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevée) 
-- NEW: Order alphabetically the entries in the class path container (IVYDE-69) (thanks to Nicolas Lalevée)
+- NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevee) 
+- NEW: Order alphabetically the entries in the class path container (IVYDE-69) (thanks to Nicolas Lalevee)
 
 - IMPROVE: The dialog box opened for resolve failure should show the status message on several lines (IVYDE-95)
-- IMPROVE: Recognize more source and javadoc artifacts names (IVYDE-66) (thanks to Nicolas Lalevée)
+- IMPROVE: Recognize more source and javadoc artifacts names (IVYDE-66) (thanks to Nicolas Lalevee)
 - IMPROVE: Use Ivy Bundle instead of packaging ivy.jar in IvyDE bundle (IVYDE-67)
 - IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
 - IMPROVE: Support javadoc and sources even in modules where they are not declared (IVYDE-46)
-- IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevée) 
+- IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevee) 
 - IMPROVE: Add new target to build.xml to build the plugin with Ant (IVYDE-88)
 
 - FIX: On classpath issues the user is not notified (IVYDE-85)
@@ -29,11 +29,11 @@
 - FIX: NPE when setting a bad file for the ivy setting path in the global configuration panel (IVYDE-91)
 - FIX: IvyDE 1.0.3 "Run configuration" problem with Eclipse 3.x (IVYDE-32)
 - FIX: Error while trying to edit an ivy.xml without a configured container (IVYDE-83)
-- FIX: IvyDE resolve also evicted artifacts (IVYDE-76) (thanks to Nicolas Lalevée)
-- FIX: IvyDE is using some internal classes of Eclipse (IVYDE-68) (thanks to Nicolas Lalevée) 
+- FIX: IvyDE resolve also evicted artifacts (IVYDE-76) (thanks to Nicolas Lalevee)
+- FIX: IvyDE is using some internal classes of Eclipse (IVYDE-68) (thanks to Nicolas Lalevee) 
 - FIX: "Add Ivy library" not working in eclipse 3.3 (IVYDE-57)
 - FIX: Automatic javadoc attachment is not working (IVYDE-55)
-- FIX: On startup IvyIDE can freeze eclipse (IVYDE-63) (thanks to Nicolas Lalevée)
+- FIX: On startup IvyIDE can freeze eclipse (IVYDE-63) (thanks to Nicolas Lalevee)
 - FIX: The project ivy configuration is not taken into account on the first run: the configuration is no longer stored in the preferences but in the .classpath (IVYDE-70)
 - FIX: An error occurs when closing a project while the ivy editor is opened (IVYDE-81)
 - FIX: Compilation fails on Europa due to API change (IVYDE-58)
