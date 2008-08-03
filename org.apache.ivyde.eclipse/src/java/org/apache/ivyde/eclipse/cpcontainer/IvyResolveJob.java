@@ -293,7 +293,10 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         resolver.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             public void uncaughtException(Thread t, Throwable e) {
                 status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                        "The resolve job has unexpectedly stopped", e);
+                        "The resolve job of "
+                                + (conf.getJavaProject() == null ? "" : conf.getJavaProject()
+                                        .getProject().getName()
+                                        + "/") + conf.ivyXmlPath + " has unexpectedly stopped", e);
             }
         });
 
@@ -322,7 +325,10 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             return status[0];
         } finally {
             container.job = null;
-            IvyPlugin.log(IStatus.INFO, "resolved dependencies of " + conf.ivyXmlPath, null);
+            IvyPlugin.log(IStatus.INFO, "resolved dependencies of "
+                    + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
+                            .getName()
+                            + "/") + conf.ivyXmlPath, null);
         }
     }
 
