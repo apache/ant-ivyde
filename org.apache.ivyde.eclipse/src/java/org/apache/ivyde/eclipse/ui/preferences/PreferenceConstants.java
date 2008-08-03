@@ -56,4 +56,6 @@ public class PreferenceConstants {
 
     public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
+    public static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
+
 }

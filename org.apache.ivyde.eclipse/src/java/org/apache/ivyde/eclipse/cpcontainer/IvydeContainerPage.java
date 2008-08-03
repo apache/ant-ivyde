@@ -105,6 +105,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     Button alphaOrderCheck;
 
+    Button resolveInWorkspaceCheck;
+
     Button projectSpecificButton;
 
     Button browse;
@@ -160,6 +162,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.retrievePattern = retrievePatternText.getText();
             conf.retrieveSync = retrieveSyncButton.getSelection();
             conf.alphaOrder = alphaOrderCheck.getSelection();
+            conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
         } else {
             conf.ivySettingsPath = null;
         }
@@ -515,6 +518,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         alphaOrderCheck
                 .setToolTipText("Order alphabetically the artifacts in the classpath container");
 
+        resolveInWorkspaceCheck = new Button(this.configComposite, SWT.CHECK);
+        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 2, 1));
+        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
+        resolveInWorkspaceCheck
+                .setToolTipText("Will replace jars on the classpath with workspace projects");
+
         return composite;
     }
 
@@ -538,6 +548,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             retrievePatternText.setText(conf.retrievePattern);
             retrieveSyncButton.setSelection(conf.retrieveSync);
             alphaOrderCheck.setSelection(conf.alphaOrder);
+            resolveInWorkspaceCheck.setSelection(this.conf.resolveInWorkspace);
         } else {
             projectSpecificButton.setSelection(false);
             IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
@@ -551,6 +562,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             retrievePatternText.setText(helper.getRetrievePattern());
             retrieveSyncButton.setSelection(helper.getRetrieveSync());
             alphaOrderCheck.setSelection(helper.isAlphOrder());
+            resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         }
 
         updateFieldsStatus();
@@ -570,6 +582,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         retrievePatternText.setEnabled(doRetrieveButton.getSelection() && projectSpecific);
         retrieveSyncButton.setEnabled(doRetrieveButton.getSelection() && projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
+        resolveInWorkspaceCheck.setEnabled(projectSpecific);
     }
 
     File getFile(File startingDirectory) {

@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,10 +47,12 @@ import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
+import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
@@ -57,6 +60,7 @@ import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -67,7 +71,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * Eclipse classpath container that will contain the ivy resolved entries.
@@ -165,6 +171,17 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
     }
 
+    private Map listDependencies(ResolveReport r) {
+        Map result = new HashMap();
+        Iterator it = r.getDependencies().iterator();
+        while (it.hasNext()) {
+            IvyNode node = (IvyNode) it.next();
+            ModuleRevisionId moduleId = node.getId();
+            result.put(moduleId.getName(), moduleId);
+        }
+        return result;
+    }
+
     protected IStatus run(IProgressMonitor monitor) {
         Message.info("resolving dependencies of " + conf.ivyXmlPath);
         _monitor = monitor;
@@ -187,7 +204,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 ClassLoader old = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
                 try {
-
+                    Map dependencies = Collections.EMPTY_MAP;
                     if (_usePreviousResolveIfExist) {
                         if (conf.confs.size() == 1 && "*".equals(conf.confs.get(0))) {
                             confs = md.getConfigurationsNames();
@@ -205,7 +222,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                     .getConfigurationResolveReportInCache(
                                         ResolveOptions.getDefaultResolveId(md), confs[i]);
                             boolean resolved = false;
-                            if (report.exists()) {
+                            if (report.exists() && !conf.isResolveInWorkspace()) {
                                 // found a report, try to parse it.
                                 try {
                                     XmlReportParser parser = new XmlReportParser();
@@ -229,6 +246,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                                 .toArray(new String[conf.confs.size()])));
                                 all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
                                 confs = r.getConfigurations();
+                                dependencies = listDependencies(r);
                                 problemMessages.addAll(r.getAllProblemMessages());
                                 maybeRetrieve(md, confs);
 
@@ -245,6 +263,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                             false)));
                         confs = report.getConfigurations();
 
+                        dependencies = listDependencies(report);
+
                         if (_monitor.isCanceled()) {
                             status[0] = Status.CANCEL_STATUS;
                             return;
@@ -255,7 +275,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
                     warnIfDuplicates(all);
 
-                    classpathEntries[0] = artifacts2ClasspathEntries(all);
+                    classpathEntries[0] = artifacts2ClasspathEntries(all, dependencies);
                 } catch (ParseException e) {
                     String errorMsg = "Error while parsing the ivy file " + conf.ivyXmlPath + "\n"
                             + e.getMessage();
@@ -386,24 +406,84 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
     }
 
-    private IClasspathEntry[] artifacts2ClasspathEntries(Collection all) {
+    private IClasspathEntry[] artifacts2ClasspathEntries(Collection all, Map dependencies) {
         IClasspathEntry[] classpathEntries;
         Collection paths = new LinkedHashSet();
+
+        Map idToJProject = new HashMap();
+        if (conf.isResolveInWorkspace()) {
+            try {
+                IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot())
+                        .getJavaProjects();
+                for (int i = 0; i < projects.length; i++) {
+                    IJavaProject javaProject = projects[i];
+                    ModuleDescriptor md = findModuleDescriptor(javaProject);
+                    if (md != null) {
+                        idToJProject.put(md.getModuleRevisionId().getModuleId(), javaProject);
+                    }
+                }
+            } catch (JavaModelException e) {
+                IvyPlugin.log(IStatus.ERROR, "Error while listing the java projects,"
+                        + " dependencies between java projects won't be used", e);
+            }
+        }
+
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
-            if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
-                Path classpathArtifact = new Path(artifact.getLocalFile().getAbsolutePath());
-                Path sourcesArtifact = getSourcesArtifactPath(artifact, all);
-                Path javadocArtifact = getJavadocArtifactPath(artifact, all);
-                paths.add(JavaCore.newLibraryEntry(classpathArtifact, getSourceAttachment(
-                    classpathArtifact, sourcesArtifact), getSourceAttachmentRoot(classpathArtifact,
-                    sourcesArtifact), null, getExtraAttribute(classpathArtifact, javadocArtifact),
-                    false));
+
+            boolean usedProject = false;
+            if (conf.isResolveInWorkspace()) {
+                ModuleId moduleId = artifact.getArtifact().getModuleRevisionId().getModuleId();
+                String moduleName = moduleId.getName();
+                ModuleRevisionId moduleRevisionId = (ModuleRevisionId) dependencies.get(moduleName);
+                if (moduleRevisionId != null) {
+                    IJavaProject project = (IJavaProject) idToJProject.get(moduleId);
+                    if (project != null && project.exists() && project.isOpen()) {
+                        IClasspathEntry entry = JavaCore.newProjectEntry(project.getPath());
+                        if (entry != null && !paths.contains(entry)) {
+                            paths.add(entry);
+                        }
+                        usedProject = true;
+                    }
+                }
             }
+
+            if (!usedProject) {
+                if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
+                    Path classpathArtifact = new Path(artifact.getLocalFile().getAbsolutePath());
+                    Path sourcesArtifact = getSourcesArtifactPath(artifact, all);
+                    Path javadocArtifact = getJavadocArtifactPath(artifact, all);
+                    paths.add(JavaCore.newLibraryEntry(classpathArtifact, getSourceAttachment(
+                        classpathArtifact, sourcesArtifact), getSourceAttachmentRoot(
+                        classpathArtifact, sourcesArtifact), null, getExtraAttribute(
+                        classpathArtifact, javadocArtifact), false));
+                }
+            }
+
         }
         classpathEntries = (IClasspathEntry[]) paths.toArray(new IClasspathEntry[paths.size()]);
 
         return classpathEntries;
+    }
+
+    /*
+     * Finds and parses the ivy.xml file for the supplied project's classpath container
+     */
+    private ModuleDescriptor findModuleDescriptor(IJavaProject javaProject) {
+        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
+        if (cp == null) {
+            return null;
+        }
+        try {
+            return cp.getConf().getModuleDescriptor(ivy);
+        } catch (MalformedURLException e) {
+            IvyPlugin.log(IStatus.WARNING, "The path of the ivy.xml of the project " + javaProject + " is not a valid URL", e);
+        } catch (ParseException e) {
+            IvyPlugin.log(IStatus.WARNING, "The ivy.xml of the project " + javaProject + " has a syntax error: ", e);
+        } catch (IOException e) {
+            IvyPlugin.log(IStatus.WARNING, "The ivy.xml of the project " + javaProject + " could not be read: ", e);
+        }
+        return null;
     }
 
     private Path getSourcesArtifactPath(ArtifactDownloadReport adr, Collection all) {

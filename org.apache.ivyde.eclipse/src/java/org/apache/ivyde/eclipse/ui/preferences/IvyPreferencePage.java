@@ -216,6 +216,17 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         spacerData.horizontalSpan = 3;
         spacer.setLayoutData(spacerData);
 
+        BooleanFieldEditor resolveInWorkspace = new BooleanFieldEditor(
+                PreferenceConstants.RESOLVE_IN_WORKSPACE,
+                "Resolve dependencies to workspace projects",
+                fieldParent);
+        addField(resolveInWorkspace);
+
+        spacer = new Label(fieldParent, SWT.NONE);
+        spacerData = new GridData();
+        spacerData.horizontalSpan = 3;
+        spacer.setLayoutData(spacerData);
+
         spacer = new Label(fieldParent, SWT.NONE);
         spacerData = new GridData();
         spacerData.horizontalSpan = 3;

@@ -116,7 +116,8 @@ public class IvyPlugin extends AbstractUIPlugin {
                             || event.getProperty() == PreferenceConstants.DO_RETRIEVE
                             || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN
                             || event.getProperty() == PreferenceConstants.RETRIEVE_SYNC
-                            || event.getProperty() == PreferenceConstants.ALPHABETICAL_ORDER) {
+                            || event.getProperty() == PreferenceConstants.ALPHABETICAL_ORDER
+                            || event.getProperty() == PreferenceConstants.RESOLVE_IN_WORKSPACE) {
                         prefStoreChanged();
                     }
                 } catch (JavaModelException e) {

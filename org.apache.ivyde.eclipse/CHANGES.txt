@@ -4,6 +4,7 @@
   next
 ==========================
 - NEW: settings files code completion support (IVYDE-22)
+- NEW: Option to resolve to local eclipse projects (IVYDE-89) (thanks to Antony James Wilkins and Matt Goldspink)
 
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
 

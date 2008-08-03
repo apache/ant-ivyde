@@ -76,6 +76,8 @@ public class IvyClasspathContainerConfiguration {
 
     boolean alphaOrder;
 
+    boolean resolveInWorkspace;
+
     /**
      * Constructor
      * 
@@ -184,6 +186,9 @@ public class IvyClasspathContainerConfiguration {
                 // return false, so it is fine
                 alphaOrder = Boolean.valueOf(value).booleanValue();
                 isProjectSpecific = true;
+            } else if (parameter[0].equals("resolveInWorkspace")) {
+                resolveInWorkspace = Boolean.valueOf(value).booleanValue();
+                isProjectSpecific = true;
             }
         }
         if (isProjectSpecific) {
@@ -245,6 +250,8 @@ public class IvyClasspathContainerConfiguration {
                 path.append(URLEncoder.encode(Boolean.toString(retrieveSync), "UTF-8"));
                 path.append("&alphaOrder=");
                 path.append(URLEncoder.encode(Boolean.toString(alphaOrder), "UTF-8"));
+                path.append("&resolveInWorkspace=");
+                path.append(URLEncoder.encode(Boolean.toString(this.resolveInWorkspace), "UTF-8"));
             }
         } catch (UnsupportedEncodingException e) {
             String message = "The UTF-8 encoding support is required is endecode the path of the container.";
@@ -355,6 +362,13 @@ public class IvyClasspathContainerConfiguration {
             return IvyPlugin.getPreferenceStoreHelper().isAlphOrder();
         }
         return alphaOrder;
+    }
+
+    public boolean isResolveInWorkspace() {
+        if (this.ivySettingsPath == null) {
+            return IvyPlugin.getPreferenceStoreHelper().isResolveInWorkspace();
+        }
+        return resolveInWorkspace;
     }
 
     public boolean isProjectSpecific() {

@@ -61,6 +61,7 @@ public class IvyDEPreferenceStoreHelper {
 
         prefStore.setDefault(PreferenceConstants.RETRIEVE_SYNC, false);
         prefStore.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, false);
+        prefStore.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, false);
     }
 
     public String getIvyOrg() {
@@ -109,6 +110,10 @@ public class IvyDEPreferenceStoreHelper {
 
     public boolean isAlphOrder() {
         return prefStore.getBoolean(PreferenceConstants.ALPHABETICAL_ORDER);
+    }
+
+    public boolean isResolveInWorkspace() {
+        return prefStore.getBoolean(PreferenceConstants.RESOLVE_IN_WORKSPACE);
     }
 
 }
