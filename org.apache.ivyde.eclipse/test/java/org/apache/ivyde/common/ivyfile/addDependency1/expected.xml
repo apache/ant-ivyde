@@ -23,7 +23,7 @@
         module="test"
 	/>
     <dependencies>
-        <dependency org="apache" name="commons-collections" rev="2.1.1" conf="default"/>
+        <dependency org="apache" name="commons-collections" rev="2.1.1" conf="default->default"/>
         <dependency org="apache" name="newdep" rev="1.0" conf="default->default" />
     </dependencies>
 </ivy-module>
