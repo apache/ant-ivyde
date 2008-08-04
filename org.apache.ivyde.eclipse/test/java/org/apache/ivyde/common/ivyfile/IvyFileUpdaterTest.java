@@ -20,6 +20,7 @@ package org.apache.ivyde.common.ivyfile;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.FileUtil;
 
@@ -36,6 +37,7 @@ public class IvyFileUpdaterTest extends TestCase {
         testAddDependency("addDependency5");
         testAddDependency("addDependency6");
         testAddDependency("addDependency7");
+        testAddDependency("addDependency8");
     }
 
     private void testAddDependency(String test) throws IOException {
@@ -43,6 +45,24 @@ public class IvyFileUpdaterTest extends TestCase {
         dest.deleteOnExit();
         FileUtil.copy(IvyFileUpdaterTest.class.getResourceAsStream(test + "/ivy.xml"), dest, null);
         updater.addDependency(dest, ModuleRevisionId.parse("apache#newdep;1.0"), "default->default");
+        assertEquals(
+            test + " failed",
+            FileUtil.readEntirely(IvyFileUpdaterTest.class.getResourceAsStream(test + "/expected.xml")),
+            FileUtil.readEntirely(dest));
+    }
+    
+    public void testRemoveDependency() throws Exception {
+        testRemoveDependency("removeDependency1");
+        testRemoveDependency("removeDependency2");
+        testRemoveDependency("removeDependency3");
+        testRemoveDependency("removeDependency4");
+    }
+
+    private void testRemoveDependency(String test) throws IOException {
+        File dest = File.createTempFile("ivy", ".xml");
+        dest.deleteOnExit();
+        FileUtil.copy(IvyFileUpdaterTest.class.getResourceAsStream(test + "/ivy.xml"), dest, null);
+        updater.removeOrExcludeDependency(dest, new ModuleId("apache", "newdep"));
         assertEquals(
             test + " failed",
             FileUtil.readEntirely(IvyFileUpdaterTest.class.getResourceAsStream(test + "/expected.xml")),
