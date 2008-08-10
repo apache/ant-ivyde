@@ -10,6 +10,7 @@
 
 - FIX: IvyDE crashes during resolve due to an incompatibility with Eclipse 3.2 (IVYDE-108)
 - FIX: Ivy preferences page mentions ivyconf not ivysettings (IVYDE-103)
+- FIX: Resolve is not triggered anymore with Eclipse 3.4 (IVYDE-110)
 
   version 2.0.0 alpha1
 ===========================

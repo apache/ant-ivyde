@@ -94,7 +94,12 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
                     return new IvyModuleDescriptorModel(
                         new EclipseIvyModelSettings(getJavaProject()));
                 }
-            });
+            }) {
+                public void doSave(IProgressMonitor progressMonitor) {
+                    super.doSave(progressMonitor);
+                    triggerResolve();
+                }
+            };
             xmlEditor.setFile(((IvyFileEditorInput) getEditorInput()).getFile());
             int index = addPage(xmlEditor, getEditorInput());
             setPageText(index, xmlEditor.getTitle());
@@ -154,6 +159,9 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
      */
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
+    }
+
+    private void triggerResolve() {
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
         IJavaProject project = JavaCore.create(file.getProject());
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
@@ -229,4 +237,5 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
             });
         }
     }
+
 }
