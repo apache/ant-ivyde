@@ -112,8 +112,8 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         Label explanation = new Label(fieldParent, SWT.NONE);
         explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
                 1));
-        explanation.setText("The url where your ivyconf file can be found. \n"
-                + "Leave empty to reference the default ivy configuration.");
+        explanation.setText("The url where your ivysettings file can be found. \n"
+                + "Leave empty to reference the default ivy settings.");
         new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
                 GridData.BEGINNING, false, false, 3, 1)); // space
 

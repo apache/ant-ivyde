@@ -337,9 +337,9 @@ public class IvyPlugin extends AbstractUIPlugin {
                     MessageDialog
                             .openWarning(
                                 getActiveWorkbenchShell(),
-                                "No ivyConf found",
+                                "No ivy settings found",
                                 ivySettingsPath
-                                        + " ivyconf cannot be found.\nPlease set your ivy conf url in the preference or in your project properties to be able to use IvyDE");
+                                        + " ivy settings cannot be found.\nPlease set your ivy conf url in the preference or in your project properties to be able to use IvyDE");
                     return null;
                 }
 
