@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivy-module version="1.0"> 
-	<info organisation="org.apache.ivyde" module="ivytest-project-dependant">
+	<info organisation="org.apache.ivyde" module="ivytest-useOrigin">
 		<description>
 		</description>
 	</info>
@@ -25,6 +25,6 @@
 		<conf name="default" />
 	</configurations>
 	<dependencies>
-		<dependency org="commons-logging" name="commons-logging" rev="1.+" conf="default" />
+		<dependency org="myorg" name="mymodule" rev="1.1" conf="default" />
 	</dependencies>
 </ivy-module>
