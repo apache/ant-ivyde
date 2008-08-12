@@ -17,20 +17,11 @@
  */
 package org.apache.ivyde.eclipse;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
@@ -270,14 +261,6 @@ public class IvyPlugin extends AbstractUIPlugin {
         return AbstractUIPlugin.imageDescriptorFromPlugin(ID, path);
     }
 
-    private static class IvyConfig {
-        Ivy ivy;
-
-        long configTime = -1;
-    }
-
-    private Map/* <String, IvyConfig> */ivyBySettings = new HashMap();
-
     private PreferenceStoreInfo _packageExtraInfo;
 
     /**
@@ -285,128 +268,6 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public static IvyDEPreferenceStoreHelper getPreferenceStoreHelper() {
         return plugin.prefStoreHelper;
-    }
-
-    /**
-     * Get the Ivy instance for the specified project.
-     * 
-     * @param javaProject
-     *            the Java project
-     * @return the configured Ivy instance, <code>null</code> if there is no Ivy for this project
-     * @throws IOException
-     * @throws ParseException
-     * @throws FileNotFoundException
-     */
-    public static synchronized Ivy getIvy(IJavaProject javaProject) {
-        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
-        if (cp == null) {
-            return null;
-        }
-        return getIvy(cp.getConf().getInheritedIvySettingsPath());
-    }
-
-    /**
-     * Get the Ivy instance for the specified project and the specified settings
-     * <p>
-     * 
-     * @param ivySettingsPath
-     *            the settings to use
-     * @return the configured Ivy instance, <code>null</code> if it failed
-     */
-    public static synchronized Ivy getIvy(String ivySettingsPath) {
-        IvyConfig ic;
-        try {
-            if (ivySettingsPath == null || ivySettingsPath.trim().length() == 0) {
-                // no settings specified, so take the default one
-                return getDefaultIvy();
-            }
-
-            ic = (IvyConfig) plugin.ivyBySettings.get(ivySettingsPath);
-            if (ic == null) {
-                ic = new IvyConfig();
-                plugin.ivyBySettings.put(ivySettingsPath, ic);
-            }
-
-            // before returning the found ivy, try to refresh it if the settings changed
-
-            URL url = new URL(ivySettingsPath);
-            if (url.getProtocol().startsWith("file")) {
-                File file = new File(url.getPath());
-
-                if (!file.exists()) {
-                    MessageDialog
-                            .openWarning(
-                                getActiveWorkbenchShell(),
-                                "No ivy settings found",
-                                ivySettingsPath
-                                        + " ivy settings cannot be found.\nPlease set your ivy conf url in the preference or in your project properties to be able to use IvyDE");
-                    return null;
-                }
-
-                if (file.lastModified() != ic.configTime) {
-                    ic.ivy = new Ivy();
-                    if (ic.configTime == -1) {
-                        Message.info("\n\n");
-                    } else {
-                        Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
-                    }
-                    ic.ivy.configure(file);
-                    ic.configTime = file.lastModified();
-                }
-
-            } else {
-                // an URL but not a file
-                if (ic.ivy == null) {
-                    ic.ivy = new Ivy();
-                    ic.ivy.configure(url);
-                }
-            }
-            return ic.ivy;
-        } catch (Throwable e) {
-            // catching Throwable in case of class path errors, some NoClassDefFoundError can be
-            // raised (IVYDE-85)
-            MessageDialog
-                    .openWarning(
-                        getActiveWorkbenchShell(),
-                        "Bad ivySetting found",
-                        "Problem occured while using "
-                                + ivySettingsPath
-                                + " to configure Ivy.\n"
-                                + "Please set your ivy settings url properly in the preference or in the project properties to be able to use IvyDE.\n"
-                                + "Exception message: " + e.getMessage());
-            log(IStatus.WARNING, "Problem occured while using " + ivySettingsPath
-                    + " to configure Ivy", e);
-            Message.warn("IVYDE: Problem occured while using " + ivySettingsPath
-                    + " to configure Ivy. See error log for details");
-            plugin.ivyBySettings.remove(ivySettingsPath);
-            return null;
-        }
-    }
-
-    private static Ivy getDefaultIvy() {
-        IvyConfig ic = (IvyConfig) plugin.ivyBySettings.get(null);
-        if (ic == null) {
-            ic = new IvyConfig();
-            ic.ivy = new Ivy();
-            try {
-                ic.ivy.configureDefault();
-                plugin.ivyBySettings.put(null, ic);
-            } catch (Exception ex) {
-                MessageDialog
-                        .openWarning(
-                            getActiveWorkbenchShell(),
-                            "Impossible to configure Ivy",
-                            "Problem occured while configuring Ivy with its default settings.\n"
-                                    + "Please set an ivy settings url properly in the preference or in the project properties to be able to use IvyDE.\n"
-                                    + "Exception message: " + ex.getMessage());
-                log(IStatus.WARNING,
-                    "Problem occured while configuring Ivy with its default settings.", ex);
-                Message
-                        .warn("IVYDE: Problem occured while configuring Ivy with its default settings. See error log for details");
-                return null;
-            }
-        }
-        return ic.ivy;
     }
 
     public IvyConsole getConsole() {

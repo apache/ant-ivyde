@@ -59,6 +59,7 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -475,13 +476,11 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             return null;
         }
         try {
-            return cp.getConf().getModuleDescriptor(ivy);
-        } catch (MalformedURLException e) {
-            IvyPlugin.log(IStatus.WARNING, "The path of the ivy.xml of the project " + javaProject + " is not a valid URL", e);
-        } catch (ParseException e) {
-            IvyPlugin.log(IStatus.WARNING, "The ivy.xml of the project " + javaProject + " has a syntax error: ", e);
-        } catch (IOException e) {
-            IvyPlugin.log(IStatus.WARNING, "The ivy.xml of the project " + javaProject + " could not be read: ", e);
+            return cp.getConf().getModuleDescriptor();
+        } catch (IvyDEException e) {
+            e.log(IStatus.WARNING, "IvyDE could not found out if the project "
+                    + javaProject.getElementName() + " should be included in " + conf
+                    + " classpath: ");
         }
         return null;
     }

@@ -18,16 +18,14 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
@@ -119,8 +117,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private IClasspathEntry entry;
 
-    private String ivyXmlError;
-
     private ModuleDescriptor md;
 
     private Button retrieveSyncButton;
@@ -137,11 +133,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         String error;
         if (ivyFilePathText.getText().length() == 0) {
             error = "Choose an ivy file";
-        } else if (ivyXmlError != null) {
-            error = ivyXmlError;
-        } else if (confTableViewer.getCheckedElements().length == 0 && md != null
-                && md.getConfigurations().length != 0) {
-            error = "Choose at least one configuration";
         } else {
             error = null;
         }
@@ -167,15 +158,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.ivySettingsPath = null;
         }
         entry = JavaCore.newContainerEntry(conf.getPath());
-        try {
-            IClasspathContainer cp = JavaCore.getClasspathContainer(entry.getPath(), project);
-            if (cp instanceof IvyClasspathContainer) {
-                ((IvyClasspathContainer) cp).scheduleResolve();
-            }
-        } catch (JavaModelException e) {
-            // unless there are issues with the JDT, this should never happen
-            IvyPlugin.log(e);
-        }
         return true;
     }
 
@@ -240,8 +222,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         ivyFilePathText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 conf.ivyXmlPath = ivyFilePathText.getText();
-                resolveModuleDescriptor();
-                refreshConfigurationTable();
                 checkCompleted();
             }
         });
@@ -295,8 +275,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 if (path != null) {
                     conf.ivyXmlPath = path;
                     ivyFilePathText.setText(path);
-                    resolveModuleDescriptor();
-                    refreshConfigurationTable();
                     checkCompleted();
                 }
             }
@@ -321,7 +299,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             new GridData(GridData.FILL, GridData.FILL, true, true));
         confTableViewer.setContentProvider(new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
-                resolveModuleDescriptor();
                 if (md != null) {
                     return md.getConfigurations();
                 }
@@ -347,7 +324,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         Button refreshConf = new Button(composite, SWT.NONE);
         refreshConf.setText("Refresh");
         refreshConf.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent ev) {
+                try {
+                    md = conf.getModuleDescriptor();
+                } catch (IvyDEException e) {
+                    e.show(IStatus.ERROR, "Configuration error",
+                        "The configurations of the ivy.xml could not be retrieved: ");
+                }
                 confTableViewer.setInput(ivyFilePathText.getText());
             }
         });
@@ -501,7 +484,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         retrieveSyncButton = new Button(configComposite, SWT.CHECK);
         retrieveSyncButton.setText("Delete old retrieved artifacts");
-        retrieveSyncButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 2, 1));
+        retrieveSyncButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false,
+                2, 1));
         retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
 
         doRetrieveButton.addSelectionListener(new SelectionAdapter() {
@@ -531,7 +515,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private void loadFromConf() {
         ivyFilePathText.setText(conf.ivyXmlPath);
 
-        resolveModuleDescriptor();
+        try {
+            md = conf.getModuleDescriptor();
+        } catch (IvyDEException e) {
+            e.log(IStatus.WARNING, "Failed to resolve the module descriptor "
+                    + "while entering in the configuration panel");
+        }
 
         confTableViewer.setInput(conf.ivyXmlPath);
         initTableSelection();
@@ -599,25 +588,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             }
         }
         return null;
-    }
-
-    void resolveModuleDescriptor() {
-        ivyXmlError = null;
-        md = null;
-        Ivy ivy = IvyPlugin.getIvy(conf.getInheritedIvySettingsPath());
-        if (ivy == null) {
-            ivyXmlError = "Error while confiuraing Ivy";
-            return;
-        }
-        try {
-            md = conf.getModuleDescriptor(ivy);
-        } catch (MalformedURLException e) {
-            ivyXmlError = "The path of the ivy.xml is not a valid URL";
-        } catch (ParseException e) {
-            ivyXmlError = "The ivy.xml has a syntax error: " + e.getMessage();
-        } catch (IOException e) {
-            ivyXmlError = "The ivy.xml could not be read: " + e.getMessage();
-        }
     }
 
     /**

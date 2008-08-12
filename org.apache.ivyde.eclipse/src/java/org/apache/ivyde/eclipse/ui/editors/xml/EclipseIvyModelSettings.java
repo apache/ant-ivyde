@@ -19,17 +19,23 @@ package org.apache.ivyde.eclipse.ui.editors.xml;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.common.model.IvyModelSettings;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 
 public class EclipseIvyModelSettings implements IvyModelSettings {
     
     private IJavaProject javaProject;
+    private IvyClasspathContainer cp;
     
     public EclipseIvyModelSettings(IJavaProject javaProject) {
         this.javaProject = javaProject;
+        cp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
     }
 
     public String getDefaultOrganization() {
@@ -43,7 +49,12 @@ public class EclipseIvyModelSettings implements IvyModelSettings {
     }
 
     public Ivy getIvyInstance() {
-        return IvyPlugin.getIvy(javaProject);
+        try {
+            return cp.getConf().getIvy();
+        } catch (IvyDEException e) {
+            e.log(IStatus.WARNING, null);
+            return null;
+        }
     }
 
     public void logError(String message, Exception e) {

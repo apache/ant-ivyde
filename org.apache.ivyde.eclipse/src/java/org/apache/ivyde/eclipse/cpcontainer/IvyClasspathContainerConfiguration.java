@@ -32,6 +32,8 @@ import java.util.List;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +41,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * path: org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER? ivyXmlPath=ivy.xml &confs=default
@@ -78,12 +79,15 @@ public class IvyClasspathContainerConfiguration {
 
     boolean resolveInWorkspace;
 
+    private Ivy ivy;
+
+    private long ivySettingsLastModified = -1;
+
     /**
      * Constructor
      * 
      * @param javaProject
-     *            the classpath container's Java project, <code>null</code> is not bind to a
-     *            project
+     *            the classpath container's Java project, <code>null</code> is not bind to a project
      * @param ivyXmlPath
      *            the path to the ivy.xml
      */
@@ -96,8 +100,7 @@ public class IvyClasspathContainerConfiguration {
      * Constructor
      * 
      * @param javaProject
-     *            the classpath container's Java project, <code>null</code> is not bind to a
-     *            project
+     *            the classpath container's Java project, <code>null</code> is not bind to a project
      * @param path
      *            the path of the classpath container
      */
@@ -108,6 +111,12 @@ public class IvyClasspathContainerConfiguration {
         } else {
             loadV1(path);
         }
+    }
+
+    public String toString() {
+        return (javaProject == null ? "" : "project '" + javaProject.getElementName()
+                + "' and ivy file '")
+                + ivyXmlPath + (javaProject == null ? "" : "'");
     }
 
     /**
@@ -269,6 +278,78 @@ public class IvyClasspathContainerConfiguration {
         return javaProject;
     }
 
+    public Ivy getIvy() throws IvyDEException {
+        String ivySettingsPath = getInheritedIvySettingsPath();
+        if (ivySettingsPath == null || ivySettingsPath.trim().length() == 0) {
+            // no settings specified, so take the default one
+            if (ivy == null) {
+                ivy = new Ivy();
+                try {
+                    ivy.configureDefault();
+                } catch (ParseException e) {
+                    throw new IvyDEException("The default ivy settings file could not be parsed ("
+                            + this.toString() + ")", e);
+                } catch (IOException e) {
+                    throw new IvyDEException("The default ivy settings file could not be read ("
+                            + this.toString() + ")", e);
+                }
+            }
+            return ivy;
+        }
+
+        // before returning the found ivy, try to refresh it if the settings changed
+        URL url;
+        try {
+            url = new URL(ivySettingsPath);
+        } catch (MalformedURLException e) {
+            throw new IvyDEException("The ivy settings url '" + ivySettingsPath
+                    + "' is incorrect (" + this.toString() + ")", e);
+        }
+        if (url.getProtocol().startsWith("file")) {
+            File file = new File(url.getPath());
+
+            if (!file.exists()) {
+                throw new IvyDEException("The ivy settings file '" + ivySettingsPath
+                        + "' cannot be found (" + this.toString() + ")", null);
+            }
+
+            if (file.lastModified() != ivySettingsLastModified) {
+                ivy = new Ivy();
+                if (ivySettingsLastModified == -1) {
+                    Message.info("\n\n");
+                } else {
+                    Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
+                }
+                try {
+                    ivy.configure(file);
+                } catch (ParseException e) {
+                    throw new IvyDEException("The ivy settings file '" + ivySettingsPath
+                            + "' could not be parsed (" + this.toString() + ")", e);
+                } catch (IOException e) {
+                    throw new IvyDEException("The ivy settings file '" + ivySettingsPath
+                            + "' could not be read (" + this.toString() + ")", e);
+                }
+                ivySettingsLastModified = file.lastModified();
+            }
+
+        } else {
+            // an URL but not a file
+            if (ivy == null) {
+                ivy = new Ivy();
+                try {
+                    ivy.configure(url);
+                } catch (ParseException e) {
+                    throw new IvyDEException("The ivy settings file '" + ivySettingsPath
+                            + "' could not be parsed (" + this.toString() + ")", e);
+                } catch (IOException e) {
+                    throw new IvyDEException("The ivy settings file '" + ivySettingsPath
+                            + "' could not be read (" + this.toString() + ")", e);
+                }
+            }
+        }
+        return ivy;
+    }
+
     public String getInheritedIvySettingsPath() {
         if (ivySettingsPath == null) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
@@ -375,20 +456,6 @@ public class IvyClasspathContainerConfiguration {
         return ivySettingsPath != null;
     }
 
-    private String getInheritablePreferenceString(String value) {
-        if (value == null || value.startsWith("[inherited]")) {
-            return null;
-        }
-        return value;
-    }
-
-    private List getInheritablePreferenceList(String values) {
-        if (values == null || values.startsWith("[inherited]")) {
-            return null;
-        }
-        return IvyClasspathUtil.split(values);
-    }
-
     File getIvyFile() {
         File file;
         if (javaProject != null) {
@@ -400,37 +467,25 @@ public class IvyClasspathContainerConfiguration {
         return file;
     }
 
-    public ModuleDescriptor getModuleDescriptorSafely(Ivy ivy) {
+    public ModuleDescriptor getModuleDescriptor() throws IvyDEException {
         File file = getIvyFile();
         try {
-            return getModuleDescriptor(ivy);
+            Ivy i = getIvy();
+            if (i == null) {
+                return null;
+            }
+            return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(i.getSettings(),
+                file.toURL(), false);
         } catch (MalformedURLException e) {
-            MessageDialog.openWarning(IvyPlugin.getActiveWorkbenchShell(), "Incorrect path",
-                "The path to the ivy.xml file is incorrect: '" + file.getAbsolutePath()
-                        + "'. \nError:" + e.getMessage());
-            return null;
+            throw new IvyDEException("The path to the ivy.xml file is incorrect: '"
+                    + file.getAbsolutePath() + "' (" + this.toString() + ")", e);
         } catch (ParseException e) {
-            MessageDialog.openWarning(IvyPlugin.getActiveWorkbenchShell(), "Incorrect ivy file",
-                "The ivy file '" + file.getAbsolutePath() + "' could not be parsed. \nError:"
-                        + e.getMessage());
-            return null;
+            throw new IvyDEException("The ivy file '" + file.getAbsolutePath()
+                    + "' could not be parsed (" + this.toString() + ")", e);
         } catch (IOException e) {
-            MessageDialog.openWarning(IvyPlugin.getActiveWorkbenchShell(), "Read error",
-                "The ivy file '" + file.getAbsolutePath() + "' could not be read. \nError:"
-                        + e.getMessage());
-            return null;
+            throw new IvyDEException("The ivy file '" + file.getAbsolutePath()
+                    + "' could not be read (" + this.toString() + ")", e);
         }
-    }
-
-    public ModuleDescriptor getModuleDescriptor(Ivy ivy) throws MalformedURLException,
-            ParseException, IOException {
-        return getModuleDescriptor(ivy, getIvyFile());
-    }
-
-    public ModuleDescriptor getModuleDescriptor(Ivy ivy, File ivyFile)
-            throws MalformedURLException, ParseException, IOException {
-        return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(),
-            ivyFile.toURL(), false);
     }
 
 }

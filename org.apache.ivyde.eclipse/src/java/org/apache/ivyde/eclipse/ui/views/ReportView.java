@@ -20,8 +20,10 @@ package org.apache.ivyde.eclipse.ui.views;
 import java.net.URL;
 
 import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -54,13 +56,17 @@ public class ReportView extends ViewPart implements ISelectionListener {
                     .getIvyClasspathContainer((IStructuredSelection) sel);
             if (ivycp != null) {
                 _browser.setUrl("");
-                URL report = ivycp.getReportUrl();
-                if (report != null) {
-                    if (!_browser.setUrl(report.toExternalForm())) {
-                        _browser.setUrl("");
-                        Message.warn("impossible to set report view url to "
-                                + report.toExternalForm());
-                    }
+                URL report;
+                try {
+                    report = ivycp.getReportUrl();
+                } catch (IvyDEException e) {
+                    e.log(IStatus.WARNING, "Impossible show the report for " + ivycp.getConf());
+                    e.show(IStatus.WARNING, "Show report failure", "Impossible show the report for " + ivycp.getConf());
+                    return;
+                }
+                if (!_browser.setUrl(report.toExternalForm())) {
+                    _browser.setUrl("");
+                    Message.warn("impossible to set report view url to " + report.toExternalForm());
                 }
             }
         }
