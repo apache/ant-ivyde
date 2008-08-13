@@ -43,7 +43,7 @@ public class RefreshAction implements IWorkbenchWindowActionDelegate {
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
                 .getSelectionInJavaPackageView());
         if (cp != null) {
-            cp.scheduleRefresh(true);
+            cp.launchResolve(true, true, null);
         }
     }
 

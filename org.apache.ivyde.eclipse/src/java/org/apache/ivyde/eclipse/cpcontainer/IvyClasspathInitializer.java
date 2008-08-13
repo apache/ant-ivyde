@@ -68,7 +68,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     new IClasspathContainer[] {container}, null);
 
                 // now refresh the container to be synchronized with the ivy.xml
-                ((IvyClasspathContainer) container).scheduleRefresh(false);
+                ((IvyClasspathContainer) container).launchResolve(false, false, null);
             } catch (Exception ex) {
                 IStatus status = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.OK,
                         "Unable to set container for " + containerPath.toString(), ex);
@@ -77,20 +77,10 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.ClasspathContainerInitializer#canUpdateClasspathContainer(org.eclipse.core.runtime.IPath,
-     *      org.eclipse.jdt.core.IJavaProject)
-     */
     public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
         return true;
     }
 
-    /**
-     * @see org.eclipse.jdt.core.ClasspathContainerInitializer#requestClasspathContainerUpdate(org.eclipse.core.runtime.IPath,
-     *      org.eclipse.jdt.core.IJavaProject, org.eclipse.jdt.core.IClasspathContainer)
-     */
     public void requestClasspathContainerUpdate(IPath containerPath, final IJavaProject project,
             IClasspathContainer containerSuggestion) throws CoreException {
         if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
@@ -111,27 +101,17 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     IvyClasspathContainer ivycp = IvyClasspathUtil
                             .getIvyClasspathContainer(project);
                     if (ivycp != null) {
-                        ivycp.scheduleRefresh(true);
+                        ivycp.launchResolve(false, true, null);
                     }
                 }
             });
         }
     }
 
-    /**
-     * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getDescription(org.eclipse.core.runtime.IPath,
-     *      org.eclipse.jdt.core.IJavaProject)
-     */
     public String getDescription(IPath containerPath, IJavaProject project) {
         return "my description";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getComparisonID(org.eclipse.core.runtime.IPath,
-     *      org.eclipse.jdt.core.IJavaProject)
-     */
     public Object getComparisonID(IPath containerPath, IJavaProject project) {
         return project.getProject().getName() + "/" + containerPath;
     }

@@ -177,7 +177,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
      * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
      */
     private IvyResolveJob computeClasspathEntries(final boolean usePreviousResolveIfExist,
-            boolean notify, boolean isUser) {
+            boolean isUser) {
         try {
             synchronized (this) {
                 if (job != null) {
@@ -192,15 +192,18 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 if (md == null) {
                     return null;
                 }
-                job = new IvyResolveJob(this, usePreviousResolveIfExist, notify, conf, ivy, md);
+                job = new IvyResolveJob(this, usePreviousResolveIfExist, conf, ivy, md);
                 job.setUser(isUser);
                 job.setRule(RESOLVE_EVENT_RULE);
                 return job;
             }
         } catch (IvyDEException e) {
-            e.print(IStatus.ERROR, "The resolve job could not be lauched: ");
-            e.log(IStatus.ERROR, "The resolve job could not be lauched: ");
-            e.show(IStatus.ERROR, "IvyDE resolve failed", "The IvyDE resolve job could not be lauched: ");
+            e.print(IStatus.ERROR, "The resolve job could not be launched: ");
+            e.log(IStatus.ERROR, "The resolve job could not be launched: ");
+            if (isUser) {
+                e.show(IStatus.ERROR, "IvyDE resolve failed",
+                    "The IvyDE resolve job could not be lauched: ");
+            }
             return null;
         } catch (Throwable e) {
             // IVYDE-79 : catch Throwable in order to catch java.lang.NoClassDefFoundError too
@@ -212,44 +215,28 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
     }
 
-    /**
-     * This method is here to available the Resolve all action to run in a single progress window.
-     * It is quiet ugly but it is a first way to do this quiet quickly.
-     * 
-     * @param monitor
-     */
-    public void resolve(IProgressMonitor monitor) {
-        IvyResolveJob j = computeClasspathEntries(false, true, true);
+    public void launchResolve(boolean usePreviousResolveIfExist, boolean isUser, IProgressMonitor monitor) {
+        IvyResolveJob j = computeClasspathEntries(usePreviousResolveIfExist, isUser);
         if (j != null) {
-            j.run(monitor);
+            if (monitor != null) {
+                j.run(monitor);
+            } else {
+                j.schedule();
+            }
         }
     }
 
-    public void scheduleResolve() {
-        IvyResolveJob j = computeClasspathEntries(false, true, true);
-        if (j != null) {
-            j.schedule();
-        }
-    }
-
-    public void scheduleRefresh(boolean isUser) {
-        IvyResolveJob j = computeClasspathEntries(true, true, isUser);
-        if (j != null) {
-            j.schedule();
-        }
-    }
-
-    void updateClasspathEntries(boolean notify, final IClasspathEntry[] newEntries) {
+    void updateClasspathEntries(final IClasspathEntry[] newEntries) {
         IClasspathEntry[] entries;
         if (newEntries != null) {
             entries = newEntries;
         } else {
             entries = new IClasspathEntry[0];
         }
-        setClasspathEntries(entries, notify);
+        setClasspathEntries(entries);
     }
 
-    private void setClasspathEntries(final IClasspathEntry[] entries, final boolean notify) {
+    private void setClasspathEntries(final IClasspathEntry[] entries) {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 if (conf.isInheritedAlphaOrder()) {
@@ -261,9 +248,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     });
                 }
                 classpathEntries = entries;
-                if (notify) {
-                    notifyUpdateClasspathEntries();
-                }
+                notifyUpdateClasspathEntries();
             }
         });
     }

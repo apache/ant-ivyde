@@ -43,7 +43,7 @@ public class ResolveAction implements IWorkbenchWindowActionDelegate {
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
                 .getSelectionInJavaPackageView());
         if (cp != null) {
-            cp.scheduleResolve();
+            cp.launchResolve(false, true, null);
         }
     }
 

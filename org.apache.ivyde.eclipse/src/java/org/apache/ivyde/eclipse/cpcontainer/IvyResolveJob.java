@@ -92,8 +92,6 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private int _workPerArtifact = 100;
 
-    private boolean _notify;
-
     final Ivy ivy;
 
     final IvyClasspathContainerConfiguration conf;
@@ -103,7 +101,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
     final ModuleDescriptor md;
 
     public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist,
-            boolean notify, IvyClasspathContainerConfiguration conf, Ivy ivy, ModuleDescriptor md) {
+            IvyClasspathContainerConfiguration conf, Ivy ivy, ModuleDescriptor md) {
         super("Resolve "
                 + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
                         .getName()
@@ -112,7 +110,6 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         this.ivy = ivy;
         this.md = md;
         _usePreviousResolveIfExist = usePreviousResolveIfExist;
-        _notify = notify;
         this.conf = conf;
     }
 
@@ -341,7 +338,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 }
             }
             if (status[0] == Status.OK_STATUS) {
-                container.updateClasspathEntries(_notify, classpathEntries[0]);
+                container.updateClasspathEntries(classpathEntries[0]);
             }
             return status[0];
         } finally {

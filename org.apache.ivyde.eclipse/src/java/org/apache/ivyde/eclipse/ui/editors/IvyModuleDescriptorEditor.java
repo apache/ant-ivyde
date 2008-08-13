@@ -167,7 +167,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
         if (cp != null
                 && cp.getConf().getIvyXmlPath().equals(file.getProjectRelativePath().toString())) {
-            cp.scheduleResolve();
+            cp.launchResolve(false, true, null);
         }
     }
 

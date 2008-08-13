@@ -77,7 +77,7 @@ public class ResolveAllAction implements IWorkbenchWindowActionDelegate {
                     }
                     SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
                     IvyClasspathContainer cp = (IvyClasspathContainer) iter.next();
-                    cp.resolve(subMonitor);
+                    cp.launchResolve(false, true, subMonitor);
                 }
 
                 return Status.OK_STATUS;

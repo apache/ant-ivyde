@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.ui.editors;
 
-import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
 import org.apache.ivyde.common.ivysettings.IvySettingsModel;
 import org.apache.ivyde.common.model.IvyModel;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -126,7 +125,7 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
         if (cp != null
                 && cp.getConf().getInheritedIvySettingsPath().equals(
                     file.getProjectRelativePath().toString())) {
-            cp.scheduleResolve();
+            cp.launchResolve(false, true, null);
         }
     }
 
