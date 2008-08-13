@@ -11,6 +11,7 @@
 - FIX: IvyDE crashes during resolve due to an incompatibility with Eclipse 3.2 (IVYDE-108)
 - FIX: Ivy preferences page mentions ivyconf not ivysettings (IVYDE-103)
 - FIX: Resolve is not triggered anymore with Eclipse 3.4 (IVYDE-110)
+- FIX: An incorrect configuration of a container make 3 error popup (IVYDE-112)
 
   version 2.0.0 alpha1
 ===========================
