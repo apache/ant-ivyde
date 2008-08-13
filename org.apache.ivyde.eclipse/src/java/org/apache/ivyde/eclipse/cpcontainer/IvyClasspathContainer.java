@@ -200,7 +200,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         } catch (IvyDEException e) {
             e.print(IStatus.ERROR, "The resolve job could not be lauched: ");
             e.log(IStatus.ERROR, "The resolve job could not be lauched: ");
-            e.show(IStatus.ERROR, "Resolve failed", "The resolve job could not be lauched: ");
+            e.show(IStatus.ERROR, "IvyDE resolve failed", "The IvyDE resolve job could not be lauched: ");
             return null;
         } catch (Throwable e) {
             // IVYDE-79 : catch Throwable in order to catch java.lang.NoClassDefFoundError too

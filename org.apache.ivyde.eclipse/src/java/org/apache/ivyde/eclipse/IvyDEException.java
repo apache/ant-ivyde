@@ -29,8 +29,25 @@ import org.eclipse.jface.dialogs.MessageDialog;
  */
 public class IvyDEException extends Exception {
 
-    public IvyDEException(String msg, Throwable cause) {
+    private final String shortMsg;
+
+    /**
+     * Default constructor
+     * 
+     * @param shortMsg
+     *            a short description of the error, whcih doesn't need context information
+     * @param msg
+     *            full message, with context information like the full path and the project name
+     * @param cause
+     *            the underlying cause
+     */
+    public IvyDEException(String shortMsg, String msg, Throwable cause) {
         super(msg, cause);
+        this.shortMsg = shortMsg;
+    }
+
+    public String getShortMsg() {
+        return shortMsg;
     }
 
     /**

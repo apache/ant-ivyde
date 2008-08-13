@@ -33,14 +33,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -121,6 +121,22 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private Button retrieveSyncButton;
 
+    private ControlDecoration ivyFilePathTextDeco;
+
+    private IvyDEException ivyXmlError;
+
+    private Image errorDecoImage;
+
+    private ControlDecoration settingsTextDeco;
+
+    private IvyDEException settingsError;
+
+    private TabItem mainTab;
+
+    private TabFolder tabs;
+
+    private TabItem advancedTab;
+
     /**
      * Constructor
      * 
@@ -191,21 +207,39 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         setTitle("IvyDE Managed Libraries");
         setDescription("Choose ivy file and its configurations.");
 
-        TabFolder tabs = new TabFolder(parent, SWT.BORDER);
+        errorDecoImage = FieldDecorationRegistry.getDefault().getFieldDecoration(
+            FieldDecorationRegistry.DEC_ERROR).getImage();
+
+        tabs = new TabFolder(parent, SWT.BORDER);
         tabs.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        TabItem mainTab = new TabItem(tabs, SWT.NONE);
+        mainTab = new TabItem(tabs, SWT.NONE);
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
 
-        TabItem advancedTab = new TabItem(tabs, SWT.NONE);
+        tabs.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                TabItem item = tabs.getSelection()[0];
+                if (item == mainTab && ivyXmlError != null) {
+                    ivyFilePathTextDeco.showHoverText(ivyXmlError.getShortMsg());
+                    settingsTextDeco.showHoverText(null);
+                } else if (item == advancedTab &&  settingsError != null) {
+                    settingsTextDeco.showHoverText(settingsError.getShortMsg());
+                    ivyFilePathTextDeco.showHoverText(null);
+                }
+            }
+        });
+
+        advancedTab = new TabItem(tabs, SWT.NONE);
         advancedTab.setText("Advanced");
         advancedTab.setControl(createAdvancedTab(tabs));
 
         setControl(tabs);
 
         loadFromConf();
+        ivyXmlPathUpdated();
         checkCompleted();
+        tabs.setFocus();
     }
 
     private Control createMainTab(Composite parent) {
@@ -220,9 +254,20 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         ivyFilePathText = new Text(composite, SWT.SINGLE | SWT.BORDER);
         ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         ivyFilePathText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            public void modifyText(ModifyEvent ev) {
                 conf.ivyXmlPath = ivyFilePathText.getText();
-                checkCompleted();
+                ivyXmlPathUpdated();
+            }
+        });
+        ivyFilePathTextDeco = new ControlDecoration(ivyFilePathText, SWT.LEFT | SWT.TOP);
+        ivyFilePathTextDeco.setMarginWidth(2);
+        ivyFilePathTextDeco.setImage(errorDecoImage);
+        ivyFilePathTextDeco.hide();
+        ivyFilePathTextDeco.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (ivyXmlError != null) {
+                    ivyXmlError.show(IStatus.ERROR, "IvyDE configuration problem", null);
+                }
             }
         });
 
@@ -275,7 +320,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 if (path != null) {
                     conf.ivyXmlPath = path;
                     ivyFilePathText.setText(path);
-                    checkCompleted();
+                    ivyXmlPathUpdated();
                 }
             }
         });
@@ -328,7 +373,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 try {
                     md = conf.getModuleDescriptor();
                 } catch (IvyDEException e) {
-                    e.show(IStatus.ERROR, "Configuration error",
+                    e.show(IStatus.ERROR, "Ivy configuration error",
                         "The configurations of the ivy.xml could not be retrieved: ");
                 }
                 confTableViewer.setInput(ivyFilePathText.getText());
@@ -353,6 +398,31 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return composite;
     }
 
+    void ivyXmlPathUpdated() {
+        try {
+            md = conf.getModuleDescriptor();
+            setIvyXmlError(null);
+        } catch (IvyDEException e) {
+            md = null;
+            setIvyXmlError(e);
+        }
+        checkCompleted();
+    }
+
+    void setIvyXmlError(IvyDEException error) {
+        if (error == null) {
+            ivyXmlError = null;
+            ivyFilePathTextDeco.hide();
+            ivyFilePathTextDeco.hideHover();
+        } else if (!error.equals(ivyXmlError)) {
+            ivyXmlError = error;
+            ivyFilePathTextDeco.show();
+            if (ivyFilePathText.isVisible()) {
+                ivyFilePathTextDeco.showHoverText(error.getShortMsg());
+            }
+        }
+    }
+
     private Control createAdvancedTab(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
@@ -368,7 +438,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             public void widgetSelected(SelectionEvent e) {
                 updateFieldsStatus();
                 conf.ivySettingsPath = settingsText.getText();
-                checkCompleted();
+                settingsUpdated();
             }
         });
 
@@ -401,7 +471,18 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         settingsText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 conf.ivySettingsPath = settingsText.getText();
-                checkCompleted();
+                settingsUpdated();
+            }
+        });
+        settingsTextDeco = new ControlDecoration(settingsText, SWT.LEFT | SWT.TOP);
+        settingsTextDeco.setMarginWidth(2);
+        settingsTextDeco.setImage(errorDecoImage);
+        settingsTextDeco.hide();
+        settingsTextDeco.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (settingsError != null) {
+                    settingsError.show(IStatus.ERROR, "IvyDE configuration problem", null);
+                }
             }
         });
 
@@ -413,6 +494,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 if (f != null) {
                     try {
                         settingsText.setText(f.toURL().toExternalForm());
+                        settingsUpdated();
                     } catch (MalformedURLException ex) {
                         // this cannot happen
                         IvyPlugin.log(IStatus.ERROR,
@@ -512,15 +594,34 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return composite;
     }
 
+    void settingsUpdated() {
+        try {
+            conf.ivySettingsLastModified = -1;
+            conf.getIvy();
+            setSettingsError(null);
+        } catch (IvyDEException e) {
+            md = null;
+            setSettingsError(e);
+        }
+        ivyXmlPathUpdated();
+    }
+
+    void setSettingsError(IvyDEException error) {
+        if (error == null) {
+            settingsError = null;
+            settingsTextDeco.hide();
+            settingsTextDeco.hideHover();
+        } else if (!error.equals(settingsError)) {
+            settingsError = error;
+            settingsTextDeco.show();
+            if (settingsText.isVisible()) {
+                settingsTextDeco.showHoverText(error.getShortMsg());
+            }
+        }
+    }
+
     private void loadFromConf() {
         ivyFilePathText.setText(conf.ivyXmlPath);
-
-        try {
-            md = conf.getModuleDescriptor();
-        } catch (IvyDEException e) {
-            e.log(IStatus.WARNING, "Failed to resolve the module descriptor "
-                    + "while entering in the configuration panel");
-        }
 
         confTableViewer.setInput(conf.ivyXmlPath);
         initTableSelection();

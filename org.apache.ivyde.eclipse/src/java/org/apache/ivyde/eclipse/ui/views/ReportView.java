@@ -61,7 +61,7 @@ public class ReportView extends ViewPart implements ISelectionListener {
                     report = ivycp.getReportUrl();
                 } catch (IvyDEException e) {
                     e.log(IStatus.WARNING, "Impossible show the report for " + ivycp.getConf());
-                    e.show(IStatus.WARNING, "Show report failure", "Impossible show the report for " + ivycp.getConf());
+                    e.show(IStatus.WARNING, "Show Ivy report failure", "Impossible show the report for " + ivycp.getConf());
                     return;
                 }
                 if (!_browser.setUrl(report.toExternalForm())) {
