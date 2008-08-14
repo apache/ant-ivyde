@@ -177,6 +177,17 @@
             id="org.apache.ivyde.eclipse.ui.actions.resolveAll">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerDecorator"
+            id="org.apache.ivyde.eclipse.cpcontainer.decorator"
+            label="IvyDE classpath decoration"
+            location="BOTTOM_LEFT"
+            state="true">
+      </decorator>
+   </extension>
    
 
 

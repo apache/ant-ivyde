@@ -61,7 +61,11 @@ import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -100,17 +104,14 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     final ModuleDescriptor md;
 
-    public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist,
-            IvyClasspathContainerConfiguration conf, Ivy ivy, ModuleDescriptor md) {
-        super("Resolve "
-                + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
-                        .getName()
-                        + "/") + conf.ivyXmlPath + " dependencies");
+    public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist)
+            throws IvyDEException {
+        super("Resolve " + container.getConf() + " dependencies");
         this.container = container;
-        this.ivy = ivy;
-        this.md = md;
+        this.conf = container.getConf();
+        this.ivy = conf.getIvy();
+        this.md = conf.getModuleDescriptor();
         _usePreviousResolveIfExist = usePreviousResolveIfExist;
-        this.conf = conf;
     }
 
     public void transferProgress(TransferEvent evt) {
@@ -340,6 +341,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             if (status[0] == Status.OK_STATUS) {
                 container.updateClasspathEntries(classpathEntries[0]);
             }
+            setResolveStatus(status[0]);
             return status[0];
         } finally {
             container.job = null;
@@ -347,6 +349,36 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                     + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
                             .getName()
                             + "/") + conf.ivyXmlPath, null);
+        }
+    }
+
+    private void setResolveStatus(IStatus status) {
+        if (conf.javaProject != null) {
+            IFile ivyFile = conf.javaProject.getProject().getFile(conf.ivyXmlPath);
+            if (!ivyFile.exists()) {
+                return;
+            }
+            try {
+                ivyFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+                if (status == Status.OK_STATUS) {
+                    return;
+                }
+                IMarker marker = ivyFile.createMarker(IMarker.PROBLEM);
+                marker.setAttribute(IMarker.MESSAGE, status.getMessage());
+                switch (status.getSeverity()) {
+                    case IStatus.ERROR:
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+                        break;
+                    case IStatus.WARNING:
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                        break;
+                    case IStatus.INFO:
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+                        break;
+                }
+            } catch (CoreException e) {
+                IvyPlugin.log(e);
+            }
         }
     }
 

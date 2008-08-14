@@ -18,6 +18,7 @@
 package org.apache.ivyde.eclipse.ui.actions;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +55,11 @@ public class OpenIvyFileAction implements IWorkbenchWindowActionDelegate {
         IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(IvyClasspathUtil
                 .getSelectionInJavaPackageView());
         if (cp != null) {
-            IFile file = cp.getIvyFile();
+            IvyClasspathContainerConfiguration conf = cp .getConf();
+            if (conf.getJavaProject() == null) {
+                return;
+            }
+            IFile file = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getActivePage();
             if (file != null) {

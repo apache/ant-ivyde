@@ -36,10 +36,14 @@ import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
@@ -83,6 +87,8 @@ public class IvyClasspathContainerConfiguration {
 
     long ivySettingsLastModified = -1;
 
+    boolean confOk;
+
     /**
      * Constructor
      * 
@@ -114,7 +120,7 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public String toString() {
-        return (javaProject == null ? "" : "project '" + javaProject.getElementName()
+        return (javaProject == null ? "" : "project '" + javaProject.getProject().getName()
                 + "' and ivy file '")
                 + ivyXmlPath + (javaProject == null ? "" : "'");
     }
@@ -278,6 +284,49 @@ public class IvyClasspathContainerConfiguration {
         return javaProject;
     }
 
+    private void setConfStatus(IvyDEException e) {
+        if (confOk != (e == null)) {
+            confOk = (e == null);
+            IvyPlugin.getDefault().getContainerDecorator().statusChaged(this);
+            if (e != null) {
+                setResolveStatus(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e
+                        .getMessage(), e.getCause()));
+            } else {
+                setResolveStatus(Status.OK_STATUS);
+            }
+        }
+    }
+
+    public void setResolveStatus(IStatus status) {
+        if (javaProject != null) {
+            IFile ivyFile = javaProject.getProject().getFile(ivyXmlPath);
+            if (!ivyFile.exists()) {
+                return;
+            }
+            try {
+                ivyFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+                if (status == Status.OK_STATUS) {
+                    return;
+                }
+                IMarker marker = ivyFile.createMarker(IMarker.PROBLEM);
+                marker.setAttribute(IMarker.MESSAGE, status.getMessage());
+                switch (status.getSeverity()) {
+                    case IStatus.ERROR:
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+                        break;
+                    case IStatus.WARNING:
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                        break;
+                    case IStatus.INFO:
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+                        break;
+                }
+            } catch (CoreException e) {
+                IvyPlugin.log(e);
+            }
+        }
+    }
+
     public Ivy getIvy() throws IvyDEException {
         String ivySettingsPath = getInheritedIvySettingsPath();
         if (ivySettingsPath == null || ivySettingsPath.trim().length() == 0) {
@@ -287,15 +336,22 @@ public class IvyClasspathContainerConfiguration {
                 try {
                     ivy.configureDefault();
                 } catch (ParseException e) {
-                    throw new IvyDEException("Parsing error of the default Ivy settings",
+                    IvyDEException ex = new IvyDEException(
+                            "Parsing error of the default Ivy settings",
                             "The default Ivy settings file could not be parsed (" + this.toString()
                                     + ")", e);
+                    setConfStatus(ex);
+                    throw ex;
                 } catch (IOException e) {
-                    throw new IvyDEException("Read error of the default Ivy settings",
+                    IvyDEException ex = new IvyDEException(
+                            "Read error of the default Ivy settings",
                             "The default Ivy settings file could not be read (" + this.toString()
                                     + ")", e);
+                    setConfStatus(ex);
+                    throw ex;
                 }
             }
+            setConfStatus(null);
             return ivy;
         }
 
@@ -304,15 +360,21 @@ public class IvyClasspathContainerConfiguration {
         try {
             url = new URL(ivySettingsPath);
         } catch (MalformedURLException e) {
-            throw new IvyDEException("Incorrect url of the Ivy settings", "The Ivy settings url '" + ivySettingsPath
-                    + "' is incorrect (" + this.toString() + ")", e);
+            IvyDEException ex = new IvyDEException("Incorrect url of the Ivy settings",
+                    "The Ivy settings url '" + ivySettingsPath + "' is incorrect ("
+                            + this.toString() + ")", e);
+            setConfStatus(ex);
+            throw ex;
         }
         if (url.getProtocol().startsWith("file")) {
             File file = new File(url.getPath());
 
             if (!file.exists()) {
-                throw new IvyDEException("Ivy settings file not found", "The Ivy settings file '"
-                        + ivySettingsPath + "' cannot be found (" + this.toString() + ")", null);
+                IvyDEException ex = new IvyDEException("Ivy settings file not found",
+                        "The Ivy settings file '" + ivySettingsPath + "' cannot be found ("
+                                + this.toString() + ")", null);
+                setConfStatus(ex);
+                throw ex;
             }
 
             if (file.lastModified() != ivySettingsLastModified) {
@@ -325,12 +387,17 @@ public class IvyClasspathContainerConfiguration {
                 try {
                     ivy.configure(file);
                 } catch (ParseException e) {
-                    throw new IvyDEException("Parsing error of the Ivy settings", "The ivy settings file '"
-                            + ivySettingsPath + "' could not be parsed (" + this.toString() + ")",
-                            e);
+                    IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
+                            "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
+                                    + this.toString() + ")", e);
+                    setConfStatus(ex);
+                    throw ex;
                 } catch (IOException e) {
-                    throw new IvyDEException("Read error of the Ivy settings", "The ivy settings file '"
-                            + ivySettingsPath + "' could not be read (" + this.toString() + ")", e);
+                    IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
+                            "The ivy settings file '" + ivySettingsPath + "' could not be read ("
+                                    + this.toString() + ")", e);
+                    setConfStatus(ex);
+                    throw ex;
                 }
                 ivySettingsLastModified = file.lastModified();
             }
@@ -343,15 +410,21 @@ public class IvyClasspathContainerConfiguration {
                     ivy.configure(url);
                     ivySettingsLastModified = 0;
                 } catch (ParseException e) {
-                    throw new IvyDEException("Parsing error of the Ivy settings", "The ivy settings file '"
-                            + ivySettingsPath + "' could not be parsed (" + this.toString() + ")",
-                            e);
+                    IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
+                            "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
+                                    + this.toString() + ")", e);
+                    setConfStatus(ex);
+                    throw ex;
                 } catch (IOException e) {
-                    throw new IvyDEException("Read error of the Ivy settings", "The ivy settings file '"
-                            + ivySettingsPath + "' could not be read (" + this.toString() + ")", e);
+                    IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
+                            "The ivy settings file '" + ivySettingsPath + "' could not be read ("
+                                    + this.toString() + ")", e);
+                    setConfStatus(ex);
+                    throw ex;
                 }
             }
         }
+        setConfStatus(null);
         return ivy;
     }
 
@@ -461,7 +534,7 @@ public class IvyClasspathContainerConfiguration {
         return ivySettingsPath != null;
     }
 
-    File getIvyFile() {
+    public File getIvyFile() {
         File file;
         if (javaProject != null) {
             IFile f = javaProject.getProject().getFile(ivyXmlPath);
@@ -475,25 +548,34 @@ public class IvyClasspathContainerConfiguration {
     public ModuleDescriptor getModuleDescriptor() throws IvyDEException {
         File file = getIvyFile();
         if (!file.exists()) {
-            throw new IvyDEException("Ivy file not found", "The ivy.xml file '"
-                + file.getAbsolutePath() + "' was not found (" + this.toString() + ")", null);
+            IvyDEException ex = new IvyDEException("Ivy file not found", "The ivy.xml file '"
+                    + file.getAbsolutePath() + "' was not found (" + this.toString() + ")", null);
+            setConfStatus(ex);
+            throw ex;
         }
         try {
             Ivy i = getIvy();
-            if (i == null) {
-                return null;
-            }
-            return ModuleDescriptorParserRegistry.getInstance().parseDescriptor(i.getSettings(),
-                file.toURL(), false);
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+                i.getSettings(), file.toURL(), false);
+            setConfStatus(null);
+            return md;
         } catch (MalformedURLException e) {
-            throw new IvyDEException("Incorrect URL of the Ivy file", "The URL to the ivy.xml file is incorrect: '"
-                    + file.getAbsolutePath() + "' (" + this.toString() + ")", e);
+            IvyDEException ex = new IvyDEException("Incorrect URL of the Ivy file",
+                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "' ("
+                            + this.toString() + ")", e);
+            setConfStatus(ex);
+            throw ex;
         } catch (ParseException e) {
-            throw new IvyDEException("Parsing error of the Ivy file", "The ivy file '" + file.getAbsolutePath()
-                    + "' could not be parsed (" + this.toString() + ")", e);
+            IvyDEException ex = new IvyDEException("Parsing error of the Ivy file",
+                    "The ivy file '" + file.getAbsolutePath() + "' could not be parsed ("
+                            + this.toString() + ")", e);
+            setConfStatus(ex);
+            throw ex;
         } catch (IOException e) {
-            throw new IvyDEException("Read error of the Ivy file", "The ivy file '" + file.getAbsolutePath()
-                    + "' could not be read (" + this.toString() + ")", e);
+            IvyDEException ex = new IvyDEException("Read error of the Ivy file", "The ivy file '"
+                    + file.getAbsolutePath() + "' could not be read (" + this.toString() + ")", e);
+            setConfStatus(ex);
+            throw ex;
         }
     }
 

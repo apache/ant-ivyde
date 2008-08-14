@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -141,8 +142,30 @@ public class IvyClasspathUtil {
             if (element instanceof ClassPathContainer) {
                 // FIXME: we shouldn't check against internal JDT API but there are not adaptable to
                 // useful class
-                return getIvyClasspathContainer(((ClassPathContainer) element).getJavaProject());
+                return jdt2IvyCPC((ClassPathContainer) element);
             }
+        }
+        return null;
+    }
+
+    /**
+     * Work around the non adaptability of ClassPathContainer
+     * 
+     * @param cpc
+     *            the container to transform into an IvyClasspathContainer
+     * @return the IvyClasspathContainer is such, null, if not
+     */
+    public static IvyClasspathContainer jdt2IvyCPC(ClassPathContainer cpc) {
+        IClasspathEntry entry = cpc.getClasspathEntry();
+        try {
+            IClasspathContainer icp = JavaCore.getClasspathContainer(entry.getPath(), cpc
+                    .getJavaProject());
+            if (icp instanceof IvyClasspathContainer) {
+                return (IvyClasspathContainer) icp;
+            }
+        } catch (JavaModelException e) {
+            // unless there are issues with the JDT, this should never happen
+            IvyPlugin.log(e);
         }
         return null;
     }

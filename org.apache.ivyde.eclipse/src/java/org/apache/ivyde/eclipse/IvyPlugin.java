@@ -23,6 +23,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerDecorator;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
@@ -69,6 +70,8 @@ public class IvyPlugin extends AbstractUIPlugin {
     private IJavaModel javaModel;
 
     private BundleContext bundleContext;
+
+    private IvyClasspathContainerDecorator containerDecorator;
 
     /**
      * The constructor.
@@ -272,6 +275,14 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public IvyConsole getConsole() {
         return console;
+    }
+
+    public void setContainerDecorator(IvyClasspathContainerDecorator containerDecorator) {
+        this.containerDecorator = containerDecorator;
+    }
+
+    public IvyClasspathContainerDecorator getContainerDecorator() {
+        return containerDecorator;
     }
 
     public IPackageFragmentExtraInfo getPackageFragmentExtraInfo() {

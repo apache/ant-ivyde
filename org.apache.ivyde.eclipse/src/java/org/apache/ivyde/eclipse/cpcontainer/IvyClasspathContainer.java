@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +30,6 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -61,10 +59,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
     public static final String IVY_CLASSPATH_CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     IClasspathEntry[] classpathEntries;
-
-    private IJavaProject javaProject;
-
-    private File ivyXmlFile;
 
     private IPath path;
 
@@ -97,18 +91,14 @@ public class IvyClasspathContainer implements IClasspathContainer {
     public IvyClasspathContainer(IJavaProject javaProject, IPath path,
             IClasspathEntry[] classpathEntries) throws MalformedURLException, ParseException,
             IOException {
-        this.javaProject = javaProject;
         this.path = path;
         conf = new IvyClasspathContainerConfiguration(javaProject, path);
-        ivyXmlFile = resolveFile(conf.ivyXmlPath);
         this.classpathEntries = classpathEntries;
     }
 
     public IvyClasspathContainer(IvyClasspathContainer cp) {
-        javaProject = cp.javaProject;
         path = cp.path;
         conf = cp.conf;
-        ivyXmlFile = cp.ivyXmlFile;
         classpathEntries = cp.classpathEntries;
     }
 
@@ -116,47 +106,18 @@ public class IvyClasspathContainer implements IClasspathContainer {
         return conf;
     }
 
-    public IFile getIvyFile() {
-        return javaProject.getProject().getFile(conf.ivyXmlPath);
-    }
-
-    private File resolveFile(String path) {
-        IFile iFile = javaProject.getProject().getFile(path);
-        return new File(iFile.getLocation().toOSString());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
-     */
     public String getDescription() {
         return conf.ivyXmlPath + " " + conf.confs;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
-     */
     public int getKind() {
         return K_APPLICATION;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
-     */
     public IPath getPath() {
         return path;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
-     */
     public IClasspathEntry[] getClasspathEntries() {
         return classpathEntries;
     }
@@ -171,11 +132,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
     };
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
-     */
     private IvyResolveJob computeClasspathEntries(final boolean usePreviousResolveIfExist,
             boolean isUser) {
         try {
@@ -184,15 +140,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     // resolve job already running
                     return job;
                 }
-                Ivy ivy = conf.getIvy();
-                if (ivy == null) {
-                    return null;
-                }
-                ModuleDescriptor md = conf.getModuleDescriptor();
-                if (md == null) {
-                    return null;
-                }
-                job = new IvyResolveJob(this, usePreviousResolveIfExist, conf, ivy, md);
+                job = new IvyResolveJob(this, usePreviousResolveIfExist);
                 job.setUser(isUser);
                 job.setRule(RESOLVE_EVENT_RULE);
                 return job;
@@ -215,7 +163,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
     }
 
-    public void launchResolve(boolean usePreviousResolveIfExist, boolean isUser, IProgressMonitor monitor) {
+    public void launchResolve(boolean usePreviousResolveIfExist, boolean isUser,
+            IProgressMonitor monitor) {
         IvyResolveJob j = computeClasspathEntries(usePreviousResolveIfExist, isUser);
         if (j != null) {
             if (monitor != null) {
@@ -255,7 +204,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
     void notifyUpdateClasspathEntries() {
         try {
-            JavaCore.setClasspathContainer(path, new IJavaProject[] {javaProject},
+            JavaCore.setClasspathContainer(path, new IJavaProject[] {conf.javaProject},
                 new IClasspathContainer[] {new IvyClasspathContainer(IvyClasspathContainer.this)},
                 null);
 
@@ -279,7 +228,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     IElementChangedListener[] listeners = state.elementChangedListeners;
                     for (int i = 0; i < listeners.length; i++) {
                         if (listeners[i] instanceof PackageExplorerContentProvider) {
-                            JavaElementDelta delta = new JavaElementDelta(javaProject);
+                            JavaElementDelta delta = new JavaElementDelta(conf.javaProject);
                             delta.changed(IJavaElementDelta.F_CLASSPATH_CHANGED);
                             listeners[i].elementChanged(new ElementChangedEvent(delta,
                                     ElementChangedEvent.POST_CHANGE));
@@ -317,10 +266,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
             // should never happen
             throw new RuntimeException(e);
         }
-    }
-
-    public IJavaProject getProject() {
-        return javaProject;
     }
 
 }
