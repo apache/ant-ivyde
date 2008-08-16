@@ -37,14 +37,16 @@ import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * path: org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER? ivyXmlPath=ivy.xml &confs=default
@@ -54,6 +56,10 @@ import org.eclipse.jdt.core.IJavaProject;
  * &retrievePattern=lib/[conf]/[artifact].[ext] &alphaOrder=true
  */
 public class IvyClasspathContainerConfiguration {
+
+    private static final String PROJECT_SCHEME_PREFIX = "project://";
+
+    private static final int PROJECT_SCHEME_PREFIX_LENGTH = PROJECT_SCHEME_PREFIX.length();
 
     final IJavaProject javaProject;
 
@@ -168,7 +174,7 @@ public class IvyClasspathContainerConfiguration {
             } else if (parameter[0].equals("confs")) {
                 confs = IvyClasspathUtil.split(value);
             } else if (parameter[0].equals("ivySettingsPath")) {
-                ivySettingsPath = value;
+                ivySettingsPath = readOldIvySettings(value);
                 isProjectSpecific = true;
             } else if (parameter[0].equals("acceptedTypes")) {
                 acceptedTypes = IvyClasspathUtil.split(value);
@@ -210,6 +216,33 @@ public class IvyClasspathContainerConfiguration {
             // in this V1 version, it is just some paranoid check
             checkNonNullConf();
         }
+    }
+
+    /**
+     * Read old configuration that were based on relative urls, like: "file://./ivysettings.xml".
+     * This kind of URL "project:///ivysettings.xml" should be used now.
+     * 
+     * @param value
+     *            the value to read
+     * @return
+     */
+    private String readOldIvySettings(String value) {
+        if (javaProject == null) {
+            return value;
+        }
+        URL url;
+        try {
+            url = new URL(value);
+        } catch (MalformedURLException e) {
+            return value;
+        }
+        File file = new File(url.getPath());
+        if (file.exists()) {
+            return value;
+        }
+        // the file doesn't exist, so try to find out if it is a relative path to the project.
+        file = new File(javaProject.getProject().getFile(url.getPath()).getLocation().toOSString());
+        return PROJECT_SCHEME_PREFIX + url.getPath();
     }
 
     private void checkNonNullConf() {
@@ -355,6 +388,41 @@ public class IvyClasspathContainerConfiguration {
             return ivy;
         }
 
+        if (ivySettingsPath.startsWith(PROJECT_SCHEME_PREFIX)) {
+            int pathIndex = ivySettingsPath.indexOf("/", PROJECT_SCHEME_PREFIX_LENGTH);
+            String projectName = ivySettingsPath.substring(PROJECT_SCHEME_PREFIX_LENGTH, pathIndex);
+            String path = ivySettingsPath.substring(pathIndex + 1);
+            if (projectName.equals("")) {
+                IFile f = javaProject.getProject().getFile(path);
+                File file = new File(f.getLocation().toOSString());
+                return getIvy(file);
+            } else {
+                try {
+                    IJavaProject[] javaProjects = JavaCore.create(
+                        ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+                    int i;
+                    for (i = 0; i < javaProjects.length; i++) {
+                        if (javaProjects[i].getProject().getName().equals(projectName)) {
+                            break;
+                        }
+                    }
+                    if (i == javaProjects.length) {
+                        IvyDEException ex = new IvyDEException("Project '" + projectName
+                                + "' not found", "The project name '" + projectName + "' from '"
+                                + ivySettingsPath + "' was not found (" + this.toString() + ")",
+                                null);
+                        setConfStatus(ex);
+                        throw ex;
+                    }
+                    IFile f = javaProjects[i].getProject().getFile(path);
+                    File file = new File(f.getLocation().toOSString());
+                    return getIvy(file);
+                } catch (JavaModelException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
         // before returning the found ivy, try to refresh it if the settings changed
         URL url;
         try {
@@ -368,40 +436,7 @@ public class IvyClasspathContainerConfiguration {
         }
         if (url.getProtocol().startsWith("file")) {
             File file = new File(url.getPath());
-
-            if (!file.exists()) {
-                IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                        "The Ivy settings file '" + ivySettingsPath + "' cannot be found ("
-                                + this.toString() + ")", null);
-                setConfStatus(ex);
-                throw ex;
-            }
-
-            if (file.lastModified() != ivySettingsLastModified) {
-                ivy = new Ivy();
-                if (ivySettingsLastModified == -1) {
-                    Message.info("\n\n");
-                } else {
-                    Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
-                }
-                try {
-                    ivy.configure(file);
-                } catch (ParseException e) {
-                    IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
-                            "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
-                                    + this.toString() + ")", e);
-                    setConfStatus(ex);
-                    throw ex;
-                } catch (IOException e) {
-                    IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
-                            "The ivy settings file '" + ivySettingsPath + "' could not be read ("
-                                    + this.toString() + ")", e);
-                    setConfStatus(ex);
-                    throw ex;
-                }
-                ivySettingsLastModified = file.lastModified();
-            }
-
+            return getIvy(file);
         } else {
             // an URL but not a file
             if (ivy == null || ivySettingsLastModified == -1) {
@@ -428,32 +463,48 @@ public class IvyClasspathContainerConfiguration {
         return ivy;
     }
 
+    private Ivy getIvy(File file) throws IvyDEException {
+        if (!file.exists()) {
+            IvyDEException ex = new IvyDEException("Ivy settings file not found",
+                    "The Ivy settings file '" + ivySettingsPath + "' cannot be found ("
+                            + this.toString() + ")", null);
+            setConfStatus(ex);
+            throw ex;
+        }
+
+        if (file.lastModified() != ivySettingsLastModified) {
+            ivy = new Ivy();
+            if (ivySettingsLastModified == -1) {
+                Message.info("\n\n");
+            } else {
+                Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
+            }
+            try {
+                ivy.configure(file);
+            } catch (ParseException e) {
+                IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
+                        "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
+                                + this.toString() + ")", e);
+                setConfStatus(ex);
+                throw ex;
+            } catch (IOException e) {
+                IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
+                        "The ivy settings file '" + ivySettingsPath + "' could not be read ("
+                                + this.toString() + ")", e);
+                setConfStatus(ex);
+                throw ex;
+            }
+            ivySettingsLastModified = file.lastModified();
+        }
+
+        return ivy;
+    }
+
     public String getInheritedIvySettingsPath() {
         if (ivySettingsPath == null) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
         }
-        if (javaProject == null || ivySettingsPath.trim().length() == 0) {
-            return ivySettingsPath;
-        }
-        URL url;
-        try {
-            url = new URL(ivySettingsPath);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        File file = new File(url.getPath());
-        if (file.exists()) {
-            return ivySettingsPath;
-        }
-        // the file doesn't exist, so try to find out if it is a relative path to the project.
-        IProject project = javaProject.getProject();
-        File loc = project.getLocation().toFile();
-        file = new File(loc, url.getPath());
-        try {
-            return file.toURL().toString();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        return ivySettingsPath;
     }
 
     public Collection getInheritedAcceptedTypes() {

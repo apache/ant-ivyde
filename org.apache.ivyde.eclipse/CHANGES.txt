@@ -6,6 +6,7 @@
 - NEW: settings files code completion support (IVYDE-22)
 - NEW: Option to resolve to local eclipse projects (IVYDE-89) (thanks to Antony James Wilkins and Matt Goldspink)
 - NEW: Add errors marker to the Ivy container (IVYDE-78)
+- NEW: Handle a project: scheme for the path of the ivysettings.xml (IVYDE-94)
 
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
 
