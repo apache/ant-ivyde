@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
+<ivy-module version="1.4">
 	<info organisation="myorg"
 		module="mybluemodule"
 		revision="1.1"
-		e:color="blue"
+		color="blue"
 		status="release"
 		publication="20080811152510"
 		default="true"

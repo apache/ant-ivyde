@@ -14,6 +14,7 @@
 - FIX: Ivy preferences page mentions ivyconf not ivysettings (IVYDE-103)
 - FIX: Resolve is not triggered anymore with Eclipse 3.4 (IVYDE-110)
 - FIX: An incorrect configuration of a container make 3 error popup (IVYDE-112)
+- FIX: IvyDE does not honour the "validate" Attribute in a ivysetting file (IVYDE-96)
 
   version 2.0.0 alpha1
 ===========================

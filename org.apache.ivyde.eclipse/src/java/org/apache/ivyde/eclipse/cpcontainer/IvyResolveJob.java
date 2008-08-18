@@ -240,9 +240,11 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                 Message.info("\n\nIVYDE: previous resolve of "
                                         + md.getModuleRevisionId().getModuleId()
                                         + " doesn't contain enough data: resolving again\n");
-                                ResolveReport r = ivy.resolve(md, new ResolveOptions()
+                                ResolveOptions resolveOption = new ResolveOptions()
                                         .setConfs((String[]) conf.confs
-                                                .toArray(new String[conf.confs.size()])));
+                                                .toArray(new String[conf.confs.size()]));
+                                resolveOption.setValidate(ivy.getSettings().doValidate());
+                                ResolveReport r = ivy.resolve(md, resolveOption);
                                 all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
                                 confs = r.getConfigurations();
                                 dependencies = listDependencies(r);
@@ -254,9 +256,11 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         }
                     } else {
                         Message.info("\n\nIVYDE: calling resolve on " + conf.ivyXmlPath + "\n");
-                        ResolveReport report = ivy.resolve(md, new ResolveOptions()
+                        ResolveOptions resolveOption = new ResolveOptions()
                                 .setConfs((String[]) conf.confs.toArray(new String[conf.confs
-                                        .size()])));
+                                        .size()]));
+                        resolveOption.setValidate(ivy.getSettings().doValidate());
+                        ResolveReport report = ivy.resolve(md, resolveOption);
                         problemMessages = report.getAllProblemMessages();
                         all = new LinkedHashSet(Arrays.asList(report.getArtifactsReports(null,
                             false)));

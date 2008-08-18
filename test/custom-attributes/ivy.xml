@@ -16,7 +16,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra"> 
+<ivy-module version="2.0"> 
 	<info organisation="org.apache.ivyde" module="ivytest-custom-attributes">
 		<description>
 		</description>
@@ -25,6 +25,6 @@
 		<conf name="default" />
 	</configurations>
 	<dependencies>
-		<dependency org="myorg" name="mybluemodule" e:color="blue" rev="1.1" conf="default" />
+		<dependency org="myorg" name="mybluemodule" color="blue" rev="1.1" conf="default" />
 	</dependencies>
 </ivy-module>
