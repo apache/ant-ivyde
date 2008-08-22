@@ -88,6 +88,16 @@
             class="org.apache.ivyde.eclipse.ui.actions.CreateContainerAction" 
             enablesFor="1"
 			/> 
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.apache.ivyde.eclipse.ui.actions.CleanCacheMenuAction"
+            objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
+         <action
+               class="org.apache.ivyde.eclipse.ui.actions.CleanCacheMenuAction"
+               id="org.apache.ivyde.eclipse.ui.actions.CleanCacheMenuAction"
+               label="Clean Ivy cache">
+         </action>
       </objectContribution> 
    </extension> 
 

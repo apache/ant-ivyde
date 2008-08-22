@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -36,7 +35,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -118,26 +117,14 @@ public class IvyClasspathUtil {
         }
         for (Iterator it = selection.iterator(); it.hasNext();) {
             Object element = it.next();
-            IvyClasspathContainer cp = null;
-            if (element instanceof IvyClasspathContainer) {
-                return (IvyClasspathContainer) element;
-            }
-            if (element instanceof IJavaProject) {
-                return getIvyClasspathContainer((IJavaProject) element);
-            }
-            if (element instanceof IAdaptable) {
-                cp = (IvyClasspathContainer) ((IAdaptable) element)
-                        .getAdapter(IvyClasspathContainer.class);
-                if (cp == null) {
-                    IJavaProject p = (IJavaProject) ((IAdaptable) element)
-                            .getAdapter(IJavaProject.class);
-                    if (p != null) {
-                        cp = getIvyClasspathContainer(p);
-                    }
-                }
-            }
+            IvyClasspathContainer cp = (IvyClasspathContainer) IvyPlugin.adapt(element,
+                IvyClasspathContainer.class);
             if (cp != null) {
                 return cp;
+            }
+            IJavaProject project = (IJavaProject) IvyPlugin.adapt(element, IJavaProject.class);
+            if (project != null) {
+                return getIvyClasspathContainer(project);
             }
             if (element instanceof ClassPathContainer) {
                 // FIXME: we shouldn't check against internal JDT API but there are not adaptable to

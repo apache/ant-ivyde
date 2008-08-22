@@ -32,7 +32,9 @@ import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -228,6 +230,25 @@ public class IvyPlugin extends AbstractUIPlugin {
         } catch (MissingResourceException e) {
             return key;
         }
+    }
+
+    /**
+     * Utility class that tries to adapt a non null object to the specified type
+     * 
+     * @param object
+     *            the object to adapt
+     * @param type
+     *            the class to adapt to
+     * @return the adapted object
+     */
+
+    public static /*<T> T*/ Object adapt(Object object, Class/*<T>*/ type) {
+        if (type.isInstance(object)) {
+            return /*(T)*/ object;
+        } else if (object instanceof IAdaptable) {
+            return /*(T)*/ ((IAdaptable) object).getAdapter(type);
+        }
+        return /*(T)*/ Platform.getAdapterManager().getAdapter(object, type);
     }
 
     /**
