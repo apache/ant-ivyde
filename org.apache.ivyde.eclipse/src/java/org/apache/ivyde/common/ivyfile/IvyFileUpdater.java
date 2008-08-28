@@ -19,6 +19,7 @@ package org.apache.ivyde.common.ivyfile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.regex.Matcher;
@@ -73,7 +74,7 @@ public class IvyFileUpdater {
 
     private void update(File ivyFile, String content, UpdateInfo info)
             throws FileNotFoundException {
-        PrintWriter w = new PrintWriter(ivyFile);
+        PrintWriter w = new PrintWriter(new FileOutputStream(ivyFile));
         try {
             w.print(content.substring(0, info.insertFromIndex));
             w.print(info.prefix);

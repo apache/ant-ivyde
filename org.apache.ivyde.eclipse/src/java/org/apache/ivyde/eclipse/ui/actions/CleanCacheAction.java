@@ -73,7 +73,7 @@ public class CleanCacheAction extends Action {
     }
 
     public void run() {
-        StringBuilder builder = new StringBuilder("Ivy cache cleaned: ");
+        StringBuffer builder = new StringBuffer("Ivy cache cleaned: ");
         for (int i = 0; i < cleanables.length; i++) {
             cleanables[i].clean();
             builder.append(cleanables[i].getName());

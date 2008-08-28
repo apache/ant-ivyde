@@ -35,7 +35,7 @@ public class IvyDEException extends Exception {
      * Default constructor
      * 
      * @param shortMsg
-     *            a short description of the error, whcih doesn't need context information
+     *            a short description of the error, which doesn't need context information
      * @param msg
      *            full message, with context information like the full path and the project name
      * @param cause
@@ -64,7 +64,7 @@ public class IvyDEException extends Exception {
         final String msg = (preMsg == null ? "" : preMsg + "\n\n")
                 + getMessage()
                 + (getCause() == null ? "" : "\n\nUnderlying error ("
-                        + getCause().getClass().getCanonicalName() + "): "
+                        + getCause().getClass().getName() + "): "
                         + getCause().getMessage());
         IvyPlugin.getDefault().getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {

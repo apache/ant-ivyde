@@ -189,139 +189,137 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
         Thread resolver = new Thread() {
             public void run() {
-                ivy.pushContext();
-                ivy.getEventManager().addIvyListener(IvyResolveJob.this);
-
-                _monitor.beginTask("resolving dependencies", 1000);
-                _monitor.setTaskName("resolving dependencies...");
-
-                String[] confs;
-                Collection/* <ArtifactDownloadReport> */all;
-                List problemMessages;
-
-                // context Classloader hook for commonlogging used by httpclient
-                ClassLoader old = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
                 try {
-                    Map dependencies = Collections.EMPTY_MAP;
-                    if (_usePreviousResolveIfExist) {
-                        if (conf.confs.size() == 1 && "*".equals(conf.confs.get(0))) {
-                            confs = md.getConfigurationsNames();
-                        } else {
-                            confs = (String[]) conf.confs.toArray(new String[conf.confs.size()]);
-                        }
-
-                        all = new LinkedHashSet();
-
-                        problemMessages = new ArrayList();
-                        // we check if all required configurations have been
-                        // resolved
-                        for (int i = 0; i < confs.length; i++) {
-                            File report = ivy.getResolutionCacheManager()
-                                    .getConfigurationResolveReportInCache(
-                                        ResolveOptions.getDefaultResolveId(md), confs[i]);
-                            boolean resolved = false;
-                            if (report.exists() && !conf.isResolveInWorkspace()) {
-                                // found a report, try to parse it.
-                                try {
-                                    XmlReportParser parser = new XmlReportParser();
-                                    parser.parse(report);
-                                    all.addAll(Arrays.asList(parser.getArtifactReports()));
-                                    resolved = true;
-                                } catch (ParseException e) {
-                                    Message.info("\n\nIVYDE: Error while parsing the report "
-                                            + report + ". Falling back by doing a resolve again.");
-                                    // it fails, so let's try resolving
+                    ivy.pushContext();
+                    ivy.getEventManager().addIvyListener(IvyResolveJob.this);
+    
+                    _monitor.beginTask("resolving dependencies", 1000);
+                    _monitor.setTaskName("resolving dependencies...");
+    
+                    String[] confs;
+                    Collection/* <ArtifactDownloadReport> */all;
+                    List problemMessages;
+    
+                    // context Classloader hook for commonlogging used by httpclient
+                    ClassLoader old = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
+                    try {
+                        Map dependencies = Collections.EMPTY_MAP;
+                        if (_usePreviousResolveIfExist) {
+                            if (conf.confs.size() == 1 && "*".equals(conf.confs.get(0))) {
+                                confs = md.getConfigurationsNames();
+                            } else {
+                                confs = (String[]) conf.confs.toArray(new String[conf.confs.size()]);
+                            }
+    
+                            all = new LinkedHashSet();
+    
+                            problemMessages = new ArrayList();
+                            // we check if all required configurations have been
+                            // resolved
+                            for (int i = 0; i < confs.length; i++) {
+                                File report = ivy.getResolutionCacheManager()
+                                        .getConfigurationResolveReportInCache(
+                                            ResolveOptions.getDefaultResolveId(md), confs[i]);
+                                boolean resolved = false;
+                                if (report.exists() && !conf.isResolveInWorkspace()) {
+                                    // found a report, try to parse it.
+                                    try {
+                                        XmlReportParser parser = new XmlReportParser();
+                                        parser.parse(report);
+                                        all.addAll(Arrays.asList(parser.getArtifactReports()));
+                                        resolved = true;
+                                    } catch (ParseException e) {
+                                        Message.info("\n\nIVYDE: Error while parsing the report "
+                                                + report + ". Falling back by doing a resolve again.");
+                                        // it fails, so let's try resolving
+                                    }
+                                }
+                                if (!resolved) {
+                                    // no resolve previously done for at least
+                                    // one conf... we do it now
+                                    Message.info("\n\nIVYDE: previous resolve of "
+                                            + md.getModuleRevisionId().getModuleId()
+                                            + " doesn't contain enough data: resolving again\n");
+                                    ResolveOptions resolveOption = new ResolveOptions()
+                                            .setConfs((String[]) conf.confs
+                                                    .toArray(new String[conf.confs.size()]));
+                                    resolveOption.setValidate(ivy.getSettings().doValidate());
+                                    ResolveReport r = ivy.resolve(md, resolveOption);
+                                    all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
+                                    confs = r.getConfigurations();
+                                    dependencies = listDependencies(r);
+                                    problemMessages.addAll(r.getAllProblemMessages());
+                                    maybeRetrieve(md, confs);
+    
+                                    break;
                                 }
                             }
-                            if (!resolved) {
-                                // no resolve previously done for at least
-                                // one conf... we do it now
-                                Message.info("\n\nIVYDE: previous resolve of "
-                                        + md.getModuleRevisionId().getModuleId()
-                                        + " doesn't contain enough data: resolving again\n");
-                                ResolveOptions resolveOption = new ResolveOptions()
-                                        .setConfs((String[]) conf.confs
-                                                .toArray(new String[conf.confs.size()]));
-                                resolveOption.setValidate(ivy.getSettings().doValidate());
-                                ResolveReport r = ivy.resolve(md, resolveOption);
-                                all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
-                                confs = r.getConfigurations();
-                                dependencies = listDependencies(r);
-                                problemMessages.addAll(r.getAllProblemMessages());
-                                maybeRetrieve(md, confs);
-
-                                break;
+                        } else {
+                            Message.info("\n\nIVYDE: calling resolve on " + conf.ivyXmlPath + "\n");
+                            ResolveOptions resolveOption = new ResolveOptions()
+                                    .setConfs((String[]) conf.confs.toArray(new String[conf.confs
+                                            .size()]));
+                            resolveOption.setValidate(ivy.getSettings().doValidate());
+                            ResolveReport report = ivy.resolve(md, resolveOption);
+                            problemMessages = report.getAllProblemMessages();
+                            all = new LinkedHashSet(Arrays.asList(report.getArtifactsReports(null,
+                                false)));
+                            confs = report.getConfigurations();
+    
+                            dependencies = listDependencies(report);
+    
+                            if (_monitor.isCanceled()) {
+                                status[0] = Status.CANCEL_STATUS;
+                                return;
                             }
+    
+                            maybeRetrieve(md, confs);
                         }
-                    } else {
-                        Message.info("\n\nIVYDE: calling resolve on " + conf.ivyXmlPath + "\n");
-                        ResolveOptions resolveOption = new ResolveOptions()
-                                .setConfs((String[]) conf.confs.toArray(new String[conf.confs
-                                        .size()]));
-                        resolveOption.setValidate(ivy.getSettings().doValidate());
-                        ResolveReport report = ivy.resolve(md, resolveOption);
-                        problemMessages = report.getAllProblemMessages();
-                        all = new LinkedHashSet(Arrays.asList(report.getArtifactsReports(null,
-                            false)));
-                        confs = report.getConfigurations();
-
-                        dependencies = listDependencies(report);
-
-                        if (_monitor.isCanceled()) {
-                            status[0] = Status.CANCEL_STATUS;
-                            return;
+    
+                        warnIfDuplicates(all);
+    
+                        classpathEntries[0] = artifacts2ClasspathEntries(all, dependencies);
+                    } catch (ParseException e) {
+                        String errorMsg = "Error while parsing the ivy file " + conf.ivyXmlPath + "\n"
+                                + e.getMessage();
+                        Message.error(errorMsg);
+                        status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
+                        return;
+                    } catch (Exception e) {
+                        String errorMsg = "Error while resolving dependencies for " + conf.ivyXmlPath
+                                + "\n" + e.getMessage();
+                        Message.error(errorMsg);
+                        status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
+                        return;
+                    } finally {
+                        Thread.currentThread().setContextClassLoader(old);
+                        _monitor.done();
+                        ivy.getEventManager().removeIvyListener(IvyResolveJob.this);
+                    }
+    
+                    if (!problemMessages.isEmpty()) {
+                        MultiStatus multiStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
+                                "Impossible to resolve dependencies of " + md.getModuleRevisionId(),
+                                null);
+                        for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
+                            multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                                    (String) iter.next(), null));
                         }
-
-                        maybeRetrieve(md, confs);
+                        status[0] = multiStatus;
+                        return;
                     }
-
-                    warnIfDuplicates(all);
-
-                    classpathEntries[0] = artifacts2ClasspathEntries(all, dependencies);
-                } catch (ParseException e) {
-                    String errorMsg = "Error while parsing the ivy file " + conf.ivyXmlPath + "\n"
-                            + e.getMessage();
-                    Message.error(errorMsg);
-                    status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
-                    return;
-                } catch (Exception e) {
-                    String errorMsg = "Error while resolving dependencies for " + conf.ivyXmlPath
-                            + "\n" + e.getMessage();
-                    Message.error(errorMsg);
-                    status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
-                    return;
-                } finally {
-                    Thread.currentThread().setContextClassLoader(old);
-                    _monitor.done();
-                    ivy.getEventManager().removeIvyListener(IvyResolveJob.this);
-                }
-
-                if (!problemMessages.isEmpty()) {
-                    MultiStatus multiStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
-                            "Impossible to resolve dependencies of " + md.getModuleRevisionId(),
-                            null);
-                    for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
-                        multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                                (String) iter.next(), null));
-                    }
-                    status[0] = multiStatus;
-                    return;
-                }
-
-                status[0] = Status.OK_STATUS;
-            }
-        };
-
-        resolver.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            public void uncaughtException(Thread t, Throwable e) {
-                status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+    
+                    status[0] = Status.OK_STATUS;
+                } catch (Throwable e) {
+                    status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
                         "The resolve job of "
                                 + (conf.getJavaProject() == null ? "" : conf.getJavaProject()
                                         .getProject().getName()
-                                        + "/") + conf.ivyXmlPath + " has unexpectedly stopped", e);
+                                        + "/") + conf.ivyXmlPath + " has unexpectedly stopped", e);                    
+                }
             }
-        });
+        };
 
         try {
             resolver.start();
