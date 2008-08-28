@@ -22,56 +22,21 @@ import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.actions.CleanCacheAction.Cleanable;
 import org.apache.ivyde.eclipse.ui.actions.CleanCacheAction.RepositoryCacheCleanable;
 import org.apache.ivyde.eclipse.ui.actions.CleanCacheAction.ResolutionCacheCleanable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
-public class CleanCacheMenuAction implements IObjectActionDelegate, IMenuCreator,
-        IWorkbenchWindowPulldownDelegate2 {
+public class CleanCacheMenuAction extends IvyDEContainerMenuAction {
 
-    IStructuredSelection selection;
-
-    public void init(IWorkbenchWindow window) {
-    }
-
-    public void dispose() {
-    }
-
-    public Menu getMenu(Control parent) {
-        Menu menu = new Menu(parent);
-        fill(menu);
-        return menu;
-    }
-
-    public Menu getMenu(Menu parent) {
-        Menu menu = new Menu(parent);
-        fill(menu);
-        return menu;
-    }
-
-    private void fill(Menu menu) {
-        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(selection);
-        if (cp != null) {
-            try {
-                fill(menu, cp.getConf().getIvy());
-            } catch (IvyDEException e) {
-                e.log(IStatus.WARNING,
-                    "Cache delection actions in the context menu could not be populated. ");
-            }
-            return;
+    protected void fill(Menu menu, IvyClasspathContainer ivycp) {
+        try {
+            fill(menu, ivycp.getConf().getIvy());
+        } catch (IvyDEException e) {
+            e.log(IStatus.WARNING,
+                "Cache delection actions in the context menu could not be populated. ");
         }
     }
 
@@ -112,20 +77,6 @@ public class CleanCacheMenuAction implements IObjectActionDelegate, IMenuCreator
     public void add(Menu menu, String name, CleanCacheAction action) {
         action.setText(name);
         new ActionContributionItem(action).fill(menu, -1);
-    }
-
-    public void run(IAction action) {
-    }
-
-    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-    }
-
-    public void selectionChanged(IAction action, ISelection selection) {
-        if (selection instanceof IStructuredSelection) {
-            this.selection = (IStructuredSelection) selection;
-            action.setMenuCreator(this);
-            action.setEnabled(!selection.isEmpty());
-        }
     }
 
 }

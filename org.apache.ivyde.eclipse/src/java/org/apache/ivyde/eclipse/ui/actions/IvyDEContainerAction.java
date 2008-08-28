@@ -18,18 +18,26 @@
 package org.apache.ivyde.eclipse.ui.actions;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
 
-public class RefreshAction extends IvyDEContainerAction {
+public abstract class IvyDEContainerAction implements IActionDelegate {
 
-    private IvyClasspathContainer cp;
-
-    protected void selectionChanged(IAction a, IvyClasspathContainer ivycp) {
-        this.cp = ivycp;
+    public void selectionChanged(IAction action, ISelection s) {
+        if (s instanceof IStructuredSelection) {
+            IStructuredSelection selection = (IStructuredSelection) s;
+            IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(selection);
+            if (cp != null) {
+                action.setEnabled(true);
+                selectionChanged(action, cp);
+                return;
+            }
+        }
+        action.setEnabled(false);
     }
 
-    public void run(IAction action) {
-        cp.launchResolve(true, true, null);
-    }
-
+    abstract protected void selectionChanged(IAction a, IvyClasspathContainer cp);
 }

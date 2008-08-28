@@ -37,10 +37,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 public class IvyClasspathUtil {
 
@@ -74,33 +71,6 @@ public class IvyClasspathUtil {
             // unless there are issues with the JDT, this should never happen
             IvyPlugin.log(e);
         }
-    }
-
-    /**
-     * Get the current selection in the Java package view
-     * 
-     * @return the selection, <code>null</code> if unsuccessful
-     */
-    public static IStructuredSelection getSelectionInJavaPackageView() {
-        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (activeWorkbenchWindow == null) {
-            return null;
-        }
-        ISelection sel = activeWorkbenchWindow.getSelectionService().getSelection();
-        IStructuredSelection selection;
-        if (sel instanceof IStructuredSelection) {
-            selection = (IStructuredSelection) sel;
-        } else {
-            sel = activeWorkbenchWindow.getSelectionService().getSelection(
-                "org.eclipse.jdt.ui.PackageExplorer");
-            if (sel instanceof IStructuredSelection) {
-                selection = (IStructuredSelection) sel;
-            } else {
-                return null;
-            }
-        }
-        return selection;
     }
 
     /**

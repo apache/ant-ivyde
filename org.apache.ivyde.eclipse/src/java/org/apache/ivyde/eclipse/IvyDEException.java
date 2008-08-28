@@ -64,8 +64,7 @@ public class IvyDEException extends Exception {
         final String msg = (preMsg == null ? "" : preMsg + "\n\n")
                 + getMessage()
                 + (getCause() == null ? "" : "\n\nUnderlying error ("
-                        + getCause().getClass().getName() + "): "
-                        + getCause().getMessage());
+                        + getCause().getClass().getName() + "): " + getCause().getMessage());
         IvyPlugin.getDefault().getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 switch (status) {
