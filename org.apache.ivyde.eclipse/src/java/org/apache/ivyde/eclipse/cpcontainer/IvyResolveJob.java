@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.IvyEvent;
@@ -569,41 +570,68 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 .getPublicationDate(), artifact.getName(), metaType, "jar", extraAtt);
         RepositoryCacheManager cache = ivy.getSettings()
                 .getResolver(artifact.getModuleRevisionId()).getRepositoryCacheManager();
-        if (cache instanceof DefaultRepositoryCacheManager) {
-            File metaArtifactFile = ((DefaultRepositoryCacheManager) cache)
-                    .getArchiveFileInCache(metaArtifact);
-            File attempt = new File(metaArtifactFile.getAbsolutePath() + ".notfound");
-            if (metaArtifactFile.exists()) {
-                return new Path(metaArtifactFile.getAbsolutePath());
-            } else if (attempt.exists()) {
-                return null;
-            } else {
-                Message.info("checking " + metaType + " for " + artifact);
-                ivy.getResolveEngine().download(metaArtifact, new DownloadOptions());
-                if (metaArtifactFile.exists()) {
-                    return new Path(metaArtifactFile.getAbsolutePath());
-                }
-                // meta artifact not found, we store this information to avoid other
-                // attempts later
-                Message.info(metaType + " not found for " + artifact);
-                try {
-                    attempt.getParentFile().mkdirs();
-                    attempt.createNewFile();
-                } catch (IOException e) {
-                    Message.error("impossible to create attempt file " + attempt + ": " + e);
-                }
-                return null;
+        if (! (cache instanceof DefaultRepositoryCacheManager)) {
+            /*
+             * we're not using a default implementation of repository cache manager, so we don't
+             * cache attempts to locate metadata artifacts
+             */
+            Path metaArtifactLocalPath = downloadMetaArtifact(adr, metaType, metaArtifact);
+            if (metaArtifactLocalPath != null) {
+                return metaArtifactLocalPath;
             }
+            Message.info(metaType + " not found for " + artifact);
+            Message.verbose(
+                "Attempt not stored in cache because a non Default cache implementation is used.");
+            return null;
         }
-        Message.info("checking " + metaType + " for " + artifact);
-        ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
-            new DownloadOptions());
-        if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-            return new Path(metaAdr.getLocalFile().getAbsolutePath());
+        
+        File metaArtifactFile = ((DefaultRepositoryCacheManager) cache)
+                                                .getArchiveFileInCache(metaArtifact);
+        File attempt = new File(metaArtifactFile.getAbsolutePath() + ".notfound");
+        if (metaArtifactFile.exists()) {
+            return new Path(metaArtifactFile.getAbsolutePath());
+        } else if (attempt.exists()) {
+            return null;
+        } 
+        Path metaArtifactLocalPath = downloadMetaArtifact(adr, metaType, metaArtifact);
+        if (metaArtifactLocalPath != null) {
+            return metaArtifactLocalPath;
         }
         Message.info(metaType + " not found for " + artifact);
-        Message
-                .verbose("Attempt not stored in cache because a non Default cache implementation is used.");
+        /*
+         * meta artifact not found, we store this information to avoid other attempts later
+         */
+        try {
+            attempt.getParentFile().mkdirs();
+            attempt.createNewFile();
+        } catch (IOException e) {
+            Message.error("impossible to create attempt file " + attempt + ": " + e);
+        }
+        return null;
+    }
+
+    private Path downloadMetaArtifact(ArtifactDownloadReport adr, String metaType,
+            Artifact metaArtifact) {
+        Artifact artifact = adr.getArtifact();
+        Message.info("checking " + metaType + " for " + artifact );
+        ArtifactOrigin origin = ivy.getResolveEngine().locate(metaArtifact);
+        if (!ArtifactOrigin.isUnknown(origin)) {
+            /*
+             * fix for IVYDE-117: we need to check that the location of this metadata
+             * artifact is different from the original artifact
+             */
+            if (adr.getArtifactOrigin() != null 
+                    && (ArtifactOrigin.isUnknown(adr.getArtifactOrigin())
+                            || !origin.getLocation()
+                                .equals(adr.getArtifactOrigin().getLocation()))) {
+                ArtifactDownloadReport metaAdr = ivy.getResolveEngine()
+                                            .download(origin, new DownloadOptions());
+                File localFile = metaAdr.getLocalFile();
+                if (localFile != null && localFile.exists()) {
+                    return new Path(localFile.getAbsolutePath());
+                }
+            }
+        }
         return null;
     }
 
