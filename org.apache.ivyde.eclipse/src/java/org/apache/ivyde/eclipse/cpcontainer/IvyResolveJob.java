@@ -97,21 +97,18 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private int _workPerArtifact = 100;
 
-    final Ivy ivy;
+    Ivy ivy;
 
     final IvyClasspathContainerConfiguration conf;
 
     private final IvyClasspathContainer container;
 
-    final ModuleDescriptor md;
+    ModuleDescriptor md;
 
-    public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist)
-            throws IvyDEException {
+    public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist) {
         super("Resolve " + container.getConf() + " dependencies");
         this.container = container;
         this.conf = container.getConf();
-        this.ivy = conf.getIvy();
-        this.md = conf.getModuleDescriptor();
         _usePreviousResolveIfExist = usePreviousResolveIfExist;
     }
 
@@ -187,6 +184,13 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         _monitor = monitor;
         final IStatus[] status = new IStatus[1];
         final IClasspathEntry[][] classpathEntries = new IClasspathEntry[1][];
+
+        try {
+            this.ivy = conf.getIvy();
+            this.md = conf.getModuleDescriptor();
+        } catch (IvyDEException e) {
+            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e.getMessage(), e);
+        }
 
         Thread resolver = new Thread() {
             public void run() {

@@ -11,6 +11,7 @@
 
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
 
+- FIX: The project dependencies and the errors markers are conflicting (IVYDE-116) 
 - FIX: same jar files get downloaded 3 times (binary, javadoc and sources jar files are identical) (IVYDE-117)
 - FIX: IvyDE crashes during resolve due to an incompatibility with Eclipse 3.2 (IVYDE-108)
 - FIX: Ivy preferences page mentions ivyconf not ivysettings (IVYDE-103)
