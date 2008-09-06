@@ -43,16 +43,21 @@ If it does work for your unlisted configuration, please send us an email on the 
 The IvyDE plugins depends on the Ivy 2.0 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build.
 
 You can get an officially released version of Ivy. Go to the <a href="http://ant.apache.org/ivy/download.cgi">Ivy download page</a> and get the binary distribution. You will find in the zip the jar ivy-2.X.Y-Z.jar.
-Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy is "0.0.0" for every version older than the 2.0.0-RC1. So a repackaging is needed. If you get the sources (which includes the build system), you can automatically install the repackaged 2.0.0-beta2 into you Eclipse install by running <code>ant install-ivy</code>.
+Note: due to <a href="https://issues.apache.org/jira/browse/IVY-802">a bug in the build script of Ivy</a>, the OSGi version of Ivy is "0.0.0" for every version older than the 2.0.0-RC1. So a repackaging is needed. If you get the sources (which includes the build system), you can automatically install the repackaged 2.0.0-beta2 into you Eclipse install by running: <code>ant install-ivy</code>
 
 You can also build it from the sources (from <a href="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/">subversion</a> or from the <a href="http://ant.apache.org/ivy/download.cgi">releases</a>). In the build/artifact folder you should then find the bundle org.apache.ivy_2.X.Y-Z.jar.
 
 Actually every Ivy jar is an OSGi bundle. So just copy it in your Eclipse install:
-<code>cp XXXXXX.jar $ECLIPSE_HOME/plugins/org.apache.ivy_2.X.Y-Z.jar</code>
+<code>cp XXXXXX.jar $ECLIPSE_HOME/plugins/org.apache.ivy_2.X.Y-Z.jar</code> 
 
 <h1>Building</h1>
 
-First somehow you got some sources, for instance from <a href="https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk/">subversion</a>.
+First somehow you got some sources, for instance from the ASF subversion repository:
+<code>
+svn co https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk ivyde-trunk
+</code>
+or get directly the released sources from the <a href="../../download.cgi#sources">distribution</a>.
+
 And go into the root folder of the sources. In that folder you should see the builder, org.apache.ivyde.eclipse and org.apache.ivyde.feature folders.
 
 And run the build:
