@@ -54,14 +54,18 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
     /** the ID of the preference page */
     public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
 
-    private StringFieldEditor _pattern;
+    private StringFieldEditor pattern;
 
-    private BooleanFieldEditor _retreiveSync;
+    private BooleanFieldEditor retreiveSync;
 
     public IvyPreferencePage() {
         super(GRID);
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
         setDescription("");
+    }
+
+    public void init(IWorkbench workbench) {
+        // nothing to init
     }
 
     /**
@@ -73,6 +77,7 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         final Composite fieldParent = getFieldEditorParent();
 
         Label info = new Label(fieldParent, SWT.NONE);
+        //CheckStyle:MagicNumber| OFF
         info.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1));
         info.setText("Apache Ivy version " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate());
         new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
@@ -124,21 +129,21 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 final Button b = getChangeControl(parent);
                 b.addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e) {
-                        _pattern.setEnabled(b.getSelection(), parent);
-                        _retreiveSync.setEnabled(b.getSelection(), parent);
+                        pattern.setEnabled(b.getSelection(), parent);
+                        retreiveSync.setEnabled(b.getSelection(), parent);
                     }
                 });
             }
         };
-        _pattern = new StringFieldEditor(PreferenceConstants.RETRIEVE_PATTERN, "Pattern",
+        pattern = new StringFieldEditor(PreferenceConstants.RETRIEVE_PATTERN, "Pattern",
                 fieldParent);
-        _pattern.setEnabled(getPreferenceStore().getBoolean(PreferenceConstants.DO_RETRIEVE),
+        pattern.setEnabled(getPreferenceStore().getBoolean(PreferenceConstants.DO_RETRIEVE),
             fieldParent);
-        _retreiveSync = new BooleanFieldEditor(PreferenceConstants.RETRIEVE_SYNC,
+        retreiveSync = new BooleanFieldEditor(PreferenceConstants.RETRIEVE_SYNC,
                 "Delete old retrieved artifacts", fieldParent);
         addField(doR);
-        addField(_pattern);
-        addField(_retreiveSync);
+        addField(pattern);
+        addField(retreiveSync);
 
         new Label(fieldParent, SWT.NONE); // space
         explanation = new Label(fieldParent, SWT.NONE);
@@ -238,14 +243,7 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 fieldParent));
         addField(new StringFieldEditor(PreferenceConstants.ORGANISATION_URL, "Organisation &URL:",
                 fieldParent));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
-    public void init(IWorkbench workbench) {
+        //CheckStyle:MagicNumber| ON
     }
 
 }

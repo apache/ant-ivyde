@@ -22,10 +22,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
- * Exception that will be displayed somehow to the end user.
- * 
- * Once catched, depending of the context the error could be popuped or just logged
- * 
+ * Exception that will be displayed somehow to the end user. Once catched, depending of the context
+ * the error could be popuped or just logged
  */
 public class IvyDEException extends Exception {
 
@@ -78,6 +76,9 @@ public class IvyDEException extends Exception {
                         MessageDialog.openInformation(IvyPlugin.getActiveWorkbenchShell(), title,
                             msg);
                         return;
+                    default:
+                        IvyPlugin.log(IStatus.WARNING, "Unsupported IvyDE error status: " + status,
+                            null);
                 }
             }
         });
@@ -116,6 +117,8 @@ public class IvyDEException extends Exception {
             case IStatus.INFO:
                 Message.info("IVYDE: " + msg);
                 return;
+            default:
+                IvyPlugin.log(IStatus.WARNING, "Unsupported IvyDE error status: " + status, null);
         }
     }
 }

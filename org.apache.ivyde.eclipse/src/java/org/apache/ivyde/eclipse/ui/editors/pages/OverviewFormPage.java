@@ -21,9 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class OverviewFormPage extends FormPage {
@@ -40,15 +39,15 @@ public class OverviewFormPage extends FormPage {
     protected void createFormContent(IManagedForm managedForm) {
         super.createFormContent(managedForm);
         ScrolledForm form = managedForm.getForm();
-        FormToolkit toolkit = managedForm.getToolkit();
         form.setText("Overview");
-        fillBody(managedForm, toolkit);
+        fillBody(managedForm);
         managedForm.refresh();
     }
 
-    private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
+    private void fillBody(IManagedForm managedForm) {
         Composite body = managedForm.getForm().getBody();
         TableWrapLayout layout = new TableWrapLayout();
+        //CheckStyle:MagicNumber| OFF
         layout.bottomMargin = 10;
         layout.topMargin = 5;
         layout.leftMargin = 10;
@@ -57,10 +56,11 @@ public class OverviewFormPage extends FormPage {
         layout.makeColumnsEqualWidth = true;
         layout.verticalSpacing = 30;
         layout.horizontalSpacing = 10;
+        //CheckStyle:MagicNumber| ON
         body.setLayout(layout);
 
         // sections
-        managedForm.addPart(new IvyInfoSection(this, body, Section.TWISTIE, true));
-        managedForm.addPart(new IvyConfSection(this, body, Section.TWISTIE, true));
+        managedForm.addPart(new IvyInfoSection(this, body, ExpandableComposite.TWISTIE, true));
+        managedForm.addPart(new IvyConfSection(this, body, ExpandableComposite.TWISTIE, true));
     }
 }

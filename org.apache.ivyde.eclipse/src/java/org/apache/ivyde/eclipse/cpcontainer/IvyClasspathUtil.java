@@ -35,11 +35,14 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class IvyClasspathUtil {
+public final class IvyClasspathUtil {
+
+    private IvyClasspathUtil() {
+        // utility class
+    }
 
     /**
      * Adds an Ivy classpath container to the list of existing classpath entries in the given
@@ -56,8 +59,7 @@ public class IvyClasspathUtil {
     public static void addCPContainer(IJavaProject project, IPath projectRelativePath, String confs) {
         try {
             IClasspathEntry newEntry = JavaCore.newContainerEntry(new Path(
-                    IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID).append(projectRelativePath)
-                    .append(confs));
+                    IvyClasspathContainer.CONTAINER_ID).append(projectRelativePath).append(confs));
 
             IClasspathEntry[] entries = project.getRawClasspath();
 
@@ -128,7 +130,7 @@ public class IvyClasspathUtil {
     }
 
     public static boolean isIvyClasspathContainer(IPath containerPath) {
-        return containerPath.segment(0).equals(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID);
+        return containerPath.segment(0).equals(IvyClasspathContainer.CONTAINER_ID);
     }
 
     /**
@@ -198,7 +200,8 @@ public class IvyClasspathUtil {
 
         int kind = entry.getEntryKind();
         if (kind != IClasspathEntry.CPE_LIBRARY && kind != IClasspathEntry.CPE_VARIABLE) {
-            throw new IllegalArgumentException("Entry must be of kind CPE_LIBRARY or CPE_VARIABLE"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Entry must be of kind CPE_LIBRARY or " + "CPE_VARIABLE"); //$NON-NLS-1$
         }
 
         IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();

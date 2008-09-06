@@ -21,79 +21,79 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class IvyTagAttribute {
-    private final static ResourceBundle doc = ResourceBundle.getBundle(
-        IvyTagAttribute.class.getPackage().getName() + ".tagsdoc");
-    
-    private IvyTag _container;
+    private static final ResourceBundle DOC_RESOURCE = ResourceBundle
+            .getBundle(IvyTagAttribute.class.getPackage().getName() + ".tagsdoc");
 
-    private String _name;
+    private IvyTag container;
 
-    private String _doc;
+    private String name;
 
-    private boolean _mandatory = false;
+    private String doc;
 
-    private IValueProvider _valueProvider = null;
+    private boolean mandatory = false;
+
+    private IValueProvider valueProvider = null;
 
     /**
      * @param name
      */
     public IvyTagAttribute(String name) {
         super();
-        _name = name;
+        this.name = name;
     }
 
     public IvyTagAttribute(String name, IValueProvider vp) {
         super();
-        _name = name;
-        _valueProvider = vp;
+        this.name = name;
+        this.valueProvider = vp;
     }
 
     public IvyTagAttribute(String name, String doc) {
         super();
-        _name = name;
-        _doc = doc;
+        this.name = name;
+        this.doc = doc;
     }
 
     public IvyTagAttribute(String name, boolean mandatory) {
-        _name = name;
-        _mandatory = mandatory;
+        this.name = name;
+        this.mandatory = mandatory;
     }
 
     public IvyTagAttribute(String name, String doc, boolean mandatory) {
         super();
-        _name = name;
-        _doc = doc;
-        _mandatory = mandatory;
+        this.name = name;
+        this.doc = doc;
+        this.mandatory = mandatory;
     }
 
     public IvyTagAttribute(String name, String doc, boolean mandatory, IValueProvider provider) {
-        _name = name;
-        _doc = doc;
-        _mandatory = mandatory;
-        _valueProvider = provider;
+        this.name = name;
+        this.doc = doc;
+        this.mandatory = mandatory;
+        this.valueProvider = provider;
     }
 
     public String getName() {
-        return _name;
+        return this.name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String toString() {
-        return _name;
+        return name;
     }
 
     public String getDoc() {
-        if (_doc == null) {
+        if (doc == null) {
             try {
-                _doc = doc.getString(getId());
+                doc = DOC_RESOURCE.getString(getId());
             } catch (MissingResourceException ex) {
-                _doc = "";
+                doc = "";
             }
         }
-        return _doc;
+        return doc;
     }
 
     private String getId() {
@@ -104,30 +104,30 @@ public class IvyTagAttribute {
     }
 
     public void setDoc(String doc) {
-        _doc = doc;
+        this.doc = doc;
     }
 
     public IvyTag getContainer() {
-        return _container;
+        return container;
     }
 
     public void setContainer(IvyTag container) {
-        _container = container;
+        this.container = container;
     }
 
     public boolean isMandatory() {
-        return _mandatory;
+        return mandatory;
     }
 
     public void setMandatory(boolean mandatory) {
-        _mandatory = mandatory;
+        this.mandatory = mandatory;
     }
 
     public IValueProvider getValueProvider() {
-        return _valueProvider;
+        return valueProvider;
     }
 
     public void setValueProvider(IValueProvider valueProvider) {
-        _valueProvider = valueProvider;
+        this.valueProvider = valueProvider;
     }
 }

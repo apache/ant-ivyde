@@ -19,7 +19,7 @@ package org.apache.ivyde.common.model;
 
 public class ListValueProvider implements IValueProvider {
 
-    private String[] _values;
+    private String[] values;
 
     public ListValueProvider(String commaSeparatedValuesList) {
         if (commaSeparatedValuesList != null) {
@@ -33,19 +33,19 @@ public class ListValueProvider implements IValueProvider {
         }
     }
 
-    private void init(String[] values, boolean trim) {
-        _values = new String[values.length];
+    private void init(String[] v, boolean trim) {
+        values = new String[v.length];
         if (trim) {
-            for (int i = 0; i < values.length; i++) {
-                _values[i] = values[i].trim();
+            for (int i = 0; i < v.length; i++) {
+                values[i] = v[i].trim();
             }
         } else {
-            System.arraycopy(values, 0, _values, 0, values.length);
+            System.arraycopy(v, 0, values, 0, v.length);
         }
     }
 
     public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-        return _values;
+        return values;
     }
 
 }

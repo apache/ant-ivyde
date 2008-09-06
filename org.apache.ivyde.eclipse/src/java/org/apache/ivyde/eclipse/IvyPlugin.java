@@ -256,9 +256,10 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public ResourceBundle getResourceBundle() {
         try {
-            if (resourceBundle == null)
+            if (resourceBundle == null) {
                 resourceBundle = ResourceBundle
                         .getBundle("org.apache.ivyde.eclipse.IvyPluginResources");
+            }
         } catch (MissingResourceException x) {
             resourceBundle = new ResourceBundle() {
                 protected Object handleGetObject(String key) {
@@ -285,7 +286,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         return AbstractUIPlugin.imageDescriptorFromPlugin(ID, path);
     }
 
-    private PreferenceStoreInfo _packageExtraInfo;
+    private PreferenceStoreInfo packageExtraInfo;
 
     /**
      * @return the helper around the plugin preference store
@@ -307,10 +308,10 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     public IPackageFragmentExtraInfo getPackageFragmentExtraInfo() {
-        if (_packageExtraInfo == null) {
-            _packageExtraInfo = new PreferenceStoreInfo(getPreferenceStore());
+        if (packageExtraInfo == null) {
+            packageExtraInfo = new PreferenceStoreInfo(getPreferenceStore());
         }
-        return _packageExtraInfo;
+        return packageExtraInfo;
     }
 
     public BundleContext getBundleContext() {

@@ -196,7 +196,7 @@ public class IvyCodeCompletionProcessor {
                     for (int i = 0; i < props.length; i++) {
                         // Construct proposal and add to result list
                         propList.add(new CodeCompletionProposal(
-                            props[i].getProposal(), ivyfile.getOffset()- qlen, qlen + caretOffset, 
+                            props[i].getProposal(), ivyfile.getOffset() - qlen, qlen + caretOffset, 
                             props[i].getCursor(), null, props[i].getDoc()));
                     }
                 }

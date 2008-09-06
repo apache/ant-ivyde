@@ -47,7 +47,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class IvySettingsEditor extends FormEditor implements IResourceChangeListener {
-    public final static String ID = "org.apache.ivyde.editors.IvySettingsEditor";
+    public static final String ID = "org.apache.ivyde.editors.IvySettingsEditor";
 
     private XMLEditor xmlEditor;
 
@@ -152,14 +152,12 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
      * is an instance of <code>IFileEditorInput</code>.
      */
     public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
-        if (!(editorInput instanceof IFileEditorInput))
+        if (!(editorInput instanceof IFileEditorInput)) {
             throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+        }
         super.init(site, editorInput);
     }
 
-    /*
-     * (non-Javadoc) Method declared on IEditorPart.
-     */
     public boolean isSaveAsAllowed() {
         return xmlEditor.isSaveAsAllowed();
     }

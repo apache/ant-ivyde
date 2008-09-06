@@ -18,28 +18,28 @@
 package org.apache.ivyde.common.model;
 
 public class Proposal {
-    private int _cursor;
+    private int cursor;
 
-    private String _proposal;
+    private String proposal;
 
-    private String _doc;
+    private String doc;
 
     public Proposal(String proposal, int cursor, String doc) {
-        _cursor = cursor;
-        _proposal = proposal;
-        _doc = doc;
+        this.cursor = cursor;
+        this.proposal = proposal;
+        this.doc = doc;
     }
 
     public int getCursor() {
-        return _cursor;
+        return cursor;
     }
 
     public String getProposal() {
-        return _proposal;
+        return proposal;
     }
 
     public String getDoc() {
-        return _doc;
+        return doc;
     }
 
 }

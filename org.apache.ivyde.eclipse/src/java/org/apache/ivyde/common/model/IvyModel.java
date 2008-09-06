@@ -27,9 +27,10 @@ import java.util.Properties;
 import org.apache.ivy.Ivy;
 
 public abstract class IvyModel {
-    private final Map MODEL = new HashMap();
+    private final Map model = new HashMap();
 
-    private Properties _defaults;
+    private Properties defaults;
+
     private IvyModelSettings settings;
 
     public IvyModel(IvyModelSettings settings) {
@@ -38,7 +39,7 @@ public abstract class IvyModel {
     }
 
     public IvyTag getIvyTag(String tagName, String parentName) {
-        Object tag = MODEL.get(tagName);
+        Object tag = model.get(tagName);
         if (tag instanceof List) {
             List all = (List) tag;
             for (Iterator iter = all.iterator(); iter.hasNext();) {
@@ -53,9 +54,9 @@ public abstract class IvyModel {
     }
 
     private void loadDefaults() {
-        _defaults = new Properties();
+        defaults = new Properties();
         try {
-            _defaults.load(IvyModel.class.getResourceAsStream("defaults.properties"));
+            defaults.load(IvyModel.class.getResourceAsStream("defaults.properties"));
         } catch (IOException e) {
             // should never never happen
             settings.logError("The default properties could not be loaded", e);
@@ -63,7 +64,7 @@ public abstract class IvyModel {
     }
 
     public IvyTag getRootIvyTag() {
-        return (IvyTag) MODEL.get(getRootIvyTagName());
+        return (IvyTag) model.get(getRootIvyTagName());
     }
 
     protected abstract String getRootIvyTagName();
@@ -71,40 +72,39 @@ public abstract class IvyModel {
     protected Ivy getIvy() {
         return settings.getIvyInstance();
     }
-    
+
     public IvyModelSettings getSettings() {
         return settings;
     }
-    
 
     protected void addTag(String name, List list) {
-        MODEL.put(name, list);
+        model.put(name, list);
     }
 
     protected void addTag(IvyTag ivyTag) {
-        if (!MODEL.containsKey(ivyTag.getName())) {
-            MODEL.put(ivyTag.getName(), ivyTag);
+        if (!model.containsKey(ivyTag.getName())) {
+            model.put(ivyTag.getName(), ivyTag);
             for (Iterator it = ivyTag.getChilds().iterator(); it.hasNext();) {
                 IvyTag child = (IvyTag) it.next();
                 addTag(child);
             }
         } else {
-            // the model already contains a tag for this name... maybe we should add it to a list, 
-            // but we still have problem of tags with infinite children hierarchy (like chain of chain)
-            // where we need to stop adding children somewhere.
+            // the model already contains a tag for this name... maybe we should add it to a list,
+            // but we still have problem of tags with infinite children hierarchy (like chain of
+            // chain) where we need to stop adding children somewhere.
         }
     }
-    
+
     protected String getDefault(String name) {
-        return _defaults.getProperty(name);
+        return defaults.getProperty(name);
     }
 
     public abstract IvyFile newIvyFile(String name, String content, int documentOffset);
 
     public void refreshIfNeeded(IvyFile file) {
     }
-    
+
     protected void clearModel() {
-        MODEL.clear();
+        model.clear();
     }
 }

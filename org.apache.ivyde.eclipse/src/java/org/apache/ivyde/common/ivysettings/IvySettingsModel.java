@@ -260,7 +260,8 @@ public class IvySettingsModel extends IvyModel {
                         Method[] methods = clazz.getMethods();
                         for (int i = 0; i < methods.length; i++) {
                             Method m = methods[i];
-                            if (m.getName().startsWith("create") && m.getParameterTypes().length == 0
+                            if (m.getName().startsWith("create")
+                                    && m.getParameterTypes().length == 0
                                     && isSupportedChildType(m.getReturnType())) {
                                 String name = StringUtils
                                 .uncapitalize(m.getName().substring("create".length()));
@@ -273,10 +274,11 @@ public class IvySettingsModel extends IvyModel {
                                     && isSupportedChildType(m.getParameterTypes()[0])
                                     && Void.TYPE.equals(m.getReturnType())) {
                                 String name = StringUtils.uncapitalize(m.getName().substring(
-                                    m.getName().startsWith("addConfigured") ? 
-                                            "addConfigured".length() : "add".length()));
+                                    m.getName().startsWith("addConfigured") ? "addConfigured"
+                                            .length() : "add".length()));
                                 if (name.length() == 0) {
-                                    addTypedefChildren(this, getChildClasses(typedefClasses, m.getParameterTypes()[0]));
+                                    addTypedefChildren(this, getChildClasses(typedefClasses, m
+                                            .getParameterTypes()[0]));
                                 } else {
                                     addChildIvyTag(typedefedTag(name, m.getParameterTypes()[0]));
                                 }
@@ -284,8 +286,8 @@ public class IvySettingsModel extends IvyModel {
                                     && Void.TYPE.equals(m.getReturnType())
                                     && m.getParameterTypes().length == 1
                                     && isSupportedAttributeType(m.getParameterTypes()[0])) {
-                                IvyTagAttribute att = new IvyTagAttribute(
-                                    StringUtils.uncapitalize(m.getName().substring(3)));
+                                IvyTagAttribute att = new IvyTagAttribute(StringUtils
+                                        .uncapitalize(m.getName().substring("set".length())));
                                 if (m.getParameterTypes()[0] == boolean.class) {
                                     att.setValueProvider(IvyBooleanTagAttribute.VALUE_PROVIDER);
                                 }
@@ -318,8 +320,7 @@ public class IvySettingsModel extends IvyModel {
                 && !Integer.class.equals(type) && !int.class.equals(type)
                 && !Short.class.equals(type) && !short.class.equals(type)
                 && !Long.class.equals(type) && !long.class.equals(type)
-                && !Class.class.equals(type)
-                ;
+                && !Class.class.equals(type);
     }
 
     private boolean isSupportedAttributeType(Class type) {

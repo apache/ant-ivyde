@@ -28,9 +28,9 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class IvyConfSection extends SectionPart {
-    IFormPage page;
+    private IFormPage page;
 
-    private static int NUM_COLUMNS = 2;
+    private static final int NUM_COLUMNS = 2;
 
     public IvyConfSection(IFormPage page, Composite parent, int style, boolean titleBar) {
         super(parent, page.getManagedForm().getToolkit(),
@@ -41,11 +41,13 @@ public class IvyConfSection extends SectionPart {
 
     protected void createClient(Section section, FormToolkit toolkit) {
         section.setText("Configurations"); //$NON-NLS-1$
-        section.setDescription("This section describe the configurations defined in your project"); //$NON-NLS-1$
+        String desc = "This section describe the configurations defined in your project";
+        section.setDescription(desc);
 
         Composite client = toolkit.createComposite(section);
         TableWrapLayout layout = new TableWrapLayout();
-        layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+        layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+        layout.leftMargin = layout.rightMargin;
         layout.numColumns = NUM_COLUMNS;
         client.setLayout(layout);
 

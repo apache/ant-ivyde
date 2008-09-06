@@ -27,13 +27,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-public abstract class IvyDEContainerMenuAction extends IvyDEContainerAction implements IMenuCreator {
+public abstract class IvyDEContainerMenuAction extends IvyDEContainerAction
+        implements IMenuCreator {
 
-    boolean selectionChanged;
+    private boolean selectionChanged;
 
     private IAction proxyAction;
 
-    IvyClasspathContainer cp;
+    private IvyClasspathContainer cp;
 
     private MenuListener menuListener = new MenuAdapter() {
         public void menuShown(MenuEvent e) {
@@ -63,7 +64,7 @@ public abstract class IvyDEContainerMenuAction extends IvyDEContainerAction impl
         return menu;
     }
 
-    abstract protected void fill(Menu menu, IvyClasspathContainer ivycp);
+    protected abstract void fill(Menu menu, IvyClasspathContainer ivycp);
 
     public void run(IAction action) {
         // nothing to run

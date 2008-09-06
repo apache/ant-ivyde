@@ -34,10 +34,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 public class ReportView extends ViewPart implements ISelectionListener {
-    private Browser _browser;
+    private Browser browser;
 
     public void createPartControl(Composite parent) {
-        _browser = new Browser(parent, SWT.NONE);
+        browser = new Browser(parent, SWT.NONE);
 
         // add myself as a global selection listener
         getSite().getPage().addSelectionListener(this);
@@ -55,17 +55,18 @@ public class ReportView extends ViewPart implements ISelectionListener {
             IvyClasspathContainer ivycp = IvyClasspathUtil
                     .getIvyClasspathContainer((IStructuredSelection) sel);
             if (ivycp != null) {
-                _browser.setUrl("");
+                browser.setUrl("");
                 URL report;
                 try {
                     report = ivycp.getReportUrl();
                 } catch (IvyDEException e) {
                     e.log(IStatus.WARNING, "Impossible show the report for " + ivycp.getConf());
-                    e.show(IStatus.WARNING, "Show Ivy report failure", "Impossible show the report for " + ivycp.getConf());
+                    e.show(IStatus.WARNING, "Show Ivy report failure",
+                        "Impossible show the report for " + ivycp.getConf());
                     return;
                 }
-                if (!_browser.setUrl(report.toExternalForm())) {
-                    _browser.setUrl("");
+                if (!browser.setUrl(report.toExternalForm())) {
+                    browser.setUrl("");
                     Message.warn("impossible to set report view url to " + report.toExternalForm());
                 }
             }

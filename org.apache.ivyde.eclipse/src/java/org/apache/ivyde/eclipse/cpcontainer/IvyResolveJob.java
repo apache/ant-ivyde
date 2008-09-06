@@ -85,51 +85,61 @@ import org.eclipse.jdt.core.JavaModelException;
  * Eclipse classpath container that will contain the ivy resolved entries.
  */
 public class IvyResolveJob extends Job implements TransferListener, IvyListener {
-    long _expectedTotalLength = 1;
+    private static final int DOWNLOAD_MONITOR_LENGTH = 100;
 
-    long _currentLength = 0;
+    private static final int KILO_BITS_UNIT = 1024;
 
-    private IProgressMonitor _monitor;
+    private static final int MONITOR_LENGTH = 1000;
 
-    private IProgressMonitor _dlmonitor;
+    private static final int WAIT_FOR_JOIN = 100;
 
-    private boolean _usePreviousResolveIfExist;
+    private long expectedTotalLength = 1;
 
-    private int _workPerArtifact = 100;
+    private long currentLength = 0;
 
-    Ivy ivy;
+    private IProgressMonitor monitor;
 
-    final IvyClasspathContainerConfiguration conf;
+    private IProgressMonitor dlmonitor;
+
+    private boolean usePreviousResolveIfExist;
+
+    private int workPerArtifact = 100;
+
+    private Ivy ivy;
+
+    private final IvyClasspathContainerConfiguration conf;
 
     private final IvyClasspathContainer container;
 
-    ModuleDescriptor md;
+    private ModuleDescriptor md;
 
     public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist) {
         super("Resolve " + container.getConf() + " dependencies");
         this.container = container;
         this.conf = container.getConf();
-        _usePreviousResolveIfExist = usePreviousResolveIfExist;
+        this.usePreviousResolveIfExist = usePreviousResolveIfExist;
     }
 
     public void transferProgress(TransferEvent evt) {
         switch (evt.getEventType()) {
             case TransferEvent.TRANSFER_INITIATED:
-                _monitor.setTaskName("downloading " + evt.getResource());
+                monitor.setTaskName("downloading " + evt.getResource());
                 break;
             case TransferEvent.TRANSFER_STARTED:
-                _currentLength = 0;
+                currentLength = 0;
                 if (evt.isTotalLengthSet()) {
-                    _expectedTotalLength = evt.getTotalLength();
-                    _dlmonitor.beginTask("downloading " + evt.getResource(), 100);
+                    expectedTotalLength = evt.getTotalLength();
+                    dlmonitor
+                            .beginTask("downloading " + evt.getResource(), DOWNLOAD_MONITOR_LENGTH);
                 }
                 break;
             case TransferEvent.TRANSFER_PROGRESS:
-                if (_expectedTotalLength > 1) {
-                    _currentLength += evt.getLength();
-                    _dlmonitor.worked((int) (_currentLength * 100 / _expectedTotalLength));
-                    _monitor.subTask((_currentLength / 1024) + " / "
-                            + (_expectedTotalLength / 1024) + "kB");
+                if (expectedTotalLength > 1) {
+                    currentLength += evt.getLength();
+                    int progress = (int) (currentLength * DOWNLOAD_MONITOR_LENGTH / expectedTotalLength);
+                    dlmonitor.worked(progress);
+                    monitor.subTask((currentLength / KILO_BITS_UNIT) + " / "
+                            + (expectedTotalLength / KILO_BITS_UNIT) + "kB");
                 }
                 break;
             default:
@@ -138,33 +148,33 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     public void progress(IvyEvent event) {
         if (event instanceof TransferEvent) {
-            if (_dlmonitor != null) {
+            if (dlmonitor != null) {
                 transferProgress((TransferEvent) event);
             }
         } else if (event instanceof PrepareDownloadEvent) {
             PrepareDownloadEvent pde = (PrepareDownloadEvent) event;
             Artifact[] artifacts = pde.getArtifacts();
             if (artifacts.length > 0) {
-                _workPerArtifact = 1000 / artifacts.length;
+                workPerArtifact = MONITOR_LENGTH / artifacts.length;
             }
         } else if (event instanceof StartArtifactDownloadEvent) {
             StartArtifactDownloadEvent evt = (StartArtifactDownloadEvent) event;
-            _monitor.setTaskName("downloading " + evt.getArtifact());
-            if (_dlmonitor != null) {
-                _dlmonitor.done();
+            monitor.setTaskName("downloading " + evt.getArtifact());
+            if (dlmonitor != null) {
+                dlmonitor.done();
             }
-            _dlmonitor = new SubProgressMonitor(_monitor, _workPerArtifact);
+            dlmonitor = new SubProgressMonitor(monitor, workPerArtifact);
         } else if (event instanceof EndArtifactDownloadEvent) {
-            if (_dlmonitor != null) {
-                _dlmonitor.done();
+            if (dlmonitor != null) {
+                dlmonitor.done();
             }
-            _monitor.subTask(" ");
-            _dlmonitor = null;
+            monitor.subTask(" ");
+            dlmonitor = null;
         } else if (event instanceof StartResolveDependencyEvent) {
             StartResolveDependencyEvent ev = (StartResolveDependencyEvent) event;
-            _monitor.subTask("resolving " + ev.getDependencyDescriptor().getDependencyRevisionId());
+            monitor.subTask("resolving " + ev.getDependencyDescriptor().getDependencyRevisionId());
         } else if (event instanceof EndResolveDependencyEvent) {
-            _monitor.subTask(" ");
+            monitor.subTask(" ");
         }
     }
 
@@ -179,9 +189,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         return result;
     }
 
-    protected IStatus run(IProgressMonitor monitor) {
-        Message.info("resolving dependencies of " + conf.ivyXmlPath);
-        _monitor = monitor;
+    protected IStatus run(IProgressMonitor m) {
+        Message.info("resolving dependencies of " + conf);
+        this.monitor = m;
         final IStatus[] status = new IStatus[1];
         final IClasspathEntry[][] classpathEntries = new IClasspathEntry[1][];
 
@@ -197,28 +207,30 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 try {
                     ivy.pushContext();
                     ivy.getEventManager().addIvyListener(IvyResolveJob.this);
-    
-                    _monitor.beginTask("resolving dependencies", 1000);
-                    _monitor.setTaskName("resolving dependencies...");
-    
+
+                    monitor.beginTask("resolving dependencies", MONITOR_LENGTH);
+                    monitor.setTaskName("resolving dependencies...");
+
                     String[] confs;
                     Collection/* <ArtifactDownloadReport> */all;
                     List problemMessages;
-    
+
                     // context Classloader hook for commonlogging used by httpclient
                     ClassLoader old = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
+                    Thread.currentThread().setContextClassLoader(
+                        IvyResolveJob.class.getClassLoader());
                     try {
                         Map dependencies = Collections.EMPTY_MAP;
-                        if (_usePreviousResolveIfExist) {
+                        if (usePreviousResolveIfExist) {
                             if (conf.confs.size() == 1 && "*".equals(conf.confs.get(0))) {
                                 confs = md.getConfigurationsNames();
                             } else {
-                                confs = (String[]) conf.confs.toArray(new String[conf.confs.size()]);
+                                confs = (String[]) conf.confs
+                                        .toArray(new String[conf.confs.size()]);
                             }
-    
+
                             all = new LinkedHashSet();
-    
+
                             problemMessages = new ArrayList();
                             // we check if all required configurations have been
                             // resolved
@@ -236,7 +248,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                         resolved = true;
                                     } catch (ParseException e) {
                                         Message.info("\n\nIVYDE: Error while parsing the report "
-                                                + report + ". Falling back by doing a resolve again.");
+                                                + report
+                                                + ". Falling back by doing a resolve again.");
                                         // it fails, so let's try resolving
                                     }
                                 }
@@ -256,7 +269,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                     dependencies = listDependencies(r);
                                     problemMessages.addAll(r.getAllProblemMessages());
                                     maybeRetrieve(md, confs);
-    
+
                                     break;
                                 }
                             }
@@ -271,40 +284,44 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                             all = new LinkedHashSet(Arrays.asList(report.getArtifactsReports(null,
                                 false)));
                             confs = report.getConfigurations();
-    
+
                             dependencies = listDependencies(report);
-    
-                            if (_monitor.isCanceled()) {
+
+                            if (monitor.isCanceled()) {
                                 status[0] = Status.CANCEL_STATUS;
                                 return;
                             }
-    
+
                             maybeRetrieve(md, confs);
                         }
-    
+
                         warnIfDuplicates(all);
-    
+
                         classpathEntries[0] = artifacts2ClasspathEntries(all, dependencies);
                     } catch (ParseException e) {
-                        String errorMsg = "Error while parsing the ivy file " + conf.ivyXmlPath + "\n"
-                                + e.getMessage();
-                        Message.error(errorMsg);
-                        status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
-                        return;
-                    } catch (Exception e) {
-                        String errorMsg = "Error while resolving dependencies for " + conf.ivyXmlPath
+                        String errorMsg = "Error while parsing the ivy file " + conf.ivyXmlPath
                                 + "\n" + e.getMessage();
                         Message.error(errorMsg);
-                        status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
+                        status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                                errorMsg, e);
+                        return;
+                    } catch (Exception e) {
+                        String errorMsg = "Error while resolving dependencies for "
+                                + conf.ivyXmlPath + "\n" + e.getMessage();
+                        Message.error(errorMsg);
+                        status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                                errorMsg, e);
                         return;
                     } finally {
                         Thread.currentThread().setContextClassLoader(old);
-                        _monitor.done();
+                        monitor.done();
                         ivy.getEventManager().removeIvyListener(IvyResolveJob.this);
                     }
-    
+
                     if (!problemMessages.isEmpty()) {
-                        MultiStatus multiStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
+                        MultiStatus multiStatus = new MultiStatus(
+                                IvyPlugin.ID,
+                                IStatus.ERROR,
                                 "Impossible to resolve dependencies of " + md.getModuleRevisionId(),
                                 null);
                         for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
@@ -314,14 +331,11 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         status[0] = multiStatus;
                         return;
                     }
-    
+
                     status[0] = Status.OK_STATUS;
                 } catch (Throwable e) {
                     status[0] = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                        "The resolve job of "
-                                + (conf.getJavaProject() == null ? "" : conf.getJavaProject()
-                                        .getProject().getName()
-                                        + "/") + conf.ivyXmlPath + " has unexpectedly stopped", e);                    
+                            "The resolve job of " + conf + " has unexpectedly stopped", e);
                 }
             }
         };
@@ -330,7 +344,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             resolver.start();
             while (true) {
                 try {
-                    resolver.join(100);
+                    resolver.join(WAIT_FOR_JOIN);
                 } catch (InterruptedException e) {
                     ivy.interrupt(resolver);
                     return Status.CANCEL_STATUS;
@@ -340,7 +354,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         break;
                     }
                 }
-                if (_monitor.isCanceled()) {
+                if (monitor.isCanceled()) {
                     ivy.interrupt(resolver);
                     return Status.CANCEL_STATUS;
                 }
@@ -351,11 +365,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             setResolveStatus(status[0]);
             return status[0];
         } finally {
-            container.job = null;
-            IvyPlugin.log(IStatus.INFO, "resolved dependencies of "
-                    + (conf.getJavaProject() == null ? "" : conf.getJavaProject().getProject()
-                            .getName()
-                            + "/") + conf.ivyXmlPath, null);
+            container.resetJob();
+            IvyPlugin.log(IStatus.INFO, "resolved dependencies of " + conf, null);
         }
     }
 
@@ -382,6 +393,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                     case IStatus.INFO:
                         marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
                         break;
+                    default:
+                        IvyPlugin.log(IStatus.WARNING, "Unsupported resolve status: "
+                                + status.getSeverity(), null);
                 }
             } catch (CoreException e) {
                 IvyPlugin.log(e);
@@ -418,8 +432,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
         if (!duplicates.isEmpty()) {
             StringBuffer buffer = new StringBuffer(
-                    "There are some duplicates entries due to conflicts between the resolved configurations "
-                            + conf.confs);
+                    "There are some duplicates entries due to conflicts"
+                            + " between the resolved configurations " + conf.confs);
             buffer.append(":\n  - ");
             Iterator it = duplicates.iterator();
             while (it.hasNext()) {
@@ -436,7 +450,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         if (conf.getInheritedDoRetrieve()) {
             String pattern = conf.javaProject.getProject().getLocation().toPortableString() + "/"
                     + conf.getInheritedRetrievePattern();
-            _monitor.setTaskName("retrieving dependencies in " + pattern);
+            monitor.setTaskName("retrieving dependencies in " + pattern);
             RetrieveOptions c = new RetrieveOptions().setConfs(confs);
             c.setSync(conf.getInheritedRetrieveSync());
             ivy.retrieve(md.getModuleRevisionId(), pattern, c);
@@ -523,7 +537,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private Path getSourcesArtifactPath(ArtifactDownloadReport adr, Collection all) {
         Artifact artifact = adr.getArtifact();
-        _monitor.subTask("searching sources for " + artifact);
+        monitor.subTask("searching sources for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
             Artifact a = otherAdr.getArtifact();
@@ -543,7 +557,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
     private Path getJavadocArtifactPath(ArtifactDownloadReport adr, Collection all) {
         Artifact artifact = adr.getArtifact();
-        _monitor.subTask("searching javadoc for " + artifact);
+        monitor.subTask("searching javadoc for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
             Artifact a = otherAdr.getArtifact();
@@ -574,7 +588,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 .getPublicationDate(), artifact.getName(), metaType, "jar", extraAtt);
         RepositoryCacheManager cache = ivy.getSettings()
                 .getResolver(artifact.getModuleRevisionId()).getRepositoryCacheManager();
-        if (! (cache instanceof DefaultRepositoryCacheManager)) {
+        if (!(cache instanceof DefaultRepositoryCacheManager)) {
             /*
              * we're not using a default implementation of repository cache manager, so we don't
              * cache attempts to locate metadata artifacts
@@ -584,19 +598,19 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 return metaArtifactLocalPath;
             }
             Message.info(metaType + " not found for " + artifact);
-            Message.verbose(
-                "Attempt not stored in cache because a non Default cache implementation is used.");
+            Message
+                    .verbose("Attempt not stored in cache because a non Default cache implementation is used.");
             return null;
         }
-        
+
         File metaArtifactFile = ((DefaultRepositoryCacheManager) cache)
-                                                .getArchiveFileInCache(metaArtifact);
+                .getArchiveFileInCache(metaArtifact);
         File attempt = new File(metaArtifactFile.getAbsolutePath() + ".notfound");
         if (metaArtifactFile.exists()) {
             return new Path(metaArtifactFile.getAbsolutePath());
         } else if (attempt.exists()) {
             return null;
-        } 
+        }
         Path metaArtifactLocalPath = downloadMetaArtifact(adr, metaType, metaArtifact);
         if (metaArtifactLocalPath != null) {
             return metaArtifactLocalPath;
@@ -617,19 +631,18 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
     private Path downloadMetaArtifact(ArtifactDownloadReport adr, String metaType,
             Artifact metaArtifact) {
         Artifact artifact = adr.getArtifact();
-        Message.info("checking " + metaType + " for " + artifact );
+        Message.info("checking " + metaType + " for " + artifact);
         ArtifactOrigin origin = ivy.getResolveEngine().locate(metaArtifact);
         if (!ArtifactOrigin.isUnknown(origin)) {
             /*
-             * fix for IVYDE-117: we need to check that the location of this metadata
-             * artifact is different from the original artifact
+             * fix for IVYDE-117: we need to check that the location of this metadata artifact is
+             * different from the original artifact
              */
-            if (adr.getArtifactOrigin() != null 
-                    && (ArtifactOrigin.isUnknown(adr.getArtifactOrigin())
-                            || !origin.getLocation()
-                                .equals(adr.getArtifactOrigin().getLocation()))) {
-                ArtifactDownloadReport metaAdr = ivy.getResolveEngine()
-                                            .download(origin, new DownloadOptions());
+            if (adr.getArtifactOrigin() != null
+                    && (ArtifactOrigin.isUnknown(adr.getArtifactOrigin()) || !origin.getLocation()
+                            .equals(adr.getArtifactOrigin().getLocation()))) {
+                ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(origin,
+                    new DownloadOptions());
                 File localFile = metaAdr.getLocalFile();
                 if (localFile != null && localFile.exists()) {
                     return new Path(localFile.getAbsolutePath());

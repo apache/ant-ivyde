@@ -84,7 +84,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     public void requestClasspathContainerUpdate(IPath containerPath, final IJavaProject project,
             IClasspathContainer containerSuggestion) throws CoreException {
         if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
-            IClasspathEntry ice[] = containerSuggestion.getClasspathEntries();
+            IClasspathEntry[] ice = containerSuggestion.getClasspathEntries();
             IPackageFragmentExtraInfo ei = IvyPlugin.getDefault().getPackageFragmentExtraInfo();
             for (int i = 0; i < ice.length; i++) {
                 IClasspathEntry entry = ice[i];

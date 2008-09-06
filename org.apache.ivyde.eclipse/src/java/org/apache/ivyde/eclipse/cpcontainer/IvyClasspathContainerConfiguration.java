@@ -57,6 +57,9 @@ import org.eclipse.jdt.core.JavaModelException;
  */
 public class IvyClasspathContainerConfiguration {
 
+    private static final String UTF8_ERROR = "The UTF-8 encoding support is required"
+            + " is decode the path of the container.";
+
     private static final String PROJECT_SCHEME_PREFIX = "project://";
 
     private static final int PROJECT_SCHEME_PREFIX_LENGTH = PROJECT_SCHEME_PREFIX.length();
@@ -165,9 +168,8 @@ public class IvyClasspathContainerConfiguration {
                 value = parameter.length > 1 ? URLDecoder.decode(parameter[1], "UTF-8") : "";
             } catch (UnsupportedEncodingException e) {
                 // this should never never happen
-                String message = "The UTF-8 encoding support is required is decode the path of the container.";
-                IvyPlugin.log(IStatus.ERROR, message, e);
-                throw new RuntimeException(message, e);
+                IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
+                throw new RuntimeException(UTF8_ERROR, e);
             }
             if (parameter[0].equals("ivyXmlPath")) {
                 ivyXmlPath = value;
@@ -302,11 +304,10 @@ public class IvyClasspathContainerConfiguration {
                 path.append(URLEncoder.encode(Boolean.toString(this.resolveInWorkspace), "UTF-8"));
             }
         } catch (UnsupportedEncodingException e) {
-            String message = "The UTF-8 encoding support is required is endecode the path of the container.";
-            IvyPlugin.log(IStatus.ERROR, message, e);
-            throw new RuntimeException(message, e);
+            IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
+            throw new RuntimeException(UTF8_ERROR, e);
         }
-        return new Path(IvyClasspathContainer.IVY_CLASSPATH_CONTAINER_ID).append(path.toString());
+        return new Path(IvyClasspathContainer.CONTAINER_ID).append(path.toString());
     }
 
     public String getIvyXmlPath() {
@@ -315,6 +316,10 @@ public class IvyClasspathContainerConfiguration {
 
     public IJavaProject getJavaProject() {
         return javaProject;
+    }
+
+    public List getConfs() {
+        return confs;
     }
 
     private void setConfStatus(IvyDEException e) {
@@ -353,6 +358,9 @@ public class IvyClasspathContainerConfiguration {
                     case IStatus.INFO:
                         marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
                         break;
+                    default:
+                        IvyPlugin.log(IStatus.WARNING, "Unsupported resolve status: "
+                                + status.getSeverity(), null);
                 }
             } catch (CoreException e) {
                 IvyPlugin.log(e);
@@ -361,8 +369,8 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public Ivy getIvy() throws IvyDEException {
-        String ivySettingsPath = getInheritedIvySettingsPath();
-        if (ivySettingsPath == null || ivySettingsPath.trim().length() == 0) {
+        String settingsPath = getInheritedIvySettingsPath();
+        if (settingsPath == null || settingsPath.trim().length() == 0) {
             // no settings specified, so take the default one
             if (ivy == null) {
                 ivy = new Ivy();
@@ -388,10 +396,10 @@ public class IvyClasspathContainerConfiguration {
             return ivy;
         }
 
-        if (ivySettingsPath.startsWith(PROJECT_SCHEME_PREFIX)) {
-            int pathIndex = ivySettingsPath.indexOf("/", PROJECT_SCHEME_PREFIX_LENGTH);
-            String projectName = ivySettingsPath.substring(PROJECT_SCHEME_PREFIX_LENGTH, pathIndex);
-            String path = ivySettingsPath.substring(pathIndex + 1);
+        if (settingsPath.startsWith(PROJECT_SCHEME_PREFIX)) {
+            int pathIndex = settingsPath.indexOf("/", PROJECT_SCHEME_PREFIX_LENGTH);
+            String projectName = settingsPath.substring(PROJECT_SCHEME_PREFIX_LENGTH, pathIndex);
+            String path = settingsPath.substring(pathIndex + 1);
             if (projectName.equals("")) {
                 IFile f = javaProject.getProject().getFile(path);
                 File file = new File(f.getLocation().toOSString());
@@ -409,8 +417,7 @@ public class IvyClasspathContainerConfiguration {
                     if (i == javaProjects.length) {
                         IvyDEException ex = new IvyDEException("Project '" + projectName
                                 + "' not found", "The project name '" + projectName + "' from '"
-                                + ivySettingsPath + "' was not found (" + this.toString() + ")",
-                                null);
+                                + settingsPath + "' was not found (" + this.toString() + ")", null);
                         setConfStatus(ex);
                         throw ex;
                     }
@@ -426,11 +433,11 @@ public class IvyClasspathContainerConfiguration {
         // before returning the found ivy, try to refresh it if the settings changed
         URL url;
         try {
-            url = new URL(ivySettingsPath);
+            url = new URL(settingsPath);
         } catch (MalformedURLException e) {
             IvyDEException ex = new IvyDEException("Incorrect url of the Ivy settings",
-                    "The Ivy settings url '" + ivySettingsPath + "' is incorrect ("
-                            + this.toString() + ")", e);
+                    "The Ivy settings url '" + settingsPath + "' is incorrect (" + this.toString()
+                            + ")", e);
             setConfStatus(ex);
             throw ex;
         }
@@ -446,13 +453,13 @@ public class IvyClasspathContainerConfiguration {
                     ivySettingsLastModified = 0;
                 } catch (ParseException e) {
                     IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
-                            "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
+                            "The ivy settings file '" + settingsPath + "' could not be parsed ("
                                     + this.toString() + ")", e);
                     setConfStatus(ex);
                     throw ex;
                 } catch (IOException e) {
                     IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
-                            "The ivy settings file '" + ivySettingsPath + "' could not be read ("
+                            "The ivy settings file '" + settingsPath + "' could not be read ("
                                     + this.toString() + ")", e);
                     setConfStatus(ex);
                     throw ex;

@@ -54,13 +54,10 @@ public class IvyModuleDescriptorEditorContributor extends MultiPageEditorActionB
         return (editor == null ? null : editor.getAction(actionID));
     }
 
-    /*
-     * (non-JavaDoc) Method declared in AbstractMultiPageEditorActionBarContributor.
-     */
-
     public void setActivePage(IEditorPart part) {
-        if (activeEditorPart == part)
+        if (activeEditorPart == part) {
             return;
+        }
 
         activeEditorPart = part;
 

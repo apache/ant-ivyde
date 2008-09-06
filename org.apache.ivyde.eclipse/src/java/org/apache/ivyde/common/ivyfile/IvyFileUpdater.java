@@ -34,22 +34,28 @@ public class IvyFileUpdater {
 
     private static class UpdateInfo {
         int insertFromIndex = 0;
+
         int insertToIndex = 0;
+
         String prefix = "";
+
         String suffix = "";
+
         String insert = "";
     }
-    
-    public void addDependency(File ivyFile, String org, String name, String revision, String confMapping) throws IOException {
-        ModuleRevisionId depId = new ModuleRevisionId(new ModuleId(org,name), revision);
+
+    public void addDependency(File ivyFile, String org, String name, String revision,
+            String confMapping) throws IOException {
+        ModuleRevisionId depId = new ModuleRevisionId(new ModuleId(org, name), revision);
         addDependency(ivyFile, depId, confMapping);
     }
-        
-    public void addDependency(File ivyFile, ModuleRevisionId depId, String confMapping) throws IOException {
+
+    public void addDependency(File ivyFile, ModuleRevisionId depId, String confMapping)
+            throws IOException {
         String content = FileUtil.readEntirely(ivyFile);
-        
+
         UpdateInfo info = findUpdateInfoToAddDependency(content, depId, confMapping);
-        
+
         update(ivyFile, content, info);
     }
 
@@ -62,18 +68,17 @@ public class IvyFileUpdater {
      *            the file pointing to the Ivy file to update
      * @param depId
      *            the module id of the dependency to remove or exclude
-     */ 
+     */
     public void removeOrExcludeDependency(File ivyFile, ModuleId depId) throws IOException {
         String content = FileUtil.readEntirely(ivyFile);
-        
+
         UpdateInfo info = findUpdateInfoToRemoveDependency(content, depId);
         if (info != null) {
             update(ivyFile, content, info);
         }
     }
 
-    private void update(File ivyFile, String content, UpdateInfo info)
-            throws FileNotFoundException {
+    private void update(File ivyFile, String content, UpdateInfo info) throws FileNotFoundException {
         PrintWriter w = new PrintWriter(new FileOutputStream(ivyFile));
         try {
             w.print(content.substring(0, info.insertFromIndex));
@@ -87,17 +92,18 @@ public class IvyFileUpdater {
         }
     }
 
-    private UpdateInfo findUpdateInfoToAddDependency(String content, ModuleRevisionId depId, String confMapping) {
+    private UpdateInfo findUpdateInfoToAddDependency(String content, ModuleRevisionId depId,
+            String confMapping) {
         UpdateInfo info = new UpdateInfo();
         info.insert = getDependencyToAdd(depId, confMapping);
-        
+
         Pattern dependenciesClose = Pattern.compile("<\\s*/dependencies");
         Matcher depsCloseMatcher = dependenciesClose.matcher(content);
         if (depsCloseMatcher.find()) {
             info.insertFromIndex = findLastDependencyEnd(content, depsCloseMatcher.start());
             if (info.insertFromIndex == -1) {
-                info.insertFromIndex = getLastMatchIndex(Pattern.compile("<\\s*dependencies.*?>"), 
-                                                        content, depsCloseMatcher.start());
+                info.insertFromIndex = getLastMatchIndex(Pattern.compile("<\\s*dependencies.*?>"),
+                    content, depsCloseMatcher.start());
                 if (info.insertFromIndex == -1) {
                     info.insertFromIndex = depsCloseMatcher.start();
                 } else {
@@ -129,16 +135,17 @@ public class IvyFileUpdater {
         }
         return info;
     }
-    
+
     private UpdateInfo findUpdateInfoToRemoveDependency(String content, ModuleId depId) {
         UpdateInfo info = new UpdateInfo();
-        
+
         Matcher depsMatcher = Pattern.compile("<\\s*dependencies").matcher(content);
         if (!depsMatcher.find()) {
             // no dependencies at all, nothing to do
             return null;
         }
-        Matcher depMatcher = Pattern.compile("<\\s*dependency\\s+.*name=[\"']([^\"']+)[\"']").matcher(content);
+        Matcher depMatcher = Pattern.compile("<\\s*dependency\\s+.*name=[\"']([^\"']+)[\"']")
+                .matcher(content);
         int start = depsMatcher.start();
         while (depMatcher.find(start)) {
             if (depId.getName().equals(depMatcher.group(1))) {
@@ -150,8 +157,8 @@ public class IvyFileUpdater {
                 }
                 m = Pattern.compile("<\\s*dependency[^<]*?\\/\\>").matcher(content);
                 if (m.find(info.insertFromIndex)) {
-                    info.insertToIndex = info.insertToIndex > 0 
-                                        ? Math.min(info.insertToIndex, m.end()) : m.end();
+                    info.insertToIndex = info.insertToIndex > 0 ? Math.min(info.insertToIndex, m
+                            .end()) : m.end();
                 }
                 info.insertFromIndex = findStartOfBlock(content, info.insertFromIndex);
                 info.insertToIndex = findEndOfBlock(content, info.insertToIndex);
@@ -159,9 +166,9 @@ public class IvyFileUpdater {
             }
             start = depMatcher.end();
         }
-        
+
         // we haven't found the dependency in the list of declared dependencies
-        
+
         if (start == depsMatcher.start()) {
             // no dependencies at all, nothing to do
             return null;
@@ -180,11 +187,13 @@ public class IvyFileUpdater {
     }
 
     private int findLastDependencyEnd(String content, int end) {
-        int depCloseIndex = getLastMatchIndex(Pattern.compile("</\\s*dependency\\s*>"), content, end);
-        int depOpCloseIndex = getLastMatchIndex(Pattern.compile("\\<\\s*dependency.*?\\/\\>"), content, end);
+        int depCloseIndex = getLastMatchIndex(Pattern.compile("</\\s*dependency\\s*>"), content,
+            end);
+        int depOpCloseIndex = getLastMatchIndex(Pattern.compile("\\<\\s*dependency.*?\\/\\>"),
+            content, end);
         return Math.max(depCloseIndex, depOpCloseIndex);
     }
-    
+
     private String getDependencyToAdd(ModuleRevisionId depId, String confMapping) {
         String dep = "        <dependency org=\"" + depId.getOrganisation() + "\"";
         dep += " name=\"" + depId.getName() + "\"";
@@ -225,7 +234,7 @@ public class IvyFileUpdater {
         }
         return 0;
     }
-    
+
     private int findEndOfBlock(String content, int index) {
         for (; index < content.length(); index++) {
             char c = content.charAt(index);

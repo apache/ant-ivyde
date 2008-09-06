@@ -46,13 +46,13 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
     private IProject project;
 
-    private IvyContentAssistProcessor _processor;
+    private IvyContentAssistProcessor processor;
 
-    private IFile _file;
+    private IFile file;
 
     public XMLConfiguration(ColorManager colorManager, IvyContentAssistProcessor processor) {
         this.colorManager = colorManager;
-        this._processor = processor;
+        this.processor = processor;
     }
 
     public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
@@ -62,8 +62,9 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
     public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer,
             String contentType) {
-        if (doubleClickStrategy == null)
+        if (doubleClickStrategy == null) {
             doubleClickStrategy = new XMLDoubleClickStrategy();
+        }
         return doubleClickStrategy;
     }
 
@@ -115,20 +116,20 @@ public class XMLConfiguration extends SourceViewerConfiguration {
             }
         });
 
-        _processor.setFile(_file);
+        processor.setFile(file);
         // Set this processor for each supported content type
-        assistant.setContentAssistProcessor(_processor, XMLPartitionScanner.XML_TAG);
-        assistant.setContentAssistProcessor(_processor, XMLPartitionScanner.XML_DEFAULT);
-        assistant.setContentAssistProcessor(_processor, IDocument.DEFAULT_CONTENT_TYPE);
+        assistant.setContentAssistProcessor(processor, XMLPartitionScanner.XML_TAG);
+        assistant.setContentAssistProcessor(processor, XMLPartitionScanner.XML_DEFAULT);
+        assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
         // Return the content assistant
         return assistant;
     }
 
     public void setFile(IFile file) {
-        if (_processor != null) {
-            _processor.setFile(file);
+        if (processor != null) {
+            processor.setFile(file);
         }
-        _file = file;
+        this.file = file;
     }
 }

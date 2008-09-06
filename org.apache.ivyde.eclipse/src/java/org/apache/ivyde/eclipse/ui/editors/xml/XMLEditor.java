@@ -32,8 +32,8 @@ public class XMLEditor extends TextEditor {
     public XMLEditor(IvyContentAssistProcessor processor) {
         super();
         colorManager = new ColorManager();
-        _configuration = new XMLConfiguration(colorManager, processor);
-        setSourceViewerConfiguration(_configuration);
+        configuration = new XMLConfiguration(colorManager, processor);
+        setSourceViewerConfiguration(configuration);
         setDocumentProvider(new XMLDocumentProvider());
 
     }
@@ -45,7 +45,7 @@ public class XMLEditor extends TextEditor {
 
     private static final String CONTENTASSIST_PROPOSAL_ID = "org.apache.ivyde.ContentAssistProposal";
 
-    private XMLConfiguration _configuration;
+    private XMLConfiguration configuration;
 
     protected void createActions() {
         super.createActions();
@@ -65,6 +65,6 @@ public class XMLEditor extends TextEditor {
     }
 
     public void setFile(IFile file) {
-        _configuration.setFile(file);
+        configuration.setFile(file);
     }
 }

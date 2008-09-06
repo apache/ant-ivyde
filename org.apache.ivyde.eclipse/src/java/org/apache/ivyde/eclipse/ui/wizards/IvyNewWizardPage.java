@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -68,7 +67,8 @@ public class IvyNewWizardPage extends WizardPage {
     public IvyNewWizardPage(ISelection selection) {
         super("wizardPage");
         setTitle("Ivy File");
-        setDescription("This wizard creates a new ivy.xml that can be opened by the ivy multi-page editor.");
+        setDescription("This wizard creates a new ivy.xml "
+                + "that can be opened by the ivy multi-page editor.");
         this.selection = selection;
     }
 
@@ -79,8 +79,10 @@ public class IvyNewWizardPage extends WizardPage {
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
+        // CheckStyle:MagicNumber| OFF
         layout.numColumns = 3;
         layout.verticalSpacing = 9;
+        // CheckStyle:MagicNumber| ON
         Label label = new Label(container, SWT.NULL);
         label.setText("&Container:");
 
@@ -166,7 +168,7 @@ public class IvyNewWizardPage extends WizardPage {
      */
 
     private void initialize() {
-        if (selection != null && selection.isEmpty() == false
+        if (selection != null && !selection.isEmpty()
                 && selection instanceof IStructuredSelection) {
             IStructuredSelection ssel = (IStructuredSelection) selection;
             if (ssel.size() > 1) {
@@ -238,7 +240,7 @@ public class IvyNewWizardPage extends WizardPage {
         int dotLoc = fileName.lastIndexOf('.');
         if (dotLoc != -1) {
             String ext = fileName.substring(dotLoc + 1);
-            if (ext.equalsIgnoreCase("xml") == false) {
+            if (!ext.equalsIgnoreCase("xml")) {
                 updateStatus("File extension must be \".xml\"");
                 return;
             }

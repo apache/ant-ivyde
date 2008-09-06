@@ -36,14 +36,16 @@ import org.apache.ivyde.common.model.IvyFile;
 import org.apache.ivyde.common.model.IvyModelSettings;
 
 public class IvySettingsFile extends IvyFile {
-    private static final Pattern CLASSPATH_URL_PATTERN = Pattern.compile("<[\\s]*classpath[^>]+url=\"([^\"]+)");
-    private static final Pattern CLASSPATH_FILE_PATTERN = Pattern.compile("<[\\s]*classpath[^>]+file=\"([^\"]+)");
+    private static final Pattern CLASSPATH_URL_PATTERN = Pattern
+            .compile("<[\\s]*classpath[^>]+url=\"([^\"]+)");
 
-    private static final Pattern TYPEDEF_PATTERN = Pattern.compile(
-        "<[\\s]*typedef[^>]+name=\"([^\"]+)\"[^>]+classname=\"([^\"]+)");
-    
+    private static final Pattern CLASSPATH_FILE_PATTERN = Pattern
+            .compile("<[\\s]*classpath[^>]+file=\"([^\"]+)");
+
+    private static final Pattern TYPEDEF_PATTERN = Pattern
+            .compile("<[\\s]*typedef[^>]+name=\"([^\"]+)\"[^>]+classname=\"([^\"]+)");
+
     private File file;
-
 
     public IvySettingsFile(IvyModelSettings settings, File file, String projectName, String doc,
             int currentOffset) {
@@ -85,7 +87,7 @@ public class IvySettingsFile extends IvyFile {
         return IvyPatternHelper.substituteVariables(str, variables);
     }
 
-    public Map/*<String,String>*/ getTypedefs() {
+    public Map/* <String,String> */getTypedefs() {
         Map p = getDefaultTypedefs();
         Matcher m = TYPEDEF_PATTERN.matcher(getDoc());
         while (m.find()) {
@@ -94,7 +96,7 @@ public class IvySettingsFile extends IvyFile {
         return p;
     }
 
-    public static Map/*<String,String>*/ getDefaultTypedefs() {
+    public static Map/* <String,String> */getDefaultTypedefs() {
         Properties p = new Properties();
         try {
             p.load(XmlSettingsParser.class.getResourceAsStream("typedef.properties"));

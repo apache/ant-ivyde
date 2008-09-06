@@ -65,7 +65,7 @@ public class CleanCacheAction extends Action {
     }
 
     public CleanCacheAction(Cleanable cleanable) {
-        this.cleanables = new Cleanable[] { cleanable };
+        this.cleanables = new Cleanable[] {cleanable};
     }
 
     public CleanCacheAction(Cleanable[] cleanables) {

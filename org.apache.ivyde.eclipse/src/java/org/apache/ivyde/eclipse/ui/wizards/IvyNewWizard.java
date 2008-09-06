@@ -45,7 +45,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -92,7 +91,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
         final IFile file = container.getFile(new Path(fileName));
         if (file.exists()
                 && !MessageDialog.openConfirm(getShell(), "overwrite existing ?",
-                    "The file you selected already exist. Do you want to overwrite its content ?")) {
+                    "The file you selected already exist."
+                            + "Do you want to overwrite its content ?")) {
             return false;
         }
 
@@ -156,7 +156,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                         .getActivePage();
                 try {
-                    page.openEditor(new IvyFileEditorInput(file), IvyModuleDescriptorEditor.ID, true);
+                    page.openEditor(new IvyFileEditorInput(file), IvyModuleDescriptorEditor.ID,
+                        true);
                     // IDE.openEditor(page, file, IvyEditor.ID, true);
                 } catch (PartInitException e) {
                     // this should not happen

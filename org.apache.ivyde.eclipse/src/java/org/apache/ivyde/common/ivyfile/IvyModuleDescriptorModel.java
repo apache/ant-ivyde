@@ -44,15 +44,13 @@ import org.apache.ivyde.common.model.ListValueProvider;
 public class IvyModuleDescriptorModel extends IvyModel {
     public IvyModuleDescriptorModel(IvyModelSettings settings) {
         super(settings);
-        
+
         // ivy-module
         IvyTag ivyTag = new IvyTag("ivy-module", "root tag of ivy file");
         ivyTag.setDoc("Root tag of any ivy-file.");
-        ivyTag.addAttribute(new IvyTagAttribute(
-                        "version",
-                        "The version of the ivy file specification \n"
-                        + "should be '2.0' with current version of ivy",
-                        true));
+        ivyTag.addAttribute(new IvyTagAttribute("version",
+                "The version of the ivy file specification \n"
+                        + "should be '2.0' with current version of ivy", true));
         addTag(ivyTag);
 
         IValueProvider defaultOrganizationProvider = new IValueProvider() {
@@ -74,7 +72,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "the status of this module.");
         statusTagAttribute.setValueProvider(new ListValueProvider(getDefault("status")));
         IvyTagAttribute pubTagAttribute = new IvyTagAttribute("publication",
-                "the date of publication of this module. \nIt should be given in this format: yyyyMMddHHmmss");
+                "the date of publication of this module. \n"
+                        + "It should be given in this format: yyyyMMddHHmmss");
         pubTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 return new String[] {Ivy.DATE_FORMAT.format(new Date())};
@@ -96,11 +95,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
         addTag(info);
         IvyTag child = new IvyTag("license",
                 "gives information about the licenses of the described module");
-        child
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the license. \nTry to respect spelling when using a classical license.",
-                        true, new ListValueProvider(getDefault("license"))));
+        child.addAttribute(new IvyTagAttribute("name", "the name of the license. \n"
+                + "Try to respect spelling when using a classical license.", true,
+                new ListValueProvider(getDefault("license"))));
         child
                 .addAttribute(new IvyTagAttribute("url", "an url pointing to the license text.",
                         false));
@@ -117,15 +114,13 @@ public class IvyModuleDescriptorModel extends IvyModel {
         info.addChildIvyTag(child);
         child = new IvyTag("repository",
                 "describes on which public repositories this module can be found");
-        child
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the repository. \nTry to respect spelling for common repositories (ibiblio, ivyrep, ...)",
-                        true, new IValueProvider() {
-                            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                                return new String[] {"ibiblio", "ivyrep"};
-                            }
-                        }));
+        child.addAttribute(new IvyTagAttribute("name", "the name of the repository. \n"
+                + "Try to respect spelling for common repositories (ibiblio, ivyrep, ...)", true,
+                new IValueProvider() {
+                    public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                        return new String[] {"ibiblio", "ivyrep"};
+                    }
+                }));
         child.addAttribute(new IvyTagAttribute("url", "an url pointing to the repository.", true,
                 new IValueProvider() {
                     public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
@@ -179,20 +174,20 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 true));
         conf.addAttribute(new IvyTagAttribute("description",
                 "a short description for the declared configuration", false));
-        IvyTagAttribute visibilityTagAttribute = new IvyTagAttribute(
-                "visibility",
-                "the visibility of the declared configuration.\n'public' means that this configuration can be used by other modules, \nwhile 'private' means that this configuration is used only in the module itself, \nand is not exposed to other modules",
-                false);
+        IvyTagAttribute visibilityTagAttribute = new IvyTagAttribute("visibility",
+                "the visibility of the declared configuration.\n"
+                        + "'public' means that this configuration can be used by other modules, \n"
+                        + "while 'private' means that this configuration is used only in the\n"
+                        + "module itself, and is not exposed to other modules", false);
         visibilityTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 return new String[] {"public", "private"};
             }
         });
         conf.addAttribute(visibilityTagAttribute);
-        IvyTagAttribute confExtTagAttribute = new IvyTagAttribute(
-                "extends",
-                "a comma separated list of configurations of this module \nthat the current configuration extends",
-                false);
+        IvyTagAttribute confExtTagAttribute = new IvyTagAttribute("extends",
+                "a comma separated list of configurations of this module \n"
+                        + "that the current configuration extends", false);
         IValueProvider masterConfsValueProvider = new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 StringBuffer base = new StringBuffer();
@@ -218,10 +213,10 @@ public class IvyModuleDescriptorModel extends IvyModel {
         };
         confExtTagAttribute.setValueProvider(masterConfsValueProvider);
         conf.addAttribute(confExtTagAttribute);
-        IvyTagAttribute deprecatedTagAttribute = new IvyTagAttribute(
-                "deprecated",
-                "indicates that this conf has been deprecated \nby giving the date of the deprecation. \nIt should be given in this format: yyyyMMddHHmmss",
-                false);
+        IvyTagAttribute deprecatedTagAttribute = new IvyTagAttribute("deprecated",
+                "indicates that this conf has been deprecated \n"
+                        + "by giving the date of the deprecation. \n"
+                        + "It should be given in this format: yyyyMMddHHmmss", false);
         deprecatedTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 return new String[] {Ivy.DATE_FORMAT.format(new Date())};
@@ -242,25 +237,22 @@ public class IvyModuleDescriptorModel extends IvyModel {
         artifact.addAttribute(new IvyTagAttribute("name",
                 "the name of the published artifact. This name must not include revision.", true,
                 projectNameValueProvider));
-        artifact
-                .addAttribute(new IvyTagAttribute(
-                        "type",
-                        "the type of the published artifact. \nIt's usually its extension, but not necessarily. \nFor instance, ivy files are of type 'ivy' but have 'xml' extension",
-                        true, new ListValueProvider(getDefault("type"))));
+        artifact.addAttribute(new IvyTagAttribute("type", "the type of the published artifact. \n"
+                + "It's usually its extension, but not necessarily. \n"
+                + "For instance, ivy files are of type 'ivy' but have 'xml' extension", true,
+                new ListValueProvider(getDefault("type"))));
         artifact.addAttribute(new IvyTagAttribute("ext", "the extension of the published artifact",
                 false, new ListValueProvider(getDefault("ext"))));
-        artifact
-                .addAttribute(new IvyTagAttribute(
-                        "conf",
-                        "comma separated list of public configurations in which this artifact is published. \n'*' wildcard can be used to designate all public configurations of this module",
-                        false, masterConfsValueProvider));
+        artifact.addAttribute(new IvyTagAttribute("conf",
+                "comma separated list of public configurations in which this artifact\n"
+                        + "is published. '*' wildcard can be used to designate all public\n"
+                        + "configurations of this module", false, masterConfsValueProvider));
         IvyTag conf2 = new IvyTag("conf",
                 "indicates a public configuration in which this artifact is published");
-        conf2
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of a module public configuration in which this artifact is published. \n'*' wildcard can be used to designate all public configurations of this module",
-                        true, masterConfValueProvider));
+        conf2.addAttribute(new IvyTagAttribute("name",
+                "the name of a module public configuration in which this artifact\n"
+                        + "is published. '*' wildcard can be used to designate all\n"
+                        + "public configurations of this module", true, masterConfValueProvider));
         allConf.add(conf2);
         artifact.addChildIvyTag(conf2);
         publications.addChildIvyTag(artifact);
@@ -315,10 +307,10 @@ public class IvyModuleDescriptorModel extends IvyModel {
             }
         });
         dependency.addAttribute(branch);
-        IvyTagAttribute rev = new IvyTagAttribute(
-                "rev",
-                "the revision of the dependency. \nUse 'latest.integration' to get the latest version of the dependency. \nYou can also end the revision asked with a '+' to get the latest matching revision.",
-                true);
+        IvyTagAttribute rev = new IvyTagAttribute("rev", "the revision of the dependency. \n"
+                + "Use 'latest.integration' to get the latest version of the dependency. \n"
+                + "You can also end the revision asked with a '+' to get the latest"
+                + " matching revision.", true);
         rev.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 List ret = listDependencyTokenValues(att.getName(), ivyFile);
@@ -327,11 +319,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
             }
         });
         dependency.addAttribute(rev);
-        dependency
-                .addAttribute(new IvyBooleanTagAttribute(
-                        "force",
-                        "a boolean to give an indication to conflict manager \nthat this dependency should be forced to this revision",
-                        false));
+        dependency.addAttribute(new IvyBooleanTagAttribute("force",
+                "a boolean to give an indication to conflict manager \n"
+                        + "that this dependency should be forced to this revision", false));
         dependency.addAttribute(new IvyBooleanTagAttribute("transitive",
                 "a boolean indicating if this dependency should be resolved transitively or not",
                 false));
@@ -426,8 +416,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                     ret.add("*");
                     return (String[]) ret.toArray(new String[ret.size()]);
                 } catch (ParseException e) {
-                    getSettings().logError("The dependencies of " + mrid
-                            + " could not be parsed", e);
+                    getSettings().logError("The dependencies of " + mrid + " could not be parsed",
+                        e);
                     return null;
                 }
             }
@@ -437,68 +427,69 @@ public class IvyModuleDescriptorModel extends IvyModel {
         conf3
                 .addAttribute(new IvyTagAttribute(
                         "name",
-                        "the name of the master configuration to map. \n'*' wildcard can be used to designate all configurations of this module",
+                        "the name of the master configuration to map. \n"
+                                + "'*' wildcard can be used to designate all configurations of this module",
                         true, masterConfValueProvider));
-        conf3
-                .addAttribute(new IvyTagAttribute(
-                        "mapped",
-                        "a comma separated list of dependency configurations \nto which this master configuration should be mapped",
-                        false, new IValueProvider() {
-                            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                                Ivy ivy = getIvy();
-                                int[] indexes = ivyFile.getParentTagIndex();
-                                if (indexes != null && ivy != null) {
-                                    Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
-                                    String org = ((IvyModuleDescriptorFile) ivyFile)
-                                                    .getDependencyOrganisation(otherAttValues);
-                                    if (org != null && otherAttValues != null
-                                            && otherAttValues.get("name") != null
-                                            && otherAttValues.get("rev") != null) {
-                                        StringBuffer base = new StringBuffer();
-                                        String qualifier = ivyFile.getAttributeValueQualifier();
-                                        // search for word after last comma
-                                        int comma = qualifier.lastIndexOf(",") + 1;
-                                        base.append(qualifier.substring(0, comma));
-                                        qualifier = qualifier.substring(comma);
-                                        while (qualifier.length() > 0 && qualifier.charAt(0) == ' ') {
-                                            base.append(' ');
-                                            qualifier = qualifier.substring(1);
-                                        }
-                                        ResolveData data = new ResolveData(ivy.getResolveEngine(),
-                                                new ResolveOptions());
-                                        ModuleRevisionId mrid = ModuleRevisionId.newInstance(org,
-                                            (String) otherAttValues.get("name"),
-                                            (String) otherAttValues.get("rev"));
-                                        DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(
-                                                mrid, false);
-                                        try {
-                                            String[] confs = ivy.getSettings().getResolver(mrid)
-                                                    .getDependency(ddd, data).getDescriptor()
-                                                    .getConfigurationsNames();
-                                            for (int i = 0; i < confs.length; i++) {
-                                                confs[i] = base + confs[i];
-                                            }
-                                            List ret = new ArrayList(Arrays.asList(confs));
-                                            ret.add("*");
-                                            return (String[]) ret.toArray(new String[ret.size()]);
-                                        } catch (ParseException e) {
-                                            getSettings().logError("The dependencies of "
-                                                    + mrid + " could not be parsed", e);
-                                            return new String[] {"*"};
-                                        }
-                                    }
+        conf3.addAttribute(new IvyTagAttribute("mapped",
+                "a comma separated list of dependency configurations \n"
+                        + "to which this master configuration should be mapped", false,
+                new IValueProvider() {
+                    public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                        Ivy ivy = getIvy();
+                        int[] indexes = ivyFile.getParentTagIndex();
+                        if (indexes != null && ivy != null) {
+                            Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
+                            String org = ((IvyModuleDescriptorFile) ivyFile)
+                                    .getDependencyOrganisation(otherAttValues);
+                            if (org != null && otherAttValues != null
+                                    && otherAttValues.get("name") != null
+                                    && otherAttValues.get("rev") != null) {
+                                StringBuffer base = new StringBuffer();
+                                String qualifier = ivyFile.getAttributeValueQualifier();
+                                // search for word after last comma
+                                int comma = qualifier.lastIndexOf(",") + 1;
+                                base.append(qualifier.substring(0, comma));
+                                qualifier = qualifier.substring(comma);
+                                while (qualifier.length() > 0 && qualifier.charAt(0) == ' ') {
+                                    base.append(' ');
+                                    qualifier = qualifier.substring(1);
                                 }
-                                return new String[] {"*"};
+                                ResolveData data = new ResolveData(ivy.getResolveEngine(),
+                                        new ResolveOptions());
+                                ModuleRevisionId mrid = ModuleRevisionId.newInstance(org,
+                                    (String) otherAttValues.get("name"), (String) otherAttValues
+                                            .get("rev"));
+                                DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(
+                                        mrid, false);
+                                try {
+                                    String[] confs = ivy.getSettings().getResolver(mrid)
+                                            .getDependency(ddd, data).getDescriptor()
+                                            .getConfigurationsNames();
+                                    for (int i = 0; i < confs.length; i++) {
+                                        confs[i] = base + confs[i];
+                                    }
+                                    List ret = new ArrayList(Arrays.asList(confs));
+                                    ret.add("*");
+                                    return (String[]) ret.toArray(new String[ret.size()]);
+                                } catch (ParseException e) {
+                                    getSettings().logError(
+                                        "The dependencies of " + mrid + " could not be parsed", e);
+                                    return new String[] {"*"};
+                                }
                             }
+                        }
+                        return new String[] {"*"};
+                    }
 
-                        }));
+                }));
         allConf.add(conf3);
         IvyTag mapped = new IvyTag("mapped",
                 "map dependency configurations for this master configuration");
         mapped
                 .addAttribute(new IvyTagAttribute(
                         "name",
-                        "the name of the dependency configuration mapped. \n'*' wildcard can be used to designate all configurations of this module",
+                        "the name of the dependency configuration mapped. \n"
+                                + "'*' wildcard can be used to designate all configurations of this module",
                         true, new IValueProvider() {
                             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                                 Ivy ivy = getIvy();
@@ -530,8 +521,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                                                         .toArray(new String[ret.size()]);
                                             } catch (ParseException e) {
                                                 getSettings().logError(
-                                                    "The dependencies of "
-                                                        + mrid + " could not be parsed", e);
+                                                    "The dependencies of " + mrid
+                                                            + " could not be parsed", e);
                                                 return new String[] {"*"};
                                             }
                                         }
@@ -551,115 +542,103 @@ public class IvyModuleDescriptorModel extends IvyModel {
         }
         ListValueProvider matcherNamesProvider = new ListValueProvider(matcherNames);
 
-        IvyTag artifact2 = new IvyTag("artifact",
-                "defines artifacts restriction \nuse only if you do not control dependency ivy file");
+        IvyTag artifact2 = new IvyTag("artifact", "defines artifacts restriction \n"
+                + "use only if you do not control dependency ivy file");
+        artifact2.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \n"
+                + "dependency module to add to the include list, \n"
+                + "or a regexp matching this name", false));
+        artifact2.addAttribute(new IvyTagAttribute("type", "the type of the artifact of the \n"
+                + "dependency module to add to the include list, \n"
+                + "or a regexp matching this name", false,
+                new ListValueProvider(getDefault("type"))));
         artifact2
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of an artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false));
-        artifact2
-                .addAttribute(new IvyTagAttribute(
-                        "type",
-                        "the type of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(getDefault("type"))));
-        artifact2
-                .addAttribute(new IvyTagAttribute(
-                        "ext",
-                        "the extension of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(getDefault("ext"))));
-        artifact2
-                .addAttribute(new IvyTagAttribute(
-                        "url",
-                        "an url where this artifact can be found \nif it isn't present at the standard \nlocation in the repository",
-                        false));
+                .addAttribute(new IvyTagAttribute("ext", "the extension of the artifact of the \n"
+                        + "dependency module to add to the include list, \n"
+                        + "or a regexp matching this name", false, new ListValueProvider(
+                        getDefault("ext"))));
+        artifact2.addAttribute(new IvyTagAttribute("url",
+                "an url where this artifact can be found \n"
+                        + "if it isn't present at the standard \n" + "location in the repository",
+                false));
         artifact2
                 .addAttribute(new IvyTagAttribute(
                         "conf",
-                        "comma separated list of the master configurations \nin which this artifact should be included. \n'*' wildcard can be used to designate all configurations of this module",
+                        "comma separated list of the master configurations \n"
+                                + "in which this artifact should be included. \n"
+                                + "'*' wildcard can be used to designate all configurations of this module",
                         false, masterConfsValueProvider));
         IvyTag conf4 = new IvyTag("conf", "configuration in which the artifact should be included");
-        conf4
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the master configuration in which \nthe enclosing artifact should be included",
-                        true, masterConfValueProvider));
+        conf4.addAttribute(new IvyTagAttribute("name",
+                "the name of the master configuration in which \n"
+                        + "the enclosing artifact should be included", true,
+                masterConfValueProvider));
         allConf.add(conf4);
         artifact2.addChildIvyTag(conf4);
         addTag(artifact2);
-        IvyTag include = new IvyTag("include",
-                "defines artifacts restriction \nuse only if you do not control dependency ivy file");
+        IvyTag include = new IvyTag("include", "defines artifacts restriction \n"
+                + "use only if you do not control dependency ivy file");
+        include.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \n"
+                + "dependency module to add to the include list, \n"
+                + "or a regexp matching this name", false));
+        include.addAttribute(new IvyTagAttribute("type", "the type of the artifact of the \n"
+                + "dependency module to add to the include list, \n"
+                + "or a regexp matching this name", false,
+                new ListValueProvider(getDefault("type"))));
         include
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of an artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false));
-        include
-                .addAttribute(new IvyTagAttribute(
-                        "type",
-                        "the type of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(getDefault("type"))));
-        include
-                .addAttribute(new IvyTagAttribute(
-                        "ext",
-                        "the extension of the artifact of the \ndependency module to add to the include list, \nor a regexp matching this name",
-                        false, new ListValueProvider(getDefault("ext"))));
+                .addAttribute(new IvyTagAttribute("ext", "the extension of the artifact of the \n"
+                        + "dependency module to add to the include list, \n"
+                        + "or a regexp matching this name", false, new ListValueProvider(
+                        getDefault("ext"))));
         include.addAttribute(new IvyTagAttribute("matcher",
                 "the matcher to use to match the modules to include", false, matcherNamesProvider));
         include
                 .addAttribute(new IvyTagAttribute(
                         "conf",
-                        "comma separated list of the master configurations \nin which this artifact should be included. \n'*' wildcard can be used to designate all configurations of this module",
+                        "comma separated list of the master configurations \n"
+                                + "in which this artifact should be included. \n"
+                                + "'*' wildcard can be used to designate all configurations of this module",
                         false, masterConfsValueProvider));
         IvyTag conf5 = new IvyTag("conf", "configuration in which the artifact should be included");
-        conf5
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the master configuration in which \nthe enclosing artifact should be included",
-                        true, masterConfValueProvider));
+        conf5.addAttribute(new IvyTagAttribute("name",
+                "the name of the master configuration in which \n"
+                        + "the enclosing artifact should be included", true,
+                masterConfValueProvider));
         include.addChildIvyTag(conf5);
         addTag(include);
         allConf.add(conf5);
-        IvyTag exclude = new IvyTag("exclude",
-                "defines artifacts restriction \nuse only if you do not control dependency ivy file");
-        exclude
-                .addAttribute(new IvyTagAttribute(
-                        "org",
-                        "the organisation of the dependency \nmodule or artifact to exclude, \nor a pattern matching this organisation",
-                        false));
-        exclude
-                .addAttribute(new IvyTagAttribute(
-                        "module",
-                        "the name of the dependency \nmodule or the artifact to exclude, \nor a pattern matching this module name",
-                        false));
-        exclude
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of an artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name",
-                        false));
-        exclude
-                .addAttribute(new IvyTagAttribute(
-                        "type",
-                        "the type of the artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name",
-                        false, new ListValueProvider(getDefault("type"))));
-        exclude
-                .addAttribute(new IvyTagAttribute(
-                        "ext",
-                        "the extension of the artifact of the \ndependency module to add to the exclude list, \nor a pattern matching this name",
-                        false, new ListValueProvider(getDefault("ext"))));
+        IvyTag exclude = new IvyTag("exclude", "defines artifacts restriction \n"
+                + "use only if you do not control dependency ivy file");
+        exclude.addAttribute(new IvyTagAttribute("org", "the organisation of the dependency \n"
+                + "module or artifact to exclude, \n" + "or a pattern matching this organisation",
+                false));
+        exclude.addAttribute(new IvyTagAttribute("module", "the name of the dependency \n"
+                + "module or the artifact to exclude, \n"
+                + "or a pattern matching this module name", false));
+        exclude.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \n"
+                + "dependency module to add to the exclude list, \n"
+                + "or a pattern matching this name", false));
+        exclude.addAttribute(new IvyTagAttribute("type", "the type of the artifact of the \n"
+                + "dependency module to add to the exclude list, \n"
+                + "or a pattern matching this name", false, new ListValueProvider(
+                getDefault("type"))));
+        exclude.addAttribute(new IvyTagAttribute("ext", "the extension of the artifact of the \n"
+                + "dependency module to add to the exclude list, \n"
+                + "or a pattern matching this name", false,
+                new ListValueProvider(getDefault("ext"))));
         exclude.addAttribute(new IvyTagAttribute("matcher",
                 "the matcher to use to match the modules to include", false, matcherNamesProvider));
         exclude
                 .addAttribute(new IvyTagAttribute(
                         "conf",
-                        "comma separated list of the master configurations \nin which this artifact should be excluded. \n'*' wildcard can be used to designate all configurations of this module",
+                        "comma separated list of the master configurations \n"
+                                + "in which this artifact should be excluded. \n"
+                                + "'*' wildcard can be used to designate all configurations of this module",
                         false, masterConfsValueProvider));
         IvyTag conf6 = new IvyTag("conf", "configuration in which the artifact should be excluded");
-        conf6
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the master configuration in which \nthe enclosing artifact should be excluded",
-                        true, masterConfValueProvider));
+        conf6.addAttribute(new IvyTagAttribute("name",
+                "the name of the master configuration in which \n"
+                        + "the enclosing artifact should be excluded", true,
+                masterConfValueProvider));
         allConf.add(conf6);
         exclude.addChildIvyTag(conf6);
         addTag(exclude);
@@ -676,16 +655,12 @@ public class IvyModuleDescriptorModel extends IvyModel {
 
         IvyTag conflicts = new IvyTag("conflicts", "conflicts managers definition section");
         IvyTag manager = new IvyTag("manager", "declares a conflict manager for this module");
-        manager
-                .addAttribute(new IvyTagAttribute(
-                        "org",
-                        "the name, or a regexp matching the name of organisation \nto which this conflict manager should apply",
-                        false));
-        manager
-                .addAttribute(new IvyTagAttribute(
-                        "module",
-                        "the name, or a regexp matching the name of module \nto which this conflict manager should apply",
-                        false));
+        manager.addAttribute(new IvyTagAttribute("org",
+                "the name, or a regexp matching the name of organisation \n"
+                        + "to which this conflict manager should apply", false));
+        manager.addAttribute(new IvyTagAttribute("module",
+                "the name, or a regexp matching the name of module \n"
+                        + "to which this conflict manager should apply", false));
         manager.addAttribute(new IvyTagAttribute("name", "the name of the conflict manager to use",
                 false));
         manager.addAttribute(new IvyTagAttribute("rev",

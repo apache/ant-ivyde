@@ -46,23 +46,23 @@ public class CleanCacheMenuAction extends IvyDEContainerMenuAction {
         ResolutionCacheCleanable resolutionCacheCleanable = new ResolutionCacheCleanable(
                 resolutionCacheManager);
 
-        RepositoryCacheManager[] repositoryCacheManagers = ivy.getSettings()
+        RepositoryCacheManager[] managers = ivy.getSettings()
                 .getRepositoryCacheManagers();
-        RepositoryCacheCleanable[] repositoryCacheCleanables = new RepositoryCacheCleanable[repositoryCacheManagers.length];
-        for (int i = 0; i < repositoryCacheManagers.length; i++) {
-            repositoryCacheCleanables[i] = new RepositoryCacheCleanable(repositoryCacheManagers[i]);
+        RepositoryCacheCleanable[] cleanables = new RepositoryCacheCleanable[managers.length];
+        for (int i = 0; i < managers.length; i++) {
+            cleanables[i] = new RepositoryCacheCleanable(managers[i]);
         }
 
-        Cleanable[] all = new Cleanable[repositoryCacheManagers.length + 1];
+        Cleanable[] all = new Cleanable[managers.length + 1];
         all[0] = resolutionCacheCleanable;
-        System.arraycopy(repositoryCacheCleanables, 0, all, 1, repositoryCacheManagers.length);
+        System.arraycopy(cleanables, 0, all, 1, managers.length);
 
         add(menu, "All", all);
         add(menu, "Resolution cache", resolutionCacheCleanable);
-        add(menu, "Every repository cache", repositoryCacheCleanables);
-        for (int i = 0; i < repositoryCacheManagers.length; i++) {
-            add(menu, "Cache '" + repositoryCacheManagers[i].getName() + "'",
-                repositoryCacheCleanables[i]);
+        add(menu, "Every repository cache", cleanables);
+        for (int i = 0; i < managers.length; i++) {
+            add(menu, "Cache '" + managers[i].getName() + "'",
+                cleanables[i]);
         }
     }
 

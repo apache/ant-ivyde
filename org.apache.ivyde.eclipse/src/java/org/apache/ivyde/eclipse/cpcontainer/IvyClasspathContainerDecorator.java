@@ -18,11 +18,8 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.resource.ImageDescriptor;

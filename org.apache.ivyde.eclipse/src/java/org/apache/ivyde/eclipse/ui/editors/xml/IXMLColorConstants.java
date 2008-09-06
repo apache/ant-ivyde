@@ -19,14 +19,19 @@ package org.apache.ivyde.eclipse.ui.editors.xml;
 
 import org.eclipse.swt.graphics.RGB;
 
-public interface IXMLColorConstants {
-    RGB XML_COMMENT = new RGB(128, 0, 0);
+public final class IXMLColorConstants {
 
-    RGB PROC_INSTR = new RGB(128, 128, 128);
+    private IXMLColorConstants() {
+        // utility class
+    }
 
-    RGB STRING = new RGB(0, 128, 0);
+    public static final RGB XML_COMMENT = new RGB(128, 0, 0);
 
-    RGB DEFAULT = new RGB(0, 0, 0);
+    public static final RGB PROC_INSTR = new RGB(128, 128, 128);
 
-    RGB TAG = new RGB(0, 0, 128);
+    public static final RGB STRING = new RGB(0, 128, 0);
+
+    public static final RGB DEFAULT = new RGB(0, 0, 0);
+
+    public static final RGB TAG = new RGB(0, 0, 128);
 }

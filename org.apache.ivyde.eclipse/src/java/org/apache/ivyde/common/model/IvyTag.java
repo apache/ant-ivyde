@@ -17,91 +17,89 @@
  */
 package org.apache.ivyde.common.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
 public class IvyTag {
-    private final static ResourceBundle doc = ResourceBundle.getBundle(
+    private static final ResourceBundle DOC_RESOURCE = ResourceBundle.getBundle(
         IvyTag.class.getPackage().getName() + ".tagsdoc");
     
-    private IvyTag _parent;
+    private IvyTag parent;
 
-    private String _name;
+    private String name;
 
-    private String _doc;
+    private String doc;
 
-    private Map _attributes = new HashMap();
+    private Map attributes = new HashMap();
 
-    private List _childs = new ArrayList();
+    private List childs = new ArrayList();
 
-    private boolean _allowNoChild = true;
+    private boolean allowNoChild = true;
 
     /**
      * @param name
      */
     public IvyTag(String name) {
         super();
-        _name = name;
+        this.name = name;
     }
 
     public IvyTag(String name, IvyTagAttribute[] atts) {
         super();
-        _name = name;
+        this.name = name;
         for (int i = 0; i < atts.length; i++) {
             addAttribute(atts[i]);
         }
     }
 
     public IvyTag(String name, String doc) {
-        _name = name;
-        _doc = doc;
+        this.name = name;
+        this.doc = doc;
     }
 
     public IvyTag(String name, String doc, IvyTagAttribute[] atts) {
-        _name = name;
-        _doc = doc;
+        this.name = name;
+        this.doc = doc;
         for (int i = 0; i < atts.length; i++) {
             addAttribute(atts[i]);
         }
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public void addAttribute(IvyTagAttribute attribute) {
         attribute.setContainer(this);
-        _attributes.put(attribute.getName(), attribute);
+        attributes.put(attribute.getName(), attribute);
     }
 
     public IvyTag addChildIvyTag(IvyTag att) {
         att.setParent(this);
-        _childs.add(att);
+        childs.add(att);
         return this;
     }
 
     public boolean hasChild() {
-        return _childs.size() > 0;
+        return childs.size() > 0;
     }
 
     public List getAttributes() {
-        return new ArrayList(_attributes.values());
+        return new ArrayList(attributes.values());
     }
 
     public List getChilds() {
-        return _childs;
+        return childs;
     }
 
     public String getEndTag() {
@@ -117,14 +115,14 @@ public class IvyTag {
     }
 
     public String getDoc() {
-        if (_doc == null) {
+        if (doc == null) {
             try {
-                _doc = doc.getString(getId());
+                doc = DOC_RESOURCE.getString(getId());
             } catch (MissingResourceException ex) {
-                _doc = "";
+                doc = "";
             }
         }
-        return _doc;
+        return doc;
     }
 
     public String getId() {
@@ -135,23 +133,23 @@ public class IvyTag {
     }
 
     public void setDoc(String doc) {
-        _doc = doc;
+        this.doc = doc;
     }
 
     public IvyTag getParent() {
-        return _parent;
+        return parent;
     }
 
     void setParent(IvyTag parent) {
-        _parent = parent;
+        this.parent = parent;
     }
 
     public String toString() {
-        return _name;
+        return name;
     }
 
     public String[] getPossibleValuesForAttribute(String att, IvyFile ivyfile) {
-        IvyTagAttribute ivyTagAttribute = (IvyTagAttribute) _attributes.get(att);
+        IvyTagAttribute ivyTagAttribute = (IvyTagAttribute) attributes.get(att);
         if (ivyTagAttribute == null) {
             return null;
         }
@@ -177,11 +175,11 @@ public class IvyTag {
     }
 
     public boolean isAllowNoChild() {
-        return _allowNoChild;
+        return allowNoChild;
     }
 
     public void setAllowNoChild(boolean allowNoChild) {
-        _allowNoChild = allowNoChild;
+        this.allowNoChild = allowNoChild;
     }
 
     public Proposal[] getProposals() {
@@ -192,7 +190,7 @@ public class IvyTag {
         int cursor = getStartTag().length();
         ret.add(new Proposal(text, cursor, getDoc()));
 
-        if (_allowNoChild && getChilds().size() > 0) {
+        if (allowNoChild && getChilds().size() > 0) {
             ret.add(new Proposal("<" + getName() + " />", cursor, getDoc()));
         }
         return (Proposal[]) ret.toArray(new Proposal[ret.size()]);

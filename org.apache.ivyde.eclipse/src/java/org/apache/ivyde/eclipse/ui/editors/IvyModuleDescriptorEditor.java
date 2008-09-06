@@ -54,11 +54,11 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class IvyModuleDescriptorEditor extends FormEditor implements IResourceChangeListener {
-    public final static String ID = "org.apache.ivyde.editors.IvyEditor";
+    public static final String ID = "org.apache.ivyde.editors.IvyEditor";
 
     private XMLEditor xmlEditor;
 
-    private Browser _browser;
+    private Browser browser;
 
     /**
      * Creates a multi-page editor example.
@@ -91,8 +91,8 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
         try {
             xmlEditor = new XMLEditor(new IvyContentAssistProcessor() {
                 protected IvyModel newCompletionModel(IFile file) {
-                    return new IvyModuleDescriptorModel(
-                        new EclipseIvyModelSettings(getJavaProject()));
+                    return new IvyModuleDescriptorModel(new EclipseIvyModelSettings(
+                            getJavaProject()));
                 }
             }) {
                 public void doSave(IProgressMonitor progressMonitor) {
@@ -122,9 +122,9 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
 
     void createPagePreview() {
         try {
-            _browser = new Browser(getContainer(), SWT.NONE);
-            _browser.setUrl(((IvyFileEditorInput) getEditorInput()).getPath().toOSString());
-            int index = addPage(_browser);
+            browser = new Browser(getContainer(), SWT.NONE);
+            browser.setUrl(((IvyFileEditorInput) getEditorInput()).getPath().toOSString());
+            int index = addPage(browser);
             setPageText(index, "Preview");
         } catch (SWTError e) {
             // IVYDE-10: under Linux if MOZILLA_FIVE_HOME is not set, it fails badly
@@ -181,9 +181,6 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
         setInput(xmlEditor.getEditorInput());
     }
 
-    /*
-     * (non-Javadoc) Method declared on IEditorPart
-     */
     public void gotoMarker(IMarker marker) {
         setActivePage(0);
         IDE.gotoMarker(getEditor(0), marker);
@@ -194,14 +191,12 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
      * is an instance of <code>IFileEditorInput</code>.
      */
     public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
-        if (!(editorInput instanceof IFileEditorInput))
+        if (!(editorInput instanceof IFileEditorInput)) {
             throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+        }
         super.init(site, editorInput);
     }
 
-    /*
-     * (non-Javadoc) Method declared on IEditorPart.
-     */
     public boolean isSaveAsAllowed() {
         return xmlEditor.isSaveAsAllowed();
     }
@@ -212,7 +207,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     protected void pageChange(int newPageIndex) {
         super.pageChange(newPageIndex);
         if (newPageIndex == 1) {
-            _browser.refresh();
+            browser.refresh();
         }
     }
 

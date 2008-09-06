@@ -32,13 +32,13 @@ public abstract class IvyFile {
     private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern
             .compile("([a-zA-Z0-9]+)[ ]*=[ ]*\"([^\"]*)\"");
 
-    private String _doc;
+    private String doc;
 
-    private int _currentOffset;
+    private int currentOffset;
 
-    private String _reversed;
+    private String reversed;
 
-    private String _projectName;
+    private String projectName;
 
     private IvyModelSettings settings;
 
@@ -48,26 +48,26 @@ public abstract class IvyFile {
 
     public IvyFile(IvyModelSettings settings, String projectName, String doc, int currentOffset) {
         this.settings = settings;
-        _projectName = projectName;
-        _doc = doc;
-        _reversed = new StringBuffer(doc).reverse().toString();
-        _currentOffset = currentOffset;
+        this.projectName = projectName;
+        this.doc = doc;
+        this.reversed = new StringBuffer(doc).reverse().toString();
+        this.currentOffset = currentOffset;
     }
 
     protected String getDoc() {
-        return _doc;
+        return doc;
     }
     
     protected int getCurrentOffset() {
-        return _currentOffset;
+        return currentOffset;
     }
     
     protected String getReversedDoc() {
-        return _reversed;
+        return reversed;
     }
 
     public boolean inTag() {
-        return inTag(_currentOffset);
+        return inTag(currentOffset);
     }
 
     public boolean inTag(int documentOffset) {
@@ -78,20 +78,23 @@ public abstract class IvyFile {
             if (documentOffset == 0) {
                 return false;
             }
-            char c = _doc.charAt(--documentOffset);
-            if (Character.isWhitespace(c))
+            char c = doc.charAt(--documentOffset);
+            if (Character.isWhitespace(c)) {
                 hasSpace = true;
-            if (c == '>' && (documentOffset == 0 || _doc.charAt(documentOffset - 1) != '-'))
+            }
+            if (c == '>' && (documentOffset == 0 || doc.charAt(documentOffset - 1) != '-')) {
                 return false;
+            }
             if (c == '<'
-                    && (documentOffset + 1 >= _doc.length() || (_doc.charAt(documentOffset + 1) != '!' && _doc
-                            .charAt(documentOffset + 1) != '?')))
+                    && (documentOffset + 1 >= doc.length() || (doc.charAt(documentOffset + 1) != '!' && doc
+                            .charAt(documentOffset + 1) != '?'))) {
                 return hasSpace;
+            }
         }
     }
 
     public String getTagName() {
-        return getTagName(_currentOffset);
+        return getTagName(currentOffset);
     }
 
     /**
@@ -106,18 +109,19 @@ public abstract class IvyFile {
         int lastSpaceIndex = offset;
         while (true) {
             // Read character backwards
-            char c = _doc.charAt(--offset);
+            char c = doc.charAt(--offset);
             if (Character.isWhitespace(c)) {
                 lastSpaceIndex = offset;
                 continue;
             }
-            if (c == '<')
-                return _doc.substring(offset + 1, lastSpaceIndex).trim();
+            if (c == '<') {
+                return doc.substring(offset + 1, lastSpaceIndex).trim();
+            }
         }
     }
 
     public boolean readyForValue() {
-        return readyForValue(_currentOffset);
+        return readyForValue(currentOffset);
     }
 
     public boolean readyForValue(int documentOffset) {
@@ -125,51 +129,51 @@ public abstract class IvyFile {
     }
 
     public int getStringIndexBackward(String string) {
-        return getStringIndexBackward(string, _currentOffset);
+        return getStringIndexBackward(string, currentOffset);
     }
 
     public int getStringIndexBackward(String string, int documentOffset) {
-        String text = _doc.substring(0, documentOffset);
+        String text = doc.substring(0, documentOffset);
         return text.lastIndexOf(string);
     }
 
     public int getStringIndexForward(String string) {
-        return getStringIndexForward(string, _currentOffset);
+        return getStringIndexForward(string, currentOffset);
     }
 
     public int getStringIndexForward(String string, int documentOffset) {
-        return _doc.indexOf(string, documentOffset);
+        return doc.indexOf(string, documentOffset);
     }
 
     public Map getAllAttsValues() {
-        return getAllAttsValues(_currentOffset);
+        return getAllAttsValues(currentOffset);
     }
 
     public Map getAllAttsValues(int documentOffset) {
         Map result = new HashMap();
 
         int offset = documentOffset;
-        int start = _reversed.indexOf('<', getReverseOffset(documentOffset));
+        int start = reversed.indexOf('<', getReverseOffset(documentOffset));
         if (start != -1) {
             start = getReverseOffset(start);
         } else {
             start = 0;
         }
         int end;
-        if (_doc.charAt(documentOffset) == '>' && getAttributeName(documentOffset) == null) {
+        if (doc.charAt(documentOffset) == '>' && getAttributeName(documentOffset) == null) {
             end = documentOffset + 1;
         } else {
             Pattern p = Pattern.compile("[^\\-]>");
-            Matcher m = p.matcher(_doc);
+            Matcher m = p.matcher(doc);
             if (m.find(documentOffset)) {
                 end = m.end();
             } else {
-                end = _doc.length();
+                end = doc.length();
             }
         }
         Pattern regexp = ATTRIBUTE_VALUE_PATTERN;
         try {
-            String tag = _doc.substring(start, end);
+            String tag = doc.substring(start, end);
             tag = tag.substring(tag.indexOf(' '));
             Matcher m = regexp.matcher(tag);
             while (m.find()) {
@@ -191,7 +195,7 @@ public abstract class IvyFile {
     }
 
     public String getQualifier() {
-        return getQualifier(_currentOffset);
+        return getQualifier(currentOffset);
     }
 
     /**
@@ -203,16 +207,16 @@ public abstract class IvyFile {
      */
     public String getQualifier(int documentOffset) {
         Pattern p = QUALIFIER_PATTERN;
-        Matcher m = p.matcher(_reversed);
+        Matcher m = p.matcher(reversed);
         if (m.find(getReverseOffset(documentOffset))) {
-            return _doc.substring(getReverseOffset(m.end()), documentOffset);
+            return doc.substring(getReverseOffset(m.end()), documentOffset);
         } else {
             return "";
         }
     }
 
     public String getAttributeValueQualifier() {
-        return getAttributeValueQualifier(_currentOffset);
+        return getAttributeValueQualifier(currentOffset);
     }
 
     /**
@@ -223,11 +227,11 @@ public abstract class IvyFile {
      * @return
      */
     public String getAttributeValueQualifier(int documentOffset) {
-        int index = _reversed.indexOf("\"", getReverseOffset(documentOffset));
+        int index = reversed.indexOf("\"", getReverseOffset(documentOffset));
         if (index == -1) {
             return "";
         } else {
-            return _doc.substring(getReverseOffset(index), documentOffset);
+            return doc.substring(getReverseOffset(index), documentOffset);
         }
     }
 
@@ -237,12 +241,12 @@ public abstract class IvyFile {
      * @return null if current offset is not in an attibute value
      */
     public String getAttributeName() {
-        return getAttributeName(_currentOffset);
+        return getAttributeName(currentOffset);
     }
 
     public String getAttributeName(int documentOffset) {
         Pattern p = ATTRIBUTE_NAME_PATTERN;
-        Matcher m = p.matcher(_reversed.substring(getReverseOffset(documentOffset)));
+        Matcher m = p.matcher(reversed.substring(getReverseOffset(documentOffset)));
         if (m.find() && m.start() == 0) {
             String attName = new StringBuffer(m.group(1)).reverse().toString();
             return attName;
@@ -252,7 +256,7 @@ public abstract class IvyFile {
     }
 
     public String getParentTagName() {
-        return getParentTagName(_currentOffset);
+        return getParentTagName(currentOffset);
     }
 
     public String getParentTagName(int documentOffset) {
@@ -263,14 +267,14 @@ public abstract class IvyFile {
 
     public String getString(int[] indexes) {
         if (indexes != null) {
-            return _doc.substring(indexes[0], indexes[1]);
+            return doc.substring(indexes[0], indexes[1]);
         } else {
             return null;
         }
     }
 
     public String getString(int start, int end) {
-        return _doc.substring(start, end);
+        return doc.substring(start, end);
     }
 
     public int[] getParentTagIndex(int documentOffset) {
@@ -282,9 +286,9 @@ public abstract class IvyFile {
         Stack stack = new Stack();
         while (true) {
             try {
-                char c = _doc.charAt(--offset);
-                if (c == '>' && _doc.charAt(offset - 1) != '-') {
-                    if (_doc.charAt(offset - 1) != '/') { // not a simple tag
+                char c = doc.charAt(--offset);
+                if (c == '>' && doc.charAt(offset - 1) != '-') {
+                    if (doc.charAt(offset - 1) != '/') { // not a simple tag
                         // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
                         // 15));
                         parentEndTagReached = true;
@@ -297,25 +301,21 @@ public abstract class IvyFile {
                         inSimpleTag = true;
                     }
                 } else if (c == '<') {
-                    if (inSimpleTag) {// simple tag end
+                    if (inSimpleTag) { // simple tag end
                         inSimpleTag = false;
-                    } else if (_doc.charAt(offset + 1) == '/') { // closing tag
+                    } else if (doc.charAt(offset + 1) == '/') { // closing tag
                         if (parentEndTagReached) {
                             parentEndTagReached = false;
-                            stack.push(_doc.substring(offset + 2, parentEndTagIndex).trim());
+                            stack.push(doc.substring(offset + 2, parentEndTagIndex).trim());
                             lastSpaceIndex = offset + 2;
                             continue;
                         }
-                    } else {// opening tag
-                        if (_doc.charAt(offset + 1) != '!' && _doc.charAt(offset + 1) != '?') {// not
-                            // a
-                            // doc
-                            // tag
-                            // or
-                            // xml
+                    } else { // opening tag
+                        if (doc.charAt(offset + 1) != '!' && doc.charAt(offset + 1) != '?') {
+                            // not a doc tag or xml
                             if (!stack.isEmpty()) { // we found the closing tag before
                                 String closedName = (String) stack.peek();
-                                if (closedName.equalsIgnoreCase(_doc.substring(offset + 1, offset
+                                if (closedName.equalsIgnoreCase(doc.substring(offset + 1, offset
                                         + 1 + closedName.length()))) {
                                     stack.pop();
                                     continue;
@@ -342,18 +342,18 @@ public abstract class IvyFile {
     }
 
     private int getReverseOffset(int documentOffset) {
-        return _doc.length() - documentOffset;
+        return doc.length() - documentOffset;
     }
 
     public int getOffset() {
-        return _currentOffset;
+        return currentOffset;
     }
 
     public int[] getParentTagIndex() {
-        return getParentTagIndex(_currentOffset);
+        return getParentTagIndex(currentOffset);
     }
 
     public String getProjectName() {
-        return _projectName;
+        return projectName;
     }
 }

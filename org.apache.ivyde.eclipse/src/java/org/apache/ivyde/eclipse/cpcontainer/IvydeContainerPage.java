@@ -79,41 +79,41 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class IvydeContainerPage extends NewElementWizardPage implements IClasspathContainerPage,
         IClasspathContainerPageExtension {
 
-    IJavaProject project;
+    private IJavaProject project;
 
-    Text ivyFilePathText;
+    private Text ivyFilePathText;
 
-    CheckboxTableViewer confTableViewer;
+    private CheckboxTableViewer confTableViewer;
 
-    Text settingsText;
+    private Text settingsText;
 
-    Text acceptedTypesText;
+    private Text acceptedTypesText;
 
-    Text sourcesTypesText;
+    private Text sourcesTypesText;
 
-    Text sourcesSuffixesText;
+    private Text sourcesSuffixesText;
 
-    Text javadocTypesText;
+    private Text javadocTypesText;
 
-    Text javadocSuffixesText;
+    private Text javadocSuffixesText;
 
-    Button doRetrieveButton;
+    private Button doRetrieveButton;
 
-    Text retrievePatternText;
+    private Text retrievePatternText;
 
-    Button alphaOrderCheck;
+    private Button alphaOrderCheck;
 
-    Button resolveInWorkspaceCheck;
+    private Button resolveInWorkspaceCheck;
 
-    Button projectSpecificButton;
+    private Button projectSpecificButton;
 
-    Button browse;
+    private Button browse;
 
-    Link generalSettingsLink;
+    private Link generalSettingsLink;
 
-    Composite configComposite;
+    private Composite configComposite;
 
-    IvyClasspathContainerConfiguration conf;
+    private IvyClasspathContainerConfiguration conf;
 
     private IClasspathEntry entry;
 
@@ -139,7 +139,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     /**
      * Constructor
-     * 
      */
     public IvydeContainerPage() {
         super("IvyDE Container");
@@ -223,7 +222,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 if (item == mainTab && ivyXmlError != null) {
                     ivyFilePathTextDeco.showHoverText(ivyXmlError.getShortMsg());
                     settingsTextDeco.showHoverText(null);
-                } else if (item == advancedTab &&  settingsError != null) {
+                } else if (item == advancedTab && settingsError != null) {
                     settingsTextDeco.showHoverText(settingsError.getShortMsg());
                     ivyFilePathTextDeco.showHoverText(null);
                 }
@@ -240,6 +239,57 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         ivyXmlPathUpdated();
         checkCompleted();
         tabs.setFocus();
+    }
+
+    private class BrowseButtonListener extends SelectionAdapter {
+        public void widgetSelected(SelectionEvent e) {
+            String path = null;
+            if (project != null) {
+                ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display
+                        .getDefault().getActiveShell(), new WorkbenchLabelProvider(),
+                        new WorkbenchContentProvider());
+                dialog.setValidator(new ISelectionStatusValidator() {
+                    private final IStatus errorStatus = new Status(IStatus.ERROR, IvyPlugin.ID, 0,
+                            "", null);
+
+                    public IStatus validate(Object[] selection) {
+                        if (selection.length == 0) {
+                            return errorStatus;
+                        }
+                        for (int i = 0; i < selection.length; i++) {
+                            Object o = selection[i];
+                            if (!(o instanceof IFile)) {
+                                return errorStatus;
+                            }
+                        }
+                        return Status.OK_STATUS;
+                    }
+
+                });
+                dialog.setTitle("choose ivy file");
+                dialog.setMessage("choose the ivy file to use to resolve dependencies");
+                dialog.setInput(project.getProject());
+                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+
+                if (dialog.open() == Window.OK) {
+                    Object[] elements = dialog.getResult();
+                    if (elements.length > 0 && elements[0] instanceof IFile) {
+                        IPath p = ((IFile) elements[0]).getProjectRelativePath();
+                        path = p.toString();
+                    }
+                }
+            } else {
+                FileDialog dialog = new FileDialog(IvyPlugin.getActiveWorkbenchShell(), SWT.OPEN);
+                dialog.setText("Choose an ivy.xml");
+                path = dialog.open();
+            }
+
+            if (path != null) {
+                conf.ivyXmlPath = path;
+                ivyFilePathText.setText(path);
+                ivyXmlPathUpdated();
+            }
+        }
     }
 
     private Control createMainTab(Composite parent) {
@@ -273,57 +323,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         Button btn = new Button(composite, SWT.NONE);
         btn.setText("Browse");
-        btn.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                String path = null;
-                if (project != null) {
-                    ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display
-                            .getDefault().getActiveShell(), new WorkbenchLabelProvider(),
-                            new WorkbenchContentProvider());
-                    dialog.setValidator(new ISelectionStatusValidator() {
-                        private final IStatus errorStatus = new Status(IStatus.ERROR, IvyPlugin.ID,
-                                0, "", null);
-
-                        public IStatus validate(Object[] selection) {
-                            if (selection.length == 0) {
-                                return errorStatus;
-                            }
-                            for (int i = 0; i < selection.length; i++) {
-                                Object o = selection[i];
-                                if (!(o instanceof IFile)) {
-                                    return errorStatus;
-                                }
-                            }
-                            return Status.OK_STATUS;
-                        }
-
-                    });
-                    dialog.setTitle("choose ivy file");
-                    dialog.setMessage("choose the ivy file to use to resolve dependencies");
-                    dialog.setInput(project.getProject());
-                    dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-
-                    if (dialog.open() == Window.OK) {
-                        Object[] elements = dialog.getResult();
-                        if (elements.length > 0 && elements[0] instanceof IFile) {
-                            IPath p = ((IFile) elements[0]).getProjectRelativePath();
-                            path = p.toString();
-                        }
-                    }
-                } else {
-                    FileDialog dialog = new FileDialog(IvyPlugin.getActiveWorkbenchShell(),
-                            SWT.OPEN);
-                    dialog.setText("Choose an ivy.xml");
-                    path = dialog.open();
-                }
-
-                if (path != null) {
-                    conf.ivyXmlPath = path;
-                    ivyFilePathText.setText(path);
-                    ivyXmlPathUpdated();
-                }
-            }
-        });
+        btn.addSelectionListener(new BrowseButtonListener());
 
         // Label for ivy configurations field
         Label confLabel = new Label(composite, SWT.NONE);
@@ -465,8 +465,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         label.setText("Ivy settings path:");
 
         settingsText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        settingsText
-                .setToolTipText("The url where your ivysettings file can be found. \nUse 'default' to reference the default ivy settings. \nRelative paths are handled relative to the project. Example: 'file://./ivysettings.xml'.");
+        settingsText.setToolTipText("The url where your ivysettings file can be found. \n"
+                + "Use 'default' to reference the default ivy settings. \n"
+                + "Relative paths are handled relative to the project."
+                + " Example: 'file://./ivysettings.xml'.");
         settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         settingsText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -510,8 +512,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         acceptedTypesText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
         acceptedTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2,
                 1));
-        acceptedTypesText
-                .setToolTipText("Comma separated list of artifact types to use in IvyDE Managed Dependencies Library.\nExample: jar, zip");
+        acceptedTypesText.setToolTipText("Comma separated list of artifact types"
+                + " to use in IvyDE Managed Dependencies Library.\n" + "Example: jar, zip");
 
         label = new Label(configComposite, SWT.NONE);
         label.setText("Sources types:");
@@ -520,7 +522,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         sourcesTypesText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false,
                 2, 1));
         sourcesTypesText
-                .setToolTipText("Comma separated list of artifact types to be used as sources.\nExample: source, src");
+                .setToolTipText("Comma separated list of artifact types to be used as sources.\n"
+                        + "Example: source, src");
 
         label = new Label(configComposite, SWT.NONE);
         label.setText("Sources suffixes:");
@@ -529,7 +532,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         sourcesSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
                 2, 1));
         sourcesSuffixesText
-                .setToolTipText("Comma separated list of suffixes to match sources to artifacts.\nExample: -source, -src");
+                .setToolTipText("Comma separated list of suffixes to match sources to artifacts.\n"
+                        + "Example: -source, -src");
 
         label = new Label(configComposite, SWT.NONE);
         label.setText("Javadoc types:");
@@ -538,7 +542,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         javadocTypesText
                 .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
         javadocTypesText
-                .setToolTipText("Comma separated list of artifact types to be used as javadoc.\nExample: javadoc.");
+                .setToolTipText("Comma separated list of artifact types to be used as javadoc.\n"
+                        + "Example: javadoc.");
 
         label = new Label(configComposite, SWT.NONE);
         label.setText("Javadoc suffixes:");
@@ -547,7 +552,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
                 2, 1));
         javadocSuffixesText
-                .setToolTipText("Comma separated list of suffixes to match javadocs to artifacts.\nExample: -javadoc, -doc");
+                .setToolTipText("Comma separated list of suffixes to match javadocs to artifacts.\n"
+                        + "Example: -javadoc, -doc");
 
         doRetrieveButton = new Button(configComposite, SWT.CHECK);
         doRetrieveButton.setText("Do retrieve after resolve");
@@ -561,8 +567,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         retrievePatternText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
                 2, 1));
         retrievePatternText.setEnabled(doRetrieveButton.getSelection());
-        retrievePatternText
-                .setToolTipText("Example: lib/[conf]/[artifact].[ext]\nTo copy artifacts in folder named lib without revision by folder named like configurations");
+        retrievePatternText.setToolTipText("Example: lib/[conf]/[artifact].[ext]\n"
+                + "To copy artifacts in folder named lib without revision by folder"
+                + " named like configurations");
 
         retrieveSyncButton = new Button(configComposite, SWT.CHECK);
         retrieveSyncButton.setText("Delete old retrieved artifacts");
@@ -710,7 +717,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         }
     }
 
-    public void initialize(IJavaProject p, IClasspathEntry currentEntries[]) {
+    public void initialize(IJavaProject p, IClasspathEntry[] currentEntries) {
         this.project = p;
     }
 

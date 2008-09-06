@@ -56,15 +56,15 @@ import org.osgi.framework.Constants;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String IVY_CLASSPATH_CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
-    IClasspathEntry[] classpathEntries;
+    private IClasspathEntry[] classpathEntries;
 
     private IPath path;
 
-    IvyResolveJob job;
+    private IvyResolveJob job;
 
-    IvyClasspathContainerConfiguration conf;
+    private IvyClasspathContainerConfiguration conf;
 
     private String jdtVersion;
 
@@ -122,7 +122,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         return classpathEntries;
     }
 
-    private final static ISchedulingRule RESOLVE_EVENT_RULE = new ISchedulingRule() {
+    private static final ISchedulingRule RESOLVE_EVENT_RULE = new ISchedulingRule() {
         public boolean contains(ISchedulingRule rule) {
             return rule == this;
         }
@@ -258,6 +258,10 @@ public class IvyClasspathContainer implements IClasspathContainer {
             // should never happen
             throw new RuntimeException(e);
         }
+    }
+
+    public void resetJob() {
+        job = null;
     }
 
 }

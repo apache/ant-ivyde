@@ -39,5 +39,5 @@ public abstract class IvyDEContainerAction implements IActionDelegate {
         action.setEnabled(false);
     }
 
-    abstract protected void selectionChanged(IAction a, IvyClasspathContainer cp);
+    protected abstract void selectionChanged(IAction a, IvyClasspathContainer cp);
 }

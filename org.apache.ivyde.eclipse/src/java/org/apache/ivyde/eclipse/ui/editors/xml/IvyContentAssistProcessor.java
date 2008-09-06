@@ -17,21 +17,10 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ivyde.common.completion.CodeCompletionProposal;
 import org.apache.ivyde.common.completion.IvyCodeCompletionProcessor;
-import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
 import org.apache.ivyde.common.model.IvyFile;
 import org.apache.ivyde.common.model.IvyModel;
-import org.apache.ivyde.common.model.IvyTag;
-import org.apache.ivyde.common.model.IvyTagAttribute;
-import org.apache.ivyde.common.model.Proposal;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -76,19 +65,18 @@ public abstract class IvyContentAssistProcessor implements IContentAssistProcess
             return null;
         }
         IProject project = getProject();
-        IvyFile ivyfile = completionProcessor.getModel().newIvyFile(project != null ? project.getName() : "", ivyFileString,
-                documentOffset);
-        CodeCompletionProposal[] proposals = 
-            completionProcessor.computeCompletionProposals(ivyfile, selectedRange.y);
-        
+        IvyFile ivyfile = completionProcessor.getModel().newIvyFile(
+            project != null ? project.getName() : "", ivyFileString, documentOffset);
+        CodeCompletionProposal[] proposals = completionProcessor.computeCompletionProposals(
+            ivyfile, selectedRange.y);
+
         // convert code completion proposal into eclipse ICompletionProposal
         ICompletionProposal[] ret = new ICompletionProposal[proposals.length];
         for (int i = 0; i < proposals.length; i++) {
             CodeCompletionProposal prop = proposals[i];
-            ret[i] = new CompletionProposal(
-                prop.getReplacementString(), prop.getReplacementOffset(), 
-                prop.getReplacementLength(), prop.getCursorPosition(), 
-                null, prop.getDisplayString(), null, prop.getDoc());
+            ret[i] = new CompletionProposal(prop.getReplacementString(), prop
+                    .getReplacementOffset(), prop.getReplacementLength(), prop.getCursorPosition(),
+                    null, prop.getDisplayString(), null, prop.getDoc());
         }
 
         return ret;

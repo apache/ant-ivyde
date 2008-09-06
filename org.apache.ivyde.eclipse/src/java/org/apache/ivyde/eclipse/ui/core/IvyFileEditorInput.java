@@ -28,15 +28,15 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 
 public class IvyFileEditorInput implements IPathEditorInput, IStorageEditorInput, IFileEditorInput {
-    private IFile _ivyFile;
+    private IFile ivyFile;
 
     public IvyFileEditorInput(IFile input) {
         super();
-        _ivyFile = input;
+        ivyFile = input;
     }
 
     public boolean exists() {
-        return _ivyFile.exists();
+        return ivyFile.exists();
     }
 
     public ImageDescriptor getImageDescriptor() {
@@ -44,28 +44,19 @@ public class IvyFileEditorInput implements IPathEditorInput, IStorageEditorInput
     }
 
     public String getName() {
-        return _ivyFile.getName();
+        return ivyFile.getName();
     }
 
-    /*
-     * (non-Javadoc) Method declared on IEditorInput.
-     */
     public String getToolTipText() {
-        return _ivyFile.getFullPath().makeRelative().toString();
+        return ivyFile.getFullPath().makeRelative().toString();
     }
 
-    /*
-     * (non-Javadoc) Method declared on IPathEditorInput
-     * 
-     * @since 3.0 @issue consider using an internal adapter for IPathEditorInput rather than adding
-     *        this as API
-     */
     public IPath getPath() {
-        return _ivyFile.getLocation();
+        return ivyFile.getLocation();
     }
 
     public String toString() {
-        return getClass().getName() + "(" + _ivyFile.getFullPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        return getClass().getName() + "(" + ivyFile.getFullPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public Object getAdapter(Class adapter) {
@@ -77,11 +68,11 @@ public class IvyFileEditorInput implements IPathEditorInput, IStorageEditorInput
     }
 
     public IStorage getStorage() throws CoreException {
-        return _ivyFile;
+        return ivyFile;
     }
 
     public IFile getFile() {
-        return _ivyFile;
+        return ivyFile;
     }
 
     public boolean equals(Object obj) {

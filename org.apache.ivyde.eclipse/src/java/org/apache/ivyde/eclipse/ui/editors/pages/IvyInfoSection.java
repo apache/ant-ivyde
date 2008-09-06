@@ -33,9 +33,9 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class IvyInfoSection extends SectionPart implements PropertyChangeListener {
-    IFormPage page;
+    private IFormPage page;
 
-    private static int NUM_COLUMNS = 2;
+    private static final int NUM_COLUMNS = 2;
 
     public IvyInfoSection(IFormPage page, Composite parent, int style, boolean titleBar) {
         super(parent, page.getManagedForm().getToolkit(),
@@ -48,11 +48,13 @@ public class IvyInfoSection extends SectionPart implements PropertyChangeListene
 
     protected void createClient(Section section, FormToolkit toolkit) {
         section.setText("General Information"); //$NON-NLS-1$
-        section.setDescription("This section describe the general information about your project"); //$NON-NLS-1$
+        String desc = "This section describe the general information about your project";
+        section.setDescription(desc);
 
         Composite client = toolkit.createComposite(section);
         TableWrapLayout layout = new TableWrapLayout();
-        layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+        layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+        layout.leftMargin = layout.rightMargin;
         layout.numColumns = 2;
         client.setLayout(layout);
         IvyFileEditorInput editorInput = (IvyFileEditorInput) page.getEditorInput();

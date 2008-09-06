@@ -49,6 +49,9 @@ public class EclipseIvyModelSettings implements IvyModelSettings {
     }
 
     public Ivy getIvyInstance() {
+        if (cp == null) {
+            return null;
+        }
         try {
             return cp.getConf().getIvy();
         } catch (IvyDEException e) {

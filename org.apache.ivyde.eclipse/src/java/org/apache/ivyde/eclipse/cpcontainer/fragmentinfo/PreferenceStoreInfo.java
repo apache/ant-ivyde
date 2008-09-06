@@ -33,14 +33,14 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
 
     private static final String DOC_SUFFIX = "-doc";
 
-    private IPreferenceStore _preferenceStore;
+    private IPreferenceStore preferenceStore;
 
     public PreferenceStoreInfo(IPreferenceStore preferenceStore) {
-        _preferenceStore = preferenceStore;
+        this.preferenceStore = preferenceStore;
     }
 
     public IPath getSourceAttachment(Path path) {
-        String srcPath = _preferenceStore.getString(path.toPortableString() + SRC_SUFFIX);
+        String srcPath = preferenceStore.getString(path.toPortableString() + SRC_SUFFIX);
         if (!"".equals(srcPath)) {
             return new Path(srcPath);
         }
@@ -48,7 +48,7 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
     }
 
     public IPath getSourceAttachmentRoot(Path path) {
-        String srcPath = _preferenceStore.getString(path.toPortableString() + SRCROOT_SUFFIX);
+        String srcPath = preferenceStore.getString(path.toPortableString() + SRCROOT_SUFFIX);
         if (!"".equals(srcPath)) {
             return new Path(srcPath);
         }
@@ -56,12 +56,13 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
     }
 
     public URL getDocAttachment(Path path) {
-        String srcPath = _preferenceStore.getString(path.toPortableString() + DOC_SUFFIX);
+        String srcPath = preferenceStore.getString(path.toPortableString() + DOC_SUFFIX);
         if (!"".equals(srcPath)) {
             try {
                 return new URL(srcPath);
             } catch (MalformedURLException e) {
-                IvyPlugin.log(IStatus.WARNING, "The path for the doc attachement is not a valid URL", e);
+                IvyPlugin.log(IStatus.WARNING,
+                    "The path for the doc attachement is not a valid URL", e);
                 return null;
             }
         }
@@ -69,17 +70,17 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
     }
 
     public void setSourceAttachmentPath(IPath containerPath, String entryPath, IPath sourcePath) {
-        _preferenceStore.setValue(entryPath + SRC_SUFFIX, sourcePath == null ? "" : sourcePath
+        preferenceStore.setValue(entryPath + SRC_SUFFIX, sourcePath == null ? "" : sourcePath
                 .toPortableString());
     }
 
     public void setSourceAttachmentRootPath(IPath containerPath, String entryPath, IPath rootPath) {
-        _preferenceStore.setValue(entryPath + SRCROOT_SUFFIX, rootPath == null ? "" : rootPath
+        preferenceStore.setValue(entryPath + SRCROOT_SUFFIX, rootPath == null ? "" : rootPath
                 .toPortableString());
     }
 
     public void setJavaDocLocation(IPath containerPath, String entryPath, URL libraryJavadocLocation) {
-        _preferenceStore.setValue(entryPath + DOC_SUFFIX, libraryJavadocLocation == null ? ""
+        preferenceStore.setValue(entryPath + DOC_SUFFIX, libraryJavadocLocation == null ? ""
                 : libraryJavadocLocation.toString());
     }
 }
