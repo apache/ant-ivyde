@@ -54,6 +54,8 @@ The global configuration can be found in the global configuration panel of Eclip
 	<li><u>Javadoc types:</u> same as sources types but for javadocs</li>
 	<li><u>Javadoc suffixes:</u> same as sources suffixes but for javadocs</li>
 	<li><u>Order alphabetically:</u> by default in the classpath container the entries are ordered by order of declaration. When there are many entries, it could be useful to have them ordered alphabetically so that you can find them faster.</li>
+	<li><u>Project dependencies:</u> IvyDE can try to make dependencies between project more than to jars into a repository.
+	    <u><i>Important note:</i></u> this feature is quite limited for now, it just tries to replace jar dependencies with project dependencies, based on the module id of the jar, and the projects configured to use IvyDE; the version is not taken into consideration, and even if a project match a dependency, the jar of the dependency have to be resolved from a repository.</li>
 	<li><u>Organisation:</u> your company name for ivy editor completion </li>
 	<li><u>Organisation URL:</u> your company web site url for ivy editor completion </li>
 </ol>
