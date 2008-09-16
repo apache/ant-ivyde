@@ -665,6 +665,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 false));
         manager.addAttribute(new IvyTagAttribute("rev",
                 "a comma separated list of revisions this conflict manager should select", false));
+        manager.addAttribute(new IvyTagAttribute("matcher",
+                "the matcher to use to match the modules for which \n"
+                        + "the conflict manager should be used", false));
         conflicts.addChildIvyTag(manager);
         ivyTag.addChildIvyTag(conflicts);
         addTag(conflicts);
