@@ -489,7 +489,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 ModuleRevisionId moduleRevisionId = (ModuleRevisionId) dependencies.get(moduleName);
                 if (moduleRevisionId != null) {
                     IJavaProject project = (IJavaProject) idToJProject.get(moduleId);
-                    if (project != null && project.exists() && project.isOpen()) {
+                    if (project != null && project.exists()) {
                         IClasspathEntry entry = JavaCore.newProjectEntry(project.getPath());
                         if (entry != null && !paths.contains(entry)) {
                             paths.add(entry);

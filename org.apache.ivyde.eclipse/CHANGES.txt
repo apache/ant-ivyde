@@ -11,6 +11,7 @@
 
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
 
+- FIX: Resolve in workspace does not pick up all projects in workspace (IVYDE-118) (thanks to Matt Goldspink)
 - FIX: Ivy editor: code completion missing for matcher attribute of conflicts manager (IVYDE-99)
 - FIX: The project dependencies and the errors markers are conflicting (IVYDE-116) 
 - FIX: same jar files get downloaded 3 times (binary, javadoc and sources jar files are identical) (IVYDE-117)
