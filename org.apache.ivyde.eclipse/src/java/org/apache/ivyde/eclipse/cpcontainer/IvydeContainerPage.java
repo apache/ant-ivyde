@@ -59,6 +59,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -101,7 +102,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private Text retrievePatternText;
 
-    private Button alphaOrderCheck;
+    private Combo alphaOrderCheck;
 
     private Button resolveInWorkspaceCheck;
 
@@ -167,7 +168,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.doRetrieve = doRetrieveButton.getSelection();
             conf.retrievePattern = retrievePatternText.getText();
             conf.retrieveSync = retrieveSyncButton.getSelection();
-            conf.alphaOrder = alphaOrderCheck.getSelection();
+            conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
             conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
         } else {
             conf.ivySettingsPath = null;
@@ -561,7 +562,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 1));
 
         label = new Label(configComposite, SWT.NONE);
-        label.setText("Retrive pattern:");
+        label.setText("Retrieve pattern:");
 
         retrievePatternText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
         retrievePatternText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
@@ -574,7 +575,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         retrieveSyncButton = new Button(configComposite, SWT.CHECK);
         retrieveSyncButton.setText("Delete old retrieved artifacts");
         retrieveSyncButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false,
-                2, 1));
+                3, 1));
         retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
 
         doRetrieveButton.addSelectionListener(new SelectionAdapter() {
@@ -584,12 +585,16 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             }
         });
 
-        alphaOrderCheck = new Button(configComposite, SWT.CHECK);
+        label = new Label(configComposite, SWT.NONE);
+        label.setText("Order of the classpath entries:");
+
+        alphaOrderCheck = new Combo(configComposite, SWT.READ_ONLY);
         alphaOrderCheck
                 .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-        alphaOrderCheck.setText("Order alphabetically the classpath entries");
         alphaOrderCheck
-                .setToolTipText("Order alphabetically the artifacts in the classpath container");
+                .setToolTipText("Order of the artifacts in the classpath container");
+        alphaOrderCheck.add("From the ivy.xml");
+        alphaOrderCheck.add("Lexical");
 
         resolveInWorkspaceCheck = new Button(this.configComposite, SWT.CHECK);
         resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
@@ -644,7 +649,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             doRetrieveButton.setSelection(conf.doRetrieve);
             retrievePatternText.setText(conf.retrievePattern);
             retrieveSyncButton.setSelection(conf.retrieveSync);
-            alphaOrderCheck.setSelection(conf.alphaOrder);
+            alphaOrderCheck.select(conf.alphaOrder ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(this.conf.resolveInWorkspace);
         } else {
             projectSpecificButton.setSelection(false);
@@ -658,7 +663,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             doRetrieveButton.setSelection(helper.getDoRetrieve());
             retrievePatternText.setText(helper.getRetrievePattern());
             retrieveSyncButton.setSelection(helper.getRetrieveSync());
-            alphaOrderCheck.setSelection(helper.isAlphOrder());
+            alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         }
 

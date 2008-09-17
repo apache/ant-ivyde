@@ -24,6 +24,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -39,9 +40,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * This class represents a preference page that is contributed to the Preferences dialog. By
- * subclassing <samp>FieldEditorPreferencePage</samp>, we can use the field support built into
- * JFace that allows us to create a page that is small and knows how to save, restore and apply
- * itself.
+ * subclassing <samp>FieldEditorPreferencePage</samp>, we can use the field support built into JFace
+ * that allows us to create a page that is small and knows how to save, restore and apply itself.
  * <p>
  * This page is used to modify preferences only. They are stored in the preference store that
  * belongs to the main plug-in class. That way, preferences can be accessed directly via the
@@ -77,7 +77,7 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         final Composite fieldParent = getFieldEditorParent();
 
         Label info = new Label(fieldParent, SWT.NONE);
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         info.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1));
         info.setText("Apache Ivy version " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate());
         new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
@@ -211,9 +211,9 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
         spacerData.horizontalSpan = 3;
         spacer.setLayoutData(spacerData);
 
-        BooleanFieldEditor alphaOrder = new BooleanFieldEditor(
-                PreferenceConstants.ALPHABETICAL_ORDER,
-                "Order alphabetically the artifacts in the classpath container", fieldParent);
+        ComboFieldEditor alphaOrder = new ComboFieldEditor(PreferenceConstants.ALPHABETICAL_ORDER,
+                "Order in the classpath container", new String[][] {
+                        {"From the ivy.xml", "false"}, {"Lexical", "true"}}, fieldParent);
         addField(alphaOrder);
 
         spacer = new Label(fieldParent, SWT.NONE);
@@ -223,8 +223,7 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
 
         BooleanFieldEditor resolveInWorkspace = new BooleanFieldEditor(
                 PreferenceConstants.RESOLVE_IN_WORKSPACE,
-                "Resolve dependencies to workspace projects",
-                fieldParent);
+                "Resolve dependencies to workspace projects", fieldParent);
         addField(resolveInWorkspace);
 
         spacer = new Label(fieldParent, SWT.NONE);
@@ -243,7 +242,7 @@ public class IvyPreferencePage extends FieldEditorPreferencePage implements
                 fieldParent));
         addField(new StringFieldEditor(PreferenceConstants.ORGANISATION_URL, "Organisation &URL:",
                 fieldParent));
-        //CheckStyle:MagicNumber| ON
+        // CheckStyle:MagicNumber| ON
     }
 
 }
