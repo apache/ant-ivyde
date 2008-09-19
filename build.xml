@@ -161,10 +161,10 @@
 
     <!-- due to a bug in the packaging of Ivy, some repackaging is needed (IVY-828,IVY-802) -->
     <target name="install-ivy">
-        <get src="http://apache.org/dist/ant/ivy/2.0.0-rc1/apache-ivy-2.0.0-rc1-bin.zip" usetimestamp="true" dest="apache-ivy-2.0.0-rc1-bin.zip" />
+        <get src="http://apache.org/dist/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" usetimestamp="true" dest="apache-ivy-${ivy.version}-bin.zip" />
         <mkdir dir="work-ivy" />
-        <unzip overwrite="true" src="apache-ivy-2.0.0-rc1-bin.zip" dest="ivy-work" />
-        <copy file="ivy-work/apache-ivy-2.0.0-rc1/ivy-2.0.0-rc1.jar" tofile="${baseLocation}/plugins/org.apache.ivy_2.0.0.rc1.jar" />
+        <unzip overwrite="true" src="apache-ivy-${ivy.version}-bin.zip" dest="ivy-work" />
+        <copy file="ivy-work/apache-ivy-${ivy.version}/ivy-${ivy.version}.jar" tofile="${baseLocation}/plugins/org.apache.ivy_${ivy.version}.jar" />
         <delete dir="work-ivy" />
     </target>
 
