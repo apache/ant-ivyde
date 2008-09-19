@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
@@ -373,9 +374,12 @@ public class IvyClasspathContainerConfiguration {
         if (settingsPath == null || settingsPath.trim().length() == 0) {
             // no settings specified, so take the default one
             if (ivy == null) {
-                ivy = new Ivy();
+                IvySettings ivySettings = new IvySettings();
+                if (javaProject != null) {
+                    ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
+                }
                 try {
-                    ivy.configureDefault();
+                    ivySettings.loadDefault();
                 } catch (ParseException e) {
                     IvyDEException ex = new IvyDEException(
                             "Parsing error of the default Ivy settings",
@@ -391,6 +395,7 @@ public class IvyClasspathContainerConfiguration {
                     setConfStatus(ex);
                     throw ex;
                 }
+                ivy = Ivy.newInstance(ivySettings);
             }
             setConfStatus(null);
             return ivy;
@@ -402,7 +407,7 @@ public class IvyClasspathContainerConfiguration {
             String path = settingsPath.substring(pathIndex + 1);
             if (projectName.equals("")) {
                 IFile f = javaProject.getProject().getFile(path);
-                File file = new File(f.getLocation().toOSString());
+                File file = f.getLocation().toFile();
                 return getIvy(file);
             } else {
                 try {
@@ -425,8 +430,11 @@ public class IvyClasspathContainerConfiguration {
                     File file = new File(f.getLocation().toOSString());
                     return getIvy(file);
                 } catch (JavaModelException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    IvyDEException ex = new IvyDEException("The workspace is broken",
+                            "The projects in the workspace could not be listed when resolving the settings ("
+                                    + this.toString() + ")", null);
+                    setConfStatus(ex);
+                    throw ex;
                 }
             }
         }
@@ -447,9 +455,12 @@ public class IvyClasspathContainerConfiguration {
         } else {
             // an URL but not a file
             if (ivy == null || ivySettingsLastModified == -1) {
-                ivy = new Ivy();
+                IvySettings ivySettings = new IvySettings();
+                if (javaProject != null) {
+                    ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
+                }
                 try {
-                    ivy.configure(url);
+                    ivySettings.load(url);
                     ivySettingsLastModified = 0;
                 } catch (ParseException e) {
                     IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
@@ -464,6 +475,7 @@ public class IvyClasspathContainerConfiguration {
                     setConfStatus(ex);
                     throw ex;
                 }
+                ivy = Ivy.newInstance(ivySettings);
             }
         }
         setConfStatus(null);
@@ -480,14 +492,17 @@ public class IvyClasspathContainerConfiguration {
         }
 
         if (file.lastModified() != ivySettingsLastModified) {
-            ivy = new Ivy();
+            IvySettings ivySettings = new IvySettings();
+            if (javaProject != null) {
+                ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
+            }
             if (ivySettingsLastModified == -1) {
                 Message.info("\n\n");
             } else {
                 Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
             }
             try {
-                ivy.configure(file);
+                ivySettings.load(file);
             } catch (ParseException e) {
                 IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
                         "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
@@ -501,6 +516,7 @@ public class IvyClasspathContainerConfiguration {
                 setConfStatus(ex);
                 throw ex;
             }
+            ivy = Ivy.newInstance(ivySettings);
             ivySettingsLastModified = file.lastModified();
         }
 
