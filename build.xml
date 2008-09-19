@@ -41,11 +41,7 @@
         <property name="generateFeatureVersionSuffix" value="false" />
     </target>
 
-    <target name="/updatesite" description="Make the feature zip package deployable in an update site">
-        <property name="outputUpdateJars" value="true" />
-    </target>
-
-    <target name="dist" depends="build-ivy-feature-zip,/updatesite,build,sources,updatesite:build,updatesite:optimize,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="build,sources,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -163,110 +159,33 @@
         </zip>
     </target>
 
-    <target name="updatesite:build" depends="/updatesite,build" description="Build the distribution binaries and put them into the update-site">
-        <mkdir dir="${dist.dir}/updatesite" />
-        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.dir}/updatesite" />
-    </target>
-
-    <target name="updatesite:optimize" depends="updatesite:pack-jars,updatesite:build-digest" description="Optimize the update site" />
-
-    <target name="updatesite:pack-jars" depends="eclipse-classpath">
-        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
-            <arg value="-consolelog" />
-            <arg line="-application org.eclipse.update.core.siteOptimizer"/>
-            <arg line="-jarProcessor -verbose -processAll -pack"/>
-            <arg line="-outputDir ${dist.dir}/updatesite/plugins"/>
-            <arg line="${dist.dir}/updatesite/plugins"/>
-        </java>
-    </target>
-
-    <target name="updatesite:build-digest" depends="eclipse-classpath">
-        <mkdir dir="${dist.dir}/updatesite/" />
-        <copy file="${basedir}/site.xml" tofile="${dist.dir}/updatesite/site.xml" />
-        <!-- see http://wiki.eclipse.org/Update_Site_Optimization -->
-        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
-            <arg value="-consolelog" />
-            <arg line="-application org.eclipse.update.core.siteOptimizer"/>
-            <arg line="-digestBuilder -digestOutputDir=${dist.dir}/updatesite/"/>
-            <arg line="-siteXML=${dist.dir}/updatesite/site.xml"/>
-        </java>
+    <!-- due to a bug in the packaging of Ivy, some repackaging is needed (IVY-828,IVY-802) -->
+    <target name="install-ivy">
+        <get src="http://apache.org/dist/ant/ivy/2.0.0-rc1/apache-ivy-2.0.0-rc1-bin.zip" usetimestamp="true" dest="apache-ivy-2.0.0-rc1-bin.zip" />
+        <mkdir dir="work-ivy" />
+        <unzip overwrite="true" src="apache-ivy-2.0.0-rc1-bin.zip" dest="ivy-work" />
+        <copy file="ivy-work/apache-ivy-2.0.0-rc1/ivy-2.0.0-rc1.jar" tofile="${baseLocation}/plugins/org.apache.ivy_2.0.0.rc1.jar" />
+        <delete dir="work-ivy" />
     </target>
 
     <target name="checksum" description="Compute the checksum for every artifact to distribute">
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM">
             <fileset dir="${dist.dir}">
-                <include name="updatesite/plugins/org.apache.ivy*.jar" />
-                <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/features/org.apache.ivy*.jar" />
-                <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/digest.zip" />
-                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
         </checksum>
         <checksum algorithm="SHA" fileext=".sha" format="MD5SUM">
             <fileset dir="${dist.dir}">
-                <include name="updatesite/plugins/org.apache.ivy*.jar" />
-                <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/features/org.apache.ivy*.jar" />
-                <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/digest.zip" />
-                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
         </checksum>
     </target>
 
-    <target name="build-ivy-feature" description="Build the feature of Ivy">
-        <mkdir dir="${dist.dir}/updatesite/features" />
-        <jar destfile="${dist.dir}/updatesite/features/org.apache.ivy.feature_2.0.0.beta2.jar">
-            <fileset dir="org.apache.ivy.feature">
-                <include name="feature.properties" />
-                <include name="feature.xml"/>
-                <include name="LICENCE"/>
-                <include name="NOTICE"/>
-            </fileset>
-        </jar>
-    </target>
-
-    <target name="build-ivy-feature-zip" depends="copy-ivy-bundle,build-ivy-feature" description="Build the zip distribution of the Ivy feature">
-        <zip destfile="${dist.dir}/org.apache.ivy.feature-2.0.0.beta2.zip">
-            <fileset dir="${dist.dir}/updatesite/">
-                <include name="features/org.apache.ivy.feature_2.0.0.beta2.jar" />
-                <include name="plugins/org.apache.ivy_2.0.0.beta2.jar"/>
-            </fileset>
-        </zip>
-    </target>
-
-    <target name="copy-ivy-bundle" description="Put the Ivy bundle into the update site">
-        <mkdir dir="${dist.dir}/updatesite/plugins" />
-        <copy file="${baseLocation}/plugins/org.apache.ivy_2.0.0.beta2.jar" tofile="${dist.dir}/updatesite/plugins/org.apache.ivy_2.0.0.beta2.jar" />
-    </target>
-
-    <!-- due to a bug in the packaging of Ivy, some repackaging is needed (IVY-828,IVY-802) -->
-    <target name="install-ivy">
-        <get src="http://apache.org/dist/ant/ivy/2.0.0-beta2/apache-ivy-2.0.0-beta2-bin.zip" usetimestamp="true" dest="apache-ivy-2.0.0-beta2-bin.zip" />
-        <mkdir dir="work-ivy/orig" />
-        <unzip overwrite="true" src="apache-ivy-2.0.0-beta2-bin.zip" dest="ivy-work/orig" />
-        <unzip overwrite="true" src="ivy-work/orig/apache-ivy-2.0.0-beta2/ivy-2.0.0-beta2.jar" dest="ivy-work/unpacked" />
-        <replaceregexp file="ivy-work/unpacked/META-INF/MANIFEST.MF" match="Bundle-Version: 0\.0\.0" replace="Bundle-Version: 2.0.0.beta2" byline="true"/>
-        <jar destfile="${baseLocation}/plugins/org.apache.ivy_2.0.0.beta2.jar" manifest="ivy-work/unpacked/META-INF/MANIFEST.MF">
-            <fileset dir="ivy-work/unpacked/" />
-        </jar>
-        <delete dir="work-ivy" />
-    </target>
-
     <target name="verify-checksum" description="Verify the checksums of the artifacts to publish">
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" verifyproperty="checksum.md5.ok" >
             <fileset dir="${dist.dir}">
-                <include name="updatesite/plugins/org.apache.ivy*.jar" />
-                <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/features/org.apache.ivy*.jar" />
-                <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/digest.zip" />
-                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
@@ -279,12 +198,6 @@
         <echo message="MD5 Checksum verify passed successfully" />
         <checksum algorithm="SHA" fileext=".sha" format="MD5SUM" verifyproperty="checksum.sha.ok" >
             <fileset dir="${dist.dir}">
-                <include name="updatesite/plugins/org.apache.ivy*.jar" />
-                <include name="updatesite/plugins/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/features/org.apache.ivy*.jar" />
-                <include name="updatesite/features/org.apache.ivy*.jar.pack.gz" />
-                <include name="updatesite/digest.zip" />
-                <include name="org.apache.ivy.feature-*.zip" />
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
             </fileset>
