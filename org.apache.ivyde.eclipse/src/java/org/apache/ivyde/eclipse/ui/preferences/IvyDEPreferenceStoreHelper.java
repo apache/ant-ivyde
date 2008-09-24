@@ -35,7 +35,7 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setDefault(PreferenceConstants.IVYSETTINGS_PATH, "");
         prefStore.setDefault(PreferenceConstants.ORGANISATION, "");
         prefStore.setDefault(PreferenceConstants.ORGANISATION_URL, "");
-        prefStore.setDefault(PreferenceConstants.ACCEPTED_TYPES, "jar,bundle");
+        prefStore.setDefault(PreferenceConstants.ACCEPTED_TYPES, "jar,bundle,ejb,maven-plugin");
         prefStore.setDefault(PreferenceConstants.SOURCES_TYPES, "source");
         prefStore.setDefault(PreferenceConstants.JAVADOC_TYPES, "javadoc");
         prefStore.setDefault(PreferenceConstants.SOURCES_SUFFIXES, "-source,-sources,-src");
