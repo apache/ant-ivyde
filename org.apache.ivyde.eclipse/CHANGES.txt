@@ -9,6 +9,7 @@
 - NEW: Handle a project: scheme for the path of the ivysettings.xml (IVYDE-94)
 - NEW: Need CleanCache task in context menu (IVYDE-114)
 
+- IMPROVE: IVYDE classpath container should support bundle types by default (IVYDE-121)
 - IMPROVE: Set current working dir to eclipse project location (IVYDE-52)
 - IMPROVE: Make the classpath entries order configuration UI more intuitive (IVYDE-104)
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
