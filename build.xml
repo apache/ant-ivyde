@@ -48,9 +48,11 @@
         <delete dir="${dist.dir}" />
     </target>
 
-    <target name="eclipse-startup-check">
-        <fail message="An Eclipse install is needed to run the build. Set your Eclipse install dir into the baseLocation property." unless="baseLocation" />
+    <target name="check-baseLocation">
+        <fail message="An Eclipse install is needed to run the build. Set your Eclipse install dir in the 'baseLocation' property." unless="baseLocation" />
+    </target>
 
+    <target name="eclipse-startup-check" depends="check-baseLocation">
         <condition property="eclipse.startup">
             <available file="${baseLocation}/startup.jar" />
         </condition>
@@ -159,13 +161,64 @@
         </zip>
     </target>
 
-    <!-- due to a bug in the packaging of Ivy, some repackaging is needed (IVY-828,IVY-802) -->
-    <target name="install-ivy">
-        <get src="http://apache.org/dist/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" usetimestamp="true" dest="apache-ivy-${ivy.version}-bin.zip" />
-        <mkdir dir="work-ivy" />
-        <unzip overwrite="true" src="apache-ivy-${ivy.version}-bin.zip" dest="ivy-work" />
-        <copy file="ivy-work/apache-ivy-${ivy.version}/ivy-${ivy.version}.jar" tofile="${baseLocation}/plugins/org.apache.ivy_${ivy.version}.jar" />
-        <delete dir="work-ivy" />
+    <!-- Get the OSGi version of Ivy in the manifest in the jar -->
+    <target name="compute-ivy-bundle-version" unless="ivy.bundle.version">
+        <mkdir dir="work-ivy/jar" />
+        <get src="${ivy.jar.url}" dest="work-ivy/ivy.jar" />
+        <unzip overwrite="true" src="work-ivy/ivy.jar" dest="work-ivy/jar" />
+        <loadfile property="ivy.bundle.version" srcFile="work-ivy/jar/META-INF/MANIFEST.MF">
+            <filterchain>
+                <linecontains>
+                    <contains value="Bundle-Version:"/>
+                </linecontains>
+                <tokenfilter>
+                    <replaceregex pattern="Bundle-Version: (.*)" replace="\1" flags="gi"/>
+                </tokenfilter>
+                <striplinebreaks/>
+            </filterchain>
+        </loadfile>
+    </target>
+
+    <!-- clean up every installed ivy and install the specified one -->
+    <target name="install-ivy-jar" depends="compute-ivy-bundle-version">
+        <delete>
+            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivy_*.jar"/>
+        </delete>
+        <get src="${ivy.jar.url}" dest="${baseLocation}/plugins/org.apache.ivy_${ivy.bundle.version}.jar" />
+        <echo message="Ivy ${ivy.bundle.version} has been installed in ${baseLocation}" />
+    </target>
+
+    <!-- Get the Ivy jar from a zip distribution -->
+    <target name="get-ivy-jar" unless="ivy.jar.url">
+        <fail>
+You have to specify the Ivy to install with one of the following property:
+ - 'ivy.version': the version to download from Apache (ex: -Divy.version=2.0.0-beta2)
+ - 'ivy.zip.url': the url of the zip distribution (ex: -Divy.zip.url=http://people.apache.org/~xavier/ivy/staging/2.0.0-rc1/apache-ivy-2.0.0-rc1-bin.zip)
+ - 'ivy.jar.url': the url of the Ivy jar (ex: -Divy.jar.url=file:///home/me/ivy-trunk/build/artifact/jars/ivy.jar)
+            <condition>
+                <not>
+                    <or>
+                        <isset property="ivy.version" />
+                        <isset property="ivy.zip.url" />
+                    </or>
+                </not>
+            </condition>
+        </fail>
+        <mkdir dir="ivy-work/distrib" />
+        <property name="ivy.zip.url" value="http://apache.multidist.com/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
+        <get src="${ivy.zip.url}" usetimestamp="true" dest="ivy-work/ivy-bin.zip" />
+        <unzip overwrite="true" src="ivy-work/ivy-bin.zip" dest="ivy-work/distrib" />
+        <path id="ivy.jar.path">
+            <first count="1">
+                <fileset dir="ivy-work" includes="distrib/apache-ivy-*/ivy-*.jar"/>
+            </first>
+        </path>
+        <property name="ivy.jar.url" value="file://${toString:ivy.jar.path}" />
+        <echo message="${ivy.jar.url}" />
+    </target>
+
+    <target name="install-ivy" depends="check-baseLocation,get-ivy-jar,install-ivy-jar" description="Install an Ivy bundle into the eclipse install">
+        <delete dir="ivy-work" />
     </target>
 
     <target name="checksum" description="Compute the checksum for every artifact to distribute">
