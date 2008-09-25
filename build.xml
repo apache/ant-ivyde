@@ -104,7 +104,13 @@
         <echo message="Building version ${build.version}" />
     </target>
 
-    <target name="build" depends="eclipse-classpath,compute-version" description="Build the plugin distribution binaries">
+    <!-- 
+        ======================================================================================
+        Build targets
+        ======================================================================================
+     -->
+
+    <target name="build" depends="check-ivy-installed,eclipse-classpath,compute-version" description="Build the plugin distribution binaries">
         <property name="outputUpdateJars" value="false" />
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
@@ -160,6 +166,12 @@
             </fileset>
         </zip>
     </target>
+
+    <!-- 
+        ======================================================================================
+        Targets related to the installation of Ivy in the Eclipse install
+        ======================================================================================
+     -->
 
     <!-- Get the OSGi version of Ivy in the manifest in the jar -->
     <target name="compute-ivy-bundle-version" unless="ivy.bundle.version">
@@ -220,6 +232,23 @@ You have to specify the Ivy to install with one of the following property:
     <target name="install-ivy" depends="check-baseLocation,get-ivy-jar,install-ivy-jar" description="Install an Ivy bundle into the eclipse install">
         <delete dir="ivy-work" />
     </target>
+
+    <target name="list-installed-ivy" depends="check-baseLocation" description="List the Ivy bundle(s) in your Eclipse install">
+        <path id="ivy.eclipse.paths">
+            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivy_*.jar"/>
+        </path>
+        <echo message="The Ivy installed in ${baseLocation}: ${toString:ivy.eclipse.paths}" />
+    </target>
+
+    <target name="check-ivy-installed" depends="list-installed-ivy">
+        <fail message="No Ivy is installed. Please run 'ant install-ivy first'." />
+    </target>
+
+    <!-- 
+        ======================================================================================
+        Targets related to the checksums of the distribution
+        ======================================================================================
+     -->
 
     <target name="checksum" description="Compute the checksum for every artifact to distribute">
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM">
