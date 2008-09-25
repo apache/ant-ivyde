@@ -16,5 +16,5 @@
 #	 * specific language governing permissions and limitations
 #	 * under the License.
 #	 ***************************************************************
-plugin@org.apache.ivyde.eclipse=COPY,.,org.apache.ivyde.eclipse
-feature@org.apache.ivyde.feature=COPY,.,org.apache.ivyde.feature
+plugin@org.apache.ivyde.eclipse=COPY,.,../org.apache.ivyde.eclipse
+feature@org.apache.ivyde.feature=COPY,.,../org.apache.ivyde.feature

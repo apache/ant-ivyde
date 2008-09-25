@@ -34,6 +34,8 @@
     <property file="build.properties" />
 
     <property name="work.dir" value="${basedir}/work"/>
+    <property name="ivy.work.dir" value="${work.dir}/ivy"/>
+    <property name="eclipse.work.dir" value="${work.dir}/eclipse"/>
     <property name="dist.dir" value="${basedir}/dist"/>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
@@ -119,7 +121,7 @@
             <sysproperty key="baseLocation" value="${baseLocation}"/>
             <sysproperty key="builder" path="${basedir}/builder/component"/>
             <sysproperty key="mapsPath" path="${basedir}/builder/maps"/>
-            <sysproperty key="buildDirectory" path="${work.dir}" />
+            <sysproperty key="buildDirectory" path="${eclipse.work.dir}" />
             <sysproperty key="DSTAMP" value="${DSTAMP}" />
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
             <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
@@ -129,7 +131,7 @@
             <sysproperty key="javacDebugInfo" value="true"/>
         </java>
         <mkdir dir="${dist.dir}"/>
-        <move file="${work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" todir="${dist.dir}"/>
+        <move file="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" todir="${dist.dir}"/>
     </target>
 
     <target name="sources" depends="compute-version" description="Create source archive files">
@@ -175,10 +177,10 @@
 
     <!-- Get the OSGi version of Ivy in the manifest in the jar -->
     <target name="compute-ivy-bundle-version" unless="ivy.bundle.version">
-        <mkdir dir="work-ivy/jar" />
-        <get src="${ivy.jar.url}" dest="work-ivy/ivy.jar" />
-        <unzip overwrite="true" src="work-ivy/ivy.jar" dest="work-ivy/jar" />
-        <loadfile property="ivy.bundle.version" srcFile="work-ivy/jar/META-INF/MANIFEST.MF">
+        <mkdir dir="${ivy.work.dir}/jar" />
+        <get src="${ivy.jar.url}" dest="${ivy.work.dir}/ivy.jar" />
+        <unzip overwrite="true" src="${ivy.work.dir}/ivy.jar" dest="${ivy.work.dir}/jar" />
+        <loadfile property="ivy.bundle.version" srcFile="${ivy.work.dir}/jar/META-INF/MANIFEST.MF">
             <filterchain>
                 <linecontains>
                     <contains value="Bundle-Version:"/>
@@ -216,13 +218,13 @@ You have to specify the Ivy to install with one of the following property:
                 </not>
             </condition>
         </fail>
-        <mkdir dir="ivy-work/distrib" />
+        <mkdir dir="${ivy.work.dir}/distrib" />
         <property name="ivy.zip.url" value="http://apache.multidist.com/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
-        <get src="${ivy.zip.url}" usetimestamp="true" dest="ivy-work/ivy-bin.zip" />
-        <unzip overwrite="true" src="ivy-work/ivy-bin.zip" dest="ivy-work/distrib" />
+        <get src="${ivy.zip.url}" usetimestamp="true" dest="${ivy.work.dir}/ivy-bin.zip" />
+        <unzip overwrite="true" src="${ivy.work.dir}/ivy-bin.zip" dest="${ivy.work.dir}/distrib" />
         <path id="ivy.jar.path">
             <first count="1">
-                <fileset dir="ivy-work" includes="distrib/apache-ivy-*/ivy-*.jar"/>
+                <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar"/>
             </first>
         </path>
         <property name="ivy.jar.url" value="file://${toString:ivy.jar.path}" />
@@ -230,7 +232,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="install-ivy" depends="check-baseLocation,get-ivy-jar,install-ivy-jar" description="Install an Ivy bundle into the eclipse install">
-        <delete dir="ivy-work" />
+        <delete dir="${ivy.work.dir}" />
     </target>
 
     <target name="list-installed-ivy" depends="check-baseLocation" description="List the Ivy bundle(s) in your Eclipse install">
@@ -241,7 +243,11 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="check-ivy-installed" depends="list-installed-ivy">
-        <fail message="No Ivy is installed. Please run 'ant install-ivy first'." />
+        <fail message="No Ivy is installed. Please run 'ant install-ivy first'.">
+            <condition>
+                <resourcecount refid="ivy.eclipse.paths" when="equal" count="0" />
+            </condition>
+        </fail>
     </target>
 
     <!-- 
