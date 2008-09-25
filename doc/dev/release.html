@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+This documentation is defining every steps that needs to be accomplished when releasing IvyDE.
+In this doc, the released version is denoted as $VERSION, so it HAVE to be replaced in the command line argument accordingly. There is also some $LOGIN which is referencing your login on the Apache machines.
+
+<h1>Prepare</h1>
+
+<h2>Jira</h2>
+
+First in <a href="https://issues.apache.org/jira/browse/IVYDE">Jira</a> make sure that no more issues are opened for the target release.
+
+<h2>Release branch</h2>
+
+Some modifications of the branch are need to do the release. So a new branch is needed:
+<pre>
+svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk \
+           https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
+      -m "Creating a release branch for IvyDE $VERSION"
+</pre>
+
+and then checkout it:
+<pre>
+svn co https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION ivyde-$VERSION
+</pre>
+
+<h2>Documentation release</h2>
+
+The documentation have to specify the correct version number:
+In the files:
+<ul>
+<li>doc/template.html</li>
+</ul>
+The header should look like this
+<code>
+<title>${title} | IvyDE $VERSION Documentation</title>
+</code>
+
+<h2>Release notes</h2>
+
+TODO: some release notes exists in ivyde/trunk/org.apache.ivyde.eclipse/CHANGE.txt. Some work need to be done before they can be published on the website.
+
+<h2>Commit your change</h2>
+
+Don't forget to commit the changes you've done into the release branch.
+
+<h1>Building</h1>
+
+Make sure you have a proper working copy with a <tt>svn status</tt>. You should have no modification.
+
+Then launch the build:
+<pre>ant /release clean dist</pre>
+And sign the artifacts:
+<pre>./signArtifacts.sh</pre>
+
+<h1>Prepare the updatesite</h1>
+
+The instructions to build the updatesite are there:
+http://ant.apache.org/ivy/history/latest-milestone/updatesite.html
+
+<h1>Vote for the released artifacts</h1>
+
+It is recommended to publish the distribution artifacts and the updatesite in your public_html on people.apache.org directory so not only committers can test it.
+
+On people.apache.org, create your "staging" directory:
+<pre>mkdir ~/public_html/ivyde-$VERSION/</pre>
+And then the copy:
+<pre>scp dist/* $LOGIN@people.apache.org:/home/$LOGIN/public_html/ivyde-$VERSION/</pre>
+It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/latest-milestone/updatesite.html">that page</a> to know how to proceed.
+
+And launch the vote on the ant-dev mailing list:
+<code>
+Subject: [VOTE] IvyDE $VERSION Release
+
+I have built a release candidate for IvyDE $VERSION
+
+You can download the distribution from this URL: http://people.apache.org/~$LOGIN/ivyde-$VERSION/
+
+And a staging update site has been setup there: http://people.apache.org/~$LOGIN/staging-updatesite
+
+Do you vote for the release of these binaries?
+
+[ ] Yes
+[ ] No
+
+Regards,
+
+$ME, IvyDE $VERSION release manager
+</code>
+
+Note: this <a href="http://ant.apache.org/bylaws.html">page</a> is defining when and how a release can be accepted.
+
+<h1>The release has been accepted</h1>
+
+Then it is time to tag the release:
+<code>svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
+           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
+      -m "Tag IvyDE release $VERSION"
+</code>
+
+<h1>Deployment</h1>
+
+<h2>Publish the artifacts</h2>
+
+The binaries have to be pushed with their signatures and checksums in the apache dist directory. On people.apache.org:
+<pre>
+mkdir /www/www.apache.org/dist/ant/ivyde/$VERSION
+cp /home/$LOGIN/public_html/ivyde-$VERSION/* $LOGIN@people.apache.org:/www/www.apache.org/dist/ant/ivyde/$VERSION
+</pre>
+
+<h2>Deploy the updatesite</h2>
+
+Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/updatesite.html
+
+<h1>Update the documentation</h1>
+
+The table of content needs to be updated so that the last documentation point to that new release.
+
+First we need to update the external links. In svn/site/ivyde/history:
+<pre>svn pe svn:externals .</pre>
+And: <ul><li>update latest-milestone:
+<code>
+latest-milestone https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION/doc </code>
+</li>
+<li>add an entry:
+<code>$VERSION https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION/doc </code></li>
+</ul>
+
+Then we need to edit svn/site/ivyde/toc.json:
+<ul>
+<li>add the following data to the correct abstract node:
+<pre>
+            {
+                "title":"$VERSION",
+                "importRoot":"history/$VERSION",
+                "importNode":"index"
+            }
+</pre>
+</li>
+<li>update the title of the latest-milestone history entry:
+<pre>
+            "title":"Documentation ($VERSION)"
+</pre>
+</li></ul>
+
+<h1>Post release tasks</h1>
+
+<h2>Jira</h2>
+
+Update the <a href="https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310640">IvyDE Jira project</a>: mark the version as released.
+
+<h2>Bump the version</h2>
+
+Update the versions needs to be updated in the following files:
+<ul>
+<li>build.properties (edit the qualifier)</li>
+<li>org.apache.ivyde.eclipse/META-INF/MANIFEST.MF</li>
+<li>org.apache.ivyde.feature/feature.xml</li>
+</ul>
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

@@ -33,10 +33,23 @@
                 ]
             },
             {
-              "id":"build",
-              "title":"Building IvyDE",
+              "id":"dev",
+              "title":"Developer doc",
               "children": [
+                  {
+                    "id":"dev/build",
+                    "title":"Building",
+                    "children": [
 
+                      ]
+                  },
+                  {
+                    "id":"dev/release",
+                    "title":"Releasing",
+                    "children": [
+
+                      ]
+                  }
                 ]
             }
           ]
