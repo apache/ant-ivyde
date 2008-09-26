@@ -113,11 +113,10 @@
      -->
 
     <target name="build" depends="check-ivy-installed,eclipse-classpath,compute-version" description="Build the plugin distribution binaries">
-        <property name="outputUpdateJars" value="false" />
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
-            <arg value="-consolelog" />
             <arg line="-application org.eclipse.pde.build.Build" />
+            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}"/>
             <sysproperty key="baseLocation" value="${baseLocation}"/>
             <sysproperty key="builder" path="${basedir}/builder/component"/>
             <sysproperty key="mapsPath" path="${basedir}/builder/maps"/>
@@ -126,7 +125,7 @@
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
             <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
             <sysproperty key="generateFeatureVersionSuffix" value="${generateFeatureVersionSuffix}" />
-            <sysproperty key="outputUpdateJars" value="${outputUpdateJars}" />
+            <sysproperty key="outputUpdateJars" value="true" />
             <sysproperty key="build.version" value="${build.version}" />
             <sysproperty key="javacDebugInfo" value="true"/>
         </java>
@@ -206,8 +205,8 @@
     <target name="get-ivy-jar" unless="ivy.jar.url">
         <fail>
 You have to specify the Ivy to install with one of the following property:
- - 'ivy.version': the version to download from Apache (ex: -Divy.version=2.0.0-beta2)
- - 'ivy.zip.url': the url of the zip distribution (ex: -Divy.zip.url=http://people.apache.org/~xavier/ivy/staging/2.0.0-rc1/apache-ivy-2.0.0-rc1-bin.zip)
+ - 'ivy.version': the version of the official Apache release to download (ex: -Divy.version=2.0.0-rc1) (older than 2.0.0-rc1 is not supported)
+ - 'ivy.zip.url': the url of the zip distribution (ex: -Divy.zip.url=file:///home/me/ivy-trunk/build/distrib/apache-ivy-2.0.0-rc1-local-20080926154508-bin.zip)
  - 'ivy.jar.url': the url of the Ivy jar (ex: -Divy.jar.url=file:///home/me/ivy-trunk/build/artifact/jars/ivy.jar)
             <condition>
                 <not>
@@ -219,7 +218,7 @@ You have to specify the Ivy to install with one of the following property:
             </condition>
         </fail>
         <mkdir dir="${ivy.work.dir}/distrib" />
-        <property name="ivy.zip.url" value="http://apache.multidist.com/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
+        <property name="ivy.zip.url" value="${mirror.url}/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
         <get src="${ivy.zip.url}" usetimestamp="true" dest="${ivy.work.dir}/ivy-bin.zip" />
         <unzip overwrite="true" src="${ivy.work.dir}/ivy-bin.zip" dest="${ivy.work.dir}/distrib" />
         <path id="ivy.jar.path">
