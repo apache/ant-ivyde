@@ -15,6 +15,7 @@
 - IMPROVE: Make the classpath entries order configuration UI more intuitive (IVYDE-104)
 - IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
 
+- FIX: Can't close ivy console in eclipse (IVYDE-123)
 - FIX: IvyDE does not do property value expansion (IVYDE-90)
 - FIX: Resolve in workspace does not pick up all projects in workspace (IVYDE-118) (thanks to Matt Goldspink)
 - FIX: Ivy editor: code completion missing for matcher attribute of conflicts manager (IVYDE-99)

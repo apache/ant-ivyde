@@ -26,6 +26,17 @@
 	     icon="icons/logo16x16.gif">
 	  </consoleFactory>
 	</extension>
+ <extension
+       point="org.eclipse.ui.console.consolePageParticipants">
+    <consolePageParticipant
+          class="org.apache.ivyde.eclipse.ui.console.IvyConsolePageParticipant"
+          id="org.apache.ivyde.eclipse.ivyConsolePageParticipant">
+       <enablement>
+          <instanceof
+                value="org.apache.ivyde.eclipse.ui.console.IvyConsole">
+          </instanceof></enablement>
+    </consolePageParticipant>
+ </extension>
 
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">

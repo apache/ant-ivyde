@@ -35,7 +35,7 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
- * This class is used to deal with ivy output, and is largely insprired of CVSOutputConsole for its
+ * This class is used to deal with ivy output, and is largely inspired of CVSOutputConsole for its
  * implementation
  */
 public class IvyConsole extends MessageConsole implements MessageLogger {
@@ -187,7 +187,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         RGB rgb = PreferenceConverter.getColor(IvyPlugin.getDefault().getPreferenceStore(),
             preference);
         if (rgb == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             if (PREF_CONSOLE_DEBUG_COLOR.equals(preference)) {
                 rgb = new RGB(180, 180, 255);
             } else if (PREF_CONSOLE_VERBOSE_COLOR.equals(preference)) {
@@ -197,7 +197,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             } else if (PREF_CONSOLE_ERROR_COLOR.equals(preference)) {
                 rgb = new RGB(255, 0, 0);
             }
-            //CheckStyle:MagicNumber| ON
+            // CheckStyle:MagicNumber| ON
         }
         return new Color(display, rgb);
     }
