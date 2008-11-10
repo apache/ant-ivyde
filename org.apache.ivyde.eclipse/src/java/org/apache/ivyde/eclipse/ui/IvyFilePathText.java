@@ -62,6 +62,8 @@ public class IvyFilePathText extends Composite {
 
     private final List listeners = new ArrayList();
 
+    private Button browseButton;
+
     public IvyFilePathText(Composite parent, int style, IJavaProject project) {
         super(parent, style);
         GridLayout layout = new GridLayout(2, false);
@@ -92,9 +94,9 @@ public class IvyFilePathText extends Composite {
             }
         });
 
-        Button btn = new Button(this, SWT.NONE);
-        btn.setText("Browse");
-        btn.addSelectionListener(new BrowseButtonListener());
+        browseButton = new Button(this, SWT.NONE);
+        browseButton.setText("Browse");
+        browseButton.addSelectionListener(new BrowseButtonListener());
     }
 
     public interface IvyXmlPathListener {
@@ -202,4 +204,9 @@ public class IvyFilePathText extends Composite {
         ivyFilePathText.setText(ivyXmlPath);
     }
 
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        ivyFilePathText.setEnabled(enabled);
+        browseButton.setEnabled(enabled);
+    }
 }

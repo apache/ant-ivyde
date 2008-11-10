@@ -44,6 +44,8 @@ public class ConfTableViewer extends Composite {
 
     private ModuleDescriptor md;
 
+    private Link select;
+
     public ConfTableViewer(Composite parent, int style) {
         super(parent, style);
         GridLayout layout = new GridLayout();
@@ -83,7 +85,7 @@ public class ConfTableViewer extends Composite {
         });
         confTableViewer.setLabelProvider(new ConfigurationLabelProvider());
 
-        Link select = new Link(this, SWT.PUSH);
+        select = new Link(this, SWT.PUSH);
         select.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         select.setText("<A>All</A>/<A>None</A>");
         select.addSelectionListener(new SelectionAdapter() {
@@ -144,5 +146,11 @@ public class ConfTableViewer extends Composite {
             }
             return ((Configuration) element).getDescription();
         }
+    }
+
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        confTableViewer.getTable().setEnabled(enabled);
+        select.setEnabled(enabled);
     }
 }

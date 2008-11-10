@@ -22,6 +22,7 @@ import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
+import org.apache.ivyde.eclipse.ui.RetrieveComposite;
 import org.apache.ivyde.eclipse.ui.SettingsPathText;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
 import org.apache.ivyde.eclipse.ui.SettingsPathText.SettingsPathListener;
@@ -72,10 +73,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private Text javadocSuffixesText;
 
-    private Button doRetrieveButton;
-
-    private Text retrievePatternText;
-
     private Combo alphaOrderCheck;
 
     private Button resolveInWorkspaceCheck;
@@ -90,13 +87,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private IClasspathEntry entry;
 
-    private Button retrieveSyncButton;
-
     private TabItem mainTab;
 
     private TabFolder tabs;
 
     private TabItem advancedTab;
+
+    private RetrieveComposite retrieveComposite;
 
     /**
      * Constructor
@@ -138,9 +135,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.javadocTypes = IvyClasspathUtil.split(javadocTypesText.getText());
             conf.sourceSuffixes = IvyClasspathUtil.split(sourcesSuffixesText.getText());
             conf.javadocSuffixes = IvyClasspathUtil.split(javadocSuffixesText.getText());
-            conf.doRetrieve = doRetrieveButton.getSelection();
-            conf.retrievePattern = retrievePatternText.getText();
-            conf.retrieveSync = retrieveSyncButton.getSelection();
+            conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
+            conf.retrievePattern = retrieveComposite.getRetrievePattern();
+            conf.retrieveSync = retrieveComposite.isSyncEnabled();
             conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
             conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
         } else {
@@ -338,34 +335,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 .setToolTipText("Comma separated list of suffixes to match javadocs to artifacts.\n"
                         + "Example: -javadoc, -doc");
 
-        doRetrieveButton = new Button(configComposite, SWT.CHECK);
-        doRetrieveButton.setText("Do retrieve after resolve");
-        doRetrieveButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 3,
+        retrieveComposite = new RetrieveComposite(configComposite, SWT.NONE);
+        retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 3,
                 1));
-
-        label = new Label(configComposite, SWT.NONE);
-        label.setText("Retrieve pattern:");
-
-        retrievePatternText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        retrievePatternText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
-                2, 1));
-        retrievePatternText.setEnabled(doRetrieveButton.getSelection());
-        retrievePatternText.setToolTipText("Example: lib/[conf]/[artifact].[ext]\n"
-                + "To copy artifacts in folder named lib without revision by folder"
-                + " named like configurations");
-
-        retrieveSyncButton = new Button(configComposite, SWT.CHECK);
-        retrieveSyncButton.setText("Delete old retrieved artifacts");
-        retrieveSyncButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false,
-                3, 1));
-        retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
-
-        doRetrieveButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                retrievePatternText.setEnabled(doRetrieveButton.getSelection());
-                retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
-            }
-        });
 
         label = new Label(configComposite, SWT.NONE);
         label.setText("Order of the classpath entries:");
@@ -410,9 +382,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             sourcesSuffixesText.setText(IvyClasspathUtil.concat(conf.sourceSuffixes));
             javadocTypesText.setText(IvyClasspathUtil.concat(conf.javadocTypes));
             javadocSuffixesText.setText(IvyClasspathUtil.concat(conf.javadocSuffixes));
-            doRetrieveButton.setSelection(conf.doRetrieve);
-            retrievePatternText.setText(conf.retrievePattern);
-            retrieveSyncButton.setSelection(conf.retrieveSync);
+            retrieveComposite.init(conf.doRetrieve, conf.retrievePattern, conf.retrieveSync);
             alphaOrderCheck.select(conf.alphaOrder ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(this.conf.resolveInWorkspace);
         } else {
@@ -424,9 +394,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             sourcesSuffixesText.setText(IvyClasspathUtil.concat(helper.getSourceSuffixes()));
             javadocTypesText.setText(IvyClasspathUtil.concat(helper.getJavadocTypes()));
             javadocSuffixesText.setText(IvyClasspathUtil.concat(helper.getJavadocSuffixes()));
-            doRetrieveButton.setSelection(helper.getDoRetrieve());
-            retrievePatternText.setText(helper.getRetrievePattern());
-            retrieveSyncButton.setSelection(helper.getRetrieveSync());
+            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper.getRetrieveSync());
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         }
@@ -444,9 +412,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         sourcesSuffixesText.setEnabled(projectSpecific);
         javadocTypesText.setEnabled(projectSpecific);
         javadocSuffixesText.setEnabled(projectSpecific);
-        doRetrieveButton.setEnabled(projectSpecific);
-        retrievePatternText.setEnabled(doRetrieveButton.getSelection() && projectSpecific);
-        retrieveSyncButton.setEnabled(doRetrieveButton.getSelection() && projectSpecific);
+        retrieveComposite.setEnabled(projectSpecific);
+        retrieveComposite.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
     }

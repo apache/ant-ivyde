@@ -174,4 +174,8 @@ public class SettingsPathText extends Composite {
         settingsText.setText(ivySettingsPath);
     }
 
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        settingsText.setEnabled(enabled);
+    }
 }
