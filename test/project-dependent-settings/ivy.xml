@@ -19,6 +19,7 @@
 <ivy-module version="1.0"> 
 	<info organisation="org.apache.ivyde" module="ivytest-project-dependent-settings">
 		<description>
+		    Project with settings defined in another Eclipse project
 		</description>
 	</info>
 	<configurations>

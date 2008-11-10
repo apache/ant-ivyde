@@ -16,15 +16,16 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
-	<info organisation="org.apache.ivyde" module="ivytest-include-properties">
-		<description>
-		</description>
-	</info>
-	<configurations>
-		<conf name="default" />
-	</configurations>
-	<dependencies>
-		<dependency org="myorg" name="mymodule" rev="${mymodule.version}" conf="default" />
-	</dependencies>
+<ivy-module version="1.0">
+    <info organisation="org.apache.ivyde" module="ivytest-include-properties">
+        <description>
+            Project with settings including some properties
+        </description>
+    </info>
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <dependencies>
+        <dependency org="myorg" name="mymodule" rev="${mymodule.version}" conf="default" />
+    </dependencies>
 </ivy-module>

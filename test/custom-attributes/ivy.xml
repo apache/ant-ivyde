@@ -16,15 +16,16 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="2.0"> 
-	<info organisation="org.apache.ivyde" module="ivytest-custom-attributes">
-		<description>
-		</description>
-	</info>
-	<configurations>
-		<conf name="default" />
-	</configurations>
-	<dependencies>
-		<dependency org="myorg" name="mybluemodule" color="blue" rev="1.1" conf="default" />
-	</dependencies>
+<ivy-module version="2.0">
+    <info organisation="org.apache.ivyde" module="ivytest-custom-attributes">
+        <description>
+            Project defining some custom attributes in its ivy file
+        </description>
+    </info>
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <dependencies>
+        <dependency org="myorg" name="mybluemodule" color="blue" rev="1.1" conf="default" />
+    </dependencies>
 </ivy-module>

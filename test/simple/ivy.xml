@@ -16,16 +16,16 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
-	<info organisation="org.apache.ivyde" module="ivytest-simple">
-		<description>
-Simple project having a dependency on commons-loggins on a m2 repository
-		</description>
-	</info>
-	<configurations>
-		<conf name="default" />
-	</configurations>
-	<dependencies>
-		<dependency org="commons-logging" name="commons-logging" rev="1.+" conf="default" />
-	</dependencies>
+<ivy-module version="1.0">
+    <info organisation="org.apache.ivyde" module="ivytest-simple">
+        <description>
+            Simple project having a dependency on commons-logging in a m2 repository
+        </description>
+    </info>
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <dependencies>
+        <dependency org="commons-logging" name="commons-logging" rev="1.+" conf="default" />
+    </dependencies>
 </ivy-module>

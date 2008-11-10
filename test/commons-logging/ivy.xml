@@ -16,15 +16,15 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
-	<info organisation="commons-logging" module="commons-logging">
-		<description>
-			fake of the commons logging project
-		</description>
-	</info>
-	<configurations>
-		<conf name="default" />
-	</configurations>
-	<dependencies>
-	</dependencies>
+<ivy-module version="1.0">
+    <info organisation="commons-logging" module="commons-logging">
+        <description>
+            Fake project of the commons logging (to test the "resolve in workspace" feature)
+        </description>
+    </info>
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <dependencies>
+    </dependencies>
 </ivy-module>

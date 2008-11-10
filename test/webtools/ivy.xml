@@ -14,17 +14,18 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.
+   under the License.    
 -->
 <ivy-module version="1.0">
-        <info organisation="org.apache.ivyde" module="ivytest-webtools">
-                <description>
-                </description>
-        </info>
-        <configurations>
-                <conf name="default" />
-        </configurations>
-        <dependencies>
-                <dependency org="commons-lang" name="commons-lang" rev="2.1"/>
-	</dependencies>
+    <info organisation="org.apache.ivyde" module="ivytest-webtools">
+        <description>
+            Test the integration of IvyDE into the webTools
+        </description>
+    </info>
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <dependencies>
+        <dependency org="commons-lang" name="commons-lang" rev="2.1" />
+    </dependencies>
 </ivy-module>

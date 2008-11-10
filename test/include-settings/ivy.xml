@@ -16,15 +16,18 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
-	<info organisation="org.apache.ivyde" module="ivytest-include-settings">
-		<description>
-		</description>
-	</info>
-	<configurations>
-		<conf name="default" />
-	</configurations>
-	<dependencies>
-		<dependency org="commons-logging" name="commons-logging" rev="1.+" conf="default" />
-	</dependencies>
+<ivy-module version="1.0">
+    <info organisation="org.apache.ivyde" module="ivytest-include-settings">
+        <description>
+            Project configured with some settings including the default settings
+            NB: this may not work when launching IvyDE in debug mode, as some default ivy settings are created at build
+            time in Ivy
+        </description>
+    </info>
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <dependencies>
+        <dependency org="commons-logging" name="commons-logging" rev="1.+" conf="default" />
+    </dependencies>
 </ivy-module>
