@@ -99,6 +99,8 @@ public class IvyClasspathContainerConfiguration {
 
     boolean confOk;
 
+    private final boolean editing;
+
     /**
      * Constructor
      * 
@@ -106,10 +108,15 @@ public class IvyClasspathContainerConfiguration {
      *            the classpath container's Java project, <code>null</code> is not bind to a project
      * @param ivyXmlPath
      *            the path to the ivy.xml
+     * @param editing
+     *            if set to true, this bean will be used for edition purpose, so no need to trigger
+     *            UI notification about some errors in there
      */
-    public IvyClasspathContainerConfiguration(IJavaProject javaProject, String ivyXmlPath) {
+    public IvyClasspathContainerConfiguration(IJavaProject javaProject, String ivyXmlPath,
+            boolean editing) {
         this.javaProject = javaProject;
         this.ivyXmlPath = ivyXmlPath;
+        this.editing = editing;
     }
 
     /**
@@ -119,9 +126,13 @@ public class IvyClasspathContainerConfiguration {
      *            the classpath container's Java project, <code>null</code> is not bind to a project
      * @param path
      *            the path of the classpath container
+     * @param editing
+     *            if set to true, this bean will be used for edition purpose, so no need to trigger
+     *            UI notification about some errors in there
      */
-    public IvyClasspathContainerConfiguration(IJavaProject javaProject, IPath path) {
+    public IvyClasspathContainerConfiguration(IJavaProject javaProject, IPath path, boolean editing) {
         this.javaProject = javaProject;
+        this.editing = editing;
         if (path.segmentCount() > 2) {
             loadV0(path);
         } else {
@@ -324,7 +335,7 @@ public class IvyClasspathContainerConfiguration {
     }
 
     private void setConfStatus(IvyDEException e) {
-        if (confOk != (e == null)) {
+        if (!editing && confOk != (e == null)) {
             confOk = (e == null);
             IvyPlugin.getDefault().getContainerDecorator().statusChaged(this);
             if (e != null) {
@@ -337,7 +348,7 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public void setResolveStatus(IStatus status) {
-        if (javaProject != null) {
+        if (!editing && javaProject != null) {
             IFile ivyFile = javaProject.getProject().getFile(ivyXmlPath);
             if (!ivyFile.exists()) {
                 return;

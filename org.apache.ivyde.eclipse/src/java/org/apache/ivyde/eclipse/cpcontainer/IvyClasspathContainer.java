@@ -89,10 +89,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
      * @throws MalformedURLException
      */
     public IvyClasspathContainer(IJavaProject javaProject, IPath path,
-            IClasspathEntry[] classpathEntries) throws MalformedURLException, ParseException,
-            IOException {
+            IClasspathEntry[] classpathEntries) throws IOException {
         this.path = path;
-        conf = new IvyClasspathContainerConfiguration(javaProject, path);
+        conf = new IvyClasspathContainerConfiguration(javaProject, path, false);
         this.classpathEntries = classpathEntries;
     }
 
