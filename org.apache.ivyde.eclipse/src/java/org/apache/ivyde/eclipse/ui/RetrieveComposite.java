@@ -92,7 +92,7 @@ public class RetrieveComposite extends Composite {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         doRetrieveButton.setEnabled(enabled);
-        retrievePatternText.setEnabled(enabled);
-        retrieveSyncButton.setEnabled(enabled);
+        retrievePatternText.setEnabled(enabled && doRetrieveButton.getSelection());
+        retrieveSyncButton.setEnabled(enabled && doRetrieveButton.getSelection());
     }
 }

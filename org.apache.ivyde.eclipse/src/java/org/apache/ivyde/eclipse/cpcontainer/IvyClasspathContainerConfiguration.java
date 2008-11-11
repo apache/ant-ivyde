@@ -101,6 +101,10 @@ public class IvyClasspathContainerConfiguration {
 
     private final boolean editing;
 
+    boolean isAdvancedProjectSpecific;
+
+    boolean isRetrieveProjectSpecific;
+
     /**
      * Constructor
      * 
@@ -169,7 +173,8 @@ public class IvyClasspathContainerConfiguration {
     private void loadV1(IPath path) {
         String url = path.segment(1).substring(1);
         String[] parameters = url.split("&");
-        boolean isProjectSpecific = false;
+        isAdvancedProjectSpecific = false;
+        isRetrieveProjectSpecific = false;
         for (int i = 0; i < parameters.length; i++) {
             String[] parameter = parameters[i].split("=");
             if (parameter == null || parameter.length == 0) {
@@ -189,46 +194,50 @@ public class IvyClasspathContainerConfiguration {
                 confs = IvyClasspathUtil.split(value);
             } else if (parameter[0].equals("ivySettingsPath")) {
                 ivySettingsPath = readOldIvySettings(value);
-                isProjectSpecific = true;
-            } else if (parameter[0].equals("acceptedTypes")) {
-                acceptedTypes = IvyClasspathUtil.split(value);
-                isProjectSpecific = true;
-            } else if (parameter[0].equals("sourceTypes")) {
-                sourceTypes = IvyClasspathUtil.split(value);
-                isProjectSpecific = true;
-            } else if (parameter[0].equals("javadocTypes")) {
-                javadocTypes = IvyClasspathUtil.split(value);
-                isProjectSpecific = true;
-            } else if (parameter[0].equals("sourceSuffixes")) {
-                sourceSuffixes = IvyClasspathUtil.split(value);
-                isProjectSpecific = true;
-            } else if (parameter[0].equals("javadocSuffixes")) {
-                javadocSuffixes = IvyClasspathUtil.split(value);
-                isProjectSpecific = true;
             } else if (parameter[0].equals("doRetrieve")) {
                 // if the value is not actually "true" or "false", the Boolean class ensure to
                 // return false, so it is fine
                 doRetrieve = Boolean.valueOf(value).booleanValue();
-                isProjectSpecific = true;
+                isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("retrievePattern")) {
                 retrievePattern = value;
-                isProjectSpecific = true;
+                isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("retrieveSync")) {
                 retrieveSync = Boolean.valueOf(value).booleanValue();
-                isProjectSpecific = true;
+                isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("acceptedTypes")) {
+                acceptedTypes = IvyClasspathUtil.split(value);
+                isAdvancedProjectSpecific = true;
+            } else if (parameter[0].equals("sourceTypes")) {
+                sourceTypes = IvyClasspathUtil.split(value);
+                isAdvancedProjectSpecific = true;
+            } else if (parameter[0].equals("javadocTypes")) {
+                javadocTypes = IvyClasspathUtil.split(value);
+                isAdvancedProjectSpecific = true;
+            } else if (parameter[0].equals("sourceSuffixes")) {
+                sourceSuffixes = IvyClasspathUtil.split(value);
+                isAdvancedProjectSpecific = true;
+            } else if (parameter[0].equals("javadocSuffixes")) {
+                javadocSuffixes = IvyClasspathUtil.split(value);
+                isAdvancedProjectSpecific = true;
             } else if (parameter[0].equals("alphaOrder")) {
                 // if the value is not actually "true" or "false", the Boolean class ensure to
                 // return false, so it is fine
                 alphaOrder = Boolean.valueOf(value).booleanValue();
-                isProjectSpecific = true;
+                isAdvancedProjectSpecific = true;
             } else if (parameter[0].equals("resolveInWorkspace")) {
                 resolveInWorkspace = Boolean.valueOf(value).booleanValue();
-                isProjectSpecific = true;
+                isAdvancedProjectSpecific = true;
             }
         }
-        if (isProjectSpecific) {
+        if (isAdvancedProjectSpecific) {
             // in this V1 version, it is just some paranoid check
             checkNonNullConf();
+        }
+        if (isRetrieveProjectSpecific) {
+            if (retrievePattern == null) {
+                retrievePattern = IvyPlugin.getPreferenceStoreHelper().getRetrievePattern();
+            }
         }
     }
 
@@ -260,9 +269,6 @@ public class IvyClasspathContainerConfiguration {
     }
 
     private void checkNonNullConf() {
-        if (ivySettingsPath == null) {
-            ivySettingsPath = IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
-        }
         if (acceptedTypes == null) {
             acceptedTypes = IvyPlugin.getPreferenceStoreHelper().getAcceptedTypes();
         }
@@ -278,9 +284,6 @@ public class IvyClasspathContainerConfiguration {
         if (javadocSuffixes == null) {
             javadocSuffixes = IvyPlugin.getPreferenceStoreHelper().getJavadocSuffixes();
         }
-        if (retrievePattern == null) {
-            retrievePattern = IvyPlugin.getPreferenceStoreHelper().getRetrievePattern();
-        }
     }
 
     public IPath getPath() {
@@ -294,6 +297,16 @@ public class IvyClasspathContainerConfiguration {
             if (ivySettingsPath != null) {
                 path.append("&ivySettingsPath=");
                 path.append(URLEncoder.encode(ivySettingsPath, "UTF-8"));
+            }
+            if (isRetrieveProjectSpecific) {
+                path.append("&doRetrieve=");
+                path.append(URLEncoder.encode(Boolean.toString(doRetrieve), "UTF-8"));
+                path.append("&retrievePattern=");
+                path.append(URLEncoder.encode(retrievePattern, "UTF-8"));
+                path.append("&retrieveSync=");
+                path.append(URLEncoder.encode(Boolean.toString(retrieveSync), "UTF-8"));
+            }
+            if (isAdvancedProjectSpecific) {
                 path.append("&acceptedTypes=");
                 path.append(URLEncoder.encode(IvyClasspathUtil.concat(acceptedTypes), "UTF-8"));
                 path.append("&sourceTypes=");
@@ -304,12 +317,6 @@ public class IvyClasspathContainerConfiguration {
                 path.append(URLEncoder.encode(IvyClasspathUtil.concat(sourceSuffixes), "UTF-8"));
                 path.append("&javadocSuffixes=");
                 path.append(URLEncoder.encode(IvyClasspathUtil.concat(javadocSuffixes), "UTF-8"));
-                path.append("&doRetrieve=");
-                path.append(URLEncoder.encode(Boolean.toString(doRetrieve), "UTF-8"));
-                path.append("&retrievePattern=");
-                path.append(URLEncoder.encode(retrievePattern, "UTF-8"));
-                path.append("&retrieveSync=");
-                path.append(URLEncoder.encode(Boolean.toString(retrieveSync), "UTF-8"));
                 path.append("&alphaOrder=");
                 path.append(URLEncoder.encode(Boolean.toString(alphaOrder), "UTF-8"));
                 path.append("&resolveInWorkspace=");
@@ -541,82 +548,90 @@ public class IvyClasspathContainerConfiguration {
         return ivySettingsPath;
     }
 
-    public Collection getInheritedAcceptedTypes() {
-        if (ivySettingsPath == null) {
-            return IvyPlugin.getPreferenceStoreHelper().getAcceptedTypes();
-        }
-        return acceptedTypes;
-    }
-
-    public Collection getInheritedSourceTypes() {
-        if (ivySettingsPath == null) {
-            return IvyPlugin.getPreferenceStoreHelper().getSourceTypes();
-        }
-        return sourceTypes;
-    }
-
-    public Collection getInheritedSourceSuffixes() {
-        if (ivySettingsPath == null) {
-            return IvyPlugin.getPreferenceStoreHelper().getSourceSuffixes();
-        }
-        return sourceSuffixes;
-    }
-
-    public Collection getInheritedJavadocTypes() {
-        if (ivySettingsPath == null) {
-            return IvyPlugin.getPreferenceStoreHelper().getJavadocTypes();
-        }
-        return javadocTypes;
-    }
-
-    public Collection getInheritedJavadocSuffixes() {
-        if (ivySettingsPath == null) {
-            return IvyPlugin.getPreferenceStoreHelper().getJavadocSuffixes();
-        }
-        return javadocSuffixes;
-    }
-
     public boolean getInheritedDoRetrieve() {
         if (javaProject == null) {
             // no project means no retrieve possible
             return false;
         }
-        if (ivySettingsPath == null) {
+        if (!isRetrieveProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getDoRetrieve();
         }
         return doRetrieve;
     }
 
     public String getInheritedRetrievePattern() {
-        if (ivySettingsPath == null) {
+        if (!isRetrieveProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getRetrievePattern();
         }
         return retrievePattern;
     }
 
     public boolean getInheritedRetrieveSync() {
-        if (ivySettingsPath == null) {
+        if (!isRetrieveProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getRetrieveSync();
         }
         return retrieveSync;
     }
 
+    public Collection getInheritedAcceptedTypes() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getAcceptedTypes();
+        }
+        return acceptedTypes;
+    }
+
+    public Collection getInheritedSourceTypes() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getSourceTypes();
+        }
+        return sourceTypes;
+    }
+
+    public Collection getInheritedSourceSuffixes() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getSourceSuffixes();
+        }
+        return sourceSuffixes;
+    }
+
+    public Collection getInheritedJavadocTypes() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getJavadocTypes();
+        }
+        return javadocTypes;
+    }
+
+    public Collection getInheritedJavadocSuffixes() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getJavadocSuffixes();
+        }
+        return javadocSuffixes;
+    }
+
     public boolean isInheritedAlphaOrder() {
-        if (ivySettingsPath == null) {
+        if (!isAdvancedProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().isAlphOrder();
         }
         return alphaOrder;
     }
 
     public boolean isResolveInWorkspace() {
-        if (this.ivySettingsPath == null) {
+        if (!isAdvancedProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().isResolveInWorkspace();
         }
         return resolveInWorkspace;
     }
 
-    public boolean isProjectSpecific() {
+    public boolean isSettingsProjectSpecific() {
         return ivySettingsPath != null;
+    }
+
+    public boolean isAdvancedProjectSpecific() {
+        return isAdvancedProjectSpecific;
+    }
+
+    public boolean isRetrieveProjectSpecific() {
+        return isRetrieveProjectSpecific;
     }
 
     public File getIvyFile() {

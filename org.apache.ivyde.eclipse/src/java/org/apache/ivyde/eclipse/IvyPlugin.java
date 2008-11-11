@@ -142,7 +142,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         IJavaProject[] projects = plugin.javaModel.getJavaProjects();
         for (int i = 0; i < projects.length; i++) {
             IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(projects[i]);
-            if (cp != null && !cp.getConf().isProjectSpecific()) {
+            if (cp != null && !cp.getConf().isSettingsProjectSpecific()) {
                 cp.launchResolve(false, false, null);
             }
         }

@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.cpcontainer;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
@@ -49,7 +50,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class IvydeContainerPage extends NewElementWizardPage implements IClasspathContainerPage,
@@ -63,37 +63,31 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private SettingsPathText settingsText;
 
-    private Text acceptedTypesText;
-
-    private Text sourcesTypesText;
-
-    private Text sourcesSuffixesText;
-
-    private Text javadocTypesText;
-
-    private Text javadocSuffixesText;
-
     private Combo alphaOrderCheck;
 
     private Button resolveInWorkspaceCheck;
 
-    private Button projectSpecificButton;
+    private Button settingsProjectSpecificButton;
 
-    private Link generalSettingsLink;
+    private Button advancedProjectSpecificButton;
 
-    private Composite configComposite;
+    private Link mainGeneralSettingsLink;
+
+    private Link advancedGeneralSettingsLink;
 
     private IvyClasspathContainerConfiguration conf;
 
     private IClasspathEntry entry;
 
-    private TabItem mainTab;
-
     private TabFolder tabs;
 
-    private TabItem advancedTab;
-
     private RetrieveComposite retrieveComposite;
+
+    private AcceptedSuffixesTypesComposite acceptedSuffixesTypesComposite;
+
+    private Button retrieveProjectSpecificButton;
+
+    private Link retrieveGeneralSettingsLink;
 
     /**
      * Constructor
@@ -128,13 +122,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     public boolean finish() {
         conf.confs = confTableViewer.getSelectedConfigurations();
-        if (projectSpecificButton.getSelection()) {
+        if (settingsProjectSpecificButton.getSelection()) {
             conf.ivySettingsPath = settingsText.getSettingsPath();
-            conf.acceptedTypes = IvyClasspathUtil.split(acceptedTypesText.getText());
-            conf.sourceTypes = IvyClasspathUtil.split(sourcesTypesText.getText());
-            conf.javadocTypes = IvyClasspathUtil.split(javadocTypesText.getText());
-            conf.sourceSuffixes = IvyClasspathUtil.split(sourcesSuffixesText.getText());
-            conf.javadocSuffixes = IvyClasspathUtil.split(javadocSuffixesText.getText());
+            conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
+            conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
+            conf.javadocTypes = acceptedSuffixesTypesComposite.getJavadocTypes();
+            conf.sourceSuffixes = acceptedSuffixesTypesComposite.getSourceSuffixes();
+            conf.javadocSuffixes = acceptedSuffixesTypesComposite.getJavadocSuffixes();
             conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
             conf.retrievePattern = retrieveComposite.getRetrievePattern();
             conf.retrieveSync = retrieveComposite.isSyncEnabled();
@@ -142,6 +136,26 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
         } else {
             conf.ivySettingsPath = null;
+        }
+        if (retrieveProjectSpecificButton.getSelection()) {
+            conf.isRetrieveProjectSpecific = true;
+            conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
+            conf.retrievePattern = retrieveComposite.getRetrievePattern();
+            conf.retrieveSync = retrieveComposite.isSyncEnabled();
+        } else {
+            conf.isRetrieveProjectSpecific = false;
+        }
+        if (advancedProjectSpecificButton.getSelection()) {
+            conf.isAdvancedProjectSpecific = true;
+            conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
+            conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
+            conf.javadocTypes = acceptedSuffixesTypesComposite.getJavadocTypes();
+            conf.sourceSuffixes = acceptedSuffixesTypesComposite.getSourceSuffixes();
+            conf.javadocSuffixes = acceptedSuffixesTypesComposite.getJavadocSuffixes();
+            conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
+            conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
+        } else {
+            conf.isAdvancedProjectSpecific = false;
         }
         entry = JavaCore.newContainerEntry(conf.getPath());
         return true;
@@ -166,9 +180,17 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         tabs = new TabFolder(parent, SWT.BORDER);
         tabs.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        mainTab = new TabItem(tabs, SWT.NONE);
+        TabItem mainTab = new TabItem(tabs, SWT.NONE);
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
+
+        TabItem retrieveTab = new TabItem(tabs, SWT.NONE);
+        retrieveTab.setText("Retrieve");
+        retrieveTab.setControl(createRetrieveTab(tabs));
+
+        TabItem advancedTab = new TabItem(tabs, SWT.NONE);
+        advancedTab.setText("Advanced");
+        advancedTab.setControl(createAdvancedTab(tabs));
 
         tabs.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -176,10 +198,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 settingsText.updateErrorMarker();
             }
         });
-
-        advancedTab = new TabItem(tabs, SWT.NONE);
-        advancedTab.setText("Advanced");
-        advancedTab.setControl(createAdvancedTab(tabs));
 
         setControl(tabs);
 
@@ -190,14 +208,62 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private Control createMainTab(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout(3, false));
+        composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
+        Composite headerComposite = new Composite(composite, SWT.NONE);
+        headerComposite.setLayout(new GridLayout(2, false));
+        headerComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        settingsProjectSpecificButton = new Button(headerComposite, SWT.CHECK);
+        settingsProjectSpecificButton.setText("Enable project specific settings");
+        settingsProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updateFieldsStatusSettings();
+                conf.ivySettingsPath = settingsText.getSettingsPath();
+                settingsUpdated();
+            }
+        });
+
+        mainGeneralSettingsLink = new Link(headerComposite, SWT.NONE);
+        mainGeneralSettingsLink.setFont(headerComposite.getFont());
+        mainGeneralSettingsLink.setText("<A>Configure Workspace Settings...</A>");
+        mainGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
+                    IvyPreferencePage.PEREFERENCE_PAGE_ID, null, null);
+                dialog.open();
+            }
+        });
+        mainGeneralSettingsLink.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+
+        Label horizontalLine = new Label(headerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+
+        Composite configComposite = new Composite(composite, SWT.NONE);
+        configComposite.setLayout(new GridLayout(3, false));
+        configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+        Label label = new Label(configComposite, SWT.NONE);
+        label.setText("Ivy settings path:");
+
+        settingsText = new SettingsPathText(configComposite, SWT.NONE);
+        settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+        settingsText.addListener(new SettingsPathListener() {
+            public void settingsPathUpdated(String path) {
+                conf.ivySettingsPath = path;
+                settingsUpdated();
+            }
+        });
+
+        horizontalLine = new Label(configComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+
         // Label for ivy file field
-        Label pathLabel = new Label(composite, SWT.NONE);
+        Label pathLabel = new Label(configComposite, SWT.NONE);
         pathLabel.setText("Ivy File");
 
-        ivyFilePathText = new IvyFilePathText(composite, SWT.NONE, project);
+        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project);
         ivyFilePathText.addListener(new IvyXmlPathListener() {
             public void ivyXmlPathUpdated(String path) {
                 conf.ivyXmlPath = path;
@@ -208,15 +274,15 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 
         // Label for ivy configurations field
-        Label confLabel = new Label(composite, SWT.NONE);
+        Label confLabel = new Label(configComposite, SWT.NONE);
         confLabel.setText("Configurations");
 
         // table for configuration selection
-        confTableViewer = new ConfTableViewer(composite, SWT.NONE);
+        confTableViewer = new ConfTableViewer(configComposite, SWT.NONE);
         confTableViewer.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         // refresh
-        Button refreshConf = new Button(composite, SWT.NONE);
+        Button refreshConf = new Button(configComposite, SWT.NONE);
         refreshConf.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
         refreshConf.setText("Refresh");
         refreshConf.addSelectionListener(new SelectionAdapter() {
@@ -236,6 +302,48 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return composite;
     }
 
+    private Control createRetrieveTab(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+        Composite headerComposite = new Composite(composite, SWT.NONE);
+        headerComposite.setLayout(new GridLayout(2, false));
+        headerComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        retrieveProjectSpecificButton = new Button(headerComposite, SWT.CHECK);
+        retrieveProjectSpecificButton.setText("Enable project specific settings");
+        retrieveProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updateFieldsStatusRetrieve();
+            }
+        });
+
+        retrieveGeneralSettingsLink = new Link(headerComposite, SWT.NONE);
+        retrieveGeneralSettingsLink.setFont(composite.getFont());
+        retrieveGeneralSettingsLink.setText("<A>Configure Workspace Settings...</A>");
+        retrieveGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
+                    IvyPreferencePage.PEREFERENCE_PAGE_ID, null, null);
+                dialog.open();
+            }
+        });
+        retrieveGeneralSettingsLink.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+
+        Label horizontalLine = new Label(headerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+
+        Composite configComposite = new Composite(composite, SWT.NONE);
+        configComposite.setLayout(new GridLayout());
+        configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        retrieveComposite = new RetrieveComposite(configComposite, SWT.NONE);
+        retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        return composite;
+    }
+
     private Control createAdvancedTab(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
@@ -245,101 +353,41 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         headerComposite.setLayout(new GridLayout(2, false));
         headerComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        projectSpecificButton = new Button(headerComposite, SWT.CHECK);
-        projectSpecificButton.setText("Enable project specific settings");
-        projectSpecificButton.addSelectionListener(new SelectionAdapter() {
+        advancedProjectSpecificButton = new Button(headerComposite, SWT.CHECK);
+        advancedProjectSpecificButton.setText("Enable project specific settings");
+        advancedProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                updateFieldsStatus();
-                conf.ivySettingsPath = settingsText.getSettingsPath();
-                settingsUpdated();
+                updateFieldsStatusAdvanced();
             }
         });
 
-        generalSettingsLink = new Link(headerComposite, SWT.NONE);
-        generalSettingsLink.setFont(composite.getFont());
-        generalSettingsLink.setText("<A>Configure Workspace Settings...</A>");
-        generalSettingsLink.addSelectionListener(new SelectionAdapter() {
+        advancedGeneralSettingsLink = new Link(headerComposite, SWT.NONE);
+        advancedGeneralSettingsLink.setFont(composite.getFont());
+        advancedGeneralSettingsLink.setText("<A>Configure Workspace Settings...</A>");
+        advancedGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
                     IvyPreferencePage.PEREFERENCE_PAGE_ID, null, null);
                 dialog.open();
             }
         });
-        generalSettingsLink.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+        advancedGeneralSettingsLink.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 
         Label horizontalLine = new Label(headerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 
-        configComposite = new Composite(composite, SWT.NONE);
+        Composite configComposite = new Composite(composite, SWT.NONE);
         configComposite.setLayout(new GridLayout(3, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
+        resolveInWorkspaceCheck = new Button(configComposite, SWT.CHECK);
+        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace (EXPERIMENTAL)");
+        resolveInWorkspaceCheck
+                .setToolTipText("Will replace jars on the classpath with workspace projects");
+
         Label label = new Label(configComposite, SWT.NONE);
-        label.setText("Ivy settings path:");
-
-        settingsText = new SettingsPathText(configComposite, SWT.NONE);
-        settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-        settingsText.addListener(new SettingsPathListener() {
-            public void settingsPathUpdated(String path) {
-                conf.ivySettingsPath = path;
-                settingsUpdated();
-            }
-        });
-
-        label = new Label(configComposite, SWT.NONE);
-        label.setText("Accepted types:");
-
-        acceptedTypesText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        acceptedTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2,
-                1));
-        acceptedTypesText.setToolTipText("Comma separated list of artifact types"
-                + " to use in IvyDE Managed Dependencies Library.\n" + "Example: jar, zip");
-
-        label = new Label(configComposite, SWT.NONE);
-        label.setText("Sources types:");
-
-        sourcesTypesText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        sourcesTypesText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false,
-                2, 1));
-        sourcesTypesText
-                .setToolTipText("Comma separated list of artifact types to be used as sources.\n"
-                        + "Example: source, src");
-
-        label = new Label(configComposite, SWT.NONE);
-        label.setText("Sources suffixes:");
-
-        sourcesSuffixesText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        sourcesSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
-                2, 1));
-        sourcesSuffixesText
-                .setToolTipText("Comma separated list of suffixes to match sources to artifacts.\n"
-                        + "Example: -source, -src");
-
-        label = new Label(configComposite, SWT.NONE);
-        label.setText("Javadoc types:");
-
-        javadocTypesText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        javadocTypesText
-                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-        javadocTypesText
-                .setToolTipText("Comma separated list of artifact types to be used as javadoc.\n"
-                        + "Example: javadoc.");
-
-        label = new Label(configComposite, SWT.NONE);
-        label.setText("Javadoc suffixes:");
-
-        javadocSuffixesText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-        javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
-                2, 1));
-        javadocSuffixesText
-                .setToolTipText("Comma separated list of suffixes to match javadocs to artifacts.\n"
-                        + "Example: -javadoc, -doc");
-
-        retrieveComposite = new RetrieveComposite(configComposite, SWT.NONE);
-        retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 3,
-                1));
-
-        label = new Label(configComposite, SWT.NONE);
         label.setText("Order of the classpath entries:");
 
         alphaOrderCheck = new Combo(configComposite, SWT.READ_ONLY);
@@ -349,12 +397,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         alphaOrderCheck.add("From the ivy.xml");
         alphaOrderCheck.add("Lexical");
 
-        resolveInWorkspaceCheck = new Button(this.configComposite, SWT.CHECK);
-        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-                false, 2, 1));
-        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
-        resolveInWorkspaceCheck
-                .setToolTipText("Will replace jars on the classpath with workspace projects");
+        acceptedSuffixesTypesComposite = new AcceptedSuffixesTypesComposite(configComposite,
+                SWT.NONE);
+        acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+                true, false, 3, 1));
 
         return composite;
     }
@@ -374,46 +420,59 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         ivyFilePathText.init(conf.ivyXmlPath);
         confTableViewer.init(conf.confs);
 
-        if (conf.isProjectSpecific()) {
-            projectSpecificButton.setSelection(true);
+        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+
+        if (conf.isSettingsProjectSpecific()) {
+            settingsProjectSpecificButton.setSelection(true);
             settingsText.init(conf.ivySettingsPath);
-            acceptedTypesText.setText(IvyClasspathUtil.concat(conf.acceptedTypes));
-            sourcesTypesText.setText(IvyClasspathUtil.concat(conf.sourceTypes));
-            sourcesSuffixesText.setText(IvyClasspathUtil.concat(conf.sourceSuffixes));
-            javadocTypesText.setText(IvyClasspathUtil.concat(conf.javadocTypes));
-            javadocSuffixesText.setText(IvyClasspathUtil.concat(conf.javadocSuffixes));
+        } else {
+            settingsProjectSpecificButton.setSelection(false);
+            settingsText.init(helper.getIvySettingsPath());
+        }
+
+        if (conf.isRetrieveProjectSpecific()) {
+            retrieveProjectSpecificButton.setSelection(true);
             retrieveComposite.init(conf.doRetrieve, conf.retrievePattern, conf.retrieveSync);
+        } else {
+            retrieveProjectSpecificButton.setSelection(false);
+            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
+                    .getRetrieveSync());
+        }
+
+        if (conf.isAdvancedProjectSpecific()) {
+            advancedProjectSpecificButton.setSelection(true);
+            acceptedSuffixesTypesComposite.init(conf.acceptedTypes, conf.sourceTypes,
+                conf.sourceSuffixes, conf.javadocTypes, conf.javadocSuffixes);
             alphaOrderCheck.select(conf.alphaOrder ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(this.conf.resolveInWorkspace);
         } else {
-            projectSpecificButton.setSelection(false);
-            IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-            settingsText.init(helper.getIvySettingsPath());
-            acceptedTypesText.setText(IvyClasspathUtil.concat(helper.getAcceptedTypes()));
-            sourcesTypesText.setText(IvyClasspathUtil.concat(helper.getSourceTypes()));
-            sourcesSuffixesText.setText(IvyClasspathUtil.concat(helper.getSourceSuffixes()));
-            javadocTypesText.setText(IvyClasspathUtil.concat(helper.getJavadocTypes()));
-            javadocSuffixesText.setText(IvyClasspathUtil.concat(helper.getJavadocSuffixes()));
-            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper.getRetrieveSync());
+            advancedProjectSpecificButton.setSelection(false);
+            acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
+                helper.getSourceSuffixes(), helper.getJavadocTypes(), helper.getJavadocSuffixes());
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         }
 
-        updateFieldsStatus();
+        updateFieldsStatusSettings();
+        updateFieldsStatusRetrieve();
+        updateFieldsStatusAdvanced();
     }
 
-    void updateFieldsStatus() {
-        boolean projectSpecific = projectSpecificButton.getSelection();
-        generalSettingsLink.setEnabled(!projectSpecific);
-        configComposite.setEnabled(projectSpecific);
+    void updateFieldsStatusSettings() {
+        boolean projectSpecific = settingsProjectSpecificButton.getSelection();
+        mainGeneralSettingsLink.setEnabled(!projectSpecific);
         settingsText.setEnabled(projectSpecific);
-        acceptedTypesText.setEnabled(projectSpecific);
-        sourcesTypesText.setEnabled(projectSpecific);
-        sourcesSuffixesText.setEnabled(projectSpecific);
-        javadocTypesText.setEnabled(projectSpecific);
-        javadocSuffixesText.setEnabled(projectSpecific);
+    }
+
+    void updateFieldsStatusRetrieve() {
+        boolean projectSpecific = retrieveProjectSpecificButton.getSelection();
         retrieveComposite.setEnabled(projectSpecific);
-        retrieveComposite.setEnabled(projectSpecific);
+    }
+
+    void updateFieldsStatusAdvanced() {
+        boolean projectSpecific = advancedProjectSpecificButton.getSelection();
+        advancedGeneralSettingsLink.setEnabled(!projectSpecific);
+        acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
     }
