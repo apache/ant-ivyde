@@ -30,6 +30,21 @@ import org.eclipse.swt.widgets.Text;
 
 public class AcceptedSuffixesTypesComposite extends Composite {
 
+    public static final String TOOLTIP_ACCEPTED_TYPES = "Comma separated list of artifact types"
+            + " to use in IvyDE Managed Dependencies Library.\n" + "Example: jar, zip";
+
+    public static final String TOOLTIP_SOURCE_TYPES = "Comma separated list of artifact types to be used as sources.\n"
+            + "Example: source, src";
+
+    public static final String TOOLTIP_JAVADOC_TYPES = "Comma separated list of artifact types to be used as javadoc.\n"
+            + "Example: javadoc.";
+
+    public static final String TOOLTIP_SOURCE_SUFFIXES = "Comma separated list of suffixes to match sources to artifacts.\n"
+            + "Example: -source, -src";
+
+    public static final String TOOLTIP_JAVADOC_SUFFIXES = "Comma separated list of suffixes to match javadocs to artifacts.\n"
+            + "Example: -javadoc, -doc";
+
     private Text acceptedTypesText;
 
     private Text sourcesTypesText;
@@ -52,8 +67,7 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
         acceptedTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         acceptedTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        acceptedTypesText.setToolTipText("Comma separated list of artifact types"
-                + " to use in IvyDE Managed Dependencies Library.\n" + "Example: jar, zip");
+        acceptedTypesText.setToolTipText(TOOLTIP_ACCEPTED_TYPES);
 
         label = new Label(this, SWT.NONE);
         label.setText("Sources types:");
@@ -61,45 +75,44 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         sourcesTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         sourcesTypesText
                 .setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-        sourcesTypesText
-                .setToolTipText("Comma separated list of artifact types to be used as sources.\n"
-                        + "Example: source, src");
+        sourcesTypesText.setToolTipText(TOOLTIP_SOURCE_TYPES);
 
         label = new Label(this, SWT.NONE);
         label.setText("Sources suffixes:");
 
         sourcesSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         sourcesSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        sourcesSuffixesText
-                .setToolTipText("Comma separated list of suffixes to match sources to artifacts.\n"
-                        + "Example: -source, -src");
+        sourcesSuffixesText.setToolTipText(TOOLTIP_SOURCE_SUFFIXES);
 
         label = new Label(this, SWT.NONE);
         label.setText("Javadoc types:");
 
         javadocTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         javadocTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        javadocTypesText
-                .setToolTipText("Comma separated list of artifact types to be used as javadoc.\n"
-                        + "Example: javadoc.");
+        javadocTypesText.setToolTipText(TOOLTIP_JAVADOC_TYPES);
 
         label = new Label(this, SWT.NONE);
         label.setText("Javadoc suffixes:");
 
         javadocSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        javadocSuffixesText
-                .setToolTipText("Comma separated list of suffixes to match javadocs to artifacts.\n"
-                        + "Example: -javadoc, -doc");
+        javadocSuffixesText.setToolTipText(TOOLTIP_JAVADOC_SUFFIXES);
     }
 
     public void init(Collection acceptedTypes, Collection sourceTypes, Collection sourceSuffixes,
             Collection javadocTypes, Collection javadocSuffixes) {
-        acceptedTypesText.setText(IvyClasspathUtil.concat(acceptedTypes));
-        sourcesTypesText.setText(IvyClasspathUtil.concat(sourceTypes));
-        sourcesSuffixesText.setText(IvyClasspathUtil.concat(sourceSuffixes));
-        javadocTypesText.setText(IvyClasspathUtil.concat(javadocTypes));
-        javadocSuffixesText.setText(IvyClasspathUtil.concat(javadocSuffixes));
+        init(IvyClasspathUtil.concat(acceptedTypes), IvyClasspathUtil.concat(sourceTypes),
+            IvyClasspathUtil.concat(sourceSuffixes), IvyClasspathUtil.concat(javadocTypes),
+            IvyClasspathUtil.concat(javadocSuffixes));
+    }
+
+    public void init(String acceptedTypes, String sourceTypes, String sourceSuffixes,
+            String javadocTypes, String javadocSuffixes) {
+        acceptedTypesText.setText(acceptedTypes);
+        sourcesTypesText.setText(sourceTypes);
+        sourcesSuffixesText.setText(sourceSuffixes);
+        javadocTypesText.setText(javadocTypes);
+        javadocSuffixesText.setText(javadocSuffixes);
     }
 
     public void setEnabled(boolean enabled) {

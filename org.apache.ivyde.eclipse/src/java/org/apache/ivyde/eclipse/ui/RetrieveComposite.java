@@ -29,6 +29,10 @@ import org.eclipse.swt.widgets.Text;
 
 public class RetrieveComposite extends Composite {
 
+    public static final String TOOLTIP_RETRIEVE_PATTERN = "Example: lib/[conf]/[artifact].[ext]\n"
+            + "To copy artifacts in folder named lib without revision by folder"
+            + " named like configurations";
+
     private Button doRetrieveButton;
 
     private Text retrievePatternText;
@@ -53,9 +57,7 @@ public class RetrieveComposite extends Composite {
         retrievePatternText = new Text(this, SWT.SINGLE | SWT.BORDER);
         retrievePatternText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         retrievePatternText.setEnabled(doRetrieveButton.getSelection());
-        retrievePatternText.setToolTipText("Example: lib/[conf]/[artifact].[ext]\n"
-                + "To copy artifacts in folder named lib without revision by folder"
-                + " named like configurations");
+        retrievePatternText.setToolTipText(TOOLTIP_RETRIEVE_PATTERN);
 
         retrieveSyncButton = new Button(this, SWT.CHECK);
         retrieveSyncButton.setText("Delete old retrieved artifacts");

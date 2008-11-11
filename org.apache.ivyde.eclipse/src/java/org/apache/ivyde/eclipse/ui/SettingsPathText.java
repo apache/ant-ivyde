@@ -43,6 +43,11 @@ import org.eclipse.swt.widgets.Text;
 
 public class SettingsPathText extends Composite {
 
+    public static final String TOOLTIP_SETTINGS = "The url where your ivysettings file can be found. \n"
+            + "Leave it empty to reference the default ivy settings. \n"
+            + "Relative paths are handled relative to the project.\n"
+            + " Example: 'project:///ivysettings.xml' or 'project://myproject/ivysettings.xml'.";
+
     private Text settingsText;
 
     private ControlDecoration settingsTextDeco;
@@ -62,10 +67,7 @@ public class SettingsPathText extends Composite {
             FieldDecorationRegistry.DEC_ERROR).getImage();
 
         settingsText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        settingsText.setToolTipText("The url where your ivysettings file can be found. \n"
-                + "Use 'default' to reference the default ivy settings. \n"
-                + "Relative paths are handled relative to the project."
-                + " Example: 'file://./ivysettings.xml'.");
+        settingsText.setToolTipText(TOOLTIP_SETTINGS);
         settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         settingsText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {

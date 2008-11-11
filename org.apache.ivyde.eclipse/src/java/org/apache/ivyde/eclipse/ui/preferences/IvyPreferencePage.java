@@ -17,26 +17,25 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ComboFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
+import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
+import org.apache.ivyde.eclipse.ui.RetrieveComposite;
+import org.apache.ivyde.eclipse.ui.SettingsPathText;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.osgi.framework.Constants;
 
 /**
  * This class represents a preference page that is contributed to the Preferences dialog. By
@@ -48,201 +47,158 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * preference store.
  */
 
-public class IvyPreferencePage extends FieldEditorPreferencePage implements
-        IWorkbenchPreferencePage {
+public class IvyPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
     public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
 
-    private StringFieldEditor pattern;
+    private RetrieveComposite retrieveComposite;
 
-    private BooleanFieldEditor retreiveSync;
+    private SettingsPathText settingsPathText;
+
+    private Button resolveInWorkspaceCheck;
+
+    private Combo alphaOrderCheck;
+
+    private AcceptedSuffixesTypesComposite acceptedSuffixesTypesComposite;
+
+    private Text organizationText;
+
+    private Text organizationUrlText;
 
     public IvyPreferencePage() {
-        super(GRID);
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
-        setDescription("");
+        Object ivydeVersion = IvyPlugin.getDefault().getBundle().getHeaders().get(
+            Constants.BUNDLE_VERSION);
+        setDescription("Ivy " + Ivy.getIvyVersion() + " (" + Ivy.getIvyDate() + ")  --  IvyDE "
+                + ivydeVersion);
     }
 
     public void init(IWorkbench workbench) {
-        // nothing to init
+        setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
     }
 
-    /**
-     * Creates the field editors. Field editors are abstractions of the common GUI blocks needed to
-     * manipulate various types of preferences. Each field editor knows how to save and restore
-     * itself.
-     */
-    public void createFieldEditors() {
-        final Composite fieldParent = getFieldEditorParent();
+    protected Control createContents(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+        composite.setLayout(new GridLayout());
 
-        Label info = new Label(fieldParent, SWT.NONE);
         // CheckStyle:MagicNumber| OFF
-        info.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 3, 1));
-        info.setText("Apache Ivy version " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate());
-        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
-                GridData.BEGINNING, false, false, 3, 1)); // space
 
-        Label spacer = new Label(fieldParent, SWT.NONE);
-        GridData spacerData = new GridData();
-        spacerData.horizontalSpan = 3;
-        spacer.setLayoutData(spacerData);
-        spacer.setText("Runtime option");
-        spacer = new Label(fieldParent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        spacer.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
-        addField(new FileFieldEditor(PreferenceConstants.IVYSETTINGS_PATH, "&Ivy settings URL:",
-                fieldParent) {
-            /* Opens the file chooser dialog and returns the selected file as an url. */
-            protected String changePressed() {
-                String f = super.changePressed();
-                if (f == null) {
-                    return null;
-                }
-                File d = new File(f);
-                try {
-                    return d.toURL().toExternalForm();
-                } catch (MalformedURLException e) {
-                    // should never happen
-                    IvyPlugin.log(IStatus.ERROR, "A file from the file chooser is not an URL", e);
-                    return null;
-                }
-            }
+        Label horizontalLine = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-            protected boolean checkState() {
-                return true;
-            }
-        });
+        Group settingsGroup = new Group(composite, SWT.NONE);
+        settingsGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        settingsGroup.setLayout(new GridLayout());
+        settingsGroup.setText("Global settings");
 
-        new Label(fieldParent, SWT.NONE); // space
-        Label explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation.setText("The url where your ivysettings file can be found. \n"
-                + "Leave empty to reference the default ivy settings.");
-        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
-                GridData.BEGINNING, false, false, 3, 1)); // space
+        settingsPathText = new SettingsPathText(settingsGroup, SWT.NONE);
+        settingsPathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        BooleanFieldEditor doR = new BooleanFieldEditor(PreferenceConstants.DO_RETRIEVE,
-                "Do a retrieve after resolve", fieldParent) {
-            protected void createControl(final Composite parent) {
-                super.createControl(parent);
-                final Button b = getChangeControl(parent);
-                b.addSelectionListener(new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e) {
-                        pattern.setEnabled(b.getSelection(), parent);
-                        retreiveSync.setEnabled(b.getSelection(), parent);
-                    }
-                });
-            }
-        };
-        pattern = new StringFieldEditor(PreferenceConstants.RETRIEVE_PATTERN, "Pattern",
-                fieldParent);
-        pattern.setEnabled(getPreferenceStore().getBoolean(PreferenceConstants.DO_RETRIEVE),
-            fieldParent);
-        retreiveSync = new BooleanFieldEditor(PreferenceConstants.RETRIEVE_SYNC,
-                "Delete old retrieved artifacts", fieldParent);
-        addField(doR);
-        addField(pattern);
-        addField(retreiveSync);
+        Group retrieveGroup = new Group(composite, SWT.NONE);
+        retrieveGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        retrieveGroup.setLayout(new GridLayout());
+        retrieveGroup.setText("Retrieve configuration");
 
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation
-                .setText("Pattern example: lib/[conf]/[artifact].[ext]\n"
-                        + "To copy artifacts in folder named lib without revision by folder named like configurations");
-        new Label(fieldParent, SWT.NONE).setLayoutData(new GridData(GridData.FILL,
-                GridData.BEGINNING, false, false, 3, 1)); // space
+        retrieveComposite = new RetrieveComposite(retrieveGroup, SWT.NONE);
+        retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        addField(new StringFieldEditor(PreferenceConstants.ACCEPTED_TYPES, "Accepted types",
-                fieldParent));
+        Group containerGroup = new Group(composite, SWT.NONE);
+        containerGroup.setText("Classpath container configuration");
+        containerGroup.setLayout(new GridLayout(3, false));
+        containerGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation
-                .setText("Comma separated list of artifact types to use in IvyDE Managed Dependencies Library\n"
-                        + "Example: jar, zip");
+        resolveInWorkspaceCheck = new Button(containerGroup, SWT.CHECK);
+        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace (EXPERIMENTAL)");
+        resolveInWorkspaceCheck
+                .setToolTipText("Will replace jars on the classpath with workspace projects");
 
-        addField(new StringFieldEditor(PreferenceConstants.SOURCES_TYPES, "Sources types",
-                fieldParent));
+        Label label = new Label(containerGroup, SWT.NONE);
+        label.setText("Order of the classpath entries:");
 
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation.setText("Comma separated list of artifact types to be used as sources. \n"
-                + "Example: source, src");
+        alphaOrderCheck = new Combo(containerGroup, SWT.READ_ONLY);
+        alphaOrderCheck
+                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+        alphaOrderCheck.setToolTipText("Order of the artifacts in the classpath container");
+        alphaOrderCheck.add("From the ivy.xml");
+        alphaOrderCheck.add("Lexical");
 
-        addField(new StringFieldEditor(PreferenceConstants.SOURCES_SUFFIXES, "Sources suffixes",
-                fieldParent));
+        acceptedSuffixesTypesComposite = new AcceptedSuffixesTypesComposite(containerGroup,
+                SWT.NONE);
+        acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+                true, false, 3, 1));
 
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation.setText("Comma separated list of suffixes to match sources and artifacts. \n"
-                + "Example: -source, -src");
+        Group editorGroup = new Group(composite, SWT.NONE);
+        editorGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+        editorGroup.setLayout(new GridLayout(2, false));
+        editorGroup.setText("Editor information");
 
-        addField(new StringFieldEditor(PreferenceConstants.JAVADOC_TYPES, "Javadoc types",
-                fieldParent));
+        label = new Label(editorGroup, SWT.NONE);
+        label.setText("Organisation:");
+        organizationText = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
+        organizationText
+                .setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation.setText("Comma separated list of artifact types to be used as javadoc. \n"
-                + "Example: javadoc");
-
-        addField(new StringFieldEditor(PreferenceConstants.JAVADOC_SUFFIXES, "Javadoc suffixes",
-                fieldParent));
-
-        new Label(fieldParent, SWT.NONE); // space
-        explanation = new Label(fieldParent, SWT.NONE);
-        explanation.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2,
-                1));
-        explanation.setText("Comma separated list of suffixes to match javadocs and artifacts. \n"
-                + "Example: -javadoc, -doc");
-
-        spacer = new Label(fieldParent, SWT.NONE);
-        spacerData = new GridData();
-        spacerData.horizontalSpan = 3;
-        spacer.setLayoutData(spacerData);
-
-        ComboFieldEditor alphaOrder = new ComboFieldEditor(PreferenceConstants.ALPHABETICAL_ORDER,
-                "Order in the classpath container", new String[][] {
-                        {"From the ivy.xml", "false"}, {"Lexical", "true"}}, fieldParent);
-        addField(alphaOrder);
-
-        spacer = new Label(fieldParent, SWT.NONE);
-        spacerData = new GridData();
-        spacerData.horizontalSpan = 3;
-        spacer.setLayoutData(spacerData);
-
-        BooleanFieldEditor resolveInWorkspace = new BooleanFieldEditor(
-                PreferenceConstants.RESOLVE_IN_WORKSPACE,
-                "Resolve dependencies to workspace projects", fieldParent);
-        addField(resolveInWorkspace);
-
-        spacer = new Label(fieldParent, SWT.NONE);
-        spacerData = new GridData();
-        spacerData.horizontalSpan = 3;
-        spacer.setLayoutData(spacerData);
-
-        spacer = new Label(fieldParent, SWT.NONE);
-        spacerData = new GridData();
-        spacerData.horizontalSpan = 3;
-        spacer.setLayoutData(spacerData);
-        spacer.setText("Editor information");
-        spacer = new Label(fieldParent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        spacer.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
-        addField(new StringFieldEditor(PreferenceConstants.ORGANISATION, "&Organisation:",
-                fieldParent));
-        addField(new StringFieldEditor(PreferenceConstants.ORGANISATION_URL, "Organisation &URL:",
-                fieldParent));
+        label = new Label(editorGroup, SWT.NONE);
+        label.setText("Organisation URL:");
+        organizationUrlText = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
+        organizationUrlText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true,
+                false));
         // CheckStyle:MagicNumber| ON
+
+        initPreferences();
+
+        return composite;
     }
 
+    private void initPreferences() {
+        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+        settingsPathText.init(helper.getIvySettingsPath());
+        retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
+                .getRetrieveSync());
+        resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
+        alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
+        acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
+            helper.getSourceSuffixes(), helper.getJavadocTypes(), helper.getJavadocSuffixes());
+        organizationText.setText(helper.getIvyOrg());
+        organizationUrlText.setText(helper.getIvyOrgUrl());
+    }
+
+    public boolean performOk() {
+        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+        helper.setIvySettingsPath(settingsPathText.getSettingsPath());
+        helper.setDoRetrieve(retrieveComposite.isRetrieveEnabled());
+        helper.setRetrievePattern(retrieveComposite.getRetrievePattern());
+        helper.setRetrieveSync(retrieveComposite.isSyncEnabled());
+        helper.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
+        helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
+        helper.setAcceptedTypes(acceptedSuffixesTypesComposite.getAcceptedTypes());
+        helper.setSourceTypes(acceptedSuffixesTypesComposite.getSourcesTypes());
+        helper.setSourceSuffixes(acceptedSuffixesTypesComposite.getSourceSuffixes());
+        helper.setJavadocTypes(acceptedSuffixesTypesComposite.getJavadocTypes());
+        helper.setJavadocSuffixes(acceptedSuffixesTypesComposite.getJavadocSuffixes());
+        helper.setOrganization(organizationText.getText());
+        helper.setOrganizationUrl(organizationUrlText.getText());
+        return true;
+    }
+
+    protected void performDefaults() {
+        settingsPathText.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH);
+        retrieveComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_DO_RETRIEVE,
+            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_PATTERN,
+            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_SYNC);
+        resolveInWorkspaceCheck
+                .setSelection(IvyDEPreferenceStoreHelper.DEFAULT_RESOLVE_IN_WORKSPACE);
+        alphaOrderCheck.select(IvyDEPreferenceStoreHelper.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
+        acceptedSuffixesTypesComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_ACCEPTED_TYPES,
+            IvyDEPreferenceStoreHelper.DEFAULT_SOURCES_TYPES,
+            IvyDEPreferenceStoreHelper.DEFAULT_SOURCES_SUFFIXES,
+            IvyDEPreferenceStoreHelper.DEFAULT_JAVADOC_TYPES,
+            IvyDEPreferenceStoreHelper.DEFAULT_JAVADOC_SUFFIXES);
+        organizationText.setText(IvyDEPreferenceStoreHelper.DEFAULT_ORGANISATION);
+        organizationUrlText.setText(IvyDEPreferenceStoreHelper.DEFAULT_ORGANISATION_URL);
+    }
 }
