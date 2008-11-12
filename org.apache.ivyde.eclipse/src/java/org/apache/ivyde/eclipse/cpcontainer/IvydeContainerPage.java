@@ -466,6 +466,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     void updateFieldsStatusRetrieve() {
         boolean projectSpecific = retrieveProjectSpecificButton.getSelection();
+        retrieveGeneralSettingsLink.setEnabled(!projectSpecific);
         retrieveComposite.setEnabled(projectSpecific);
     }
 
