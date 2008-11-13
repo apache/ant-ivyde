@@ -107,7 +107,7 @@ public class ConfTableViewer extends Composite {
     public void init(List/* <String> */confs) {
         if (md != null) {
             Configuration[] configurations = md.getConfigurations();
-            if ("*".equals(confs.get(0))) {
+            if (confs.size() != 0 && "*".equals(confs.get(0))) {
                 confTableViewer.setCheckedElements(configurations);
             } else {
                 for (int i = 0; i < confs.size(); i++) {
