@@ -146,7 +146,7 @@ public class IvyNewWizard extends Wizard implements INewWizard {
             }
             stream.close();
         } catch (IOException e) {
-            throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID,
+            throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, 
                     "The ivy.xml could not be created", e));
         }
         monitor.worked(1);

@@ -26,18 +26,22 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 
@@ -50,11 +54,13 @@ public class SettingsPathText extends Composite {
 
     private Text settingsText;
 
-    private ControlDecoration settingsTextDeco;
+    private DecoratedField settingsTextDeco;
 
     private final List listeners = new ArrayList();
 
     private IvyDEException settingsError;
+
+    private FieldDecoration errorDecoration;
 
     public SettingsPathText(Composite parent, int style) {
         super(parent, style);
@@ -63,26 +69,37 @@ public class SettingsPathText extends Composite {
         layout.marginWidth = 0;
         setLayout(layout);
 
-        Image errorDecoImage = FieldDecorationRegistry.getDefault().getFieldDecoration(
-            FieldDecorationRegistry.DEC_ERROR).getImage();
+        errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
+            FieldDecorationRegistry.DEC_ERROR);
 
-        settingsText = new Text(this, SWT.SINGLE | SWT.BORDER);
+        settingsTextDeco = new DecoratedField(this, SWT.LEFT | SWT.TOP, new IControlCreator() {
+            public Control createControl(Composite parent, int style) {
+                return new Text(parent, SWT.SINGLE | SWT.BORDER);
+            }
+        });
+        settingsTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
+        // settingsTextDeco.setMarginWidth(2);
+        settingsTextDeco.hideDecoration(errorDecoration);     
+        // this doesn't work well: we want the decoration image to be clickable, but it actually
+        // hides the clickable area
+        // settingsTextDeco.getLayoutControl().addMouseListener(new MouseAdapter() {
+        // public void mouseDoubleClick(MouseEvent e) {
+        // super.mouseDoubleClick(e);
+        // }
+        // public void mouseDown(MouseEvent e) {
+        // if (settingsError != null) {
+        // settingsError.show(IStatus.ERROR, "IvyDE configuration problem", null);
+        // }
+        // }
+        // });
+
+        settingsText = (Text) settingsTextDeco.getControl();
         settingsText.setToolTipText(TOOLTIP_SETTINGS);
-        settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        settingsTextDeco.getLayoutControl().setLayoutData(
+            new GridData(GridData.FILL, GridData.FILL, true, false));
         settingsText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 settingsPathUpdated();
-            }
-        });
-        settingsTextDeco = new ControlDecoration(settingsText, SWT.LEFT | SWT.TOP);
-        settingsTextDeco.setMarginWidth(2);
-        settingsTextDeco.setImage(errorDecoImage);
-        settingsTextDeco.hide();
-        settingsTextDeco.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                if (settingsError != null) {
-                    settingsError.show(IStatus.ERROR, "IvyDE configuration problem", null);
-                }
             }
         });
 
@@ -137,12 +154,13 @@ public class SettingsPathText extends Composite {
     public void setSettingsError(IvyDEException error) {
         if (error == null) {
             settingsError = null;
-            settingsTextDeco.hide();
+            settingsTextDeco.hideDecoration(errorDecoration);
             settingsTextDeco.hideHover();
         } else if (!error.equals(settingsError)) {
             settingsError = error;
-            settingsTextDeco.show();
+            settingsTextDeco.showDecoration(errorDecoration);
             if (settingsText.isVisible()) {
+                errorDecoration.setDescription(error.getShortMsg());
                 settingsTextDeco.showHoverText(error.getShortMsg());
             }
         }
@@ -150,6 +168,7 @@ public class SettingsPathText extends Composite {
 
     public void updateErrorMarker() {
         if (isVisible() && settingsError != null) {
+            errorDecoration.setDescription(settingsError.getShortMsg());
             settingsTextDeco.showHoverText(settingsError.getShortMsg());
         } else {
             settingsTextDeco.hideHover();

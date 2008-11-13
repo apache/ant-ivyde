@@ -28,19 +28,23 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
@@ -54,7 +58,7 @@ public class IvyFilePathText extends Composite {
 
     private Text ivyFilePathText;
 
-    private ControlDecoration ivyFilePathTextDeco;
+    private DecoratedField ivyFilePathTextDeco;
 
     private IvyDEException ivyXmlError;
 
@@ -64,6 +68,8 @@ public class IvyFilePathText extends Composite {
 
     private Button browseButton;
 
+    private FieldDecoration errorDecoration;
+
     public IvyFilePathText(Composite parent, int style, IJavaProject project) {
         super(parent, style);
         GridLayout layout = new GridLayout(2, false);
@@ -72,25 +78,32 @@ public class IvyFilePathText extends Composite {
         setLayout(layout);
         this.project = project;
 
-        Image errorDecoImage = FieldDecorationRegistry.getDefault().getFieldDecoration(
-            FieldDecorationRegistry.DEC_ERROR).getImage();
+        errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
+            FieldDecorationRegistry.DEC_ERROR);
 
-        ivyFilePathText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        ivyFilePathTextDeco = new DecoratedField(this, SWT.LEFT | SWT.TOP, new IControlCreator() {
+            public Control createControl(Composite parent, int style) {
+                return new Text(parent, SWT.SINGLE | SWT.BORDER);
+            }
+        });
+        ivyFilePathTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
+        ivyFilePathTextDeco.hideDecoration(errorDecoration);
+        // this doesn't work well: we want the decoration image to be clickable, but it actually
+        // hides the clickable area
+        // ivyFilePathTextDeco.getLayoutControl().addMouseListener(new MouseAdapter() {
+        // public void mouseDown(MouseEvent e) {
+        // if (ivyXmlError != null) {
+        // ivyXmlError.show(IStatus.ERROR, "IvyDE configuration problem", null);
+        // }
+        // }
+        // });
+
+        ivyFilePathText = (Text) ivyFilePathTextDeco.getControl();
+        ivyFilePathTextDeco.getLayoutControl().setLayoutData(
+            new GridData(GridData.FILL, GridData.FILL, true, false));
         ivyFilePathText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent ev) {
                 ivyXmlPathUpdated();
-            }
-        });
-        ivyFilePathTextDeco = new ControlDecoration(ivyFilePathText, SWT.LEFT | SWT.TOP);
-        ivyFilePathTextDeco.setMarginWidth(2);
-        ivyFilePathTextDeco.setImage(errorDecoImage);
-        ivyFilePathTextDeco.hide();
-        ivyFilePathTextDeco.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                if (ivyXmlError != null) {
-                    ivyXmlError.show(IStatus.ERROR, "IvyDE configuration problem", null);
-                }
             }
         });
 
@@ -131,12 +144,13 @@ public class IvyFilePathText extends Composite {
     public void setIvyXmlError(IvyDEException error) {
         if (error == null) {
             ivyXmlError = null;
-            ivyFilePathTextDeco.hide();
+            ivyFilePathTextDeco.hideDecoration(errorDecoration);
             ivyFilePathTextDeco.hideHover();
         } else if (!error.equals(ivyXmlError)) {
             ivyXmlError = error;
-            ivyFilePathTextDeco.show();
+            ivyFilePathTextDeco.showDecoration(errorDecoration);
             if (ivyFilePathText.isVisible()) {
+                errorDecoration.setDescription(error.getShortMsg());
                 ivyFilePathTextDeco.showHoverText(error.getShortMsg());
             }
         }
@@ -144,6 +158,7 @@ public class IvyFilePathText extends Composite {
 
     public void updateErrorMarker() {
         if (isVisible() && ivyXmlError != null) {
+            errorDecoration.setDescription(ivyXmlError.getShortMsg());
             ivyFilePathTextDeco.showHoverText(ivyXmlError.getShortMsg());
         } else {
             ivyFilePathTextDeco.hideHover();
