@@ -226,7 +226,7 @@ You have to specify the Ivy to install with one of the following property:
                 <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar"/>
             </first>
         </path>
-        <property name="ivy.jar.url" value="file://${toString:ivy.jar.path}" />
+        <makeurl property="ivy.jar.url" file="${toString:ivy.jar.path}" />
         <echo message="${ivy.jar.url}" />
     </target>
 
