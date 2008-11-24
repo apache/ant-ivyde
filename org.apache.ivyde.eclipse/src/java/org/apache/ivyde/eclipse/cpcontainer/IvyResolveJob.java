@@ -35,9 +35,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.ArtifactOrigin;
-import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
 import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
@@ -46,13 +43,11 @@ import org.apache.ivy.core.event.download.StartArtifactDownloadEvent;
 import org.apache.ivy.core.event.resolve.EndResolveDependencyEvent;
 import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -548,11 +543,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 return new Path(otherAdr.getLocalFile().getAbsolutePath());
             }
         }
-        if (shouldTestNonDeclaredSources()) {
-            return getMetaArtifactPath(adr, "source", "sources");
-        } else {
-            return null;
-        }
+        return null;
     }
 
     private Path getJavadocArtifactPath(ArtifactDownloadReport adr, Collection all) {
@@ -566,87 +557,6 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                     && a.getId().equals(artifact.getId()) && isJavadoc(a)) {
                 return new Path(otherAdr.getLocalFile().getAbsolutePath());
-            }
-        }
-        if (shouldTestNonDeclaredJavadocs()) {
-            return getMetaArtifactPath(adr, "javadoc", "javadoc");
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * meta artifact (source or javadoc) not found in resolved artifacts, try to see if a non
-     * declared one is available
-     */
-    private Path getMetaArtifactPath(ArtifactDownloadReport adr, String metaType,
-            String metaClassifier) {
-        Artifact artifact = adr.getArtifact();
-        Map extraAtt = new HashMap(artifact.getExtraAttributes());
-        extraAtt.put("classifier", metaClassifier);
-        Artifact metaArtifact = new DefaultArtifact(artifact.getModuleRevisionId(), artifact
-                .getPublicationDate(), artifact.getName(), metaType, "jar", extraAtt);
-        RepositoryCacheManager cache = ivy.getSettings()
-                .getResolver(artifact.getModuleRevisionId()).getRepositoryCacheManager();
-        if (!(cache instanceof DefaultRepositoryCacheManager)) {
-            /*
-             * we're not using a default implementation of repository cache manager, so we don't
-             * cache attempts to locate metadata artifacts
-             */
-            Path metaArtifactLocalPath = downloadMetaArtifact(adr, metaType, metaArtifact);
-            if (metaArtifactLocalPath != null) {
-                return metaArtifactLocalPath;
-            }
-            Message.info(metaType + " not found for " + artifact);
-            Message
-                    .verbose("Attempt not stored in cache because a non Default cache implementation is used.");
-            return null;
-        }
-
-        File metaArtifactFile = ((DefaultRepositoryCacheManager) cache)
-                .getArchiveFileInCache(metaArtifact);
-        File attempt = new File(metaArtifactFile.getAbsolutePath() + ".notfound");
-        if (metaArtifactFile.exists()) {
-            return new Path(metaArtifactFile.getAbsolutePath());
-        } else if (attempt.exists()) {
-            return null;
-        }
-        Path metaArtifactLocalPath = downloadMetaArtifact(adr, metaType, metaArtifact);
-        if (metaArtifactLocalPath != null) {
-            return metaArtifactLocalPath;
-        }
-        Message.info(metaType + " not found for " + artifact);
-        /*
-         * meta artifact not found, we store this information to avoid other attempts later
-         */
-        try {
-            attempt.getParentFile().mkdirs();
-            attempt.createNewFile();
-        } catch (IOException e) {
-            Message.error("impossible to create attempt file " + attempt + ": " + e);
-        }
-        return null;
-    }
-
-    private Path downloadMetaArtifact(ArtifactDownloadReport adr, String metaType,
-            Artifact metaArtifact) {
-        Artifact artifact = adr.getArtifact();
-        Message.info("checking " + metaType + " for " + artifact);
-        ArtifactOrigin origin = ivy.getResolveEngine().locate(metaArtifact);
-        if (!ArtifactOrigin.isUnknown(origin)) {
-            /*
-             * fix for IVYDE-117: we need to check that the location of this metadata artifact is
-             * different from the original artifact
-             */
-            if (adr.getArtifactOrigin() != null
-                    && (ArtifactOrigin.isUnknown(adr.getArtifactOrigin()) || !origin.getLocation()
-                            .equals(adr.getArtifactOrigin().getLocation()))) {
-                ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(origin,
-                    new DownloadOptions());
-                File localFile = metaAdr.getLocalFile();
-                if (localFile != null && localFile.exists()) {
-                    return new Path(localFile.getAbsolutePath());
-                }
             }
         }
         return null;
@@ -700,14 +610,6 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url.toExternalForm()));
         }
         return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
-    }
-
-    public boolean shouldTestNonDeclaredSources() {
-        return true; // TODO: add settings for that
-    }
-
-    public boolean shouldTestNonDeclaredJavadocs() {
-        return true; // TODO: add settings for that
     }
 
     public boolean isJavadocArtifactName(String jar, String javadoc) {
