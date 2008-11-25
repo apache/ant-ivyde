@@ -55,6 +55,8 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.filter.ArtifactTypeFilter;
+import org.apache.ivy.util.filter.Filter;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
@@ -448,6 +450,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             monitor.setTaskName("retrieving dependencies in " + pattern);
             RetrieveOptions c = new RetrieveOptions().setConfs(confs);
             c.setSync(conf.getInheritedRetrieveSync());
+            c.setConfs(conf.getInheritedRetrieveConfs().split(","));
+            c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil.split(conf
+                    .getInheritedRetrieveTypes())));
             ivy.retrieve(md.getModuleRevisionId(), pattern, c);
         }
     }

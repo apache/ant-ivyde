@@ -33,11 +33,21 @@ public class RetrieveComposite extends Composite {
             + "To copy artifacts in folder named lib without revision by folder"
             + " named like configurations";
 
+    public static final String TOOLTIP_RETRIEVE_CONFS = "Comma separated list of configuration to retrieve\n"
+        +"Exemple: '*' or 'compile,test'";
+
+    public static final String TOOLTIP_RETRIEVE_TYPES = "Comma separated list of types to retrieve\n"
+        +"Exemple: '*' or 'jar,source'";
+
     private Button doRetrieveButton;
 
     private Text retrievePatternText;
 
     private Button retrieveSyncButton;
+
+    private Text confsText;
+
+    private Text typesText;
 
     public RetrieveComposite(Composite parent, int style) {
         super(parent, style);
@@ -65,10 +75,28 @@ public class RetrieveComposite extends Composite {
                 2, 1));
         retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
 
+        label = new Label(this, SWT.NONE);
+        label.setText("Configurations:");
+
+        confsText = new Text(this, SWT.SINGLE | SWT.BORDER);
+        confsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        confsText.setEnabled(doRetrieveButton.getSelection());
+        confsText.setToolTipText(TOOLTIP_RETRIEVE_CONFS);
+
+        label = new Label(this, SWT.NONE);
+        label.setText("Types:");
+
+        typesText = new Text(this, SWT.SINGLE | SWT.BORDER);
+        typesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        typesText.setEnabled(doRetrieveButton.getSelection());
+        typesText.setToolTipText(TOOLTIP_RETRIEVE_TYPES);
+        
         doRetrieveButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 retrievePatternText.setEnabled(doRetrieveButton.getSelection());
                 retrieveSyncButton.setEnabled(doRetrieveButton.getSelection());
+                confsText.setEnabled(doRetrieveButton.getSelection());
+                typesText.setEnabled(doRetrieveButton.getSelection());
             }
         });
     }
@@ -85,10 +113,20 @@ public class RetrieveComposite extends Composite {
         return retrievePatternText.getText();
     }
 
-    public void init(boolean doRetrieve, String retrievePattern, boolean retrieveSync) {
+    public String getRetrieveConfs() {
+        return confsText.getText();
+    }
+
+    public String getRetrieveTypes() {
+        return typesText.getText();
+    }
+
+    public void init(boolean doRetrieve, String retrievePattern, String confs, String types, boolean retrieveSync) {
         doRetrieveButton.setSelection(doRetrieve);
         retrievePatternText.setText(retrievePattern);
         retrieveSyncButton.setSelection(retrieveSync);
+        confsText.setText(confs);
+        typesText.setText(types);
     }
 
     public void setEnabled(boolean enabled) {
@@ -96,5 +134,7 @@ public class RetrieveComposite extends Composite {
         doRetrieveButton.setEnabled(enabled);
         retrievePatternText.setEnabled(enabled && doRetrieveButton.getSelection());
         retrieveSyncButton.setEnabled(enabled && doRetrieveButton.getSelection());
+        confsText.setEnabled(enabled && doRetrieveButton.getSelection());
+        typesText.setEnabled(enabled && doRetrieveButton.getSelection());
     }
 }

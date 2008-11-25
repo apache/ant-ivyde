@@ -47,6 +47,10 @@ public class IvyDEPreferenceStoreHelper {
 
     public static final boolean DEFAULT_RETRIEVE_SYNC = false;
 
+    public static final String DEFAULT_RETRIEVE_CONFS = "*";
+
+    public static final String DEFAULT_RETRIEVE_TYPES = "*";
+
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
@@ -78,6 +82,8 @@ public class IvyDEPreferenceStoreHelper {
         }
 
         prefStore.setDefault(PreferenceConstants.RETRIEVE_PATTERN, DEFAULT_RETRIEVE_PATTERN);
+        prefStore.setDefault(PreferenceConstants.RETRIEVE_CONFS, DEFAULT_RETRIEVE_CONFS);
+        prefStore.setDefault(PreferenceConstants.RETRIEVE_TYPES, DEFAULT_RETRIEVE_TYPES);
         String s = prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED);
         if (s != null && s.length() != 0) {
             // not the default value, so it has been set
@@ -178,6 +184,22 @@ public class IvyDEPreferenceStoreHelper {
 
     public void setRetrieveSync(boolean sync) {
         prefStore.setValue(PreferenceConstants.RETRIEVE_SYNC, sync);
+    }
+
+    public String getRetrieveConfs() {
+        return prefStore.getString(PreferenceConstants.RETRIEVE_CONFS);
+    }
+
+    public void setRetrieveConfs(String confs) {
+        prefStore.setValue(PreferenceConstants.RETRIEVE_CONFS, confs);
+    }
+
+    public String getRetrieveTypes() {
+        return prefStore.getString(PreferenceConstants.RETRIEVE_TYPES);
+    }
+
+    public void setRetrieveTypes(String types) {
+        prefStore.setValue(PreferenceConstants.RETRIEVE_TYPES, types);
     }
 
     public boolean isAlphOrder() {

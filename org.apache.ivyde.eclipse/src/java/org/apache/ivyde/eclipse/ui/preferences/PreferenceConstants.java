@@ -58,8 +58,13 @@ public final class PreferenceConstants {
 
     public static final String RETRIEVE_SYNC = "retrieve.sync";
 
+    public static final String RETRIEVE_CONFS = "retrieve.confs";
+
+    public static final String RETRIEVE_TYPES = "retrieve.types";
+
     public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
     public static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
+
 
 }

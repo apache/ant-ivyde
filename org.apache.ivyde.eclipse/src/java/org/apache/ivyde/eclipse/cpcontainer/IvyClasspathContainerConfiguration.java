@@ -89,6 +89,10 @@ public class IvyClasspathContainerConfiguration {
 
     boolean retrieveSync = false;
 
+    String retrieveConfs = "*";
+
+    String retrieveTypes = "*";
+
     boolean alphaOrder;
 
     boolean resolveInWorkspace;
@@ -205,6 +209,12 @@ public class IvyClasspathContainerConfiguration {
             } else if (parameter[0].equals("retrieveSync")) {
                 retrieveSync = Boolean.valueOf(value).booleanValue();
                 isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("retrieveConfs")) {
+                retrieveConfs = value;
+                isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("retrieveTypes")) {
+                retrieveTypes = value;
+                isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("acceptedTypes")) {
                 acceptedTypes = IvyClasspathUtil.split(value);
                 isAdvancedProjectSpecific = true;
@@ -305,6 +315,10 @@ public class IvyClasspathContainerConfiguration {
                 path.append(URLEncoder.encode(retrievePattern, "UTF-8"));
                 path.append("&retrieveSync=");
                 path.append(URLEncoder.encode(Boolean.toString(retrieveSync), "UTF-8"));
+                path.append("&retrieveConfs=");
+                path.append(URLEncoder.encode(retrieveConfs, "UTF-8"));
+                path.append("&retrieveTypes=");
+                path.append(URLEncoder.encode(retrieveTypes, "UTF-8"));
             }
             if (isAdvancedProjectSpecific) {
                 path.append("&acceptedTypes=");
@@ -564,6 +578,20 @@ public class IvyClasspathContainerConfiguration {
             return IvyPlugin.getPreferenceStoreHelper().getRetrievePattern();
         }
         return retrievePattern;
+    }
+
+    public String getInheritedRetrieveConfs() {
+        if (!isRetrieveProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getRetrieveConfs();
+        }
+        return retrieveConfs;
+    }
+
+    public String getInheritedRetrieveTypes() {
+        if (!isRetrieveProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getRetrieveTypes();
+        }
+        return retrieveTypes;
     }
 
     public boolean getInheritedRetrieveSync() {

@@ -132,6 +132,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
             conf.retrievePattern = retrieveComposite.getRetrievePattern();
             conf.retrieveSync = retrieveComposite.isSyncEnabled();
+            conf.retrieveConfs = retrieveComposite.getRetrieveConfs();
+            conf.retrieveTypes = retrieveComposite.getRetrieveTypes();
             conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
             conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
         } else {
@@ -432,10 +434,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         if (conf.isRetrieveProjectSpecific()) {
             retrieveProjectSpecificButton.setSelection(true);
-            retrieveComposite.init(conf.doRetrieve, conf.retrievePattern, conf.retrieveSync);
+            retrieveComposite.init(conf.doRetrieve, conf.retrievePattern, conf.retrieveConfs,
+                conf.retrieveTypes, conf.retrieveSync);
         } else {
             retrieveProjectSpecificButton.setSelection(false);
-            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
+            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper.getRetrieveConfs(), helper.getRetrieveTypes(), helper
                     .getRetrieveSync());
         }
 

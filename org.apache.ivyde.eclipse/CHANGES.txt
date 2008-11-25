@@ -8,6 +8,7 @@
 - NEW: Add errors marker to the Ivy container (IVYDE-78)
 - NEW: Handle a project: scheme for the path of the ivysettings.xml (IVYDE-94)
 - NEW: Need CleanCache task in context menu (IVYDE-114)
+- NEW: Retrieve after resolve feature does not fetch only accepted jar types artifact (IVYDE-106)
 
 - IMPROVE: Split the configuration panel (IVYDE-119)
 - IMPROVE: Support latest dev version of ivy.jar in IVYDE build (IVYDE-122)

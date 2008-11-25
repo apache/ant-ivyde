@@ -158,7 +158,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         settingsPathText.init(helper.getIvySettingsPath());
         retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
-                .getRetrieveSync());
+                .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
         resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
         acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
@@ -173,6 +173,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         helper.setDoRetrieve(retrieveComposite.isRetrieveEnabled());
         helper.setRetrievePattern(retrieveComposite.getRetrievePattern());
         helper.setRetrieveSync(retrieveComposite.isSyncEnabled());
+        helper.setRetrieveConfs(retrieveComposite.getRetrieveConfs());
+        helper.setRetrieveTypes(retrieveComposite.getRetrieveTypes());
         helper.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
         helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
         helper.setAcceptedTypes(acceptedSuffixesTypesComposite.getAcceptedTypes());
@@ -189,6 +191,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         settingsPathText.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH);
         retrieveComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_DO_RETRIEVE,
             IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_PATTERN,
+            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_CONFS,
+            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_TYPES,
             IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_SYNC);
         resolveInWorkspaceCheck
                 .setSelection(IvyDEPreferenceStoreHelper.DEFAULT_RESOLVE_IN_WORKSPACE);
