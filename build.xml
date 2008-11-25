@@ -251,6 +251,30 @@ You have to specify the Ivy to install with one of the following property:
 
     <!-- 
         ======================================================================================
+        Targets related to the installation of IvyDE in the Eclipse install
+        ======================================================================================
+     -->
+
+    <target name="clean-installed-ivyde" description="Remove every IvyDE version installed in Eclipse">
+        <delete>
+            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivyde*.jar"/>
+            <fileset dir="${baseLocation}/features/" includes="org.apache.ivyde*.jar"/>
+        </delete>
+    </target>
+
+    <target name="list-installed-ivyde" depends="check-baseLocation" description="List the IvyDE plugin(s) in your Eclipse install">
+        <path id="ivyde.eclipse.paths">
+            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivyde*.jar"/>
+        </path>
+        <echo message="The IvyDE installed in ${baseLocation}: ${toString:ivyde.eclipse.paths}" />
+    </target>
+
+    <target name="install" depends="dist,clean-installed-ivyde" description="Install the IvyDE bundle into the eclipse install">
+        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${baseLocation}"/>
+    </target>
+
+    <!-- 
+        ======================================================================================
         Targets related to the checksums of the distribution
         ======================================================================================
      -->
