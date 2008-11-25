@@ -7,8 +7,7 @@ Bundle-ClassPath: ivyde-eclipse.jar
 Bundle-Activator: org.apache.ivyde.eclipse.IvyPlugin
 Bundle-Vendor: Apache Software Foundation
 Bundle-Localization: plugin
-Export-Package: .,
- org.apache.ivyde.eclipse,
+Export-Package: org.apache.ivyde.eclipse,
  org.apache.ivyde.eclipse.cpcontainer,
  org.apache.ivyde.eclipse.cpcontainer.fragmentinfo,
  org.apache.ivyde.eclipse.ui.actions,
