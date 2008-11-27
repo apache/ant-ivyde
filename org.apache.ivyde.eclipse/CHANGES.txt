@@ -1,7 +1,7 @@
 				IvyDE 
 				============================================
 
-  next
+  version 2.0.0 beta1
 ==========================
 - NEW: settings files code completion support (IVYDE-22)
 - NEW: Option to resolve to local eclipse projects (IVYDE-89) (thanks to Antony James Wilkins and Matt Goldspink)
