@@ -1,6 +1,10 @@
 				IvyDE 
 				============================================
 
+  version 2.0.0 final
+==========================
+- FIX: When migrating from ivyde alpha to ivyde beta eclipse is throwing NPE at startup (IVYDE-136) (thanks to Daniel Becheanu)
+
   version 2.0.0 beta1
 ==========================
 - NEW: settings files code completion support (IVYDE-22)

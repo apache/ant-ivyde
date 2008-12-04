@@ -77,7 +77,7 @@ public class IvyDEPreferenceStoreHelper {
         if (b) {
             // not the default value, so it has been set
             // erase the deprecated preference and store the new one
-            prefStore.setValue(PreferenceConstants.DO_RETRIEVE_DEPRECATED, null);
+            prefStore.setValue(PreferenceConstants.DO_RETRIEVE_DEPRECATED, "");
             prefStore.setValue(PreferenceConstants.DO_RETRIEVE, b);
         }
 
@@ -88,7 +88,7 @@ public class IvyDEPreferenceStoreHelper {
         if (s != null && s.length() != 0) {
             // not the default value, so it has been set
             // erase the deprecated preference and store the new one
-            prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED, null);
+            prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED, "");
             prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN, s);
         }
 
