@@ -128,13 +128,12 @@ Then it is time to tag the release:
 
 The binaries have to be pushed with their signatures and checksums in the apache dist directory. On people.apache.org:
 <pre>
-mkdir /www/www.apache.org/dist/ant/ivyde/$VERSION
-cp /home/$LOGIN/public_html/ivyde-$VERSION/* $LOGIN@people.apache.org:/www/www.apache.org/dist/ant/ivyde/$VERSION
+cp -R ~/public_html/ivyde-$VERSION /www/www.apache.org/dist/ant/ivyde/$VERSION
 </pre>
 
 <h2>Deploy the updatesite</h2>
 
-Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/updatesite.html
+Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html#deployment
 
 <h1>Update the documentation</h1>
 
@@ -166,6 +165,10 @@ Then we need to edit svn/site/ivyde/toc.json:
             "title":"Documentation ($VERSION)"
 </pre>
 </li></ul>
+
+Then svn update your working copy (to retrieve the new history branch).
+
+And commit and proceed to the classical deployment of the website.
 
 <h1>Post release tasks</h1>
 
