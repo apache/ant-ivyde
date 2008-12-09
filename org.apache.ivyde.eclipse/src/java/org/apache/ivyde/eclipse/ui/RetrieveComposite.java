@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class RetrieveComposite extends Composite {
 
-    public static final String TOOLTIP_RETRIEVE_PATTERN = "Example: lib/[conf]/[artifact].[ext]\n"
+    public static final String TOOLTIP_RETRIEVE_PATTERN = "Exemple: lib/[conf]/[artifact].[ext]\n"
             + "To copy artifacts in folder named lib without revision by folder"
             + " named like configurations";
 
