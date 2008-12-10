@@ -56,7 +56,6 @@ import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
-import org.apache.ivy.util.filter.Filter;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
@@ -265,7 +264,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                     confs = r.getConfigurations();
                                     dependencies = listDependencies(r);
                                     problemMessages.addAll(r.getAllProblemMessages());
-                                    maybeRetrieve(md, confs);
+                                    maybeRetrieve(md);
 
                                     break;
                                 }
@@ -289,7 +288,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                 return;
                             }
 
-                            maybeRetrieve(md, confs);
+                            maybeRetrieve(md);
                         }
 
                         warnIfDuplicates(all);
@@ -443,16 +442,19 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
     }
 
-    private void maybeRetrieve(ModuleDescriptor md, String[] confs) throws IOException {
+    private void maybeRetrieve(ModuleDescriptor md) throws IOException {
         if (conf.getInheritedDoRetrieve()) {
             String pattern = conf.javaProject.getProject().getLocation().toPortableString() + "/"
                     + conf.getInheritedRetrievePattern();
             monitor.setTaskName("retrieving dependencies in " + pattern);
-            RetrieveOptions c = new RetrieveOptions().setConfs(confs);
+            RetrieveOptions c = new RetrieveOptions();
             c.setSync(conf.getInheritedRetrieveSync());
             c.setConfs(conf.getInheritedRetrieveConfs().split(","));
-            c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil.split(conf
-                    .getInheritedRetrieveTypes())));
+            String inheritedRetrieveTypes = conf.getInheritedRetrieveTypes();
+            if (inheritedRetrieveTypes != null && !inheritedRetrieveTypes.equals("*")) {
+                c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil
+                        .split(inheritedRetrieveTypes)));
+            }
             ivy.retrieve(md.getModuleRevisionId(), pattern, c);
         }
     }
