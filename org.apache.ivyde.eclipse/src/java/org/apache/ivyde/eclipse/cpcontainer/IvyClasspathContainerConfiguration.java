@@ -356,7 +356,7 @@ public class IvyClasspathContainerConfiguration {
     }
 
     private void setConfStatus(IvyDEException e) {
-        if (!editing && confOk != (e == null)) {
+        if (!editing) {
             confOk = (e == null);
             IvyPlugin.getDefault().getContainerDecorator().statusChaged(this);
             if (e != null) {
@@ -439,6 +439,13 @@ public class IvyClasspathContainerConfiguration {
             String path = settingsPath.substring(pathIndex + 1);
             if (projectName.equals("")) {
                 IFile f = javaProject.getProject().getFile(path);
+                if (!f.exists()) {
+                    IvyDEException ex = new IvyDEException("Ivy settings file not found",
+                        "The Ivy settings file '" + ivySettingsPath + "' cannot be found ("
+                                + this.toString() + ")", null);
+                    setConfStatus(ex);
+                    throw ex;
+                }
                 File file = f.getLocation().toFile();
                 return getIvy(file);
             } else {
