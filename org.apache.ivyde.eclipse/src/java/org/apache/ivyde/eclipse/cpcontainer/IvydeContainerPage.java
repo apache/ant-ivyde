@@ -17,6 +17,8 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.util.Collections;
+
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
@@ -122,6 +124,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     public boolean finish() {
         conf.confs = confTableViewer.getSelectedConfigurations();
+        if (conf.confs.isEmpty()) {
+            conf.confs = Collections.singletonList("*");
+        }
+
         if (settingsProjectSpecificButton.getSelection()) {
             conf.ivySettingsPath = settingsText.getSettingsPath();
             conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();

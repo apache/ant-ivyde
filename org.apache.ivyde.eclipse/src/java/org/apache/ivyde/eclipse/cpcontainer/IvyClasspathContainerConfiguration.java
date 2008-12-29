@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
@@ -164,6 +165,9 @@ public class IvyClasspathContainerConfiguration {
         // load some configuration that can be loaded
         ivyXmlPath = path.removeFirstSegments(1).removeLastSegments(1).toString();
         confs = IvyClasspathUtil.split(path.lastSegment());
+        if (confs.isEmpty()) {
+            confs = Collections.singletonList("*");
+        }
         // the last part of the configuration coming from the preferences cannot be loaded due to
         // the bug described in IVYDE-70, so the configuration is let as the default one
     }
@@ -196,6 +200,9 @@ public class IvyClasspathContainerConfiguration {
                 ivyXmlPath = value;
             } else if (parameter[0].equals("confs")) {
                 confs = IvyClasspathUtil.split(value);
+                if (confs.isEmpty()) {
+                    confs = Collections.singletonList("*");
+                }
             } else if (parameter[0].equals("ivySettingsPath")) {
                 ivySettingsPath = readOldIvySettings(value);
             } else if (parameter[0].equals("doRetrieve")) {
@@ -441,7 +448,7 @@ public class IvyClasspathContainerConfiguration {
                 IFile f = javaProject.getProject().getFile(path);
                 if (!f.exists()) {
                     IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                        "The Ivy settings file '" + ivySettingsPath + "' cannot be found ("
+                        "The Ivy settings file '" + settingsPath + "' cannot be found ("
                                 + this.toString() + ")", null);
                     setConfStatus(ex);
                     throw ex;
@@ -449,32 +456,24 @@ public class IvyClasspathContainerConfiguration {
                 File file = f.getLocation().toFile();
                 return getIvy(file);
             } else {
-                try {
-                    IJavaProject[] javaProjects = JavaCore.create(
-                        ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-                    int i;
-                    for (i = 0; i < javaProjects.length; i++) {
-                        if (javaProjects[i].getProject().getName().equals(projectName)) {
-                            break;
-                        }
-                    }
-                    if (i == javaProjects.length) {
-                        IvyDEException ex = new IvyDEException("Project '" + projectName
-                                + "' not found", "The project name '" + projectName + "' from '"
-                                + settingsPath + "' was not found (" + this.toString() + ")", null);
-                        setConfStatus(ex);
-                        throw ex;
-                    }
-                    IFile f = javaProjects[i].getProject().getFile(path);
-                    File file = new File(f.getLocation().toOSString());
-                    return getIvy(file);
-                } catch (JavaModelException e) {
-                    IvyDEException ex = new IvyDEException("The workspace is broken",
-                            "The projects in the workspace could not be listed when resolving the settings ("
-                                    + this.toString() + ")", null);
+                IResource p = ResourcesPlugin.getWorkspace().getRoot().findMember(projectName);
+                if (p == null) {
+                    IvyDEException ex = new IvyDEException("Project '" + projectName
+                        + "' not found", "The project name '" + projectName + "' from '"
+                        + settingsPath + "' was not found (" + this.toString() + ")", null);
                     setConfStatus(ex);
                     throw ex;
                 }
+                IFile f = p.getProject().getFile(path);
+                if (!f.exists()) {
+                    IvyDEException ex = new IvyDEException("Ivy settings file not found",
+                        "The Ivy settings file '" + path + "' cannot be found in project '" 
+                        + projectName + "'", null);
+                    setConfStatus(ex);
+                    throw ex;
+                }
+                File file = new File(f.getLocation().toOSString());
+                return getIvy(file);
             }
         }
         // before returning the found ivy, try to refresh it if the settings changed
