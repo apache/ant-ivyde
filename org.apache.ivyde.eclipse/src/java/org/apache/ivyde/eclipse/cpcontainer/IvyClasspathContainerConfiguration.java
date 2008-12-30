@@ -259,8 +259,8 @@ public class IvyClasspathContainerConfiguration {
     }
 
     /**
-     * Read old configuration that were based on relative urls, like: "file://./ivysettings.xml".
-     * This kind of URL "project:///ivysettings.xml" should be used now.
+     * Read old configuration that were based on relative urls, like: "file://./ivysettings.xml" or
+     * "file:./ivysettings.xml". This kind of URL "project:///ivysettings.xml" should be used now.
      * 
      * @param value
      *            the value to read
@@ -280,9 +280,12 @@ public class IvyClasspathContainerConfiguration {
         if (file.exists()) {
             return value;
         }
-        // the file doesn't exist, so try to find out if it is a relative path to the project.
-        file = new File(javaProject.getProject().getFile(url.getPath()).getLocation().toOSString());
-        return PROJECT_SCHEME_PREFIX + url.getPath();
+        // the file doesn't exist, it is a relative path to the project.
+        String urlpath = url.getPath();
+        if (urlpath != null && urlpath.startsWith("./")) {
+            urlpath = urlpath.substring(1);
+        }
+        return PROJECT_SCHEME_PREFIX + urlpath;
     }
 
     private void checkNonNullConf() {
@@ -448,8 +451,8 @@ public class IvyClasspathContainerConfiguration {
                 IFile f = javaProject.getProject().getFile(path);
                 if (!f.exists()) {
                     IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                        "The Ivy settings file '" + settingsPath + "' cannot be found ("
-                                + this.toString() + ")", null);
+                            "The Ivy settings file '" + settingsPath + "' cannot be found ("
+                                    + this.toString() + ")", null);
                     setConfStatus(ex);
                     throw ex;
                 }
@@ -459,16 +462,16 @@ public class IvyClasspathContainerConfiguration {
                 IResource p = ResourcesPlugin.getWorkspace().getRoot().findMember(projectName);
                 if (p == null) {
                     IvyDEException ex = new IvyDEException("Project '" + projectName
-                        + "' not found", "The project name '" + projectName + "' from '"
-                        + settingsPath + "' was not found (" + this.toString() + ")", null);
+                            + "' not found", "The project name '" + projectName + "' from '"
+                            + settingsPath + "' was not found (" + this.toString() + ")", null);
                     setConfStatus(ex);
                     throw ex;
                 }
                 IFile f = p.getProject().getFile(path);
                 if (!f.exists()) {
                     IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                        "The Ivy settings file '" + path + "' cannot be found in project '" 
-                        + projectName + "'", null);
+                            "The Ivy settings file '" + path + "' cannot be found in project '"
+                                    + projectName + "'", null);
                     setConfStatus(ex);
                     throw ex;
                 }
