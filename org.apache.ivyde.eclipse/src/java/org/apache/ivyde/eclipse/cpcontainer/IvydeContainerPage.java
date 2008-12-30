@@ -150,6 +150,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
             conf.retrievePattern = retrieveComposite.getRetrievePattern();
             conf.retrieveSync = retrieveComposite.isSyncEnabled();
+            conf.retrieveConfs = retrieveComposite.getRetrieveConfs();
+            conf.retrieveTypes = retrieveComposite.getRetrieveTypes();
         } else {
             conf.isRetrieveProjectSpecific = false;
         }
