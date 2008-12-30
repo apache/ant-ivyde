@@ -7,6 +7,7 @@
 - FIX: The retrieve configuration doesn't support '*' as accepted types (IVYDE-137) (thanks to Daniel Becheanu)
 - FIX: NPE when a project:/// path is used and path does not exist (IVYDE-144)
 - FIX: project://[projectname]/ scheme for settings only work with java projects, not simple projects (IVYDE-145)
+- FIX: source and javadoc attachment regression (IVYDE-146)
 
   version 2.0.0 beta1
 ==========================
