@@ -9,7 +9,7 @@
 - FIX: project://[projectname]/ scheme for settings only work with java projects, not simple projects (IVYDE-145)
 - FIX: source and javadoc attachment regression (IVYDE-146)
 - FIX: IvyDE does not save "Configurations" and "Types" field values for "Retrive" tab  (IVYDE-142) (thanks to Daniel Becheanu)
-- FIX: Retrieve after resolve task fails because of wrong resolve configuration (IVYDE-142) (thanks to Daniel Becheanu)
+- FIX: Retrieve after resolve task fails because of wrong resolve configuration (IVYDE-140) (thanks to Daniel Becheanu)
 
   version 2.0.0 beta1
 ==========================
