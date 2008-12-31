@@ -83,7 +83,7 @@ public class IvyClasspathContainerDecorator implements ILabelDecorator {
         }
     }
 
-    public void statusChaged(IvyClasspathContainerConfiguration conf) {
+    public void statusChanged(IvyClasspathContainerConfiguration conf) {
         if (listenerList != null && !listenerList.isEmpty()) {
             ClassPathContainer elem = new ClassPathContainer(conf.javaProject, JavaCore
                     .newContainerEntry(conf.getPath()));

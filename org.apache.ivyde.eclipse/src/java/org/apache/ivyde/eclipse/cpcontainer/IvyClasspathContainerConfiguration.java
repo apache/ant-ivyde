@@ -368,7 +368,7 @@ public class IvyClasspathContainerConfiguration {
     private void setConfStatus(IvyDEException e) {
         if (!editing) {
             confOk = (e == null);
-            IvyPlugin.getDefault().getContainerDecorator().statusChaged(this);
+            IvyPlugin.getDefault().getContainerDecorator().statusChanged(this);
             if (e != null) {
                 setResolveStatus(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e
                         .getMessage(), e.getCause()));
