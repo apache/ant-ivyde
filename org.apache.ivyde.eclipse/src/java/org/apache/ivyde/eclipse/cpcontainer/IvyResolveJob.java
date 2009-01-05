@@ -195,6 +195,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             this.md = conf.getModuleDescriptor();
         } catch (IvyDEException e) {
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e.getMessage(), e);
+        } catch (Throwable e) {
+            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, "Unexpected error ["
+                    + e.getClass().getCanonicalName() + "]: " + e.getMessage(), e);
         }
 
         Thread resolver = new Thread() {
