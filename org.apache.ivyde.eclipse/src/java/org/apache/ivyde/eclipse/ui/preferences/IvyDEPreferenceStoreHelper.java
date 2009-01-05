@@ -59,6 +59,8 @@ public class IvyDEPreferenceStoreHelper {
 
     public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
 
+    public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
+
     private final IPreferenceStore prefStore;
 
     public IvyDEPreferenceStoreHelper(IPreferenceStore prefStore) {
@@ -103,6 +105,7 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);
         prefStore.setDefault(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
             DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        prefStore.setDefault(PreferenceConstants.RESOLVE_ON_STARTUP, DEFAULT_RESOLVE_ON_STARTUP);
     }
 
     public String getIvyOrg() {
@@ -253,12 +256,20 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(files));
     }
 
-    public boolean isLoadSettingsOnDemand() {
+    public boolean getLoadSettingsOnDemand() {
         return prefStore.getBoolean(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND);
     }
 
     public void setLoadSettingsOnDemand(boolean onDemand) {
         prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND, onDemand);
+    }
+
+    public int getResolveOnStartup() {
+        return prefStore.getInt(PreferenceConstants.RESOLVE_ON_STARTUP);
+    }
+
+    public void setResolveOnStartup(int resolveOnStartup) {
+        prefStore.setValue(PreferenceConstants.RESOLVE_ON_STARTUP, resolveOnStartup);
     }
 
 }

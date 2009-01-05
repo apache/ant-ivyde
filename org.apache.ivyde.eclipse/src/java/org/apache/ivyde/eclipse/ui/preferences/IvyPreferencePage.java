@@ -19,11 +19,14 @@ package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
 import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
 import org.apache.ivyde.eclipse.ui.SettingsEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -66,6 +69,12 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private Text organizationUrlText;
 
+    private Button refreshOnStartupButton;
+
+    private Button resolveOnStartupButton;
+
+    private Button doNothingButton;
+
     public IvyPreferencePage() {
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
         Object ivydeVersion = IvyPlugin.getDefault().getBundle().getHeaders().get(
@@ -87,6 +96,25 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
         Label horizontalLine = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        Group startupGroup = new Group(composite, SWT.NONE);
+        startupGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        startupGroup.setLayout(new GridLayout());
+        startupGroup.setText("On Eclipse startup");
+
+        doNothingButton = new Button(startupGroup, SWT.RADIO);
+        doNothingButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        doNothingButton.setText("Do nothing");
+
+        refreshOnStartupButton = new Button(startupGroup, SWT.RADIO);
+        refreshOnStartupButton
+                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        refreshOnStartupButton.setText("Trigger refresh");
+
+        resolveOnStartupButton = new Button(startupGroup, SWT.RADIO);
+        resolveOnStartupButton
+                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        resolveOnStartupButton.setText("Trigger resolve");
 
         Group settingsGroup = new Group(composite, SWT.NONE);
         settingsGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -156,8 +184,19 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private void initPreferences() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+        switch (helper.getResolveOnStartup()) {
+            case IvyClasspathInitializer.ON_STARTUP_NOTHING:
+                doNothingButton.setSelection(true);
+                break;
+            case IvyClasspathInitializer.ON_STARTUP_REFRESH:
+                refreshOnStartupButton.setSelection(true);
+                break;
+            case IvyClasspathInitializer.ON_STARTUP_RESOLVE:
+                resolveOnStartupButton.setSelection(true);
+                break;
+        }
         settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
-                .isLoadSettingsOnDemand());
+                .getLoadSettingsOnDemand());
         retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
                 .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
         resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
@@ -171,6 +210,13 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         helper.setIvySettingsPath(settingsEditor.getSettingsPath());
+        if (doNothingButton.getSelection()) {
+            helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_NOTHING);
+        } else if (refreshOnStartupButton.getSelection()) {
+            helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_REFRESH);
+        } else {
+            helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_RESOLVE);
+        }
         helper.setPropertyFiles(settingsEditor.getPropertyFiles());
         helper.setDoRetrieve(retrieveComposite.isRetrieveEnabled());
         helper.setRetrievePattern(retrieveComposite.getRetrievePattern());
@@ -190,6 +236,17 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
     }
 
     protected void performDefaults() {
+        switch (IvyDEPreferenceStoreHelper.DEFAULT_RESOLVE_ON_STARTUP) {
+            case IvyClasspathInitializer.ON_STARTUP_NOTHING:
+                doNothingButton.setSelection(true);
+                break;
+            case IvyClasspathInitializer.ON_STARTUP_REFRESH:
+                refreshOnStartupButton.setSelection(true);
+                break;
+            case IvyClasspathInitializer.ON_STARTUP_RESOLVE:
+                resolveOnStartupButton.setSelection(true);
+                break;
+        }
         settingsEditor.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH,
             IvyDEPreferenceStoreHelper.DEFAULT_PROPERTY_FILES,
             IvyDEPreferenceStoreHelper.DEFAULT_LOAD_SETTINGS_ON_DEMAND);

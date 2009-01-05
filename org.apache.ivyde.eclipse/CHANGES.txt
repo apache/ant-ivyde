@@ -7,6 +7,7 @@
 - NEW: Export IVY_HOME as a classpath variable (IVYDE-141)
 - NEW: Support variables in ivyconf.xml (IVYDE-13) (thanks to Will Gorman)
 - NEW: Allow to manually reload the settings (IVYDE-26)
+- NEW: Allow to not trigger full resolve at startup (IVYDE-74)
 
 - FIX: When migrating from ivyde alpha to ivyde beta eclipse is throwing NPE at startup (IVYDE-136) (thanks to Daniel Becheanu)
 - FIX: The retrieve configuration doesn't support '*' as accepted types (IVYDE-137) (thanks to Daniel Becheanu)

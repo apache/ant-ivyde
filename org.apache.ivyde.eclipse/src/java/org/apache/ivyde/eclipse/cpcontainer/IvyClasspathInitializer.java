@@ -19,6 +19,7 @@ package org.apache.ivyde.eclipse.cpcontainer;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
+import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -36,6 +37,12 @@ import org.eclipse.swt.widgets.Display;
  * path entries, and then schedule the refresh of the container.
  */
 public class IvyClasspathInitializer extends ClasspathContainerInitializer {
+
+    public static final int ON_STARTUP_NOTHING = 0;
+
+    public static final int ON_STARTUP_REFRESH = 1;
+
+    public static final int ON_STARTUP_RESOLVE = 2;
 
     /**
      * Initialize the container with the "persisted" class path entries, and then schedule the
@@ -56,19 +63,36 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             }
 
             try {
+                IvyClasspathContainer ivycp;
+
                 if (container == null) {
-                    container = new IvyClasspathContainer(project, containerPath,
+                    ivycp = new IvyClasspathContainer(project, containerPath,
                             new IClasspathEntry[0]);
                 } else if (!(container instanceof IvyClasspathContainer)) {
                     // this might be the persisted one : reuse the persisted entries
-                    container = new IvyClasspathContainer(project, containerPath, container
+                    ivycp = new IvyClasspathContainer(project, containerPath, container
                             .getClasspathEntries());
+                } else {
+                    ivycp = (IvyClasspathContainer) container;
                 }
+
                 JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project},
-                    new IClasspathContainer[] {container}, null);
+                    new IClasspathContainer[] {ivycp}, null);
+
+                IvyDEPreferenceStoreHelper prefHelper = IvyPlugin.getPreferenceStoreHelper();
+                boolean refresh = true;
+
+                // if we have a non ivy cp, it means Eclipse is starting
+                // maybe we don't want to trigger the resolve
+                if (container != null && !(container instanceof IvyClasspathContainer)) {
+                    if (prefHelper.getResolveOnStartup() == ON_STARTUP_NOTHING) {
+                        return;
+                    }
+                    refresh = prefHelper.getResolveOnStartup() == ON_STARTUP_REFRESH;
+                }
 
                 // now refresh the container to be synchronized with the ivy.xml
-                ((IvyClasspathContainer) container).launchResolve(false, false, null);
+                ivycp.launchResolve(refresh, false, null);
             } catch (Exception ex) {
                 IStatus status = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.OK,
                         "Unable to set container for " + containerPath.toString(), ex);

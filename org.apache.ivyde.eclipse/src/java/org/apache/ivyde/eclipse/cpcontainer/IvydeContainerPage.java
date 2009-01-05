@@ -439,7 +439,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         } else {
             settingsProjectSpecificButton.setSelection(false);
             settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
-                    .isLoadSettingsOnDemand());
+                    .getLoadSettingsOnDemand());
         }
 
         if (conf.isRetrieveProjectSpecific()) {

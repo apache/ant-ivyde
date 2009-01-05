@@ -650,7 +650,7 @@ public class IvyClasspathContainerConfiguration {
 
     public boolean getInheritedLoadSettingsOnDemandPath() {
         if (!isSettingsSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().isLoadSettingsOnDemand();
+            return IvyPlugin.getPreferenceStoreHelper().getLoadSettingsOnDemand();
         }
         return loadSettingsOnDemand;
     }
