@@ -25,8 +25,6 @@ import org.apache.ivyde.eclipse.ui.RetrieveComposite;
 import org.apache.ivyde.eclipse.ui.SettingsEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -236,7 +234,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
     }
 
     protected void performDefaults() {
-        switch (IvyDEPreferenceStoreHelper.DEFAULT_RESOLVE_ON_STARTUP) {
+        switch (PreferenceInitializer.DEFAULT_RESOLVE_ON_STARTUP) {
             case IvyClasspathInitializer.ON_STARTUP_NOTHING:
                 doNothingButton.setSelection(true);
                 break;
@@ -247,23 +245,22 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
         }
-        settingsEditor.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH,
-            IvyDEPreferenceStoreHelper.DEFAULT_PROPERTY_FILES,
-            IvyDEPreferenceStoreHelper.DEFAULT_LOAD_SETTINGS_ON_DEMAND);
-        retrieveComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_DO_RETRIEVE,
-            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_PATTERN,
-            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_CONFS,
-            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_TYPES,
-            IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_SYNC);
-        resolveInWorkspaceCheck
-                .setSelection(IvyDEPreferenceStoreHelper.DEFAULT_RESOLVE_IN_WORKSPACE);
-        alphaOrderCheck.select(IvyDEPreferenceStoreHelper.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
-        acceptedSuffixesTypesComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_ACCEPTED_TYPES,
-            IvyDEPreferenceStoreHelper.DEFAULT_SOURCES_TYPES,
-            IvyDEPreferenceStoreHelper.DEFAULT_SOURCES_SUFFIXES,
-            IvyDEPreferenceStoreHelper.DEFAULT_JAVADOC_TYPES,
-            IvyDEPreferenceStoreHelper.DEFAULT_JAVADOC_SUFFIXES);
-        organizationText.setText(IvyDEPreferenceStoreHelper.DEFAULT_ORGANISATION);
-        organizationUrlText.setText(IvyDEPreferenceStoreHelper.DEFAULT_ORGANISATION_URL);
+        settingsEditor.init(PreferenceInitializer.DEFAULT_IVYSETTINGS_PATH,
+            PreferenceInitializer.DEFAULT_PROPERTY_FILES,
+            PreferenceInitializer.DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        retrieveComposite.init(PreferenceInitializer.DEFAULT_DO_RETRIEVE,
+            PreferenceInitializer.DEFAULT_RETRIEVE_PATTERN,
+            PreferenceInitializer.DEFAULT_RETRIEVE_CONFS,
+            PreferenceInitializer.DEFAULT_RETRIEVE_TYPES,
+            PreferenceInitializer.DEFAULT_RETRIEVE_SYNC);
+        resolveInWorkspaceCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_IN_WORKSPACE);
+        alphaOrderCheck.select(PreferenceInitializer.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
+        acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_ACCEPTED_TYPES,
+            PreferenceInitializer.DEFAULT_SOURCES_TYPES,
+            PreferenceInitializer.DEFAULT_SOURCES_SUFFIXES,
+            PreferenceInitializer.DEFAULT_JAVADOC_TYPES,
+            PreferenceInitializer.DEFAULT_JAVADOC_SUFFIXES);
+        organizationText.setText(PreferenceInitializer.DEFAULT_ORGANISATION);
+        organizationUrlText.setText(PreferenceInitializer.DEFAULT_ORGANISATION_URL);
     }
 }

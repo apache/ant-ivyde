@@ -26,16 +26,85 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-     */
+    public static final String DEFAULT_IVYSETTINGS_PATH = "";
+
+    public static final String DEFAULT_ORGANISATION = "";
+
+    public static final String DEFAULT_ORGANISATION_URL = "";
+
+    public static final String DEFAULT_ACCEPTED_TYPES = "jar,bundle,ejb,maven-plugin";
+
+    public static final String DEFAULT_SOURCES_TYPES = "source";
+
+    public static final String DEFAULT_JAVADOC_TYPES = "javadoc";
+
+    public static final String DEFAULT_SOURCES_SUFFIXES = "-source,-sources,-src";
+
+    public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
+
+    public static final boolean DEFAULT_DO_RETRIEVE = false;
+
+    public static final String DEFAULT_RETRIEVE_PATTERN = "lib/[conf]/[artifact].[ext]";
+
+    public static final boolean DEFAULT_RETRIEVE_SYNC = false;
+
+    public static final String DEFAULT_RETRIEVE_CONFS = "*";
+
+    public static final String DEFAULT_RETRIEVE_TYPES = "*";
+
+    public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
+
+    public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
+
+    public static final String DEFAULT_PROPERTY_FILES = "";
+
+    public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
+
+    public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
+
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
         store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
         store.setDefault(PreferenceConstants.P_STRING, "Default value");
+
+        store.setDefault(PreferenceConstants.IVYSETTINGS_PATH, DEFAULT_IVYSETTINGS_PATH);
+        store.setDefault(PreferenceConstants.ORGANISATION, DEFAULT_ORGANISATION);
+        store.setDefault(PreferenceConstants.ORGANISATION_URL, DEFAULT_ORGANISATION_URL);
+        store.setDefault(PreferenceConstants.ACCEPTED_TYPES, DEFAULT_ACCEPTED_TYPES);
+        store.setDefault(PreferenceConstants.SOURCES_TYPES, DEFAULT_SOURCES_TYPES);
+        store.setDefault(PreferenceConstants.JAVADOC_TYPES, DEFAULT_JAVADOC_TYPES);
+        store.setDefault(PreferenceConstants.SOURCES_SUFFIXES, DEFAULT_SOURCES_SUFFIXES);
+        store.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, DEFAULT_JAVADOC_SUFFIXES);
+
+        store.setDefault(PreferenceConstants.DO_RETRIEVE, DEFAULT_DO_RETRIEVE);
+        boolean b = store.getBoolean(PreferenceConstants.DO_RETRIEVE_DEPRECATED);
+        if (b) {
+            // not the default value, so it has been set
+            // erase the deprecated preference and store the new one
+            store.setValue(PreferenceConstants.DO_RETRIEVE_DEPRECATED, "");
+            store.setValue(PreferenceConstants.DO_RETRIEVE, b);
+        }
+
+        store.setDefault(PreferenceConstants.RETRIEVE_PATTERN, DEFAULT_RETRIEVE_PATTERN);
+        store.setDefault(PreferenceConstants.RETRIEVE_CONFS, DEFAULT_RETRIEVE_CONFS);
+        store.setDefault(PreferenceConstants.RETRIEVE_TYPES, DEFAULT_RETRIEVE_TYPES);
+        String s = store.getString(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED);
+        if (s != null && s.length() != 0) {
+            // not the default value, so it has been set
+            // erase the deprecated preference and store the new one
+            store.setValue(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED, "");
+            store.setValue(PreferenceConstants.RETRIEVE_PATTERN, s);
+        }
+
+        store.setDefault(PreferenceConstants.RETRIEVE_SYNC, DEFAULT_RETRIEVE_SYNC);
+        store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
+        store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
+        store.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);
+        store.setDefault(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
+            DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        store.setDefault(PreferenceConstants.RESOLVE_ON_STARTUP, DEFAULT_RESOLVE_ON_STARTUP);
+
     }
 
 }

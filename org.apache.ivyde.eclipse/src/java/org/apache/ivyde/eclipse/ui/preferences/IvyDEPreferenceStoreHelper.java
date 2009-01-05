@@ -25,87 +25,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 public class IvyDEPreferenceStoreHelper {
 
-    public static final String DEFAULT_IVYSETTINGS_PATH = "";
-
-    public static final String DEFAULT_ORGANISATION = "";
-
-    public static final String DEFAULT_ORGANISATION_URL = "";
-
-    public static final String DEFAULT_ACCEPTED_TYPES = "jar,bundle,ejb,maven-plugin";
-
-    public static final String DEFAULT_SOURCES_TYPES = "source";
-
-    public static final String DEFAULT_JAVADOC_TYPES = "javadoc";
-
-    public static final String DEFAULT_SOURCES_SUFFIXES = "-source,-sources,-src";
-
-    public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
-
-    public static final boolean DEFAULT_DO_RETRIEVE = false;
-
-    public static final String DEFAULT_RETRIEVE_PATTERN = "lib/[conf]/[artifact].[ext]";
-
-    public static final boolean DEFAULT_RETRIEVE_SYNC = false;
-
-    public static final String DEFAULT_RETRIEVE_CONFS = "*";
-
-    public static final String DEFAULT_RETRIEVE_TYPES = "*";
-
-    public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
-
-    public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
-
-    public static final String DEFAULT_PROPERTY_FILES = "";
-
-    public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
-
-    public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
-
     private final IPreferenceStore prefStore;
 
     public IvyDEPreferenceStoreHelper(IPreferenceStore prefStore) {
         this.prefStore = prefStore;
-        setDefault();
-    }
-
-    public void setDefault() {
-        prefStore.setDefault(PreferenceConstants.IVYSETTINGS_PATH, DEFAULT_IVYSETTINGS_PATH);
-        prefStore.setDefault(PreferenceConstants.ORGANISATION, DEFAULT_ORGANISATION);
-        prefStore.setDefault(PreferenceConstants.ORGANISATION_URL, DEFAULT_ORGANISATION_URL);
-        prefStore.setDefault(PreferenceConstants.ACCEPTED_TYPES, DEFAULT_ACCEPTED_TYPES);
-        prefStore.setDefault(PreferenceConstants.SOURCES_TYPES, DEFAULT_SOURCES_TYPES);
-        prefStore.setDefault(PreferenceConstants.JAVADOC_TYPES, DEFAULT_JAVADOC_TYPES);
-        prefStore.setDefault(PreferenceConstants.SOURCES_SUFFIXES, DEFAULT_SOURCES_SUFFIXES);
-        prefStore.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, DEFAULT_JAVADOC_SUFFIXES);
-
-        prefStore.setDefault(PreferenceConstants.DO_RETRIEVE, DEFAULT_DO_RETRIEVE);
-        boolean b = prefStore.getBoolean(PreferenceConstants.DO_RETRIEVE_DEPRECATED);
-        if (b) {
-            // not the default value, so it has been set
-            // erase the deprecated preference and store the new one
-            prefStore.setValue(PreferenceConstants.DO_RETRIEVE_DEPRECATED, "");
-            prefStore.setValue(PreferenceConstants.DO_RETRIEVE, b);
-        }
-
-        prefStore.setDefault(PreferenceConstants.RETRIEVE_PATTERN, DEFAULT_RETRIEVE_PATTERN);
-        prefStore.setDefault(PreferenceConstants.RETRIEVE_CONFS, DEFAULT_RETRIEVE_CONFS);
-        prefStore.setDefault(PreferenceConstants.RETRIEVE_TYPES, DEFAULT_RETRIEVE_TYPES);
-        String s = prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED);
-        if (s != null && s.length() != 0) {
-            // not the default value, so it has been set
-            // erase the deprecated preference and store the new one
-            prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED, "");
-            prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN, s);
-        }
-
-        prefStore.setDefault(PreferenceConstants.RETRIEVE_SYNC, DEFAULT_RETRIEVE_SYNC);
-        prefStore.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
-        prefStore
-                .setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
-        prefStore.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);
-        prefStore.setDefault(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
-            DEFAULT_LOAD_SETTINGS_ON_DEMAND);
-        prefStore.setDefault(PreferenceConstants.RESOLVE_ON_STARTUP, DEFAULT_RESOLVE_ON_STARTUP);
     }
 
     public String getIvyOrg() {
