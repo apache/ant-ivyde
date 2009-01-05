@@ -251,7 +251,7 @@ pre {
 
 table.home {
     text-align:center;
-    color:#6e9244;
+    color:#369;
     font-family:verdana, "Lucida Grande", arial, helvetica, sans-serif;
 }
 tr.homeitems {
@@ -261,7 +261,7 @@ tr.homeitems td {
     padding: 0 0.5cm 0 0.5cm;
 }
 tr.homeitems a:link, a:visited {
-    color: #6e9244; 
+    color: #369; 
     text-decoration: none;
 }
 tr.homeitems a:hover {
