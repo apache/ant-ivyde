@@ -1,0 +1,116 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+package org.apache.ivyde.eclipse.ui.preferences;
+
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+
+public class ClasspathPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+    /** the ID of the preference page */
+    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
+
+    private Button resolveInWorkspaceCheck;
+
+    private Combo alphaOrderCheck;
+
+    private AcceptedSuffixesTypesComposite acceptedSuffixesTypesComposite;
+
+    public ClasspathPreferencePage() {
+        setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
+    }
+
+    public void init(IWorkbench workbench) {
+        setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
+    }
+
+    protected Control createContents(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        // CheckStyle:MagicNumber| OFF
+        composite.setLayout(new GridLayout(3, false));
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        resolveInWorkspaceCheck = new Button(composite, SWT.CHECK);
+        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace (EXPERIMENTAL)");
+        resolveInWorkspaceCheck
+                .setToolTipText("Will replace jars on the classpath with workspace projects");
+
+        Label label = new Label(composite, SWT.NONE);
+        label.setText("Order of the classpath entries:");
+
+        alphaOrderCheck = new Combo(composite, SWT.READ_ONLY);
+        alphaOrderCheck
+                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+        alphaOrderCheck.setToolTipText("Order of the artifacts in the classpath container");
+        alphaOrderCheck.add("From the ivy.xml");
+        alphaOrderCheck.add("Lexical");
+
+        acceptedSuffixesTypesComposite = new AcceptedSuffixesTypesComposite(composite, SWT.NONE);
+        acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+                true, false, 3, 1));
+
+        // CheckStyle:MagicNumber| ON
+
+        initPreferences();
+
+        return composite;
+    }
+
+    private void initPreferences() {
+        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+        resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
+        alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
+        acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
+            helper.getSourceSuffixes(), helper.getJavadocTypes(), helper.getJavadocSuffixes());
+    }
+
+    public boolean performOk() {
+        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+        helper.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
+        helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
+        helper.setAcceptedTypes(acceptedSuffixesTypesComposite.getAcceptedTypes());
+        helper.setSourceTypes(acceptedSuffixesTypesComposite.getSourcesTypes());
+        helper.setSourceSuffixes(acceptedSuffixesTypesComposite.getSourceSuffixes());
+        helper.setJavadocTypes(acceptedSuffixesTypesComposite.getJavadocTypes());
+        helper.setJavadocSuffixes(acceptedSuffixesTypesComposite.getJavadocSuffixes());
+        return true;
+    }
+
+    protected void performDefaults() {
+        resolveInWorkspaceCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_IN_WORKSPACE);
+        alphaOrderCheck.select(PreferenceInitializer.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
+        acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_ACCEPTED_TYPES,
+            PreferenceInitializer.DEFAULT_SOURCES_TYPES,
+            PreferenceInitializer.DEFAULT_SOURCES_SUFFIXES,
+            PreferenceInitializer.DEFAULT_JAVADOC_TYPES,
+            PreferenceInitializer.DEFAULT_JAVADOC_SUFFIXES);
+    }
+}

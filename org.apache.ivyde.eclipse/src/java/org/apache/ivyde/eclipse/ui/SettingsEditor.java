@@ -152,7 +152,7 @@ public class SettingsEditor extends Composite {
         return settingsText.getText();
     }
 
-    public boolean isLoadOnDemand() {
+    public boolean getLoadOnDemand() {
         return loadOnDemandButton.getSelection();
     }
 

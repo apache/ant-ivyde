@@ -20,15 +20,11 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
-import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
-import org.apache.ivyde.eclipse.ui.RetrieveComposite;
-import org.apache.ivyde.eclipse.ui.SettingsEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -52,16 +48,6 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     /** the ID of the preference page */
     public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
-
-    private RetrieveComposite retrieveComposite;
-
-    private SettingsEditor settingsEditor;
-
-    private Button resolveInWorkspaceCheck;
-
-    private Combo alphaOrderCheck;
-
-    private AcceptedSuffixesTypesComposite acceptedSuffixesTypesComposite;
 
     private Text organizationText;
 
@@ -114,55 +100,12 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         resolveOnStartupButton.setText("Trigger resolve");
 
-        Group settingsGroup = new Group(composite, SWT.NONE);
-        settingsGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        settingsGroup.setLayout(new GridLayout());
-        settingsGroup.setText("Global settings");
-
-        settingsEditor = new SettingsEditor(settingsGroup, SWT.NONE);
-        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-
-        Group retrieveGroup = new Group(composite, SWT.NONE);
-        retrieveGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        retrieveGroup.setLayout(new GridLayout());
-        retrieveGroup.setText("Retrieve configuration");
-
-        retrieveComposite = new RetrieveComposite(retrieveGroup, SWT.NONE);
-        retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-
-        Group containerGroup = new Group(composite, SWT.NONE);
-        containerGroup.setText("Classpath container configuration");
-        containerGroup.setLayout(new GridLayout(3, false));
-        containerGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-
-        resolveInWorkspaceCheck = new Button(containerGroup, SWT.CHECK);
-        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-                false, 3, 1));
-        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace (EXPERIMENTAL)");
-        resolveInWorkspaceCheck
-                .setToolTipText("Will replace jars on the classpath with workspace projects");
-
-        Label label = new Label(containerGroup, SWT.NONE);
-        label.setText("Order of the classpath entries:");
-
-        alphaOrderCheck = new Combo(containerGroup, SWT.READ_ONLY);
-        alphaOrderCheck
-                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-        alphaOrderCheck.setToolTipText("Order of the artifacts in the classpath container");
-        alphaOrderCheck.add("From the ivy.xml");
-        alphaOrderCheck.add("Lexical");
-
-        acceptedSuffixesTypesComposite = new AcceptedSuffixesTypesComposite(containerGroup,
-                SWT.NONE);
-        acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-                true, false, 3, 1));
-
         Group editorGroup = new Group(composite, SWT.NONE);
         editorGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
         editorGroup.setLayout(new GridLayout(2, false));
         editorGroup.setText("Editor information");
 
-        label = new Label(editorGroup, SWT.NONE);
+        Label label = new Label(editorGroup, SWT.NONE);
         label.setText("Organisation:");
         organizationText = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
         organizationText
@@ -193,21 +136,12 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
         }
-        settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
-                .getLoadSettingsOnDemand());
-        retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
-                .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
-        resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
-        alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
-        acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
-            helper.getSourceSuffixes(), helper.getJavadocTypes(), helper.getJavadocSuffixes());
         organizationText.setText(helper.getIvyOrg());
         organizationUrlText.setText(helper.getIvyOrgUrl());
     }
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        helper.setIvySettingsPath(settingsEditor.getSettingsPath());
         if (doNothingButton.getSelection()) {
             helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_NOTHING);
         } else if (refreshOnStartupButton.getSelection()) {
@@ -215,19 +149,6 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         } else {
             helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_RESOLVE);
         }
-        helper.setPropertyFiles(settingsEditor.getPropertyFiles());
-        helper.setDoRetrieve(retrieveComposite.isRetrieveEnabled());
-        helper.setRetrievePattern(retrieveComposite.getRetrievePattern());
-        helper.setRetrieveSync(retrieveComposite.isSyncEnabled());
-        helper.setRetrieveConfs(retrieveComposite.getRetrieveConfs());
-        helper.setRetrieveTypes(retrieveComposite.getRetrieveTypes());
-        helper.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
-        helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
-        helper.setAcceptedTypes(acceptedSuffixesTypesComposite.getAcceptedTypes());
-        helper.setSourceTypes(acceptedSuffixesTypesComposite.getSourcesTypes());
-        helper.setSourceSuffixes(acceptedSuffixesTypesComposite.getSourceSuffixes());
-        helper.setJavadocTypes(acceptedSuffixesTypesComposite.getJavadocTypes());
-        helper.setJavadocSuffixes(acceptedSuffixesTypesComposite.getJavadocSuffixes());
         helper.setOrganization(organizationText.getText());
         helper.setOrganizationUrl(organizationUrlText.getText());
         return true;
@@ -245,21 +166,6 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
         }
-        settingsEditor.init(PreferenceInitializer.DEFAULT_IVYSETTINGS_PATH,
-            PreferenceInitializer.DEFAULT_PROPERTY_FILES,
-            PreferenceInitializer.DEFAULT_LOAD_SETTINGS_ON_DEMAND);
-        retrieveComposite.init(PreferenceInitializer.DEFAULT_DO_RETRIEVE,
-            PreferenceInitializer.DEFAULT_RETRIEVE_PATTERN,
-            PreferenceInitializer.DEFAULT_RETRIEVE_CONFS,
-            PreferenceInitializer.DEFAULT_RETRIEVE_TYPES,
-            PreferenceInitializer.DEFAULT_RETRIEVE_SYNC);
-        resolveInWorkspaceCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_IN_WORKSPACE);
-        alphaOrderCheck.select(PreferenceInitializer.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
-        acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_ACCEPTED_TYPES,
-            PreferenceInitializer.DEFAULT_SOURCES_TYPES,
-            PreferenceInitializer.DEFAULT_SOURCES_SUFFIXES,
-            PreferenceInitializer.DEFAULT_JAVADOC_TYPES,
-            PreferenceInitializer.DEFAULT_JAVADOC_SUFFIXES);
         organizationText.setText(PreferenceInitializer.DEFAULT_ORGANISATION);
         organizationUrlText.setText(PreferenceInitializer.DEFAULT_ORGANISATION_URL);
     }

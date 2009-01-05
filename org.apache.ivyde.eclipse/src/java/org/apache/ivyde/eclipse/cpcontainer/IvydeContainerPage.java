@@ -29,8 +29,11 @@ import org.apache.ivyde.eclipse.ui.RetrieveComposite;
 import org.apache.ivyde.eclipse.ui.SettingsEditor;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
 import org.apache.ivyde.eclipse.ui.SettingsEditor.SettingsEditorListener;
+import org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
+import org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage;
+import org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -131,7 +134,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         if (settingsProjectSpecificButton.getSelection()) {
             conf.isSettingsSpecific = true;
             conf.ivySettingsPath = settingsEditor.getSettingsPath();
-            conf.loadSettingsOnDemand = settingsEditor.isLoadOnDemand();
+            conf.loadSettingsOnDemand = settingsEditor.getLoadOnDemand();
             conf.propertyFiles = settingsEditor.getPropertyFiles();
             conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
             conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
@@ -244,7 +247,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         mainGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
-                    IvyPreferencePage.PEREFERENCE_PAGE_ID, null, null);
+                    SettingsPreferencePage.PEREFERENCE_PAGE_ID, null, null);
                 dialog.open();
             }
         });
@@ -335,7 +338,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         retrieveGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
-                    IvyPreferencePage.PEREFERENCE_PAGE_ID, null, null);
+                    RetrievePreferencePage.PEREFERENCE_PAGE_ID, null, null);
                 dialog.open();
             }
         });
@@ -377,7 +380,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         advancedGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
-                    IvyPreferencePage.PEREFERENCE_PAGE_ID, null, null);
+                    ClasspathPreferencePage.PEREFERENCE_PAGE_ID, null, null);
                 dialog.open();
             }
         });

@@ -163,6 +163,24 @@
             class="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage">
       </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage"
+            name="Classpath">
+      </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage"
+            name="Retrieve">
+      </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
+            name="Settings">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
