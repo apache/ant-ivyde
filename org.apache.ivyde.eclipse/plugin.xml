@@ -216,6 +216,13 @@
             primary="true">
       </toc>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathVariableInitializer">
+      <classpathVariableInitializer
+            class="org.apache.ivyde.eclipse.IvyDEClasspathVariableInitializer"
+            variable="IVY_HOME">
+      </classpathVariableInitializer>
+   </extension>
    
 
 
