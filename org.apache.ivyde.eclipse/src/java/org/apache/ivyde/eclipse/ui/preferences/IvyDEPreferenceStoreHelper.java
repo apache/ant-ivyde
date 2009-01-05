@@ -54,8 +54,10 @@ public class IvyDEPreferenceStoreHelper {
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
-    
+
     public static final String DEFAULT_PROPERTY_FILES = "";
+
+    public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
 
     private final IPreferenceStore prefStore;
 
@@ -99,6 +101,8 @@ public class IvyDEPreferenceStoreHelper {
         prefStore
                 .setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
         prefStore.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);
+        prefStore.setDefault(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
+            DEFAULT_LOAD_SETTINGS_ON_DEMAND);
     }
 
     public String getIvyOrg() {
@@ -130,7 +134,8 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public void setAcceptedTypes(Collection acceptedTypes) {
-        prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES, IvyClasspathUtil.concat(acceptedTypes));
+        prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES, IvyClasspathUtil
+                .concat(acceptedTypes));
     }
 
     public List getSourceTypes() {
@@ -146,7 +151,8 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public void setJavadocTypes(Collection javadocTypes) {
-        prefStore.setValue(PreferenceConstants.JAVADOC_TYPES, IvyClasspathUtil.concat(javadocTypes));
+        prefStore
+                .setValue(PreferenceConstants.JAVADOC_TYPES, IvyClasspathUtil.concat(javadocTypes));
     }
 
     public List getSourceSuffixes() {
@@ -154,7 +160,8 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public void setSourceSuffixes(Collection sourceSuffixes) {
-        prefStore.setValue(PreferenceConstants.SOURCES_SUFFIXES, IvyClasspathUtil.concat(sourceSuffixes));
+        prefStore.setValue(PreferenceConstants.SOURCES_SUFFIXES, IvyClasspathUtil
+                .concat(sourceSuffixes));
     }
 
     public List getJavadocSuffixes() {
@@ -162,7 +169,8 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public void setJavadocSuffixes(Collection javadocSuffixes) {
-        prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil.concat(javadocSuffixes));
+        prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil
+                .concat(javadocSuffixes));
     }
 
     public boolean getDoRetrieve() {
@@ -238,10 +246,19 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public List getPropertyFiles() {
-      return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.PROPERTY_FILES));
+        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.PROPERTY_FILES));
     }
 
     public void setPropertyFiles(List files) {
         prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(files));
     }
+
+    public boolean isLoadSettingsOnDemand() {
+        return prefStore.getBoolean(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND);
+    }
+
+    public void setLoadSettingsOnDemand(boolean onDemand) {
+        prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND, onDemand);
+    }
+
 }

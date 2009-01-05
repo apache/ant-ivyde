@@ -118,6 +118,8 @@ public class IvyClasspathContainerConfiguration {
 
     boolean isSettingsSpecific;
 
+    boolean loadSettingsOnDemand = false;
+
     /**
      * Constructor
      * 
@@ -213,6 +215,9 @@ public class IvyClasspathContainerConfiguration {
                 }
             } else if (parameter[0].equals("ivySettingsPath")) {
                 ivySettingsPath = readOldIvySettings(value);
+                isSettingsSpecific = true;
+            } else if (parameter[0].equals("loadSettingsOnDemand")) {
+                loadSettingsOnDemand = Boolean.valueOf(value).booleanValue();
                 isSettingsSpecific = true;
             } else if (parameter[0].equals("propertyFiles")) {
                 propertyFiles = IvyClasspathUtil.split(value);
@@ -332,6 +337,8 @@ public class IvyClasspathContainerConfiguration {
             if (isSettingsSpecific) {
                 path.append("&ivySettingsPath=");
                 path.append(URLEncoder.encode(ivySettingsPath, "UTF-8"));
+                path.append("&loadSettingsOnDemand=");
+                path.append(URLEncoder.encode(Boolean.toString(loadSettingsOnDemand), "UTF-8"));
                 path.append("&propertyFiles=");
                 path.append(URLEncoder.encode(IvyClasspathUtil.concat(propertyFiles), "UTF-8"));
             }
@@ -551,7 +558,7 @@ public class IvyClasspathContainerConfiguration {
             throw ex;
         }
 
-        if (file.lastModified() != ivySettingsLastModified) {
+        if (file.lastModified() != ivySettingsLastModified || !getInheritedLoadSettingsOnDemandPath()) {
             IvySettings ivySettings = createIvySettings();
             if (ivySettingsLastModified == -1) {
                 Message.info("\n\n");
@@ -639,6 +646,13 @@ public class IvyClasspathContainerConfiguration {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
         }
         return ivySettingsPath;
+    }
+
+    public boolean getInheritedLoadSettingsOnDemandPath() {
+        if (!isSettingsSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().isLoadSettingsOnDemand();
+        }
+        return loadSettingsOnDemand;
     }
 
     public boolean getInheritedDoRetrieve() {

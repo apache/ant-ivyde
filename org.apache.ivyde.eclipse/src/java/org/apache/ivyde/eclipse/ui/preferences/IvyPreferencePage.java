@@ -156,7 +156,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private void initPreferences() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles());
+        settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
+                .isLoadSettingsOnDemand());
         retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
                 .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
         resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
@@ -190,7 +191,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     protected void performDefaults() {
         settingsEditor.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH,
-            IvyDEPreferenceStoreHelper.DEFAULT_PROPERTY_FILES);
+            IvyDEPreferenceStoreHelper.DEFAULT_PROPERTY_FILES,
+            IvyDEPreferenceStoreHelper.DEFAULT_LOAD_SETTINGS_ON_DEMAND);
         retrieveComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_DO_RETRIEVE,
             IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_PATTERN,
             IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_CONFS,

@@ -129,7 +129,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         }
 
         if (settingsProjectSpecificButton.getSelection()) {
+            conf.isSettingsSpecific = true;
             conf.ivySettingsPath = settingsEditor.getSettingsPath();
+            conf.loadSettingsOnDemand = settingsEditor.isLoadOnDemand();
             conf.propertyFiles = settingsEditor.getPropertyFiles();
             conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
             conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
@@ -144,7 +146,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
             conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
         } else {
-            conf.ivySettingsPath = null;
+            conf.isSettingsSpecific = false;
         }
         if (retrieveProjectSpecificButton.getSelection()) {
             conf.isRetrieveProjectSpecific = true;
@@ -432,10 +434,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         if (conf.isSettingsProjectSpecific()) {
             settingsProjectSpecificButton.setSelection(true);
-            settingsEditor.init(conf.ivySettingsPath, conf.propertyFiles);
+            settingsEditor
+                    .init(conf.ivySettingsPath, conf.propertyFiles, conf.loadSettingsOnDemand);
         } else {
             settingsProjectSpecificButton.setSelection(false);
-            settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles());
+            settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
+                    .isLoadSettingsOnDemand());
         }
 
         if (conf.isRetrieveProjectSpecific()) {

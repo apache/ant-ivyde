@@ -58,7 +58,18 @@
       </classpathContainerInitializer>
    </extension>
 
-   <extension point="org.eclipse.ui.popupMenus"> 
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.apache.ivyde.eclipse.ui.actions.ReloadSettingsAction"
+            objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
+         <action
+               class="org.apache.ivyde.eclipse.ui.actions.ReloadSettingsAction"
+               enablesFor="1"
+               id="org.apache.ivyde.eclipse.ui.actions.ReloadSettingsAction"
+               label="Reload &amp;settings">
+         </action>
+      </objectContribution> 
       <objectContribution 
          id="org.apache.ivyde.eclipse.ui.actions.RefreshAction" 
          objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 

@@ -67,6 +67,8 @@ public class SettingsEditor extends Composite {
 
     private Text propFilesText;
 
+    private Button loadOnDemandButton;
+
     public SettingsEditor(Composite parent, int style) {
         super(parent, style);
         GridLayout layout = new GridLayout(3, false);
@@ -129,6 +131,10 @@ public class SettingsEditor extends Composite {
             }
         });
 
+        loadOnDemandButton = new Button(this, SWT.CHECK);
+        loadOnDemandButton.setText("reload the settings only on demand");
+        loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+
         label = new Label(this, SWT.NONE);
         label.setText("Property files:");
 
@@ -144,6 +150,10 @@ public class SettingsEditor extends Composite {
 
     public String getSettingsPath() {
         return settingsText.getText();
+    }
+
+    public boolean isLoadOnDemand() {
+        return loadOnDemandButton.getSelection();
     }
 
     public List getPropertyFiles() {
@@ -215,19 +225,21 @@ public class SettingsEditor extends Composite {
         return null;
     }
 
-    public void init(String ivySettingsPath, String propertyFiles) {
+    public void init(String ivySettingsPath, String propertyFiles, boolean loadOnDemand) {
         settingsText.setText(ivySettingsPath);
         propFilesText.setText(propertyFiles);
+        loadOnDemandButton.setSelection(loadOnDemand);
     }
 
-    public void init(String ivySettingsPath, List propertyFiles) {
-        init(ivySettingsPath, IvyClasspathUtil.concat(propertyFiles));
+    public void init(String ivySettingsPath, List propertyFiles, boolean loadOnDemand) {
+        init(ivySettingsPath, IvyClasspathUtil.concat(propertyFiles), loadOnDemand);
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         settingsText.setEnabled(enabled);
         propFilesText.setEnabled(enabled);
+        loadOnDemandButton.setEnabled(enabled);
     }
 
 }

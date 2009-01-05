@@ -263,4 +263,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
         job = null;
     }
 
+    public void reloadSettings() {
+        conf.ivySettingsLastModified = -1;
+        launchResolve(false, true, null);
+    }
+
 }
