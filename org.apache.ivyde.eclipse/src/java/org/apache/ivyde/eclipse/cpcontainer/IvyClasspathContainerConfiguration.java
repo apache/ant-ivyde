@@ -44,6 +44,7 @@ import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -381,13 +382,12 @@ public class IvyClasspathContainerConfiguration {
         return confs;
     }
 
-    private void setConfStatus(IvyDEException e) {
+    private void setConfStatus(IvyDEException ex) {
         if (!editing) {
-            confOk = (e == null);
-            IvyPlugin.getDefault().getContainerDecorator().statusChanged(this);
-            if (e != null) {
-                setResolveStatus(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e
-                        .getMessage(), e.getCause()));
+            confOk = (ex == null);
+            if (ex != null) {
+                setResolveStatus(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, ex
+                        .getMessage(), ex.getCause()));
             } else {
                 setResolveStatus(Status.OK_STATUS);
             }
@@ -396,16 +396,17 @@ public class IvyClasspathContainerConfiguration {
 
     public void setResolveStatus(IStatus status) {
         if (!editing && javaProject != null) {
-            IFile ivyFile = javaProject.getProject().getFile(ivyXmlPath);
-            if (!ivyFile.exists()) {
-                return;
-            }
+            IProject p = javaProject.getProject();
             try {
-                ivyFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+                p.deleteMarkers(IvyPlugin.MARKER_ID, true, IResource.DEPTH_INFINITE);
                 if (status == Status.OK_STATUS) {
                     return;
                 }
-                IMarker marker = ivyFile.createMarker(IMarker.PROBLEM);
+                IResource r = javaProject.getProject().getFile(ivyXmlPath);
+                if (!r.exists()) {
+                    r = p;
+                }
+                IMarker marker = r.createMarker(IvyPlugin.MARKER_ID);
                 marker.setAttribute(IMarker.MESSAGE, status.getMessage());
                 switch (status.getSeverity()) {
                     case IStatus.ERROR:

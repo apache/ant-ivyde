@@ -199,17 +199,6 @@
       </command>
    </extension>
    <extension
-         point="org.eclipse.ui.decorators">
-      <decorator
-            adaptable="true"
-            class="org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerDecorator"
-            id="org.apache.ivyde.eclipse.cpcontainer.decorator"
-            label="IvyDE classpath decoration"
-            location="BOTTOM_LEFT"
-            state="true">
-      </decorator>
-   </extension>
-   <extension
          point="org.eclipse.help.toc">
       <toc
             file="doc/toc.xml"
@@ -222,6 +211,17 @@
             class="org.apache.ivyde.eclipse.IvyDEClasspathVariableInitializer"
             variable="IVY_HOME">
       </classpathVariableInitializer>
+   </extension>
+   <extension
+         id="marker"
+         name="IvyDE Problem"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="false">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
    </extension>
    
 
