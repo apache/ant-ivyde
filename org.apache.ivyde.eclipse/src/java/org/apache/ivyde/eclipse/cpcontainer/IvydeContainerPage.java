@@ -26,9 +26,9 @@ import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
-import org.apache.ivyde.eclipse.ui.SettingsPathText;
+import org.apache.ivyde.eclipse.ui.SettingsEditor;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
-import org.apache.ivyde.eclipse.ui.SettingsPathText.SettingsPathListener;
+import org.apache.ivyde.eclipse.ui.SettingsEditor.SettingsEditorListener;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
 import org.eclipse.core.runtime.IStatus;
@@ -63,7 +63,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private ConfTableViewer confTableViewer;
 
-    private SettingsPathText settingsText;
+    private SettingsEditor settingsEditor;
 
     private Combo alphaOrderCheck;
 
@@ -129,7 +129,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         }
 
         if (settingsProjectSpecificButton.getSelection()) {
-            conf.ivySettingsPath = settingsText.getSettingsPath();
+            conf.ivySettingsPath = settingsEditor.getSettingsPath();
+            conf.propertyFiles = settingsEditor.getPropertyFiles();
             conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
             conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
             conf.javadocTypes = acceptedSuffixesTypesComposite.getJavadocTypes();
@@ -205,7 +206,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         tabs.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ivyFilePathText.updateErrorMarker();
-                settingsText.updateErrorMarker();
+                settingsEditor.updateErrorMarker();
             }
         });
 
@@ -230,7 +231,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         settingsProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateFieldsStatusSettings();
-                conf.ivySettingsPath = settingsText.getSettingsPath();
+                conf.ivySettingsPath = settingsEditor.getSettingsPath();
                 settingsUpdated();
             }
         });
@@ -254,13 +255,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         configComposite.setLayout(new GridLayout(3, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        Label label = new Label(configComposite, SWT.NONE);
-        label.setText("Ivy settings path:");
-
-        settingsText = new SettingsPathText(configComposite, SWT.NONE);
-        settingsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-        settingsText.addListener(new SettingsPathListener() {
-            public void settingsPathUpdated(String path) {
+        settingsEditor = new SettingsEditor(configComposite, SWT.NONE);
+        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+        settingsEditor.addListener(new SettingsEditorListener() {
+            public void settingsEditorUpdated(String path) {
                 conf.ivySettingsPath = path;
                 settingsUpdated();
             }
@@ -419,9 +417,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         try {
             conf.ivySettingsLastModified = -1;
             conf.getIvy();
-            settingsText.setSettingsError(null);
+            settingsEditor.setSettingsError(null);
         } catch (IvyDEException e) {
-            settingsText.setSettingsError(e);
+            settingsEditor.setSettingsError(e);
         }
         checkIvyXmlPath();
     }
@@ -434,10 +432,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         if (conf.isSettingsProjectSpecific()) {
             settingsProjectSpecificButton.setSelection(true);
-            settingsText.init(conf.ivySettingsPath);
+            settingsEditor.init(conf.ivySettingsPath, conf.propertyFiles);
         } else {
             settingsProjectSpecificButton.setSelection(false);
-            settingsText.init(helper.getIvySettingsPath());
+            settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles());
         }
 
         if (conf.isRetrieveProjectSpecific()) {
@@ -446,8 +444,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 conf.retrieveTypes, conf.retrieveSync);
         } else {
             retrieveProjectSpecificButton.setSelection(false);
-            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper.getRetrieveConfs(), helper.getRetrieveTypes(), helper
-                    .getRetrieveSync());
+            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
+                    .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
         }
 
         if (conf.isAdvancedProjectSpecific()) {
@@ -472,7 +470,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     void updateFieldsStatusSettings() {
         boolean projectSpecific = settingsProjectSpecificButton.getSelection();
         mainGeneralSettingsLink.setEnabled(!projectSpecific);
-        settingsText.setEnabled(projectSpecific);
+        settingsEditor.setEnabled(projectSpecific);
     }
 
     void updateFieldsStatusRetrieve() {

@@ -54,6 +54,8 @@ public class IvyDEPreferenceStoreHelper {
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
+    
+    public static final String DEFAULT_PROPERTY_FILES = "";
 
     private final IPreferenceStore prefStore;
 
@@ -96,6 +98,7 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         prefStore
                 .setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
+        prefStore.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);
     }
 
     public String getIvyOrg() {
@@ -234,4 +237,11 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.ORGANISATION_URL, url);
     }
 
+    public List getPropertyFiles() {
+      return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.PROPERTY_FILES));
+    }
+
+    public void setPropertyFiles(List files) {
+        prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(files));
+    }
 }

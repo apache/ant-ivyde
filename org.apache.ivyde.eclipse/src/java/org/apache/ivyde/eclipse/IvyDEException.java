@@ -29,6 +29,8 @@ public class IvyDEException extends Exception {
 
     private final String shortMsg;
 
+    private String msg;
+
     /**
      * Default constructor
      * 
@@ -40,12 +42,21 @@ public class IvyDEException extends Exception {
      *            the underlying cause
      */
     public IvyDEException(String shortMsg, String msg, Throwable cause) {
-        super(msg, cause);
+        super(cause);
         this.shortMsg = shortMsg;
+        this.msg = msg;
     }
 
     public String getShortMsg() {
         return shortMsg;
+    }
+
+    public String getMessage() {
+        return msg;
+    }
+
+    public void contextualizeMessage(String context) {
+        this.msg = context + ":\n  " + msg;
     }
 
     /**

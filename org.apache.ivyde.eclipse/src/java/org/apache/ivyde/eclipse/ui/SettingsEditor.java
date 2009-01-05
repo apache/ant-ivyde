@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -33,8 +34,6 @@ import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -43,14 +42,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class SettingsPathText extends Composite {
+public class SettingsEditor extends Composite {
 
-    public static final String TOOLTIP_SETTINGS = "The url where your ivysettings file can be found. \n"
+    public static final String TOOLTIP_SETTINGS_PATH = "The url where your ivysettings file can be found. \n"
             + "Leave it empty to reference the default ivy settings. \n"
             + "Relative paths are handled relative to the project.\n"
             + " Example: 'project:///ivysettings.xml' or 'project://myproject/ivysettings.xml'.";
+
+    public static final String TOOLTIP_PROPERTY_FILES = "Comma separated list of build property files.\n"
+            + "Example: build.properties, override.properties";
 
     private Text settingsText;
 
@@ -62,12 +65,17 @@ public class SettingsPathText extends Composite {
 
     private FieldDecoration errorDecoration;
 
-    public SettingsPathText(Composite parent, int style) {
+    private Text propFilesText;
+
+    public SettingsEditor(Composite parent, int style) {
         super(parent, style);
-        GridLayout layout = new GridLayout(2, false);
+        GridLayout layout = new GridLayout(3, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         setLayout(layout);
+
+        Label label = new Label(this, SWT.NONE);
+        label.setText("Ivy settings path:");
 
         errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
             FieldDecorationRegistry.DEC_ERROR);
@@ -79,7 +87,7 @@ public class SettingsPathText extends Composite {
         });
         settingsTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
         // settingsTextDeco.setMarginWidth(2);
-        settingsTextDeco.hideDecoration(errorDecoration);     
+        settingsTextDeco.hideDecoration(errorDecoration);
         // this doesn't work well: we want the decoration image to be clickable, but it actually
         // hides the clickable area
         // settingsTextDeco.getLayoutControl().addMouseListener(new MouseAdapter() {
@@ -94,7 +102,7 @@ public class SettingsPathText extends Composite {
         // });
 
         settingsText = (Text) settingsTextDeco.getControl();
-        settingsText.setToolTipText(TOOLTIP_SETTINGS);
+        settingsText.setToolTipText(TOOLTIP_SETTINGS_PATH);
         settingsTextDeco.getLayoutControl().setLayoutData(
             new GridData(GridData.FILL, GridData.FILL, true, false));
         settingsText.addModifyListener(new ModifyListener() {
@@ -120,23 +128,39 @@ public class SettingsPathText extends Composite {
                 }
             }
         });
+
+        label = new Label(this, SWT.NONE);
+        label.setText("Property files:");
+
+        propFilesText = new Text(this, SWT.BORDER);
+        propFilesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        propFilesText.setToolTipText(TOOLTIP_PROPERTY_FILES);
+        propFilesText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                settingsPathUpdated();
+            }
+        });
     }
 
     public String getSettingsPath() {
         return settingsText.getText();
     }
 
-    public interface SettingsPathListener {
-        void settingsPathUpdated(String path);
+    public List getPropertyFiles() {
+        return IvyClasspathUtil.split(propFilesText.getText());
     }
 
-    public void addListener(SettingsPathListener listener) {
+    public interface SettingsEditorListener {
+        void settingsEditorUpdated(String path);
+    }
+
+    public void addListener(SettingsEditorListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public void remodeListener(SettingsPathListener listener) {
+    public void remodeListener(SettingsEditorListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -146,7 +170,7 @@ public class SettingsPathText extends Composite {
         synchronized (listeners) {
             Iterator it = listeners.iterator();
             while (it.hasNext()) {
-                ((SettingsPathListener) it.next()).settingsPathUpdated(settingsText.getText());
+                ((SettingsEditorListener) it.next()).settingsEditorUpdated(settingsText.getText());
             }
         }
     }
@@ -191,12 +215,19 @@ public class SettingsPathText extends Composite {
         return null;
     }
 
-    public void init(String ivySettingsPath) {
+    public void init(String ivySettingsPath, String propertyFiles) {
         settingsText.setText(ivySettingsPath);
+        propFilesText.setText(propertyFiles);
+    }
+
+    public void init(String ivySettingsPath, List propertyFiles) {
+        init(ivySettingsPath, IvyClasspathUtil.concat(propertyFiles));
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         settingsText.setEnabled(enabled);
+        propFilesText.setEnabled(enabled);
     }
+
 }

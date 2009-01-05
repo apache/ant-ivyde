@@ -111,7 +111,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
     private ModuleDescriptor md;
 
     public IvyResolveJob(IvyClasspathContainer container, boolean usePreviousResolveIfExist) {
-        super("Resolve " + container.getConf() + " dependencies");
+        super("Ivy resolve job of " + container.getConf());
         this.container = container;
         this.conf = container.getConf();
         this.usePreviousResolveIfExist = usePreviousResolveIfExist;

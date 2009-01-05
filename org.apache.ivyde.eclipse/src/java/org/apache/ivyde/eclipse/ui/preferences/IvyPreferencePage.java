@@ -21,7 +21,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
-import org.apache.ivyde.eclipse.ui.SettingsPathText;
+import org.apache.ivyde.eclipse.ui.SettingsEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -54,7 +54,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private RetrieveComposite retrieveComposite;
 
-    private SettingsPathText settingsPathText;
+    private SettingsEditor settingsEditor;
 
     private Button resolveInWorkspaceCheck;
 
@@ -93,8 +93,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         settingsGroup.setLayout(new GridLayout());
         settingsGroup.setText("Global settings");
 
-        settingsPathText = new SettingsPathText(settingsGroup, SWT.NONE);
-        settingsPathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        settingsEditor = new SettingsEditor(settingsGroup, SWT.NONE);
+        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
         Group retrieveGroup = new Group(composite, SWT.NONE);
         retrieveGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -156,7 +156,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private void initPreferences() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        settingsPathText.init(helper.getIvySettingsPath());
+        settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles());
         retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
                 .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
         resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
@@ -169,7 +169,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        helper.setIvySettingsPath(settingsPathText.getSettingsPath());
+        helper.setIvySettingsPath(settingsEditor.getSettingsPath());
+        helper.setPropertyFiles(settingsEditor.getPropertyFiles());
         helper.setDoRetrieve(retrieveComposite.isRetrieveEnabled());
         helper.setRetrievePattern(retrieveComposite.getRetrievePattern());
         helper.setRetrieveSync(retrieveComposite.isSyncEnabled());
@@ -188,7 +189,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
     }
 
     protected void performDefaults() {
-        settingsPathText.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH);
+        settingsEditor.init(IvyDEPreferenceStoreHelper.DEFAULT_IVYSETTINGS_PATH,
+            IvyDEPreferenceStoreHelper.DEFAULT_PROPERTY_FILES);
         retrieveComposite.init(IvyDEPreferenceStoreHelper.DEFAULT_DO_RETRIEVE,
             IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_PATTERN,
             IvyDEPreferenceStoreHelper.DEFAULT_RETRIEVE_CONFS,

@@ -18,7 +18,10 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +31,9 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -47,8 +52,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * path: org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER? ivyXmlPath=ivy.xml &confs=default
@@ -73,6 +76,8 @@ public class IvyClasspathContainerConfiguration {
     List/* <String> */confs = Arrays.asList(new String[] {"*"});
 
     String ivySettingsPath;
+
+    List/* <String> */propertyFiles;
 
     List/* <String> */acceptedTypes;
 
@@ -109,6 +114,8 @@ public class IvyClasspathContainerConfiguration {
     boolean isAdvancedProjectSpecific;
 
     boolean isRetrieveProjectSpecific;
+
+    boolean isSettingsSpecific;
 
     /**
      * Constructor
@@ -150,9 +157,8 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public String toString() {
-        return (javaProject == null ? "" : "project '" + javaProject.getProject().getName()
-                + "' and ivy file '")
-                + ivyXmlPath + (javaProject == null ? "" : "'");
+        return ivyXmlPath
+                + (javaProject == null ? "" : " in '" + javaProject.getProject().getName() + "'");
     }
 
     /**
@@ -183,6 +189,7 @@ public class IvyClasspathContainerConfiguration {
         String[] parameters = url.split("&");
         isAdvancedProjectSpecific = false;
         isRetrieveProjectSpecific = false;
+        isSettingsSpecific = false;
         for (int i = 0; i < parameters.length; i++) {
             String[] parameter = parameters[i].split("=");
             if (parameter == null || parameter.length == 0) {
@@ -205,6 +212,10 @@ public class IvyClasspathContainerConfiguration {
                 }
             } else if (parameter[0].equals("ivySettingsPath")) {
                 ivySettingsPath = readOldIvySettings(value);
+                isSettingsSpecific = true;
+            } else if (parameter[0].equals("propertyFiles")) {
+                propertyFiles = IvyClasspathUtil.split(value);
+                isSettingsSpecific = true;
             } else if (parameter[0].equals("doRetrieve")) {
                 // if the value is not actually "true" or "false", the Boolean class ensure to
                 // return false, so it is fine
@@ -292,6 +303,9 @@ public class IvyClasspathContainerConfiguration {
         if (acceptedTypes == null) {
             acceptedTypes = IvyPlugin.getPreferenceStoreHelper().getAcceptedTypes();
         }
+        if (propertyFiles == null) {
+            propertyFiles = IvyPlugin.getPreferenceStoreHelper().getPropertyFiles();
+        }
         if (sourceTypes == null) {
             sourceTypes = IvyPlugin.getPreferenceStoreHelper().getSourceTypes();
         }
@@ -314,9 +328,11 @@ public class IvyClasspathContainerConfiguration {
             path.append(URLEncoder.encode(ivyXmlPath, "UTF-8"));
             path.append("&confs=");
             path.append(URLEncoder.encode(IvyClasspathUtil.concat(confs), "UTF-8"));
-            if (ivySettingsPath != null) {
+            if (isSettingsSpecific) {
                 path.append("&ivySettingsPath=");
                 path.append(URLEncoder.encode(ivySettingsPath, "UTF-8"));
+                path.append("&propertyFiles=");
+                path.append(URLEncoder.encode(IvyClasspathUtil.concat(propertyFiles), "UTF-8"));
             }
             if (isRetrieveProjectSpecific) {
                 path.append("&doRetrieve=");
@@ -412,14 +428,20 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public Ivy getIvy() throws IvyDEException {
+        try {
+            return doGetIvy();
+        } catch (IvyDEException e) {
+            e.contextualizeMessage("Error while resolving the ivy instance for " + this.toString());
+            throw e;
+        }
+    }
+
+    private Ivy doGetIvy() throws IvyDEException {
         String settingsPath = getInheritedIvySettingsPath();
         if (settingsPath == null || settingsPath.trim().length() == 0) {
             // no settings specified, so take the default one
             if (ivy == null) {
-                IvySettings ivySettings = new IvySettings();
-                if (javaProject != null) {
-                    ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
-                }
+                IvySettings ivySettings = createIvySettings();
                 try {
                     ivySettings.loadDefault();
                 } catch (ParseException e) {
@@ -496,10 +518,7 @@ public class IvyClasspathContainerConfiguration {
         } else {
             // an URL but not a file
             if (ivy == null || ivySettingsLastModified == -1) {
-                IvySettings ivySettings = new IvySettings();
-                if (javaProject != null) {
-                    ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
-                }
+                IvySettings ivySettings = createIvySettings();
                 try {
                     ivySettings.load(url);
                     ivySettingsLastModified = 0;
@@ -526,17 +545,13 @@ public class IvyClasspathContainerConfiguration {
     private Ivy getIvy(File file) throws IvyDEException {
         if (!file.exists()) {
             IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                    "The Ivy settings file '" + ivySettingsPath + "' cannot be found ("
-                            + this.toString() + ")", null);
+                    "The Ivy settings file '" + ivySettingsPath + "' cannot be found", null);
             setConfStatus(ex);
             throw ex;
         }
 
         if (file.lastModified() != ivySettingsLastModified) {
-            IvySettings ivySettings = new IvySettings();
-            if (javaProject != null) {
-                ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
-            }
+            IvySettings ivySettings = createIvySettings();
             if (ivySettingsLastModified == -1) {
                 Message.info("\n\n");
             } else {
@@ -546,26 +561,80 @@ public class IvyClasspathContainerConfiguration {
                 ivySettings.load(file);
             } catch (ParseException e) {
                 IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
-                        "The ivy settings file '" + ivySettingsPath + "' could not be parsed ("
-                                + this.toString() + ")", e);
+                        "The ivy settings file '" + ivySettingsPath + "' could not be parsed", e);
                 setConfStatus(ex);
                 throw ex;
             } catch (IOException e) {
                 IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
-                        "The ivy settings file '" + ivySettingsPath + "' could not be read ("
-                                + this.toString() + ")", e);
+                        "The ivy settings file '" + ivySettingsPath + "' could not be read", e);
                 setConfStatus(ex);
                 throw ex;
             }
             ivy = Ivy.newInstance(ivySettings);
             ivySettingsLastModified = file.lastModified();
         }
-
         return ivy;
     }
 
+    private IvySettings createIvySettings() throws IvyDEException {
+        IvySettings ivySettings = new IvySettings();
+        if (javaProject != null) {
+            ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
+        }
+        Collection propFiles = getInheritedPropertyFiles();
+        if (propFiles != null) {
+            Iterator iter = propFiles.iterator();
+            while (iter.hasNext()) {
+                String file = (String) iter.next();
+                InputStream is;
+                Path p = new Path(file);
+                if (javaProject != null && !p.isAbsolute()) {
+                    try {
+                        is = javaProject.getProject().getFile(file).getContents();
+                    } catch (CoreException e) {
+                        IvyDEException ex = new IvyDEException("Unreadable property file",
+                                "The property file '" + file + "' could not be read", e);
+                        setConfStatus(ex);
+                        throw ex;
+                    }
+                } else {
+                    try {
+                        is = new FileInputStream(file);
+                    } catch (FileNotFoundException e) {
+                        IvyDEException ex = new IvyDEException("Property file not found",
+                                "The property file '" + file + "' was not found", e);
+                        setConfStatus(ex);
+                        throw ex;
+                    }
+                }
+                Properties props = new Properties();
+                try {
+                    props.load(is);
+                } catch (IOException e) {
+                    IvyDEException ex = new IvyDEException("Not a property file",
+                            "The property file '" + file + "' could not be loaded", e);
+                    setConfStatus(ex);
+                    throw ex;
+                }
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    // don't care
+                }
+
+                Iterator keys = props.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    String value = props.getProperty(key);
+                    ivySettings.setVariable(key, value);
+                }
+            }
+        }
+        return ivySettings;
+    }
+
     public String getInheritedIvySettingsPath() {
-        if (ivySettingsPath == null) {
+        if (!isSettingsSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsPath();
         }
         return ivySettingsPath;
@@ -660,7 +729,7 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public boolean isSettingsProjectSpecific() {
-        return ivySettingsPath != null;
+        return isSettingsSpecific;
     }
 
     public boolean isAdvancedProjectSpecific() {
@@ -686,7 +755,7 @@ public class IvyClasspathContainerConfiguration {
         File file = getIvyFile();
         if (!file.exists()) {
             IvyDEException ex = new IvyDEException("Ivy file not found", "The ivy.xml file '"
-                    + file.getAbsolutePath() + "' was not found (" + this.toString() + ")", null);
+                    + file.getAbsolutePath() + "' was not found", null);
             setConfStatus(ex);
             throw ex;
         }
@@ -698,21 +767,27 @@ public class IvyClasspathContainerConfiguration {
             return md;
         } catch (MalformedURLException e) {
             IvyDEException ex = new IvyDEException("Incorrect URL of the Ivy file",
-                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "' ("
-                            + this.toString() + ")", e);
+                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "'", e);
             setConfStatus(ex);
             throw ex;
         } catch (ParseException e) {
             IvyDEException ex = new IvyDEException("Parsing error of the Ivy file",
-                    "The ivy file '" + file.getAbsolutePath() + "' could not be parsed ("
-                            + this.toString() + ")", e);
+                    "The ivy file '" + file.getAbsolutePath() + "' could not be parsed", e);
             setConfStatus(ex);
             throw ex;
         } catch (IOException e) {
             IvyDEException ex = new IvyDEException("Read error of the Ivy file", "The ivy file '"
-                    + file.getAbsolutePath() + "' could not be read (" + this.toString() + ")", e);
+                    + file.getAbsolutePath() + "' could not be read", e);
             setConfStatus(ex);
             throw ex;
+        }
+    }
+
+    public Collection getInheritedPropertyFiles() {
+        if (!isSettingsSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getPropertyFiles();
+        } else {
+            return propertyFiles;
         }
     }
 

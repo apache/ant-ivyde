@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -175,6 +176,9 @@ public final class IvyClasspathUtil {
     }
 
     public static String concat(Collection/* <String> */list) {
+        if (list == null) {
+            return "";
+        }
         StringBuffer b = new StringBuffer();
         Iterator it = list.iterator();
         while (it.hasNext()) {
