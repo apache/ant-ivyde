@@ -31,5 +31,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
  org.eclipse.ui.console,
- org.apache.ivy
+ org.apache.ivy,
+ org.eclipse.help
 Eclipse-LazyStart: true

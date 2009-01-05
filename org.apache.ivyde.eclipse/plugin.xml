@@ -209,6 +209,13 @@
             state="true">
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="doc/toc.xml"
+            primary="true">
+      </toc>
+   </extension>
    
 
 

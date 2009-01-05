@@ -28,22 +28,27 @@
 - local.build.properties : properties handled by developers, ignored by subversion.
                            The baseLocation property should be set there.
 -->
-<project name="ivyde" basedir="." default="build">
+<project name="ivyde" basedir="." default="build" xmlns:xooki="antlib:xooki">
+
+    <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
 
     <property file="local.build.properties" />
     <property file="build.properties" />
 
     <property name="work.dir" value="${basedir}/work"/>
     <property name="ivy.work.dir" value="${work.dir}/ivy"/>
+    <property name="doc.work.dir" value="${work.dir}/doc"/>
     <property name="eclipse.work.dir" value="${work.dir}/eclipse"/>
     <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
+    <property name="src.doc.dir" value="${basedir}/doc" />
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <property name="forceContextQualifier" value="${version.qualifier}" />
         <property name="generateFeatureVersionSuffix" value="false" />
     </target>
 
-    <target name="dist" depends="build,sources,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="generate-eclipse-doc,build,sources,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -320,4 +325,87 @@ You have to specify the Ivy to install with one of the following property:
         </fail>
         <echo message="SHA Checksum verify passed successfully" />
     </target>
+
+    <!--
+        ======================================================================================
+        Targets related to the generation of the documentation included in the eclipse plugin
+        ======================================================================================
+     -->
+
+    <target name="generate-eclipse-doc" depends="clean-eclipse-doc,generate-eclipse-doc-html,generate-eclipse-doc-files,generate-eclipse-toc">
+    </target>
+
+    <target name="clean-eclipse-doc">
+        <delete dir="${doc.work.dir}" />
+        <delete dir="${eclipse-doc.dir}" />
+    </target>
+
+    <target name="generate-eclipse-doc-html">
+        <copy todir="${doc.work.dir}">
+            <fileset dir="${src.doc.dir}" />
+        </copy>
+        <copy file="${basedir}/template-eclipse-doc.html" tofile="${doc.work.dir}/template.html" overwrite="true"/>
+        <property name="checkUpToDate" value="true" />
+        <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}">
+            <fileset dir="${doc.work.dir}">
+                <include name="**/*.html"/>
+                <exclude name="template.html"/>
+                <exclude name="**/xooki/**"/>
+            </fileset>
+        </xooki:generate>
+    </target>
+
+    <target name="generate-eclipse-doc-files">
+        <property name="checkUpToDate" value="true" />
+        <condition property="overwrite">
+             <isfalse value="${checkUpToDate}"/>
+        </condition>
+        <copy todir="${eclipse-doc.dir}" overwrite="${overwrite}">
+            <fileset dir="${src.doc.dir}">
+                <include name="style/**" />
+                <include name="js/**" />
+                <include name="images/**" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="generate-eclipse-toc">
+        <scriptdef name="generate-eclipse-toc" language="javascript">
+            <attribute name="jsontocfile" />
+            <attribute name="destFile"/>
+            <![CDATA[
+                importPackage(java.io);
+                importPackage(javax.xml.xpath);
+                importPackage(org.xml.sax);
+                importPackage(javax.xml.parsers);
+
+                var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
+                r = new BufferedReader(new FileReader(tocfile));
+                var val = "";
+                while((s = r.readLine()) != null) {
+                    val += s;
+                }
+                r.close();
+                var toc = eval("("+val+")")
+
+                var writeTopic = function(o, children, indent) {
+                    for(var c in children) {
+                        o.write(indent + '<topic label="' + children[c].title + '" href="doc/' + children[c].id + '.html">\n');
+                        if (children[c].children && children[c].children.length && children[c].children.length != 0) {
+                            writeTopic(o, children[c].children, indent+'    ');
+                        }
+                        o.write(indent+'</topic>\n');
+                    }
+                };
+
+                out = new FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
+                out.write('<toc label="IvyDE user documentation">\n')
+                writeTopic(out, toc.children[0].children, '    ');
+                out.write('</toc>\n');
+                out.close();
+            ]]>
+        </scriptdef>
+        <generate-eclipse-toc jsontocfile="${src.doc.dir}/toc.json" destFile="${eclipse-doc.dir}/toc.xml" />
+    </target>
+
 </project>
