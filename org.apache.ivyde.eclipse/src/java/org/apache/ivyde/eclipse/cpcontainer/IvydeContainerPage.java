@@ -31,7 +31,6 @@ import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
 import org.apache.ivyde.eclipse.ui.SettingsEditor.SettingsEditorListener;
 import org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
-import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage;
 import org.eclipse.core.runtime.IStatus;
@@ -93,6 +92,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private Button retrieveProjectSpecificButton;
 
     private Link retrieveGeneralSettingsLink;
+
+    private boolean exported;
 
     /**
      * Constructor
@@ -173,7 +174,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         } else {
             conf.isAdvancedProjectSpecific = false;
         }
-        entry = JavaCore.newContainerEntry(conf.getPath());
+        entry = JavaCore.newContainerEntry(conf.getPath(), exported);
         return true;
     }
 
@@ -184,8 +185,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     public void setSelection(IClasspathEntry entry) {
         if (entry == null) {
             conf = new IvyClasspathContainerConfiguration(project, "ivy.xml", true);
+            exported = false;
         } else {
             conf = new IvyClasspathContainerConfiguration(project, entry.getPath(), true);
+            exported = entry.isExported();
         }
     }
 
