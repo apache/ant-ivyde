@@ -25,6 +25,7 @@ import org.apache.ivy.util.MessageLogger;
 import org.apache.ivy.util.MessageLoggerHelper;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -54,9 +55,9 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     private ConsoleDocument document;
 
-    private boolean initialized;
+    private boolean initialized = false;
 
-    private boolean visible;
+    private boolean visible = false;
 
     private boolean showOnMessage;
 
@@ -200,6 +201,17 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             // CheckStyle:MagicNumber| ON
         }
         return new Color(display, rgb);
+    }
+
+    protected void dispose() {
+        // Here we can't call super.dispose() because we actually want the partitioner to remain
+        // connected, but we won't show lines until the console is added to the console manager
+        // again.
+
+        // Called when console is removed from the console view
+        synchronized (document) {
+            visible = false;
+        }
     }
 
     /**

@@ -17,35 +17,16 @@
  */
 package org.apache.ivyde.eclipse.ui.console;
 
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.actions.CloseConsoleAction;
-import org.eclipse.ui.part.IPageBookViewPage;
 
-public class IvyConsolePageParticipant implements IConsolePageParticipant {
+public class IvyConsoleRemoveAction extends CloseConsoleAction {
 
-    private CloseConsoleAction closeAction;
-
-    public void init(IPageBookViewPage page, IConsole console) {
-        closeAction = new IvyConsoleRemoveAction(console);
-        IToolBarManager manager = page.getSite().getActionBars().getToolBarManager();
-        manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, closeAction);
+	public IvyConsoleRemoveAction(IConsole console) {
+        super(console);
     }
 
-    public void dispose() {
-        closeAction = null;
-    }
-
-    public Object getAdapter(Class adapter) {
-        return null;
-    }
-
-    public void activated() {
-    }
-
-    public void deactivated() {
-    }
-
+    public void run() {
+		IvyConsoleFactory.closeConsole();
+	}
 }
