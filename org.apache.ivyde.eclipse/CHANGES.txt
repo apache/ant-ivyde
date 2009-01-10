@@ -22,6 +22,7 @@
 - FIX: The decorators can throw a NPE at startup (IVYDE-133)
 - FIX: Changing any setting for the classpath container loses the "exported" setting of the classpath container (IVYDE-149)
 - FIX: IvyConsole:java.io.IOException: Output Stream is closed (IVYDE-130)
+- FIX: "Delete old retrieved artifacts" gets grayed out after OK'ing the dialog (IVYDE-155)
 
   version 2.0.0 beta1
 ==========================

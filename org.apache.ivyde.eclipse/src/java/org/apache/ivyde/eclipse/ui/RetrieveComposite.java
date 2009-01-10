@@ -127,6 +127,7 @@ public class RetrieveComposite extends Composite {
         retrieveSyncButton.setSelection(retrieveSync);
         confsText.setText(confs);
         typesText.setText(types);
+        setEnabled(true);
     }
 
     public void setEnabled(boolean enabled) {
