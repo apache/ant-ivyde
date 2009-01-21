@@ -30,8 +30,6 @@
 -->
 <project name="ivyde" basedir="." default="build" xmlns:xooki="antlib:xooki">
 
-    <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
-
     <property file="local.build.properties" />
     <property file="build.properties" />
 
@@ -243,15 +241,14 @@ You have to specify the Ivy to install with one of the following property:
         <path id="ivy.eclipse.paths">
             <fileset dir="${baseLocation}/plugins" includes="org.apache.ivy_*.jar"/>
         </path>
+        <condition property="ivy.installed">
+            <resourcecount refid="ivy.eclipse.paths" when="greater" count="0" />
+        </condition>
         <echo message="The Ivy installed in ${baseLocation}: ${toString:ivy.eclipse.paths}" />
     </target>
 
     <target name="check-ivy-installed" depends="list-installed-ivy">
-        <fail message="No Ivy is installed. Please run 'ant install-ivy first'.">
-            <condition>
-                <resourcecount refid="ivy.eclipse.paths" when="equal" count="0" />
-            </condition>
-        </fail>
+        <fail message="No Ivy is installed. Please run 'ant install-ivy first'." unless="ivy.installed" />
     </target>
 
     <!-- 
@@ -327,6 +324,51 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <!--
+            ======================================================================================
+            Targets related to prepare the build environment of IvyDE on hudson.
+            ======================================================================================
+         -->
+
+    <target name="hudson-prepare" depends="hudson-prepare-eclipse,hudson-prepare-properties,hudson-install-ivy" />
+
+    <target name="hudson-prepare-eclipse" depends="hudson-get-eclipse,hudson-unzip-eclipse" />
+
+    <target name="hudson-check-download-eclipse">
+        <condition property="hudson.eclipse.downloaded">
+            <available file="${hudson.eclipse.name}.zip" />
+        </condition>
+    </target>
+
+    <target name="hudson-get-eclipse" depends="hudson-check-download-eclipse" unless="hudson.eclipse.downloaded">
+        <get src="${hudson.eclipse.url}" dest="${hudson.eclipse.name}.zip" verbose="yes" />
+    </target>
+
+    <target name="hudson-check-unzip-eclipse">
+        <condition property="hudson.eclipse.unzipped">
+            <available file="${hudson.eclipse.name}" />
+        </condition>
+    </target>
+
+    <target name="hudson-unzip-eclipse" depends="hudson-check-unzip-eclipse" unless="hudson.eclipse.unzipped">
+        <unzip src="${hudson.eclipse.name}.zip" dest="${basedir}" />
+        <move file="eclipse" tofile="${hudson.eclipse.name}" />
+    </target>
+
+    <target name="hudson-prepare-properties">
+        <property name="baseLocation" value="${basedir}/${hudson.eclipse.name}" />
+        <echo file="local.build.properties">
+baseLocation=${basedir}/${hudson.eclipse.name}
+</echo>
+    </target>
+
+    <target name="hudson-install-ivy" depends="list-installed-ivy" unless="ivy.installed">
+        <ant antfile="build.xml" target="install-ivy">
+            <property name="ivy.version" value="${hudson.ivy.version}" />
+            <property name="baseLocation" location="${basedir}/${hudson.eclipse.name}" />
+        </ant>
+    </target>
+
+    <!--
         ======================================================================================
         Targets related to the generation of the documentation included in the eclipse plugin
         ======================================================================================
@@ -341,6 +383,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="generate-eclipse-doc-html">
+        <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
         <copy todir="${doc.work.dir}">
             <fileset dir="${src.doc.dir}" />
         </copy>
