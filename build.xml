@@ -33,11 +33,11 @@
     <property file="local.build.properties" />
     <property file="build.properties" />
 
-    <property name="work.dir" value="${basedir}/work"/>
-    <property name="ivy.work.dir" value="${work.dir}/ivy"/>
-    <property name="doc.work.dir" value="${work.dir}/doc"/>
-    <property name="eclipse.work.dir" value="${work.dir}/eclipse"/>
-    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="work.dir" value="${basedir}/work" />
+    <property name="ivy.work.dir" value="${work.dir}/ivy" />
+    <property name="doc.work.dir" value="${work.dir}/doc" />
+    <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
+    <property name="dist.dir" value="${basedir}/dist" />
     <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
     <property name="src.doc.dir" value="${basedir}/doc" />
 
@@ -95,15 +95,15 @@
 
     <target name="compute-version">
         <tstamp />
-        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}"/>
+        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}" />
         <property name="generateFeatureVersionSuffix" value="true" />
         <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
             <filterchain>
                 <linecontainsregexp>
-                    <regexp pattern="Bundle-Version:.*"/>
+                    <regexp pattern="Bundle-Version:.*" />
                 </linecontainsregexp>
-                <replaceregex pattern="Bundle-Version: (.*)qualifier" replace="\1${forceContextQualifier}"/>
-                <striplinebreaks/>
+                <replaceregex pattern="Bundle-Version: (.*)qualifier" replace="\1${forceContextQualifier}" />
+                <striplinebreaks />
             </filterchain>
         </loadfile>
         <echo message="Building version ${build.version}" />
@@ -119,10 +119,10 @@
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
             <arg value="-clean" />
             <arg line="-application org.eclipse.pde.build.Build" />
-            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}"/>
-            <sysproperty key="baseLocation" value="${baseLocation}"/>
-            <sysproperty key="builder" path="${basedir}/builder/component"/>
-            <sysproperty key="mapsPath" path="${basedir}/builder/maps"/>
+            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+            <sysproperty key="baseLocation" value="${baseLocation}" />
+            <sysproperty key="builder" path="${basedir}/builder/component" />
+            <sysproperty key="mapsPath" path="${basedir}/builder/maps" />
             <sysproperty key="buildDirectory" path="${eclipse.work.dir}" />
             <sysproperty key="DSTAMP" value="${DSTAMP}" />
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
@@ -130,14 +130,14 @@
             <sysproperty key="generateFeatureVersionSuffix" value="${generateFeatureVersionSuffix}" />
             <sysproperty key="outputUpdateJars" value="true" />
             <sysproperty key="build.version" value="${build.version}" />
-            <sysproperty key="javacDebugInfo" value="true"/>
+            <sysproperty key="javacDebugInfo" value="true" />
         </java>
-        <mkdir dir="${dist.dir}"/>
-        <move file="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" todir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}" />
+        <move file="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" todir="${dist.dir}" />
     </target>
 
     <target name="sources" depends="compute-version" description="Create source archive files">
-        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip">
             <fileset dir="${basedir}">
                 <include name="site.xml" />
@@ -149,24 +149,24 @@
                 <include name="org.apache.ivy.feature/feature.xml" />
                 <include name="org.apache.ivy.feature/LICENSE" />
                 <include name="org.apache.ivy.feature/NOTICE" />
-                <include name="org.apache.ivy.feature/.project"/>
-                <include name="org.apache.ivyde.eclipse/plugin.xml"/>
-                <include name="org.apache.ivyde.eclipse/build.properties"/>
-                <include name="org.apache.ivyde.eclipse/**/*.java"/>
-                <include name="org.apache.ivyde.eclipse/icons/**"/>
-                <include name="org.apache.ivyde.eclipse/META-INF/**"/>
-                <include name="org.apache.ivyde.eclipse/CHANGES.txt"/>
-                <include name="org.apache.ivyde.eclipse/.project"/>
-                <include name="org.apache.ivyde.eclipse/.classpath"/>
-                <include name="org.apache.ivyde.eclipse/.settings/**"/>
-                <include name="org.apache.ivyde.feature/feature.xml"/>
+                <include name="org.apache.ivy.feature/.project" />
+                <include name="org.apache.ivyde.eclipse/plugin.xml" />
+                <include name="org.apache.ivyde.eclipse/build.properties" />
+                <include name="org.apache.ivyde.eclipse/**/*.java" />
+                <include name="org.apache.ivyde.eclipse/icons/**" />
+                <include name="org.apache.ivyde.eclipse/META-INF/**" />
+                <include name="org.apache.ivyde.eclipse/CHANGES.txt" />
+                <include name="org.apache.ivyde.eclipse/.project" />
+                <include name="org.apache.ivyde.eclipse/.classpath" />
+                <include name="org.apache.ivyde.eclipse/.settings/**" />
+                <include name="org.apache.ivyde.feature/feature.xml" />
                 <include name="org.apache.ivyde.feature/feature.properties" />
-                <include name="org.apache.ivyde.feature/build.properties"/>
-                <include name="org.apache.ivyde.feature/.project"/>
-                <include name="org.apache.ivyde.feature/LICENCE"/>
-                <include name="org.apache.ivyde.feature/NOTICE"/>
-                <include name="signArtifacts.sh"/>
-                <include name="verifyArtifacts.sh"/>
+                <include name="org.apache.ivyde.feature/build.properties" />
+                <include name="org.apache.ivyde.feature/.project" />
+                <include name="org.apache.ivyde.feature/LICENCE" />
+                <include name="org.apache.ivyde.feature/NOTICE" />
+                <include name="signArtifacts.sh" />
+                <include name="verifyArtifacts.sh" />
             </fileset>
         </zip>
     </target>
@@ -185,12 +185,12 @@
         <loadfile property="ivy.bundle.version" srcFile="${ivy.work.dir}/jar/META-INF/MANIFEST.MF">
             <filterchain>
                 <linecontains>
-                    <contains value="Bundle-Version:"/>
+                    <contains value="Bundle-Version:" />
                 </linecontains>
                 <tokenfilter>
-                    <replaceregex pattern="Bundle-Version: (.*)" replace="\1" flags="gi"/>
+                    <replaceregex pattern="Bundle-Version: (.*)" replace="\1" flags="gi" />
                 </tokenfilter>
-                <striplinebreaks/>
+                <striplinebreaks />
             </filterchain>
         </loadfile>
     </target>
@@ -198,7 +198,7 @@
     <!-- clean up every installed ivy and install the specified one -->
     <target name="install-ivy-jar" depends="compute-ivy-bundle-version">
         <delete>
-            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivy_*.jar"/>
+            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivy_*.jar" />
         </delete>
         <get src="${ivy.jar.url}" dest="${baseLocation}/plugins/org.apache.ivy_${ivy.bundle.version}.jar" />
         <echo message="Ivy ${ivy.bundle.version} has been installed in ${baseLocation}" />
@@ -226,7 +226,7 @@ You have to specify the Ivy to install with one of the following property:
         <unzip overwrite="true" src="${ivy.work.dir}/ivy-bin.zip" dest="${ivy.work.dir}/distrib" />
         <path id="ivy.jar.path">
             <first count="1">
-                <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar"/>
+                <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar" />
             </first>
         </path>
         <makeurl property="ivy.jar.url" file="${toString:ivy.jar.path}" />
@@ -239,7 +239,7 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="list-installed-ivy" depends="check-baseLocation" description="List the Ivy bundle(s) in your Eclipse install">
         <path id="ivy.eclipse.paths">
-            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivy_*.jar"/>
+            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivy_*.jar" />
         </path>
         <condition property="ivy.installed">
             <resourcecount refid="ivy.eclipse.paths" when="greater" count="0" />
@@ -259,20 +259,20 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="clean-installed-ivyde" description="Remove every IvyDE version installed in Eclipse">
         <delete>
-            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivyde*.jar"/>
-            <fileset dir="${baseLocation}/features/" includes="org.apache.ivyde*.jar"/>
+            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivyde*.jar" />
+            <fileset dir="${baseLocation}/features/" includes="org.apache.ivyde*.jar" />
         </delete>
     </target>
 
     <target name="list-installed-ivyde" depends="check-baseLocation" description="List the IvyDE plugin(s) in your Eclipse install">
         <path id="ivyde.eclipse.paths">
-            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivyde*.jar"/>
+            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivyde*.jar" />
         </path>
         <echo message="The IvyDE installed in ${baseLocation}: ${toString:ivyde.eclipse.paths}" />
     </target>
 
     <target name="install" depends="dist,clean-installed-ivyde" description="Install the IvyDE bundle into the eclipse install">
-        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${baseLocation}"/>
+        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${baseLocation}" />
     </target>
 
     <!-- 
@@ -297,7 +297,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="verify-checksum" description="Verify the checksums of the artifacts to publish">
-        <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" verifyproperty="checksum.md5.ok" >
+        <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" verifyproperty="checksum.md5.ok">
             <fileset dir="${dist.dir}">
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
@@ -305,11 +305,11 @@ You have to specify the Ivy to install with one of the following property:
         </checksum>
         <fail message="MD5 Checksum verify failed !">
             <condition>
-                <isfalse value="${checksum.md5.ok}"/>
+                <isfalse value="${checksum.md5.ok}" />
             </condition>
         </fail>
         <echo message="MD5 Checksum verify passed successfully" />
-        <checksum algorithm="SHA" fileext=".sha" format="MD5SUM" verifyproperty="checksum.sha.ok" >
+        <checksum algorithm="SHA" fileext=".sha" format="MD5SUM" verifyproperty="checksum.sha.ok">
             <fileset dir="${dist.dir}">
                 <include name="org.apache.ivyde.feature-*.zip" />
                 <include name="apache-ivyde-sources-*.zip" />
@@ -317,7 +317,7 @@ You have to specify the Ivy to install with one of the following property:
         </checksum>
         <fail message="SHA Checksum verify failed !">
             <condition>
-                <isfalse value="${checksum.sha.ok}"/>
+                <isfalse value="${checksum.sha.ok}" />
             </condition>
         </fail>
         <echo message="SHA Checksum verify passed successfully" />
@@ -387,13 +387,13 @@ baseLocation=${basedir}/${hudson.eclipse.name}
         <copy todir="${doc.work.dir}">
             <fileset dir="${src.doc.dir}" />
         </copy>
-        <copy file="${basedir}/template-eclipse-doc.html" tofile="${doc.work.dir}/template.html" overwrite="true"/>
+        <copy file="${basedir}/template-eclipse-doc.html" tofile="${doc.work.dir}/template.html" overwrite="true" />
         <property name="checkUpToDate" value="true" />
         <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}">
             <fileset dir="${doc.work.dir}">
-                <include name="**/*.html"/>
-                <exclude name="template.html"/>
-                <exclude name="**/xooki/**"/>
+                <include name="**/*.html" />
+                <exclude name="template.html" />
+                <exclude name="**/xooki/**" />
             </fileset>
         </xooki:generate>
     </target>
@@ -401,7 +401,7 @@ baseLocation=${basedir}/${hudson.eclipse.name}
     <target name="generate-eclipse-doc-files">
         <property name="checkUpToDate" value="true" />
         <condition property="overwrite">
-             <isfalse value="${checkUpToDate}"/>
+            <isfalse value="${checkUpToDate}" />
         </condition>
         <copy todir="${eclipse-doc.dir}" overwrite="${overwrite}">
             <fileset dir="${src.doc.dir}">
@@ -415,7 +415,7 @@ baseLocation=${basedir}/${hudson.eclipse.name}
     <target name="generate-eclipse-toc">
         <scriptdef name="generate-eclipse-toc" language="javascript">
             <attribute name="jsontocfile" />
-            <attribute name="destFile"/>
+            <attribute name="destFile" />
             <![CDATA[
                 importPackage(java.io);
                 importPackage(javax.xml.xpath);
