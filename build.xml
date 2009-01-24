@@ -138,7 +138,7 @@
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip">
             <fileset dir="${basedir}">
-                <include name="site.xml" />
+                <include name="site-template.xml" />
                 <include name="build.xml" />
                 <include name="build.properties" />
                 <include name="builder/**" />
