@@ -17,24 +17,9 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<!--
-  publishing this files means copying it into the ivyde website at:
-    svn.apache.org/repos/asf/ant/ivy/site/ivyde/updatesite/site.xml
--->
-<site pack200="true"
-      digestURL="http://www.apache.org/dist/ant/ivy/ivyde/updatesite/digest.zip/"
-      mirrorsURL="http://www.apache.org/ant/ivy/ivyde/updatesite/eclipse-update--xml.cgi">
-   <description url="http://www.apache.org/ant/ivy/ivyde/updatesite">
-      Eclipse update site for Apache IvyDE.
-   </description>
-
-   <feature url="features/org.apache.ivyde.feature_2.0.0.alpha1.jar" id="org.apache.ivyde.feature" version="2.0.0.alpha1">
+<site>
+   <feature url="features/org.apache.ivyde.feature_@VERSION@.jar" id="org.apache.ivyde.feature" version="@VERSION@">
       <category name="ivyde"/>
    </feature>
-
-   <feature url="features/org.apache.ivy.feature_2.0.0.beta2.jar" id="org.apache.ivy.feature" version="2.0.0.beta2">
-      <category name="ivyde"/>
-   </feature>
-
-   <category-def name="ivyde" label="Apache IvyDE Eclipse plugins"/>
+   <category-def name="ivyde" label="Apache IvyDE Eclipse plugins (trunk builds)"/>
 </site>

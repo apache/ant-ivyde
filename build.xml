@@ -38,12 +38,12 @@
     <property name="doc.work.dir" value="${work.dir}/doc" />
     <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
     <property name="dist.dir" value="${basedir}/dist" />
+    <property name="updatesite.dir" value="${basedir}/updatesite" />
     <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
     <property name="src.doc.dir" value="${basedir}/doc" />
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <property name="forceContextQualifier" value="${version.qualifier}" />
-        <property name="generateFeatureVersionSuffix" value="false" />
     </target>
 
     <target name="dist" depends="generate-eclipse-doc,build,sources,checksum" description="Build every artifacts for distribution" />
@@ -96,7 +96,6 @@
     <target name="compute-version">
         <tstamp />
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}" />
-        <property name="generateFeatureVersionSuffix" value="true" />
         <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
             <filterchain>
                 <linecontainsregexp>
@@ -127,7 +126,6 @@
             <sysproperty key="DSTAMP" value="${DSTAMP}" />
             <sysproperty key="TSTAMP" value="${TSTAMP}" />
             <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
-            <sysproperty key="generateFeatureVersionSuffix" value="${generateFeatureVersionSuffix}" />
             <sysproperty key="outputUpdateJars" value="true" />
             <sysproperty key="build.version" value="${build.version}" />
             <sysproperty key="javacDebugInfo" value="true" />
@@ -169,6 +167,25 @@
                 <include name="verifyArtifacts.sh" />
             </fileset>
         </zip>
+    </target>
+
+    <!-- 
+        ======================================================================================
+        Target to create an updatesite with a fresh build of IvyDE
+        ======================================================================================
+     -->
+
+    <target name="generate-updatesite" depends="build">
+        <delete dir="${updatesite.dir}" />
+        <mkdir dir="${updatesite.dir}" />
+        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${updatesite.dir}" />
+        <copy file="${basedir}/site-template.xml" tofile="${updatesite.dir}/site.xml">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="${build.version}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
     </target>
 
     <!-- 
