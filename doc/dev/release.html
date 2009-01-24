@@ -137,6 +137,8 @@ Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-m
 
 <h1>Update the documentation</h1>
 
+<h2>Update the table of content</h2>
+
 The table of content needs to be updated so that the last documentation point to that new release.
 
 First we need to update the external links. In svn/site/ivyde/history:
@@ -167,6 +169,12 @@ Then we need to edit svn/site/ivyde/toc.json:
 </li></ul>
 
 Then svn update your working copy (to retrieve the new history branch).
+
+<h2>Update the download page</h2>
+
+In the page svn/site/ivyde/download.html change every reference of the old version to the new one.
+
+<h2>Deploy</h2>
 
 Commit your changes, and proceed to the full deployment of the website (regenerate every page as the toc changed: <tt>ant /all generate-site-ivyde</tt>).
 
