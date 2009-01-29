@@ -239,8 +239,8 @@ You have to specify the Ivy to install with one of the following property:
         </fail>
         <mkdir dir="${ivy.work.dir}/distrib" />
         <property name="ivy.zip.url" value="${mirror.url}/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
-        <get src="${ivy.zip.url}" usetimestamp="true" dest="${ivy.work.dir}/ivy-bin.zip" />
-        <unzip overwrite="true" src="${ivy.work.dir}/ivy-bin.zip" dest="${ivy.work.dir}/distrib" />
+        <get src="${ivy.zip.url}" usetimestamp="true" dest="${basedir}/apache-ivy-${ivy.version}-bin.zip" verbose="true" />
+        <unzip overwrite="true" src="${basedir}/apache-ivy-${ivy.version}-bin.zip" dest="${ivy.work.dir}/distrib" />
         <path id="ivy.jar.path">
             <first count="1">
                 <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar" />
@@ -378,7 +378,7 @@ baseLocation=${basedir}/${hudson.eclipse.name}
 </echo>
     </target>
 
-    <target name="hudson-install-ivy" depends="list-installed-ivy" unless="ivy.installed">
+    <target name="hudson-install-ivy">
         <ant antfile="build.xml" target="install-ivy">
             <property name="ivy.version" value="${hudson.ivy.version}" />
             <property name="baseLocation" location="${basedir}/${hudson.eclipse.name}" />
