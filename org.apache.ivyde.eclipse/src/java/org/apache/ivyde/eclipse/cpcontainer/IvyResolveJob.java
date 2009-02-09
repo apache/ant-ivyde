@@ -219,17 +219,20 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                         IvyResolveJob.class.getClassLoader());
                     try {
                         Map/*<ModuleRevisionId, IvyNode>*/ dependencies = Collections.EMPTY_MAP;
-                        List configurations = new ArrayList();
+                        Set configurations = new HashSet();
                         configurations.addAll(conf.getConfs());
-                        configurations.addAll(Arrays.asList(conf.getInheritedRetrieveConfs().split(",")));
-                        if (usePreviousResolveIfExist) {
-                            if (configurations.size() == 1 && "*".equals(configurations.get(0))) {
-                                confs = md.getConfigurationsNames();
-                            } else {
-                                confs = (String[]) configurations
-                                        .toArray(new String[configurations.size()]);
-                            }
+                        if (conf.getInheritedDoRetrieve()) {
+                            configurations.addAll(Arrays.asList(conf.getInheritedRetrieveConfs().split(",")));
+                        }
 
+                        if (configurations.contains("*")) {
+                            confs = md.getConfigurationsNames();
+                        } else {
+                            confs = (String[]) configurations.toArray(new String[configurations
+                                    .size()]);
+                        }
+
+                        if (usePreviousResolveIfExist) {
                             all = new LinkedHashSet();
 
                             problemMessages = new ArrayList();
@@ -261,8 +264,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                             + md.getModuleRevisionId().getModuleId()
                                             + " doesn't contain enough data: resolving again\n");
                                     ResolveOptions resolveOption = new ResolveOptions()
-                                            .setConfs((String[]) configurations
-                                                    .toArray(new String[configurations.size()]));
+                                            .setConfs(confs);
                                     resolveOption.setValidate(ivy.getSettings().doValidate());
                                     ResolveReport r = ivy.resolve(md, resolveOption);
                                     all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
@@ -276,9 +278,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                             }
                         } else {
                             Message.info("\n\nIVYDE: calling resolve on " + conf.ivyXmlPath + "\n");
-                            ResolveOptions resolveOption = new ResolveOptions()
-                                    .setConfs((String[]) configurations.toArray(new String[configurations
-                                            .size()]));
+                            ResolveOptions resolveOption = new ResolveOptions().setConfs(confs);
                             resolveOption.setValidate(ivy.getSettings().doValidate());
                             ResolveReport report = ivy.resolve(md, resolveOption);
                             problemMessages = report.getAllProblemMessages();
