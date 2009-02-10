@@ -32,6 +32,7 @@
 
     <property file="local.build.properties" />
     <property file="build.properties" />
+    <property environment="env" />
 
     <property name="work.dir" value="${basedir}/work" />
     <property name="ivy.work.dir" value="${work.dir}/ivy" />
@@ -42,7 +43,7 @@
     <property name="src.doc.dir" value="${basedir}/doc" />
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
-        <property name="forceContextQualifier" value="${version.qualifier}" />
+        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
     </target>
 
     <target name="dist" depends="generate-eclipse-doc,build,sources,checksum" description="Build every artifacts for distribution" />
@@ -94,7 +95,7 @@
 
     <target name="compute-version">
         <tstamp />
-        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}" />
+        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-dev" />
         <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
             <filterchain>
                 <linecontainsregexp>
@@ -352,9 +353,11 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-prepare-properties">
+        <tstamp />
         <property name="baseLocation" value="${basedir}/${hudson.eclipse.name}" />
         <echo file="local.build.properties">
 baseLocation=${basedir}/${hudson.eclipse.name}
+forceContextQualifier=${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}
 </echo>
     </target>
 
