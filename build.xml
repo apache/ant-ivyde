@@ -41,6 +41,9 @@
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
     <property name="src.doc.dir" value="${basedir}/doc" />
+    <property name="checkstyle.src.dir" value="${basedir}/org.apache.ivyde.eclipse/src/etc/checkstyle" />
+    <property name="checkstyle.report.dir" value="${basedir}/checkstyle/report" />
+    <property name="checkstyle.lib" value="${basedir}/checkstyle/lib" />
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
@@ -322,10 +325,42 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <!--
-            ======================================================================================
-            Targets related to prepare the build environment of IvyDE on hudson.
-            ======================================================================================
-         -->
+        ======================================================================================
+        Targets related to checkstyle
+        ======================================================================================
+    -->
+
+    <target name="checkstyle-get-lib">
+        <mkdir dir="${checkstyle.lib}" />
+        <get src="http://repo1.maven.org/maven2/checkstyle/checkstyle/4.3/checkstyle-4.3.jar" dest="${checkstyle.lib}/checkstyle-4.3.jar" />
+        <get src="http://repo1.maven.org/maven2/antlr/antlr/2.7.6/antlr-2.7.6.jar" dest="${checkstyle.lib}/antlr-2.7.6.jar" />
+        <get src="http://repo1.maven.org/maven2/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar" dest="${checkstyle.lib}/commons-beanutils-core-1.7.0.jar" />
+        <get src="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.3/commons-logging-1.0.3.jar" dest="${checkstyle.lib}/commons-logging-1.0.3.jar" />
+    </target>
+
+    <target name="checkstyle" description="Generate checkstyle report">
+        <path id="checkstyle.classpath">
+            <fileset dir="${checkstyle.lib}" />
+        </path>
+        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
+
+        <mkdir dir="${checkstyle.report.dir}" />
+        <checkstyle config="${checkstyle.src.dir}/checkstyle-config" failOnViolation="false" failureProperty="checkstyle.failed">
+            <classpath>
+                <path refid="checkstyle.classpath" />
+            </classpath>
+            <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml" />
+            <fileset dir="org.apache.ivyde.eclipse/src/java">
+                <include name="**/*.java" />
+            </fileset>
+        </checkstyle>
+    </target>
+
+    <!--
+        ======================================================================================
+        Targets related to prepare the build environment of IvyDE on hudson.
+        ======================================================================================
+    -->
 
     <target name="hudson-prepare" depends="hudson-prepare-eclipse,hudson-prepare-properties,hudson-install-ivy" />
 

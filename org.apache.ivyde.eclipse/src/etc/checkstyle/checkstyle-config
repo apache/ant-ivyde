@@ -143,7 +143,7 @@
   </module>
   
   <module name="SuppressionFilter">
-    <property name="file" value="${basedir}/src/etc/checkstyle/checkstyle-suppress.xml"/>
+    <property name="file" value="${checkstyle.src.dir}/checkstyle-suppress.xml"/>
   </module>
   
 </module>
