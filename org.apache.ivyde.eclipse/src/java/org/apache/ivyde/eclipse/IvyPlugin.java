@@ -26,6 +26,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
+import org.apache.ivyde.eclipse.resolver.WorkspaceResourceChangeListener;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
@@ -124,6 +125,11 @@ public class IvyPlugin extends AbstractUIPlugin {
                 }
             }
         });
+
+        // Listen for project open/close events to auto-update inter-project dependencies
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(
+            new WorkspaceResourceChangeListener());
+
         log(IStatus.INFO, "IvyDE plugin started", null);
     }
 

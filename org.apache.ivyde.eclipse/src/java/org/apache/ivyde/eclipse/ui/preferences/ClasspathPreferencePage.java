@@ -59,7 +59,7 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         resolveInWorkspaceCheck = new Button(composite, SWT.CHECK);
         resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
                 false, 3, 1));
-        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace (EXPERIMENTAL)");
+        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
         resolveInWorkspaceCheck
                 .setToolTipText("Will replace jars on the classpath with workspace projects");
 

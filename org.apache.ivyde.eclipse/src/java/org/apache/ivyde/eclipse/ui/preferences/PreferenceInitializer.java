@@ -62,6 +62,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
 
+    public static final boolean DEFAULT_AUTO_RESOLVE_ON_CLOSE = true;
+
+    public static final boolean DEFAULT_AUTO_RESOLVE_ON_OPEN = false;
+
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
@@ -105,6 +109,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             DEFAULT_LOAD_SETTINGS_ON_DEMAND);
         store.setDefault(PreferenceConstants.RESOLVE_ON_STARTUP, DEFAULT_RESOLVE_ON_STARTUP);
 
+        store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CLOSE, DEFAULT_AUTO_RESOLVE_ON_CLOSE);
+        store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_OPEN, DEFAULT_AUTO_RESOLVE_ON_OPEN);
     }
 
 }

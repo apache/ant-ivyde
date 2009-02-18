@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -193,6 +194,22 @@ public class IvyDEPreferenceStoreHelper {
 
     public void setResolveOnStartup(int resolveOnStartup) {
         prefStore.setValue(PreferenceConstants.RESOLVE_ON_STARTUP, resolveOnStartup);
+    }
+
+    public boolean getAutoResolveOnClose() {
+        return prefStore.getBoolean(PreferenceConstants.AUTO_RESOLVE_ON_CLOSE);
+    }
+
+    public void setAutoResolveOnClose(boolean autoResolveOnOpen) {
+        prefStore.setValue(PreferenceConstants.AUTO_RESOLVE_ON_CLOSE, autoResolveOnOpen);
+    }
+
+    public boolean getAutoResolveOnOpen() {
+        return prefStore.getBoolean(PreferenceConstants.AUTO_RESOLVE_ON_OPEN);
+    }
+
+    public void setAutoResolveOnOpen(boolean autoResolveOnOpen) {
+        prefStore.setValue(PreferenceConstants.AUTO_RESOLVE_ON_OPEN, autoResolveOnOpen);
     }
 
 }

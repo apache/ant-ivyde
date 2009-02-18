@@ -11,6 +11,7 @@
 
 - IMPROVE: Split the global configuration panel into sevral ones (IVYDE-151)
 - IMPROVE: Add ivy.xsd to ivy.xml template (IVYDE-165) (thanks to Marko Niemi)
+- IMPROVE: Better support the resolve in workspace feature (IVYDE-153) (thanks to Eugene Goldfarb)
 
 - FIX: When migrating from ivyde alpha to ivyde beta eclipse is throwing NPE at startup (IVYDE-136) (thanks to Daniel Becheanu)
 - FIX: The retrieve configuration doesn't support '*' as accepted types (IVYDE-137) (thanks to Daniel Becheanu)

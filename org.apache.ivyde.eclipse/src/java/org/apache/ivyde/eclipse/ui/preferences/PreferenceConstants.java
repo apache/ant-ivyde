@@ -72,4 +72,8 @@ public final class PreferenceConstants {
 
     public static final String RESOLVE_ON_STARTUP = "resolveOnStartup";
 
+    public static final String AUTO_RESOLVE_ON_OPEN = "autoResolve.open";
+
+    public static final String AUTO_RESOLVE_ON_CLOSE = "autoResolve.close";
+
 }

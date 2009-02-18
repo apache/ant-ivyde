@@ -181,6 +181,12 @@
             id="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
             name="Settings">
       </page>
+      <page
+            name="Workspace Resolver"
+            class="org.apache.ivyde.eclipse.ui.preferences.WorkspaceResolverPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.WorkspaceResolverPreferencePage"
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

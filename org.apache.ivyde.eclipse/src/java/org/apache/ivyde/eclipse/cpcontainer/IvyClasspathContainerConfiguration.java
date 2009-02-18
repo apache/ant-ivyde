@@ -36,12 +36,18 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.plugins.resolver.ChainResolver;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.resolver.WorkspaceResolver;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -53,6 +59,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
+import org.osgi.framework.BundleContext;
 
 /**
  * path: org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER? ivyXmlPath=ivy.xml &confs=default
@@ -558,7 +565,8 @@ public class IvyClasspathContainerConfiguration {
             throw ex;
         }
 
-        if (file.lastModified() != ivySettingsLastModified || !getInheritedLoadSettingsOnDemandPath()) {
+        if (file.lastModified() != ivySettingsLastModified
+                || !getInheritedLoadSettingsOnDemandPath()) {
             IvySettings ivySettings = createIvySettings();
             if (ivySettingsLastModified == -1) {
                 Message.info("\n\n");
@@ -585,7 +593,19 @@ public class IvyClasspathContainerConfiguration {
     }
 
     private IvySettings createIvySettings() throws IvyDEException {
-        IvySettings ivySettings = new IvySettings();
+        IvySettings ivySettings;
+        if (isInheritedResolveInWorkspace()) {
+            ivySettings = new WorkspaceIvySettings();
+            DefaultRepositoryCacheManager cacheManager = new DefaultRepositoryCacheManager();
+            BundleContext bundleContext = IvyPlugin.getDefault().getBundleContext();
+            cacheManager.setBasedir(bundleContext.getDataFile("ivyde-workspace-resolver-cache"));
+            cacheManager.setCheckmodified(true);
+            cacheManager.setUseOrigin(true);
+            cacheManager.setName(WorkspaceResolver.CACHE_NAME);
+            ivySettings.addRepositoryCacheManager(cacheManager);
+        } else {
+            ivySettings = new IvySettings();
+        }
         if (javaProject != null) {
             ivySettings.setBaseDir(javaProject.getProject().getLocation().toFile());
         }
@@ -639,6 +659,31 @@ public class IvyClasspathContainerConfiguration {
             }
         }
         return ivySettings;
+    }
+
+    private class WorkspaceIvySettings extends IvySettings {
+
+        public DependencyResolver getResolver(ModuleRevisionId mrid) {
+            return decorate(super.getResolver(mrid));
+        }
+
+        public DependencyResolver getDefaultResolver() {
+            return decorate(super.getDefaultResolver());
+        }
+
+        private DependencyResolver decorate(DependencyResolver resolver) {
+            if (resolver == null) {
+                return resolver;
+            }
+            ChainResolver chain = new ChainResolver();
+            chain.setName(javaProject.getElementName() + "-ivyde-workspace-chain-resolver");
+            chain.setSettings(this);
+            chain.setReturnFirst(true);
+            chain.add(new WorkspaceResolver(javaProject, this));
+            chain.add(resolver);
+            return chain;
+            
+        }
     }
 
     public String getInheritedIvySettingsPath() {
@@ -736,7 +781,7 @@ public class IvyClasspathContainerConfiguration {
         return alphaOrder;
     }
 
-    public boolean isResolveInWorkspace() {
+    public boolean isInheritedResolveInWorkspace() {
         if (!isAdvancedProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().isResolveInWorkspace();
         }
