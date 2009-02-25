@@ -187,6 +187,10 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         final IStatus[] status = new IStatus[1];
         final IClasspathEntry[][] classpathEntries = new IClasspathEntry[1][];
 
+        // Ivy use the SaxParserFactory, and we want it to instanciate the xerces parser which is in
+        // the dependencies of IvyDE, so accessible via the current classloader
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
         try {
             this.ivy = conf.getIvy();
             this.md = conf.getModuleDescriptor();
@@ -195,6 +199,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         } catch (Throwable e) {
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, "Unexpected error ["
                     + e.getClass().getCanonicalName() + "]: " + e.getMessage(), e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
         }
 
         Thread resolver = new Thread() {
@@ -211,15 +217,17 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                     List problemMessages;
 
                     // context Classloader hook for commonlogging used by httpclient
+                    // It will also be used by the SaxParserFactory in Ivy
                     ClassLoader old = Thread.currentThread().getContextClassLoader();
                     Thread.currentThread().setContextClassLoader(
                         IvyResolveJob.class.getClassLoader());
                     try {
-                        Map/*<ModuleRevisionId, IvyNode>*/ dependencies = Collections.EMPTY_MAP;
+                        Map/* <ModuleRevisionId, IvyNode> */dependencies = Collections.EMPTY_MAP;
                         Set configurations = new HashSet();
                         configurations.addAll(conf.getConfs());
                         if (conf.getInheritedDoRetrieve()) {
-                            configurations.addAll(Arrays.asList(conf.getInheritedRetrieveConfs().split(",")));
+                            configurations.addAll(Arrays.asList(conf.getInheritedRetrieveConfs()
+                                    .split(",")));
                         }
 
                         if (configurations.contains("*")) {
