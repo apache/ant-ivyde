@@ -193,6 +193,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
         try {
             this.ivy = conf.getIvy();
+            // IVYDE-168 : Ivy needs the IvyContext in the threadlocal in order to found the default branch
+            ivy.pushContext();
             this.md = conf.getModuleDescriptor();
         } catch (IvyDEException e) {
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e.getMessage(), e);

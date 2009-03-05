@@ -27,6 +27,7 @@
 - FIX: REGRESSION: Resolving does no longer respect configurations (IVYDE-161)
 - FIX: Parsing ivy file fails in IvyDE while it succeeds in Ant (IVYDE-35)
 - FIX: Sources attach but Javadocs don't (IVYDE-166)
+- FIX: Branch in repository pattern and defaultBranch (IVYDE-168)
 
   version 2.0.0 beta1
 ==========================

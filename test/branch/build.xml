@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<target name="default">
+		<path id="antlib.classpath">
+			<!--fileset dir="/home/nicolasl/dev/platform/svn/platform/tools/build/lib" includes="*.jar" /-->
+			<fileset dir="/home/nicolasl/tools/eclipse-3.4/plugins" includes="org.apache.ivy_*.jar" />
+		</path>
+		<taskdef uri="antlib:org.apache.ivy.ant" resource="org/apache/ivy/ant/antlib.xml" classpathref="antlib.classpath" loaderref="antlib.classpath.loader" />
+		<ivy:configure file="ivysettings.xml" />
+		<ivy:resolve conf="*" type="*" />
+	</target>
+
+</project>
