@@ -22,10 +22,12 @@
             Test the attachement of javadoc
         </description>
     </info>
-    <configurations>
-        <conf name="default" />
+    <configurations defaultconf="compile,war->default;ide->ide(default)">
+        <conf name="compile" />
+        <conf name="war" /> <!-- Artifacts to be included in a WAR -->
+        <conf name="ide" extends="compile" description="+ Javadocs and sources" />
     </configurations>
     <dependencies>
-        <dependency org="myorg" name="helloworld" rev="1.1" conf="default->ide" />
+        <dependency org="myorg" name="helloworld" rev="1.1" />
     </dependencies>
 </ivy-module>
