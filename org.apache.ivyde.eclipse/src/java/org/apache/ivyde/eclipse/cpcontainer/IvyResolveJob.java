@@ -507,7 +507,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             Artifact a = otherAdr.getArtifact();
             if (otherAdr.getLocalFile() != null
                     && isSourceArtifactName(artifact.getName(), a.getName())
-                    && a.getId().getRevision().equals(artifact.getId().getRevision())
+                    && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                     && isSources(a)) {
                 return new Path(otherAdr.getLocalFile().getAbsolutePath());
             }
@@ -543,7 +543,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             if (otherAdr.getLocalFile() != null
                     && isJavadocArtifactName(artifact.getName(), a.getName())
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
-                    && a.getId().equals(artifact.getId()) && isJavadoc(a)) {
+                    && isJavadoc(a)) {
                 return new Path(otherAdr.getLocalFile().getAbsolutePath());
             }
         }
