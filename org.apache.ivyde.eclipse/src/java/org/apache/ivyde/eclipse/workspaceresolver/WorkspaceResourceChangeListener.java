@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.resolver;
+package org.apache.ivyde.eclipse.workspaceresolver;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

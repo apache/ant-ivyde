@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.resolver;
+package org.apache.ivyde.eclipse.workspaceresolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -161,7 +161,7 @@ public class WorkspaceResolver extends AbstractResolver {
             if (ivycp != null) {
                 ModuleDescriptor md;
                 try {
-                    md = ivycp.getConf().getModuleDescriptor();
+                    md = ivycp.getConf().getCachedModuleDescriptor();
                 } catch (IvyDEException e) {
                     IvyPlugin.log(IStatus.WARNING, "Resolve in workspace for '"
                             + resolvingJavaProject.getElementName() + "' cannot depend on "

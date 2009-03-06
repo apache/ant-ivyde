@@ -37,17 +37,14 @@ import java.util.Properties;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
-import org.apache.ivy.plugins.resolver.ChainResolver;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.resolver.WorkspaceResolver;
+import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceIvySettings;
+import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -126,6 +123,8 @@ public class IvyClasspathContainerConfiguration {
     boolean isSettingsSpecific;
 
     boolean loadSettingsOnDemand = false;
+
+    private ModuleDescriptor md;
 
     /**
      * Constructor
@@ -442,6 +441,13 @@ public class IvyClasspathContainerConfiguration {
         }
     }
 
+    public Ivy getCachedIvy() throws IvyDEException {
+        if (ivy != null) {
+            return ivy;
+        }
+        return getIvy();
+    }
+
     public Ivy getIvy() throws IvyDEException {
         try {
             return doGetIvy();
@@ -595,7 +601,7 @@ public class IvyClasspathContainerConfiguration {
     private IvySettings createIvySettings() throws IvyDEException {
         IvySettings ivySettings;
         if (isInheritedResolveInWorkspace()) {
-            ivySettings = new WorkspaceIvySettings();
+            ivySettings = new WorkspaceIvySettings(javaProject);
             DefaultRepositoryCacheManager cacheManager = new DefaultRepositoryCacheManager();
             BundleContext bundleContext = IvyPlugin.getDefault().getBundleContext();
             cacheManager.setBasedir(bundleContext.getDataFile("ivyde-workspace-resolver-cache"));
@@ -659,31 +665,6 @@ public class IvyClasspathContainerConfiguration {
             }
         }
         return ivySettings;
-    }
-
-    private class WorkspaceIvySettings extends IvySettings {
-
-        public DependencyResolver getResolver(ModuleRevisionId mrid) {
-            return decorate(super.getResolver(mrid));
-        }
-
-        public DependencyResolver getDefaultResolver() {
-            return decorate(super.getDefaultResolver());
-        }
-
-        private DependencyResolver decorate(DependencyResolver resolver) {
-            if (resolver == null) {
-                return resolver;
-            }
-            ChainResolver chain = new ChainResolver();
-            chain.setName(javaProject.getElementName() + "-ivyde-workspace-chain-resolver");
-            chain.setSettings(this);
-            chain.setReturnFirst(true);
-            chain.add(new WorkspaceResolver(javaProject, this));
-            chain.add(resolver);
-            return chain;
-            
-        }
     }
 
     public String getInheritedIvySettingsPath() {
@@ -811,7 +792,18 @@ public class IvyClasspathContainerConfiguration {
         return file;
     }
 
+    public ModuleDescriptor getCachedModuleDescriptor() throws IvyDEException {
+        if (md != null) {
+            return md;
+        }
+        return getModuleDescriptor(getCachedIvy());
+    }
+
     public ModuleDescriptor getModuleDescriptor() throws IvyDEException {
+        return getModuleDescriptor(getIvy());
+    }
+
+    public ModuleDescriptor getModuleDescriptor(Ivy i) throws IvyDEException {
         File file = getIvyFile();
         if (!file.exists()) {
             IvyDEException ex = new IvyDEException("Ivy file not found", "The ivy.xml file '"
@@ -820,8 +812,7 @@ public class IvyClasspathContainerConfiguration {
             throw ex;
         }
         try {
-            Ivy i = getIvy();
-            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+            md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
                 i.getSettings(), file.toURL(), false);
             setConfStatus(null);
             return md;

@@ -58,7 +58,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.resolver.WorkspaceResolver;
+import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -195,7 +195,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             this.ivy = conf.getIvy();
             // IVYDE-168 : Ivy needs the IvyContext in the threadlocal in order to found the default branch
             ivy.pushContext();
-            this.md = conf.getModuleDescriptor();
+            this.md = conf.getModuleDescriptor(ivy);
         } catch (IvyDEException e) {
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e.getMessage(), e);
         } catch (Throwable e) {
