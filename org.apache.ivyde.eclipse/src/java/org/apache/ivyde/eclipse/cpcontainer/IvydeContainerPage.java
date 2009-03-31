@@ -426,10 +426,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.ivySettingsLastModified = -1;
             conf.getIvy();
             settingsEditor.setSettingsError(null);
+            checkIvyXmlPath();
         } catch (IvyDEException e) {
             settingsEditor.setSettingsError(e);
         }
-        checkIvyXmlPath();
     }
 
     private void loadFromConf() {

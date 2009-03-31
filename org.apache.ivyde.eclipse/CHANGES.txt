@@ -29,6 +29,7 @@
 - FIX: Sources attach but Javadocs don't (IVYDE-166)
 - FIX: Branch in repository pattern and defaultBranch (IVYDE-168)
 - FIX: The resolve in workspace is being evicted by transitive dependencies (IVYDE-169)
+- FIX: Error messages when setting path to ivy settings file covers what is being typed in (IVYDE-172)
 
   version 2.0.0 beta1
 ==========================
