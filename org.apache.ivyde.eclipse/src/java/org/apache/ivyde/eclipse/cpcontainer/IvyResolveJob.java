@@ -172,11 +172,11 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
     }
 
-    private Map dependenciesAsMap(ResolveReport r) {
+    private Map/* <ModuleRevisionId, IvyNode> */dependenciesAsMap(ResolveReport r) {
         Map result = new HashMap();
         for (Iterator it = r.getDependencies().iterator(); it.hasNext();) {
             IvyNode node = (IvyNode) it.next();
-            result.put(node.getId(), node);
+            result.put(node.getResolvedId(), node);
         }
         return result;
     }
