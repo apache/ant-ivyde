@@ -19,6 +19,8 @@ package org.apache.ivyde.eclipse;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -147,9 +149,14 @@ public class IvyPlugin extends AbstractUIPlugin {
     void prefStoreChanged() throws JavaModelException {
         IJavaProject[] projects = plugin.javaModel.getJavaProjects();
         for (int i = 0; i < projects.length; i++) {
-            IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(projects[i]);
-            if (cp != null && !cp.getConf().isSettingsProjectSpecific()) {
-                cp.launchResolve(false, false, null);
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(projects[i]);
+            Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+            while (itContainers.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+                if (!ivycp.getConf().isSettingsProjectSpecific()) {
+                    ivycp.launchResolve(false, false, null);
+                }
             }
         }
     }

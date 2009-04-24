@@ -65,11 +65,7 @@ public class ResolveAllAction implements IWorkbenchWindowActionDelegate {
                 }
                 List containers = new ArrayList();
                 for (int i = 0; i < projects.length; i++) {
-                    IvyClasspathContainer cp = IvyClasspathUtil
-                            .getIvyClasspathContainer(projects[i]);
-                    if (cp != null) {
-                        containers.add(cp);
-                    }
+                    containers.addAll(IvyClasspathUtil.getIvyClasspathContainers(projects[i]));
                 }
                 monitor.beginTask("Resolve all dependencies", containers.size());
                 for (Iterator iter = containers.iterator(); iter.hasNext();) {

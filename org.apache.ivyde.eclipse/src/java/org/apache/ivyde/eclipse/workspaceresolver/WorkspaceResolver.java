@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -157,8 +158,11 @@ public class WorkspaceResolver extends AbstractResolver {
             if (!javaProject.exists()) {
                 continue;
             }
-            IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
-            if (ivycp != null) {
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(javaProject);
+            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
+            while (itContainer.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
                 ModuleDescriptor md;
                 try {
                     md = ivycp.getConf().getCachedModuleDescriptor();

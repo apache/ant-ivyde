@@ -17,6 +17,9 @@
  */
 package org.apache.ivyde.eclipse.ui.editors;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
 import org.apache.ivyde.common.model.IvyModel;
 import org.apache.ivyde.eclipse.IvyPlugin;
@@ -35,8 +38,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -92,7 +93,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
             xmlEditor = new XMLEditor(new IvyContentAssistProcessor() {
                 protected IvyModel newCompletionModel(IFile file) {
                     return new IvyModuleDescriptorModel(new EclipseIvyModelSettings(
-                            getJavaProject()));
+                            file));
                 }
             }) {
                 public void doSave(IProgressMonitor progressMonitor) {
@@ -163,11 +164,12 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
 
     private void triggerResolve() {
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
-        IJavaProject project = JavaCore.create(file.getProject());
-        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
-        if (cp != null
-                && cp.getConf().getIvyXmlPath().equals(file.getProjectRelativePath().toString())) {
-            cp.launchResolve(false, true, null);
+        List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                .getIvyFileClasspathContainers(file);
+        Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+        while (itContainers.hasNext()) {
+            IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+            ivycp.launchResolve(false, true, null);
         }
     }
 

@@ -17,6 +17,9 @@
  */
 package org.apache.ivyde.eclipse.ui.editors;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.ivyde.common.ivysettings.IvySettingsModel;
 import org.apache.ivyde.common.model.IvyModel;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -32,8 +35,6 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -120,12 +121,12 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
-        IJavaProject project = JavaCore.create(file.getProject());
-        IvyClasspathContainer cp = IvyClasspathUtil.getIvyClasspathContainer(project);
-        if (cp != null
-                && cp.getConf().getInheritedIvySettingsPath().equals(
-                    file.getProjectRelativePath().toString())) {
-            cp.launchResolve(false, true, null);
+        List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                .getIvySettingsClasspathContainers(file);
+        Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+        while (itContainers.hasNext()) {
+            IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+            ivycp.launchResolve(false, true, null);
         }
     }
 

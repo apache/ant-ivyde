@@ -105,8 +105,9 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
         return true;
     }
 
-    public void requestClasspathContainerUpdate(IPath containerPath, final IJavaProject project,
-            IClasspathContainer containerSuggestion) throws CoreException {
+    public void requestClasspathContainerUpdate(final IPath containerPath,
+            final IJavaProject project, IClasspathContainer containerSuggestion)
+            throws CoreException {
         if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
             IClasspathEntry[] ice = containerSuggestion.getClasspathEntries();
             IPackageFragmentExtraInfo ei = IvyPlugin.getDefault().getPackageFragmentExtraInfo();
@@ -122,10 +123,15 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             // force refresh of ivy classpath entry in ui thread
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    IvyClasspathContainer ivycp = IvyClasspathUtil
-                            .getIvyClasspathContainer(project);
-                    if (ivycp != null) {
-                        ivycp.launchResolve(false, true, null);
+                    IClasspathContainer cp;
+                    try {
+                        cp = JavaCore.getClasspathContainer(containerPath, project);
+                    } catch (JavaModelException e) {
+                        IvyPlugin.log(e);
+                        return;
+                    }
+                    if (cp instanceof IvyClasspathContainer) {
+                        ((IvyClasspathContainer) cp).launchResolve(false, true, null);
                     }
                 }
             });

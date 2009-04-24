@@ -18,7 +18,9 @@
 package org.apache.ivyde.eclipse.workspaceresolver;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -96,8 +98,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
     private void projectClosed(final IJavaProject javaProject) throws JavaModelException {
         // Check if one of Ivy projects is being removed
-        IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
-        if (ivycp == null) {
+        List containers = IvyClasspathUtil.getIvyClasspathContainers(javaProject);
+        if (containers.isEmpty()) {
             return;
         }
 
@@ -146,11 +148,16 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                 continue;
             }
             IJavaProject javaProject = JavaCore.create((IProject) resource);
-            IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
-            if (ivycp == null || !ivycp.getConf().isInheritedResolveInWorkspace()) {
-                continue;
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(javaProject);
+            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
+            while (itContainer.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
+                if (!ivycp.getConf().isInheritedResolveInWorkspace()) {
+                    continue;
+                }
+                projects.add(resource);
             }
-            projects.add(resource);
         }
 
         if (projects.size() == 0) {
@@ -189,28 +196,30 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         for (int i = 0; i < projects.length; i++) {
             IJavaProject javaProject = projects[i];
-            IvyClasspathContainer c = IvyClasspathUtil.getIvyClasspathContainer(javaProject);
-            if (c == null) {
-                continue;
-            }
-            IClasspathEntry[] containerEntries = c.getClasspathEntries();
-            for (int j = 0; j < containerEntries.length; j++) {
-                IClasspathEntry containerEntry = containerEntries[j];
-                if (containerEntry == null
-                        || containerEntry.getEntryKind() != IClasspathEntry.CPE_PROJECT
-                        || !containerEntry.getPath().equals(projectPath)) {
-                    continue;
-                }
-
-                SubProgressMonitor subMonitor = null;
-                if (monitor != null) {
-                    if (monitor.isCanceled()) {
-                        return;
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(javaProject);
+            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
+            while (itContainer.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
+                IClasspathEntry[] containerEntries = ivycp.getClasspathEntries();
+                for (int j = 0; j < containerEntries.length; j++) {
+                    IClasspathEntry containerEntry = containerEntries[j];
+                    if (containerEntry == null
+                            || containerEntry.getEntryKind() != IClasspathEntry.CPE_PROJECT
+                            || !containerEntry.getPath().equals(projectPath)) {
+                        continue;
                     }
-                    subMonitor = new SubProgressMonitor(monitor, 1);
+
+                    SubProgressMonitor subMonitor = null;
+                    if (monitor != null) {
+                        if (monitor.isCanceled()) {
+                            return;
+                        }
+                        subMonitor = new SubProgressMonitor(monitor, 1);
+                    }
+                    ivycp.launchResolve(false, isUser, subMonitor);
+                    break;
                 }
-                c.launchResolve(false, isUser, subMonitor);
-                break;
             }
         }
     }
@@ -230,8 +239,13 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                 }
                 subMonitor = new SubProgressMonitor(monitor, 1);
             }
-            IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(projects[i]);
-            ivycp.launchResolve(false, isUser, subMonitor);
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(projects[i]);
+            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
+            while (itContainer.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
+                ivycp.launchResolve(false, isUser, subMonitor);
+            }
         }
     }
 
