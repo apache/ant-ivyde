@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,17 +42,21 @@ import org.apache.ivy.core.event.download.StartArtifactDownloadEvent;
 import org.apache.ivy.core.event.resolve.EndResolveDependencyEvent;
 import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
 import org.apache.ivyde.eclipse.IvyDEException;
@@ -172,11 +175,11 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
     }
 
-    private Map/* <ModuleRevisionId, IvyNode> */dependenciesAsMap(ResolveReport r) {
+    private Map/* <ModuleRevisionId, Artifact[]> */getArtifactsByDependency(ResolveReport r) {
         Map result = new HashMap();
         for (Iterator it = r.getDependencies().iterator(); it.hasNext();) {
             IvyNode node = (IvyNode) it.next();
-            result.put(node.getResolvedId(), node);
+            result.put(node.getResolvedId(), node.getDescriptor().getAllArtifacts());
         }
         return result;
     }
@@ -200,7 +203,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e.getMessage(), e);
         } catch (Throwable e) {
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, "Unexpected error ["
-                    + e.getClass().getCanonicalName() + "]: " + e.getMessage(), e);
+                    + e.getClass().getName() + "]: " + e.getMessage(), e);
         } finally {
             Thread.currentThread().setContextClassLoader(old);
         }
@@ -224,7 +227,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                     Thread.currentThread().setContextClassLoader(
                         IvyResolveJob.class.getClassLoader());
                     try {
-                        Map/* <ModuleRevisionId, IvyNode> */dependencies = Collections.EMPTY_MAP;
+                        Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency = new HashMap();
                         Set configurations = new HashSet();
                         configurations.addAll(conf.getConfs());
                         if (conf.getInheritedDoRetrieve()) {
@@ -257,6 +260,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                         parser.parse(report);
                                         all.addAll(Arrays.asList(parser.getArtifactReports()));
                                         resolved = true;
+                                        findAllArtifactOnRefresh(parser, artifactsByDependency);
                                     } catch (ParseException e) {
                                         Message.info("\n\nIVYDE: Error while parsing the report "
                                                 + report
@@ -276,7 +280,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                     ResolveReport r = ivy.resolve(md, resolveOption);
                                     all.addAll(Arrays.asList(r.getArtifactsReports(null, false)));
                                     confs = r.getConfigurations();
-                                    dependencies = dependenciesAsMap(r);
+                                    artifactsByDependency.putAll(getArtifactsByDependency(r));
                                     problemMessages.addAll(r.getAllProblemMessages());
                                     maybeRetrieve(md);
 
@@ -293,7 +297,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                                 false)));
                             confs = report.getConfigurations();
 
-                            dependencies = dependenciesAsMap(report);
+                            artifactsByDependency.putAll(getArtifactsByDependency(report));
 
                             if (monitor.isCanceled()) {
                                 status[0] = Status.CANCEL_STATUS;
@@ -305,7 +309,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
 
                         warnIfDuplicates(all);
 
-                        classpathEntries[0] = artifacts2ClasspathEntries(all, dependencies);
+                        classpathEntries[0] = artifacts2ClasspathEntries(all, artifactsByDependency);
                     } catch (ParseException e) {
                         String errorMsg = "Error while parsing the ivy file " + conf.ivyXmlPath
                                 + "\n" + e.getMessage();
@@ -375,6 +379,36 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         } finally {
             container.resetJob();
             IvyPlugin.log(IStatus.INFO, "resolved dependencies of " + conf, null);
+        }
+    }
+
+    /**
+     * Populate the map of artifact. The map should be populated by metadata in cache as this is
+     * called in the refresh process.
+     * 
+     * @param parser
+     * @param artifactsByDependency
+     * @throws ParseException
+     */
+    private void findAllArtifactOnRefresh(XmlReportParser parser, Map/*
+                                                                      * <ModuleRevisionId,
+                                                                      * Artifact[]>
+                                                                      */artifactsByDependency)
+            throws ParseException {
+        ModuleRevisionId[] dependencyMrdis = parser.getDependencyRevisionIds();
+        for (int iDep = 0; iDep < dependencyMrdis.length; iDep++) {
+            DependencyResolver depResolver = ivy.getSettings().getResolver(dependencyMrdis[iDep]);
+            DefaultDependencyDescriptor depDescriptor = new DefaultDependencyDescriptor(
+                    dependencyMrdis[iDep], false);
+            ResolveOptions options = new ResolveOptions();
+            options.setRefresh(true);
+            options.setUseCacheOnly(true);
+            ResolvedModuleRevision dependency = depResolver.getDependency(depDescriptor,
+                new ResolveData(ivy.getResolveEngine(), options));
+            if (dependency != null) {
+                artifactsByDependency.put(dependencyMrdis[iDep], dependency.getDescriptor()
+                        .getAllArtifacts());
+            }
         }
     }
 
@@ -471,10 +505,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
     }
 
-    private IClasspathEntry[] artifacts2ClasspathEntries(Collection all, Map/*
-                                                                             * <ModuleRevisionId,
-                                                                             * IvyNode>
-                                                                             */dependencies) {
+    private IClasspathEntry[] artifacts2ClasspathEntries(Collection all,
+            Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency) {
         IClasspathEntry[] classpathEntries;
         Collection paths = new LinkedHashSet();
 
@@ -486,8 +518,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
                 paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
                 Path classpathArtifact = new Path(artifact.getLocalFile().getAbsolutePath());
-                Path sourcesArtifact = getSourcesArtifactPath(artifact, all, dependencies);
-                Path javadocArtifact = getJavadocArtifactPath(artifact, all, dependencies);
+                Path sourcesArtifact = getSourcesArtifactPath(artifact, all, artifactsByDependency);
+                Path javadocArtifact = getJavadocArtifactPath(artifact, all, artifactsByDependency);
                 paths.add(JavaCore.newLibraryEntry(classpathArtifact, getSourceAttachment(
                     classpathArtifact, sourcesArtifact), getSourceAttachmentRoot(classpathArtifact,
                     sourcesArtifact), null, getExtraAttribute(classpathArtifact, javadocArtifact),
@@ -501,7 +533,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
     }
 
     private Path getSourcesArtifactPath(ArtifactDownloadReport adr, Collection all,
-            Map/* <ModuleRevisionId, IvyNode> */dependencies) {
+            Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency) {
         Artifact artifact = adr.getArtifact();
         monitor.subTask("searching sources for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
@@ -516,9 +548,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
         // we haven't found source artifact in resolved artifacts,
         // let's look in the module declaring the artifact
-        IvyNode node = (IvyNode) dependencies.get(artifact.getId().getModuleRevisionId());
-        if (node != null) {
-            Artifact[] artifacts = node.getDescriptor().getAllArtifacts();
+        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(artifact.getId().getModuleRevisionId());
+        if (artifacts != null) {
             for (int i = 0; i < artifacts.length; i++) {
                 Artifact metaArtifact = artifacts[i];
                 if (isSourceArtifactName(artifact.getName(), metaArtifact.getName())
@@ -536,7 +567,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
     }
 
     private Path getJavadocArtifactPath(ArtifactDownloadReport adr, Collection all,
-            Map/* <ModuleRevisionId, IvyNode> */dependencies) {
+            Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency) {
         Artifact artifact = adr.getArtifact();
         monitor.subTask("searching javadoc for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
@@ -551,9 +582,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
         // we haven't found javadoc artifact in resolved artifacts,
         // let's look in the module declaring the artifact
-        IvyNode node = (IvyNode) dependencies.get(artifact.getId().getModuleRevisionId());
-        if (node != null) {
-            Artifact[] artifacts = node.getDescriptor().getAllArtifacts();
+        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(artifact.getId().getModuleRevisionId());
+        if (artifacts != null) {
             for (int i = 0; i < artifacts.length; i++) {
                 Artifact metaArtifact = artifacts[i];
                 if (isJavadocArtifactName(artifact.getName(), metaArtifact.getName())

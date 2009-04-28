@@ -32,6 +32,7 @@
 - FIX: Error messages when setting path to ivy settings file covers what is being typed in (IVYDE-172)
 - FIX: ResolveAllAction does not resolve multiple IvyDE containers in a single project (IVYDE-175)
 - FIX: The sources/javadocs are not added for dependencies which don't have a fixed revision (IVYDE-174)
+- FIX: Refresh action is detaching javadoc and sources (IVYDE-176)
 
   version 2.0.0 beta1
 ==========================
