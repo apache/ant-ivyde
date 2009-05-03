@@ -179,7 +179,9 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         Map result = new HashMap();
         for (Iterator it = r.getDependencies().iterator(); it.hasNext();) {
             IvyNode node = (IvyNode) it.next();
-            result.put(node.getResolvedId(), node.getDescriptor().getAllArtifacts());
+            if (node.getDescriptor() != null) {
+                result.put(node.getResolvedId(), node.getDescriptor().getAllArtifacts());
+            }
         }
         return result;
     }
