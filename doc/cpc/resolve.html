@@ -19,23 +19,23 @@
 -->
 <html>
 <head>
-	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
-	<script type="text/javascript" src="xooki/xooki.js"></script>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-As the Ivy's ant target to manage classpath, the IvyDE classpath container will help you manage the classpath of your Eclipse project, based on the dependencies declared in the Ivy files.
+You can explicitly ask for a dependencies resolution from your class path container.
 
-So you probably want to:
-<ul>
-    <li><a href="cpc/create.html">Create</a> a container</li>
-    <li><a href="cpc/edit.html">Edit</a> its setup</li>
-    <li>Launch the <a href="cpc/resolve.html">resolve</a> of the dependencies</li>
-    <li><a href="cpc/retrieve.html">Retrieve</a> the dependencies in your project</li>
-    <li>Resolve dependencies within the Eclipse <a href="cpc/workspace.html">workspace</a></li>
-    <li>Use IvyDE with <a href="cpc/maven.html">maven pom.xml</a></li>
-    <li>Use IvyDE in concert with <a href="cpc/wtp.html">WTP</a></li>
-</ul>
+This command will invoke the "resolve" ivy task and update your class path container.
+
+There is also a "refresh" action: this action is similar to the resolve one, it just doesn't do a full resolve if a report already exists in the cache. This is particularly useful if you work also with ant and a command line so you won't do two full resolve.
+
+<center><img src="../images/cp_resolve.jpg"></center><br/>
+
+You can also trigger a resolve (not a refresh!) of every IvyDE classpath container in the workspace via the button in the tool bar of Eclipse.
+
+<center><img src="../images/resolveall.jpg"></center><br/>
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

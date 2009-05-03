@@ -19,23 +19,19 @@
 -->
 <html>
 <head>
-	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
-	<script type="text/javascript" src="xooki/xooki.js"></script>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-As the Ivy's ant target to manage classpath, the IvyDE classpath container will help you manage the classpath of your Eclipse project, based on the dependencies declared in the Ivy files.
+WTP is the <a href="http://www.eclipse.org/webtools/">Web Tools Platform</a> project from the Eclipse fondation which allow to easily develop, launch and debug web applications. IvyDE can be used with this framework, but only from the version 2.0 of WTP, which is supported since Eclipse 3.3.
 
-So you probably want to:
-<ul>
-    <li><a href="cpc/create.html">Create</a> a container</li>
-    <li><a href="cpc/edit.html">Edit</a> its setup</li>
-    <li>Launch the <a href="cpc/resolve.html">resolve</a> of the dependencies</li>
-    <li><a href="cpc/retrieve.html">Retrieve</a> the dependencies in your project</li>
-    <li>Resolve dependencies within the Eclipse <a href="cpc/workspace.html">workspace</a></li>
-    <li>Use IvyDE with <a href="cpc/maven.html">maven pom.xml</a></li>
-    <li>Use IvyDE in concert with <a href="cpc/wtp.html">WTP</a></li>
-</ul>
+In the properties of your project configured to use WTP, there is a section "Java EE Module Dependencies". There should be your configured IvyDE classpath container listed, usually with the name "ivy.xml [*]". Just select it and the Ivy dependencies will be deployed as well.
+
+<center><img src="../images/wtp.jpg"/></center>
+
+This has been successfully tested with Eclipse 3.3 and WTP 2.0, Eclipse 3.4 and WTP 3.0.
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

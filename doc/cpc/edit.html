@@ -19,23 +19,24 @@
 -->
 <html>
 <head>
-	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
-	<script type="text/javascript" src="xooki/xooki.js"></script>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-As the Ivy's ant target to manage classpath, the IvyDE classpath container will help you manage the classpath of your Eclipse project, based on the dependencies declared in the Ivy files.
 
-So you probably want to:
-<ul>
-    <li><a href="cpc/create.html">Create</a> a container</li>
-    <li><a href="cpc/edit.html">Edit</a> its setup</li>
-    <li>Launch the <a href="cpc/resolve.html">resolve</a> of the dependencies</li>
-    <li><a href="cpc/retrieve.html">Retrieve</a> the dependencies in your project</li>
-    <li>Resolve dependencies within the Eclipse <a href="cpc/workspace.html">workspace</a></li>
-    <li>Use IvyDE with <a href="cpc/maven.html">maven pom.xml</a></li>
-    <li>Use IvyDE in concert with <a href="cpc/wtp.html">WTP</a></li>
-</ul>
+During life of your project you can change the ivy.xml file or <a href="maven.html">maven pom.xml</a> and change the configuration you want
+to use.
+
+These properties can be accessed by contextual menu of the IvyDE class path container:
+
+<center><img src="../images/cp_configuration.jpg"></center>
+
+You can also edit it via the build path configuration. Open the build path configuration dialog, select the "Libraries" panel and select the IvyDE classpath container. Then you will be able to click on the button "Edit": the IvyDE classpath container configuration dialog will pop up.
+This is particularly useful when Eclipse hides the empty classpath containers (since Eclipse 3.3), and then this is only way to trigger a resolve.
+<br/><br/>
+<center><img src="../images/build_path_edit.jpg"></center>
+<br/>
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

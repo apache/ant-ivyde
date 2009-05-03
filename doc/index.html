@@ -24,51 +24,15 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-IvyDE can be considered as the merge of two tools:
+IvyDE is the Eclipse plugin which intergrate Ivy into your java development enviromnent. It includes:
 <ul>
-<li><a href="editor.html">Ivy xml files Editor</a>: creation wizard, html preview and completion for Ivy xml tag, attributes but also attributes' values.</li>
-<li><a href="cp_container.html">Class path container</a>: Automatic downloads, access "resolve" task from your IDE</li>
+<li><a href="ivyeditor.html">an Ivy xml files editor</a>: creation wizard, html preview and completion for Ivy xml tag, attributes but also attributes' values.</li>
+<li><a href="settingseditor.html">an Ivy settings files editor</a>: completion for xml tag, attributes but also attributes' values.</li>
+<li><a href="cp_container.html">a classpath container</a>: automatic downloads, access "resolve" task from your IDE, and <a href="cpc/workspace.html">resolve in Eclipse's workspace</a></li>
+<li><a href="cp_container.html">an Ivy console</a>: presents every log from Ivy, really helpful to debug a failing resolve</li>
 </ul>
 
-Then you are probably interested by the [[console Ivy console]] which contains every log from Ivy. So it is really helpful when trying to find why a resolve failed.
-
-<h1><a name="install"></a>Plugin installation</h1>
-
-Before trying to use it, let's install it!
-
-The trunk version has not been release yet, so you should install it by [[build building it yourself]].
-
-<h1><a name="pref"></a>Eclipse Preference Page</h1>
-
-There is a global configuration page, which control the behaviour of every Ivy instance in every project. You can also configure it <a href="cp_container.html#localconf">by project</a>.
-
-The global configuration can be found in the global configuration panel of Eclipse (menu Window>Preferences for Windows and Linux users, Eclipse>Preferences for mac users), and select the item Ivy.
-
-<img src="images/pref.jpg"/><br/>
-<ul><b>Global settings:</b>
-	<li><u>Ivy settings URL:</u> specify here the path to your ivy settings file. Leave it blank to use Ivy default resolvers</li>
-</ul>
-<ul><b>Retrieve configuration:</b><br/>
-    If checked, some retrieve job will be triggered after each the resolve.<br/>
-	<li><u>Retrieve pattern:</u> the pattern to use for the retrieve. Check <a href="../../../history/latest-milestone/use/retrieve.html">Ivy documentation</a> for pattern explanation.</li>
-        <li><u>Delete old retrieve artifacts:</u> on each retrieve, the previously retrieved libraries will be removed (similar to the sync argument in the ant task)</li>
-        <li><u>Retrieve configurations:</u> the configurations to retrieve (a comma separated list)</li>
-        <li><u>Retrieve types:</u> the types of artifact to retrieve (a comma separated list)</li>
-</ul>
-<ul><b>Classpath container configuration:</b>
-	<li><u>Project dependencies:</u> IvyDE can try to make dependencies between project more than to jars into a repository.
-	    <u><i>Important note:</i></u> this feature is quite limited for now, it just tries to replace jar dependencies with project dependencies, based on the module id of the jar, and the projects configured to use IvyDE; the version is not taken into consideration, and even if a project match a dependency, the jar of the dependency have to be resolved from a repository.</li>
-	<li><u>Order alphabetically:</u> by default in the classpath container the entries are ordered by order of declaration. When there are many entries, it could be useful to have them ordered alphabetically so that you can find them faster.</li>
-	<li><u>Accepted types:</u> a comma separated list of extensions which will make IvyDE add the artifact to the classpath</li>
-	<li><u>Sources types:</u> a comma separated list of ivy "type" which will make IvyDE consider them as sources</li>
-	<li><u>Sources suffixes:</u> a comma separated list of suffixes which will make IvyDE attach as source the artifact with the suffix to the artifact without the suffix. For instance, "commons-lang-sources.jar" will be attached as source to "commons-lang.jar" with the default value.</li>
-	<li><u>Javadoc types:</u> same as sources types but for javadocs</li>
-	<li><u>Javadoc suffixes:</u> same as sources suffixes but for javadocs</li>
-</ul>
-<ul><b>Editor information:</b>
-	<li><u>Organisation:</u> your company name for ivy editor completion </li>
-	<li><u>Organisation URL:</u> your company web site url for ivy editor completion </li>
-</ul>
+And IvyDE can be also used with other plugins like <a href="cpc/wtp.html">WTP</a> or <a href="ant.html">Ant</a>.
 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>

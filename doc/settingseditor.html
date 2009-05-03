@@ -24,18 +24,25 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-As the Ivy's ant target to manage classpath, the IvyDE classpath container will help you manage the classpath of your Eclipse project, based on the dependencies declared in the Ivy files.
+IvyDE provides an editor of ivysettings.xml files which make the edition of such files simple. It provides completion on every tags and attribute names.
 
-So you probably want to:
-<ul>
-    <li><a href="cpc/create.html">Create</a> a container</li>
-    <li><a href="cpc/edit.html">Edit</a> its setup</li>
-    <li>Launch the <a href="cpc/resolve.html">resolve</a> of the dependencies</li>
-    <li><a href="cpc/retrieve.html">Retrieve</a> the dependencies in your project</li>
-    <li>Resolve dependencies within the Eclipse <a href="cpc/workspace.html">workspace</a></li>
-    <li>Use IvyDE with <a href="cpc/maven.html">maven pom.xml</a></li>
-    <li>Use IvyDE in concert with <a href="cpc/wtp.html">WTP</a></li>
+<center><img src="images/settings.jpg"/></center>
+
+Completion comes with contextual help. The completion popup is displayed when hitting simultaneously the CTRL and the SPACE keys.
+
+<b>Available completions:</b><ul>
+	<li><b>Xml structure</b>: allows you quickly to insert the good tag at its right place. If the tag can have nested children both notations, simple tag and open tag, are proposed
+	    
+	    <center><img src="images/settings_completion_struct.jpg"/></center>
+	    
+	</li>
+	<li><b>Tag attributes</b>: when your cursor is placed in a tag bracket the completion show available attributes for the enclosing tag.
+	    
+	    <center><img src="images/settings_completion_att.jpg"/></center>
+
+	</li>
 </ul>
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

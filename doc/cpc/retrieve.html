@@ -19,23 +19,25 @@
 -->
 <html>
 <head>
-	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
-	<script type="text/javascript" src="xooki/xooki.js"></script>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-As the Ivy's ant target to manage classpath, the IvyDE classpath container will help you manage the classpath of your Eclipse project, based on the dependencies declared in the Ivy files.
+It is possible to make IvyDE copy the resolved dependencies in your project: a retrieve of the dependencies can be triggered on each resolve of the classpath container.
 
-So you probably want to:
-<ul>
-    <li><a href="cpc/create.html">Create</a> a container</li>
-    <li><a href="cpc/edit.html">Edit</a> its setup</li>
-    <li>Launch the <a href="cpc/resolve.html">resolve</a> of the dependencies</li>
-    <li><a href="cpc/retrieve.html">Retrieve</a> the dependencies in your project</li>
-    <li>Resolve dependencies within the Eclipse <a href="cpc/workspace.html">workspace</a></li>
-    <li>Use IvyDE with <a href="cpc/maven.html">maven pom.xml</a></li>
-    <li>Use IvyDE in concert with <a href="cpc/wtp.html">WTP</a></li>
-</ul>
+To enable it, enter the classpath container configuration panel, and hit the second tab "Retrieve".
+
+<center><img src="../images/retrieve.jpg"/></center>
+
+So you can choose to <b>do retrieve after resolve</b> the dependencies.
+
+The <b>Retrieve pattern</b> specified the location where the deendencies should be copied, location raltive to the containing project.
+
+The <b>Delete old retrieved artifacts</b> check box will enable the wipe out the output directory before each retrieve.
+
+And finally you can select in which <b>Configurations</b> the dependencies should be resolved and you can select which <b>Types</b> of artifact should be actually retrieved. In both fields, <i>*</i> will means <i>all</i>.
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

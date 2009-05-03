@@ -19,23 +19,21 @@
 -->
 <html>
 <head>
-	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
-	<script type="text/javascript" src="xooki/xooki.js"></script>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-As the Ivy's ant target to manage classpath, the IvyDE classpath container will help you manage the classpath of your Eclipse project, based on the dependencies declared in the Ivy files.
+In case you have selected the "Reload the settings only on demand" option in the <a href="../preferences.html#settings">preferences</a>, you can manually reload the settings via the context menu on the classpath container.
 
-So you probably want to:
+<center><img src="../images/reload_settings.jpg"/></center>
+
+<u>Notes:</u>
 <ul>
-    <li><a href="cpc/create.html">Create</a> a container</li>
-    <li><a href="cpc/edit.html">Edit</a> its setup</li>
-    <li>Launch the <a href="cpc/resolve.html">resolve</a> of the dependencies</li>
-    <li><a href="cpc/retrieve.html">Retrieve</a> the dependencies in your project</li>
-    <li>Resolve dependencies within the Eclipse <a href="cpc/workspace.html">workspace</a></li>
-    <li>Use IvyDE with <a href="cpc/maven.html">maven pom.xml</a></li>
-    <li>Use IvyDE in concert with <a href="cpc/wtp.html">WTP</a></li>
+    <li>reloading the settings will automatically launch a resolve</li>
+    <li>reloading the settings in a project will not make other projects reload their settings even if they use the same settings file</li>
 </ul>
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
