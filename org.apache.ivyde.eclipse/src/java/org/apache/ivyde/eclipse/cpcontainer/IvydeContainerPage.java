@@ -17,7 +17,10 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
@@ -108,6 +111,31 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             error = "Choose an ivy file";
         } else {
             error = null;
+            // check that the chosen configuration doesn't already exist
+            // the uniqueness is for xmlivyPath + conf
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(project);
+            if (containers != null) {
+                Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+                while (error == null && itContainers.hasNext()) {
+                    IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+                    IvyClasspathContainerConfiguration cpc = ivycp.getConf();
+                    if (cpc.ivyXmlPath.equals(ivyFilePathText.getIvyFilePath())) {
+                        List/* <String> */selecteds = confTableViewer.getSelectedConfigurations();
+                        if (selecteds.isEmpty() || cpc.confs.contains("*")) {
+                            error = "A container already exists for the selected conf of "
+                                    + "the module descriptor";
+                        } else {
+                            ArrayList list = new ArrayList(cpc.confs);
+                            list.retainAll(selecteds);
+                            if (!list.isEmpty()) {
+                                error = "A container already exists for the selected conf of "
+                                        + "the module descriptor";
+                            }
+                        }
+                    }
+                }
+            }
         }
         setErrorMessage(error);
         setPageComplete(error == null);
@@ -176,6 +204,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         }
         entry = JavaCore.newContainerEntry(conf.getPath(), exported);
         return true;
+    }
+
+    public IJavaProject getProject() {
+        return project;
     }
 
     public IClasspathEntry getSelection() {
@@ -259,6 +291,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         Label horizontalLine = new Label(headerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 
+        //CheckStyle:MagicNumber| OFF
         Composite configComposite = new Composite(composite, SWT.NONE);
         configComposite.setLayout(new GridLayout(3, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
@@ -274,7 +307,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         horizontalLine = new Label(configComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
-
+        //CheckStyle:MagicNumber| OFN
+        
         // Label for ivy file field
         Label pathLabel = new Label(configComposite, SWT.NONE);
         pathLabel.setText("Ivy File");

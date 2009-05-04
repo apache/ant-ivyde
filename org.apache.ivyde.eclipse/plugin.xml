@@ -106,7 +106,7 @@
          nameFilter="*.xml"> 
          <action
             id="org.apache.ivyde.eclipse.ui.actions.CreateContainerAction" 
-            label="Add &amp;Ivy Library"
+            label="Add &amp;Ivy Library..."
             class="org.apache.ivyde.eclipse.ui.actions.CreateContainerAction" 
             enablesFor="1"
 			/> 

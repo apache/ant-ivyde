@@ -20,16 +20,13 @@ package org.apache.ivyde.eclipse.cpcontainer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -43,37 +40,6 @@ public final class IvyClasspathUtil {
 
     private IvyClasspathUtil() {
         // utility class
-    }
-
-    /**
-     * Adds an Ivy classpath container to the list of existing classpath entries in the given
-     * project.
-     * 
-     * @param project
-     *            the project to which the classpath container should be added
-     * @param projectRelativePath
-     *            the path relative to the project of the module descriptor file to use for the
-     *            classpath container
-     * @param confs
-     *            the configurations to use in the classpath container.
-     */
-    public static void addCPContainer(IJavaProject project, IPath projectRelativePath, String confs) {
-        try {
-            IClasspathEntry newEntry = JavaCore.newContainerEntry(new Path(
-                    IvyClasspathContainer.CONTAINER_ID).append(projectRelativePath).append(confs));
-
-            IClasspathEntry[] entries = project.getRawClasspath();
-
-            List newEntries = new ArrayList(Arrays.asList(entries));
-            newEntries.add(newEntry);
-            entries = (IClasspathEntry[]) newEntries
-                    .toArray(new IClasspathEntry[newEntries.size()]);
-
-            project.setRawClasspath(entries, project.getOutputLocation(), null);
-        } catch (CoreException e) {
-            // unless there are issues with the JDT, this should never happen
-            IvyPlugin.log(e);
-        }
     }
 
     /**
