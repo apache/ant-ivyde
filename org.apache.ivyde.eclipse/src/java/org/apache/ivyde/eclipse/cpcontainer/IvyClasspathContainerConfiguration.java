@@ -491,14 +491,13 @@ public class IvyClasspathContainerConfiguration {
             String projectName = settingsPath.substring(PROJECT_SCHEME_PREFIX_LENGTH, pathIndex);
             String path = settingsPath.substring(pathIndex + 1);
             if (projectName.equals("")) {
-                IFile f = javaProject.getProject().getFile(path);
-                if (!f.exists()) {
+                File file = javaProject.getProject().getFile(path).getLocation().toFile();
+                if (!file.exists()) {
                     IvyDEException ex = new IvyDEException("Ivy settings file not found",
                             "The Ivy settings file '" + settingsPath + "' cannot be found", null);
                     setConfStatus(ex);
                     throw ex;
                 }
-                File file = f.getLocation().toFile();
                 return getIvy(file);
             } else {
                 IResource p = ResourcesPlugin.getWorkspace().getRoot().findMember(projectName);
@@ -509,15 +508,14 @@ public class IvyClasspathContainerConfiguration {
                     setConfStatus(ex);
                     throw ex;
                 }
-                IFile f = p.getProject().getFile(path);
-                if (!f.exists()) {
+                File file = p.getProject().getFile(path).getLocation().toFile();
+                if (!file.exists()) {
                     IvyDEException ex = new IvyDEException("Ivy settings file not found",
                             "The Ivy settings file '" + path + "' cannot be found in project '"
                                     + projectName + "'", null);
                     setConfStatus(ex);
                     throw ex;
                 }
-                File file = new File(f.getLocation().toOSString());
                 return getIvy(file);
             }
         }
@@ -786,7 +784,7 @@ public class IvyClasspathContainerConfiguration {
         File file;
         if (javaProject != null) {
             IFile f = javaProject.getProject().getFile(ivyXmlPath);
-            file = new File(f.getLocation().toOSString());
+            file = f.getLocation().toFile();
         } else {
             file = new File(ivyXmlPath);
         }
