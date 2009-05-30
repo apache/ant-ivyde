@@ -35,6 +35,7 @@
 - FIX: Refresh action is detaching javadoc and sources (IVYDE-176)
 - FIX: Add Ivy Library command adds classpath container even though it already exists (IVYDE-164)
 - FIX: Importing a project with Ivy configured with an embedded ivysettings fails (IVYDE-181)
+- FIX: Importing a project with Ivy fails if properties files are specified in settings (IVYDE-182)
 
   version 2.0.0 beta1
 ==========================

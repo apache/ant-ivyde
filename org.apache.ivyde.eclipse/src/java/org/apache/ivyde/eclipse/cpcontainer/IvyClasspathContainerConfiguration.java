@@ -623,10 +623,11 @@ public class IvyClasspathContainerConfiguration {
                 Path p = new Path(file);
                 if (javaProject != null && !p.isAbsolute()) {
                     try {
-                        is = javaProject.getProject().getFile(file).getContents();
-                    } catch (CoreException e) {
-                        IvyDEException ex = new IvyDEException("Unreadable property file",
-                                "The property file '" + file + "' could not be read", e);
+                        is = new FileInputStream(javaProject.getProject().getFile(file)
+                                .getFullPath().toFile());
+                    } catch (FileNotFoundException e) {
+                        IvyDEException ex = new IvyDEException("Property file not found",
+                                "The property file '" + file + "' could not be found", e);
                         setConfStatus(ex);
                         throw ex;
                     }
