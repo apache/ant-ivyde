@@ -630,7 +630,7 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
             if (path != null) {
                 String u;
                 try {
-                    u = "jar:" + path.toFile().toURI().toURL().toExternalForm() + "!/";
+                    u = "jar:" + path.toFile().toURL().toExternalForm() + "!/";
                     try {
                         url = new URL(u);
                     } catch (MalformedURLException e) {

@@ -36,6 +36,7 @@
 - FIX: Add Ivy Library command adds classpath container even though it already exists (IVYDE-164)
 - FIX: Importing a project with Ivy configured with an embedded ivysettings fails (IVYDE-181)
 - FIX: Importing a project with Ivy fails if properties files are specified in settings (IVYDE-182)
+- FIX: IvyDE does not set javadoc archive path properly (IVYDE-179)
 
   version 2.0.0 beta1
 ==========================
