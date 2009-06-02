@@ -30,12 +30,14 @@ import org.apache.ivyde.eclipse.ui.ConfTableViewer;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
 import org.apache.ivyde.eclipse.ui.SettingsEditor;
+import org.apache.ivyde.eclipse.ui.ConfTableViewer.ConfTableListener;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
 import org.apache.ivyde.eclipse.ui.SettingsEditor.SettingsEditorListener;
 import org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -98,6 +100,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private boolean exported;
 
+    private boolean newContainer = false;
+
+    private String oldIvyFile;
+
+    private List oldConfs;
+
     /**
      * Constructor
      */
@@ -106,31 +114,45 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     void checkCompleted() {
-        String error;
+        String error = null;
         if (ivyFilePathText.getIvyFilePath().length() == 0) {
             error = "Choose an ivy file";
         } else {
-            error = null;
-            // check that the chosen configuration doesn't already exist
-            // the uniqueness is for xmlivyPath + conf
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(project);
-            if (containers != null) {
-                Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-                while (error == null && itContainers.hasNext()) {
-                    IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
-                    IvyClasspathContainerConfiguration cpc = ivycp.getConf();
-                    if (cpc.ivyXmlPath.equals(ivyFilePathText.getIvyFilePath())) {
-                        List/* <String> */selecteds = confTableViewer.getSelectedConfigurations();
-                        if (selecteds.isEmpty() || cpc.confs.contains("*")) {
-                            error = "A container already exists for the selected conf of "
-                                    + "the module descriptor";
-                        } else {
-                            ArrayList list = new ArrayList(cpc.confs);
-                            list.retainAll(selecteds);
-                            if (!list.isEmpty()) {
+            String ivyFilePath = ivyFilePathText.getIvyFilePath();
+            List selectedConfigurations = confTableViewer.getSelectedConfigurations();
+
+            // we will check if there are duplicate if we are creating a new container
+            boolean checkDuplicate = newContainer;
+            if (!checkDuplicate) {
+                // or we are editing a classpath with different ivy and confs than the initial ones
+                checkDuplicate = !ivyFilePath.equals(oldIvyFile)
+                        || (selectedConfigurations.size() != oldConfs.size()
+                        || !oldConfs.containsAll(selectedConfigurations));                
+            }
+
+            if (checkDuplicate) {
+                // check that the chosen configuration doesn't already exist
+                // the uniqueness is for xmlivyPath + conf
+                List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                        .getIvyClasspathContainers(project);
+                if (containers != null) {
+                    Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+                    while (error == null && itContainers.hasNext()) {
+                        IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+                        IvyClasspathContainerConfiguration cpc = ivycp.getConf();
+                        if (cpc.ivyXmlPath.equals(ivyFilePath)) {
+                            if (selectedConfigurations.isEmpty()
+                                    || selectedConfigurations.contains("*") || cpc.confs.isEmpty()
+                                    || cpc.confs.contains("*")) {
                                 error = "A container already exists for the selected conf of "
                                         + "the module descriptor";
+                            } else {
+                                ArrayList list = new ArrayList(cpc.confs);
+                                list.retainAll(selectedConfigurations);
+                                if (!list.isEmpty()) {
+                                    error = "A container already exists for the selected conf of "
+                                            + "the module descriptor";
+                                }
                             }
                         }
                     }
@@ -222,6 +244,17 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf = new IvyClasspathContainerConfiguration(project, entry.getPath(), true);
             exported = entry.isExported();
         }
+        oldIvyFile = conf.ivyXmlPath;
+        oldConfs = conf.confs;
+    }
+
+    public void setSelection(IFile ivyfile) {
+        newContainer  = true;
+        conf = new IvyClasspathContainerConfiguration(project, ivyfile.getProjectRelativePath()
+                .toString(), true);
+        exported = false;
+        oldIvyFile = conf.ivyXmlPath;
+        oldConfs = conf.confs;
     }
 
     public void createControl(Composite parent) {
@@ -330,6 +363,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         // table for configuration selection
         confTableViewer = new ConfTableViewer(configComposite, SWT.NONE);
         confTableViewer.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+        confTableViewer.addListener(new ConfTableListener() {
+            public void confTableUpdated(List confs) {
+                checkCompleted();
+            }
+        });
 
         // refresh
         Button refreshConf = new Button(configComposite, SWT.NONE);

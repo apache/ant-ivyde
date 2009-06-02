@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvydeContainerPage;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -38,10 +39,10 @@ public class NewIvyDEContainerWizard extends Wizard {
 
     private IvydeContainerPage containerPage;
 
-    public NewIvyDEContainerWizard(IJavaProject project, IClasspathEntry entry) {
+    public NewIvyDEContainerWizard(IJavaProject project, IFile ivyfile) {
         containerPage = new IvydeContainerPage();
         containerPage.initialize(project, null);
-        containerPage.setSelection(entry);
+        containerPage.setSelection(ivyfile);
     }
 
     public void addPages() {

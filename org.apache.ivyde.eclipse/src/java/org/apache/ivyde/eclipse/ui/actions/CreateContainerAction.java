@@ -18,10 +18,8 @@
 package org.apache.ivyde.eclipse.ui.actions;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
 import org.apache.ivyde.eclipse.ui.NewIvyDEContainerWizard;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
@@ -33,13 +31,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
 public class CreateContainerAction implements IWorkbenchWindowActionDelegate {
-    private IWorkbenchWindow window;
-
-    /**
-     * The constructor.
-     */
-    public CreateContainerAction() {
-    }
 
     public void run(IAction action) {
         ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
@@ -50,11 +41,8 @@ public class CreateContainerAction implements IWorkbenchWindowActionDelegate {
             if (o instanceof IFile) {
                 IFile f = (IFile) o;
                 IJavaProject javaProject = JavaCore.create(f.getProject());
-                IvyClasspathContainerConfiguration conf = new IvyClasspathContainerConfiguration(
-                        javaProject, f.getProjectRelativePath().toString(), false);
-                IClasspathEntry entry = JavaCore.newContainerEntry(conf.getPath());
                 WizardDialog dialog = new WizardDialog(IvyPlugin.getActiveWorkbenchShell(),
-                        new NewIvyDEContainerWizard(javaProject, entry));
+                        new NewIvyDEContainerWizard(javaProject, f));
                 dialog.open();
             }
         }
@@ -69,6 +57,6 @@ public class CreateContainerAction implements IWorkbenchWindowActionDelegate {
     }
 
     public void init(IWorkbenchWindow window) {
-        this.window = window;
+        // nothing to initialize
     }
 }

@@ -19,14 +19,17 @@ package org.apache.ivyde.eclipse.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -45,6 +48,8 @@ public class ConfTableViewer extends Composite {
     private ModuleDescriptor md;
 
     private Link select;
+
+    private final List listeners = new ArrayList();
 
     public ConfTableViewer(Composite parent, int style) {
         super(parent, style);
@@ -84,6 +89,11 @@ public class ConfTableViewer extends Composite {
             }
         });
         confTableViewer.setLabelProvider(new ConfigurationLabelProvider());
+        confTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                confTableUpdated();
+            }
+        });
 
         select = new Link(this, SWT.PUSH);
         select.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -145,6 +155,31 @@ public class ConfTableViewer extends Composite {
                 return ((Configuration) element).getName();
             }
             return ((Configuration) element).getDescription();
+        }
+    }
+
+    public interface ConfTableListener {
+        void confTableUpdated(List confs);
+    }
+
+    public void addListener(ConfTableListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void remodeListener(ConfTableListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    void confTableUpdated() {
+        synchronized (listeners) {
+            Iterator it = listeners.iterator();
+            while (it.hasNext()) {
+                ((ConfTableListener) it.next()).confTableUpdated(getSelectedConfigurations());
+            }
         }
     }
 
