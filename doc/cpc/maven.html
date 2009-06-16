@@ -68,7 +68,7 @@ This sample shows that IvyDE Class path container on a Maven2 pom can handle tra
 
 <b> - Create a new empty java project in eclipse.</b>
 
-<b> - In your Ivy project configuration, set the ivy settings file below (Project/Properties/Ivy):</b>
+<b> - In your project, create an <tt>ivysettings.xml</tt> file: </b>
 
 <code><ivysettings>
 	<conf defaultResolver="ibiblio"/>
@@ -80,9 +80,7 @@ This sample shows that IvyDE Class path container on a Maven2 pom can handle tra
 
 Using the m2compatible attribute, you can benefit from Maven2 repository compatibility.
 
-
-<b> - Add the pom below in your project and select it for an IvyDE class path container choosing "compile" and "runtime" configurations.</b>
-
+<b> - In your project, create a <tt>pom.xml</tt> file: </b>
 
 <code>
 <project>
@@ -100,11 +98,21 @@ Using the m2compatible attribute, you can benefit from Maven2 repository compati
 </project>
 </code>
 
+<b> - On the pom.xml file, open the context menu and click on "Add Ivy Library...":</b>
+
+<ul>
+    <li>Select "Enable project specific settings" and set the "Ivy setting path" to: <tt>project:///ivysettings.xml</tt> </li>
+    <li>Select the configuration <tt>compile</tt> and <tt>runtime</tt></li>
+</ul>
+
+<center>
+    <img src="../images/maven2classpath1.jpg"/>
+</center>   
 
 <b> - That's all ! Your IvyDE class path container gets all dependencies even those that were transitive to the commons-httpclient module !</b>
 
 <center>
-    <img src="../images/maven2classpath.jpg"/>
+    <img src="../images/maven2classpath2.jpg"/>
 </center>   
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
