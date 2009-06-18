@@ -46,6 +46,7 @@
     <property name="checkstyle.lib" value="${basedir}/checkstyle/lib" />
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
+        <tstamp />
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
     </target>
 
