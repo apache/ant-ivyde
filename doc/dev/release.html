@@ -73,14 +73,14 @@ Don't forget to commit the changes you've done into the release branch.
 Make sure you have a proper working copy with a <tt>svn status</tt>. You should have no modification.
 
 Then launch the build:
-<pre>ant /release clean dist</pre>
+<pre>ant /release clean dist -DbaseLocation=/home/me/...../eclipse/</pre>
 And sign the artifacts:
 <pre>./signArtifacts.sh</pre>
 
 <h1>Prepare the updatesite</h1>
 
 The instructions to build the updatesite are there:
-http://ant.apache.org/ivy/history/latest-milestone/updatesite.html
+http://ant.apache.org/ivy/history/trunk/dev/updatesite.html
 
 <h1>Vote for the released artifacts</h1>
 
@@ -90,7 +90,7 @@ On people.apache.org, create your "staging" directory:
 <pre>mkdir ~/public_html/ivyde-$VERSION/</pre>
 And then the copy:
 <pre>scp dist/* $LOGIN@people.apache.org:/home/$LOGIN/public_html/ivyde-$VERSION/</pre>
-It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html">that page</a> to know how to proceed.
+It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/trunk/dev/updatesite.html">that page</a> to know how to proceed.
 
 And launch the vote on the ant-dev mailing list:
 <code>
