@@ -77,6 +77,13 @@ Then launch the build:
 And sign the artifacts:
 <pre>./signArtifacts.sh</pre>
 
+Then it is time to tag the release as soon as you are happy with your artifacts:
+
+<code>svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
+           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
+      -m "Tag IvyDE release $VERSION"
+</code>
+
 <h1>Prepare the updatesite</h1>
 
 The instructions to build the updatesite are there:
@@ -113,14 +120,6 @@ $ME, IvyDE $VERSION release manager
 </code>
 
 Note: this <a href="http://ant.apache.org/bylaws.html">page</a> is defining when and how a release can be accepted.
-
-<h1>The release has been accepted</h1>
-
-Then it is time to tag the release:
-<code>svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
-           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
-      -m "Tag IvyDE release $VERSION"
-</code>
 
 <h1>Deployment</h1>
 
