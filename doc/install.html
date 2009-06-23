@@ -26,19 +26,25 @@
 <body>
 	<textarea id="xooki-source">
 
-<h1><a name="manual"></a>Install the last release via Internet</h1>
+<h1><a name="latest"></a>Install the last release via Internet</h1>
 
 For most user who have access to the internet it is simpler to install the latest release from the IvyDE updatesite. So just look out there:
 http://ant.apache.org/ivy/ivyde/download.cgi
 
 <h1><a name="manual"></a>Manual install</h1>
 
-So you should have the zip distribution of IvyDE: org.apache.ivyde.feature-2.0.0.final.zip
+<h2>Install IvyDE</h2>
 
-You can then install it with:
+So you should have the zip distribution of IvyDE in which you should find these files:
+<ul>
+<li>features/org.apache.ivyde.feature_2.0.0.final-XXXX.jar</li>
+<li>plugins/org.apache.ivyde.eclipse_2.0.0.final-XXXX.jar</li>
+</ul>
+
+You can then install them by copying them respectively in the $ECLIPSE_HOME/features and the $ECLIPSE_HOME/plugins:
 <code>
-cd $ECLIPSE_HOME
-unzip org.apache.ivyde.feature-2.0.0.final.zip
+cp features/* $ECLIPSE_HOME/features
+cp plugins/* $ECLIPSE_HOME/plugins
 </code>
 
 <h2>Install the latest Ivy bundle</h2>
@@ -50,7 +56,10 @@ Get the latest Ivy feature and bundle for the updatesite:
 </ul>
 
 And then just copy them respectively in the $ECLIPSE_HOME/features and the $ECLIPSE_HOME/plugins folders.
-Then it is recommended to (re)start your Eclipse with the -clean option.
+
+<h2>Restart Eclipse</h2>
+
+After installing manually your plugins, you have to restart your Eclipse to have it take into account the changes. It is recommended to restart it with the -clean option on the command line.
 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>

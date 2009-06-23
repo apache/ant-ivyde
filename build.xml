@@ -36,11 +36,14 @@
 
     <property name="work.dir" value="${basedir}/work" />
     <property name="ivy.work.dir" value="${work.dir}/ivy" />
-    <property name="doc.work.dir" value="${work.dir}/doc" />
-    <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
-    <property name="dist.dir" value="${basedir}/dist" />
-    <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
     <property name="src.doc.dir" value="${basedir}/doc" />
+    <property name="dist.dir" value="${basedir}/dist" />
+    <property name="dist.work.dir" value="${work.dir}/dist" />
+    <property name="dist.work.doc.dir" value="${dist.work.dir}/doc" />
+    <property name="doc-dist.work.dir" value="${work.dir}/doc-dist" />
+    <property name="doc-eclipse.work.dir" value="${work.dir}/doc-eclipse" />
+    <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
+    <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
     <property name="checkstyle.src.dir" value="${basedir}/org.apache.ivyde.eclipse/src/etc/checkstyle" />
     <property name="checkstyle.report.dir" value="${basedir}/checkstyle/report" />
     <property name="checkstyle.lib" value="${basedir}/checkstyle/lib" />
@@ -50,7 +53,7 @@
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
     </target>
 
-    <target name="dist" depends="generate-eclipse-doc,build,sources,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="generate-eclipse-doc,build,package-binaries,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -134,43 +137,54 @@
             <sysproperty key="build.version" value="${build.version}" />
             <sysproperty key="javacDebugInfo" value="true" />
         </java>
-        <mkdir dir="${dist.dir}" />
-        <move file="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" todir="${dist.dir}" />
     </target>
 
-    <target name="sources" depends="compute-version" description="Create source archive files">
-        <mkdir dir="${dist.dir}" />
-        <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip">
-            <fileset dir="${basedir}">
-                <include name="site-template.xml" />
-                <include name="build.xml" />
-                <include name="build.properties" />
-                <include name="builder/**" />
-                <include name="org.apache.ivy.feature/build.properties" />
-                <include name="org.apache.ivy.feature/feature.properties" />
-                <include name="org.apache.ivy.feature/feature.xml" />
-                <include name="org.apache.ivy.feature/LICENSE" />
-                <include name="org.apache.ivy.feature/NOTICE" />
-                <include name="org.apache.ivy.feature/.project" />
-                <include name="org.apache.ivyde.eclipse/plugin.xml" />
-                <include name="org.apache.ivyde.eclipse/build.properties" />
-                <include name="org.apache.ivyde.eclipse/**/*.java" />
-                <include name="org.apache.ivyde.eclipse/icons/**" />
-                <include name="org.apache.ivyde.eclipse/META-INF/**" />
-                <include name="org.apache.ivyde.eclipse/CHANGES.txt" />
-                <include name="org.apache.ivyde.eclipse/.project" />
-                <include name="org.apache.ivyde.eclipse/.classpath" />
-                <include name="org.apache.ivyde.eclipse/.settings/**" />
-                <include name="org.apache.ivyde.feature/feature.xml" />
-                <include name="org.apache.ivyde.feature/feature.properties" />
-                <include name="org.apache.ivyde.feature/build.properties" />
-                <include name="org.apache.ivyde.feature/.project" />
-                <include name="org.apache.ivyde.feature/LICENCE" />
-                <include name="org.apache.ivyde.feature/NOTICE" />
-                <include name="signArtifacts.sh" />
-                <include name="verifyArtifacts.sh" />
+    <target name="generate-dist-doc-files">
+        <property name="checkUpToDate" value="true" />
+        <condition property="overwrite">
+            <isfalse value="${checkUpToDate}" />
+        </condition>
+        <mkdir dir="${dist.work.doc.dir}" />
+        <copy todir="${dist.work.doc.dir}" overwrite="${overwrite}">
+            <fileset dir="${src.doc.dir}">
+                <include name="style/**" />
+                <include name="js/**" />
+                <include name="images/**" />
             </fileset>
-        </zip>
+        </copy>
+    </target>
+
+    <target name="generate-dist-doc-html">
+        <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
+        <mkdir dir="${doc-dist.work.dir}" />
+        <copy todir="${doc-dist.work.dir}">
+            <fileset dir="${src.doc.dir}" />
+        </copy>
+        <copy file="${basedir}/template-doc.html" tofile="${doc-dist.work.dir}/template.html" overwrite="true" />
+        <property name="checkUpToDate" value="true" />
+        <mkdir dir="${dist.work.doc.dir}" />
+        <xooki:generate destDir="${dist.work.doc.dir}" checkUpToDate="${checkUpToDate}">
+            <fileset dir="${doc-dist.work.dir}">
+                <include name="**/*.html" />
+                <exclude name="template.html" />
+                <exclude name="**/xooki/**" />
+            </fileset>
+        </xooki:generate>
+    </target>
+
+    <target name="package-binaries" depends="build,generate-dist-doc-files,generate-dist-doc-html">
+        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}" />
+        <copy todir="${dist.work.dir}">
+            <fileset dir="${basedir}">
+                <include name="LICENCE" />
+                <include name="README.txt" />
+                <include name="RELEASE_NOTES.txt" />
+                <include name="NOTICE" />
+            </fileset>
+        </copy>
+        <mkdir dir="${dist.dir}" />
+        <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}" />
+        <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tgz" basedir="${dist.work.dir}" compression="gzip" />
     </target>
 
     <!-- 
@@ -414,19 +428,19 @@ forceContextQualifier=${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD
     </target>
 
     <target name="clean-eclipse-doc">
-        <delete dir="${doc.work.dir}" />
+        <delete dir="${doc-eclipse.work.dir}" />
         <delete dir="${eclipse-doc.dir}" />
     </target>
 
     <target name="generate-eclipse-doc-html">
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
-        <copy todir="${doc.work.dir}">
+        <copy todir="${doc-eclipse.work.dir}">
             <fileset dir="${src.doc.dir}" />
         </copy>
-        <copy file="${basedir}/template-eclipse-doc.html" tofile="${doc.work.dir}/template.html" overwrite="true" />
+        <copy file="${basedir}/template-eclipse-doc.html" tofile="${doc-eclipse.work.dir}/template.html" overwrite="true" />
         <property name="checkUpToDate" value="true" />
         <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}">
-            <fileset dir="${doc.work.dir}">
+            <fileset dir="${doc-eclipse.work.dir}">
                 <include name="**/*.html" />
                 <exclude name="template.html" />
                 <exclude name="**/xooki/**" />

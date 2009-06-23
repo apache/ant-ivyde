@@ -104,6 +104,18 @@
     <!-- Steps to do after fetching the build elements -->
     <!-- ===================================================================== -->
     <target name="postFetch">
+        <copy todir="${buildDirectory}/features/org.apache.ivyde.feature/">
+            <fileset dir="${buildDirectory}/../..">
+                <include name="LICENSE" />
+                <include name="NOTICE" />
+            </fileset>
+        </copy>
+        <copy todir="${buildDirectory}/plugins/org.apache.ivyde.eclipse/META-INF/">
+            <fileset dir="${buildDirectory}/../..">
+                <include name="LICENSE" />
+                <include name="NOTICE" />
+            </fileset>
+        </copy>
     </target>
 
     <!-- ===================================================================== -->
