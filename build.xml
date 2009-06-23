@@ -40,7 +40,7 @@
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="dist.work.dir" value="${work.dir}/dist" />
     <property name="dist.work.doc.dir" value="${dist.work.dir}/doc" />
-    <property name="doc-dist.work.dir" value="${work.dir}/doc-dist" />
+    <property name="dist.work.src.dir" value="${dist.work.dir}/doc" />
     <property name="doc-eclipse.work.dir" value="${work.dir}/doc-eclipse" />
     <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
     <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
@@ -53,7 +53,7 @@
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
     </target>
 
-    <target name="dist" depends="generate-eclipse-doc,build,package-binaries,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="generate-eclipse-doc,build,package-binaries" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -156,17 +156,12 @@
 
     <target name="generate-dist-doc-html">
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
-        <mkdir dir="${doc-dist.work.dir}" />
-        <copy todir="${doc-dist.work.dir}">
-            <fileset dir="${src.doc.dir}" />
-        </copy>
-        <copy file="${basedir}/template-doc.html" tofile="${doc-dist.work.dir}/template.html" overwrite="true" />
         <property name="checkUpToDate" value="true" />
         <mkdir dir="${dist.work.doc.dir}" />
         <xooki:generate destDir="${dist.work.doc.dir}" checkUpToDate="${checkUpToDate}">
-            <fileset dir="${doc-dist.work.dir}">
+            <fileset dir="${src.doc.dir}">
                 <include name="**/*.html" />
-                <exclude name="template.html" />
+                <exclude name="template*.html" />
                 <exclude name="**/xooki/**" />
             </fileset>
         </xooki:generate>
@@ -438,12 +433,12 @@ forceContextQualifier=${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD
         <copy todir="${doc-eclipse.work.dir}">
             <fileset dir="${src.doc.dir}" />
         </copy>
-        <copy file="${basedir}/template-eclipse-doc.html" tofile="${doc-eclipse.work.dir}/template.html" overwrite="true" />
+        <copy file="${src.doc.dir}/template-eclipse.html" tofile="${doc-eclipse.work.dir}/template.html" overwrite="true" />
         <property name="checkUpToDate" value="true" />
         <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}">
             <fileset dir="${doc-eclipse.work.dir}">
                 <include name="**/*.html" />
-                <exclude name="template.html" />
+                <exclude name="template*.html" />
                 <exclude name="**/xooki/**" />
             </fileset>
         </xooki:generate>
@@ -499,7 +494,7 @@ forceContextQualifier=${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD
                 out.close();
             ]]>
         </scriptdef>
-    <generate-eclipse-toc jsontocfile="${src.doc.dir}/toc.json" destFile="${eclipse-doc.dir}/toc.xml" />
-</target>
+        <generate-eclipse-toc jsontocfile="${src.doc.dir}/toc.json" destFile="${eclipse-doc.dir}/toc.xml" />
+    </target>
 
 </project>
