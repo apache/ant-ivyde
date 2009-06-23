@@ -17,5 +17,5 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-for i in dist/apache-ivyde-sources-*.zip; do gpg --verify $i.asc; done
-for i in dist/org.apache.ivyde.feature-*.zip; do gpg --verify $i.asc; done
+for i in dist/apache-ivyde-*.zip; do gpg --verify $i.asc; done
+for i in dist/apache-ivyde-*.tgz; do gpg --verify $i.asc; done
