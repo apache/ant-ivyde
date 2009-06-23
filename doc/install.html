@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+
+<h1><a name="manual"></a>Install the last release via Internet</h1>
+
+For most user who have access to the internet it is simpler to install the latest release from the IvyDE updatesite. So just look out there:
+http://ant.apache.org/ivy/ivyde/download.cgi
+
+<h1><a name="manual"></a>Manual install</h1>
+
+So you should have the zip distribution of IvyDE: org.apache.ivyde.feature-2.0.0.final.zip
+
+You can then install it with:
+<code>
+cd $ECLIPSE_HOME
+unzip org.apache.ivyde.feature-2.0.0.final.zip
+</code>
+
+<h2>Install the latest Ivy bundle</h2>
+
+Get the latest Ivy feature and bundle for the updatesite:
+<ul>
+<li>the <a href="[preferred]/ant/ivyde/updatesite/features">features folder</a></li>
+<li>the <a href="[preferred]/ant/ivyde/updatesite/plugins">plugins folder</a></li>
+</ul>
+
+And then just copy them respectively in the $ECLIPSE_HOME/features and the $ECLIPSE_HOME/plugins folders.
+Then it is recommended to (re)start your Eclipse with the -clean option.
+
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

@@ -62,7 +62,20 @@ The header should look like this
 
 <h2>Release notes</h2>
 
-TODO: some release notes exists in ivyde/trunk/org.apache.ivyde.eclipse/CHANGE.txt. Some work need to be done before they can be published on the website.
+Go edit the RELEASE_NOTES.txt files. There are two things to change, marked by some <tt>TODO WHEN RELEASING</tt>:
+<ul>
+    <li>the list of contributors should be filled according to the "thanks to" in the CHANGE.txt file</li>
+    <li>the list of bug/features fixed in the release should be filled from the one in the CHANGE.txt file</li>
+</ul>
+
+Edit the IvyDE doc and add a new page just under the root of the documentation tree:
+<ul>
+    <li>Child page title: Release Notes</li>
+    <li>Child page path: release-notes</li>
+</ul>
+
+As content in that doc, copy paste the content of the RELEASE_NOTES.txt file.
+Then you should improve the style of the page by adding some h1, h2, remove unwanted line break. Normally you shouldn't care about the http link or the jira issue, xooki will take care of them.
 
 <h2>Commit your change</h2>
 
