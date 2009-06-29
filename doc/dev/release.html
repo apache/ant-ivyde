@@ -88,20 +88,6 @@ Make sure you have a proper working copy with a <tt>svn status</tt>. You should 
 Then launch the build:
 <pre>ant /release clean dist -DbaseLocation=/home/me/...../eclipse/</pre>
 
-Package the sources:
-<pre>
-cd work
-mkdir sources
-cd sources
-svn export https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION
-cd $VERSION
-zip -r ../../../dist/apache-ivyde-sources-$VERSION.zip *
-tar cvzf ../../../dist/apache-ivyde-sources-$VERSION.tgz *
-</pre>
-
-Generate the checksums:
-<pre>ant checksum</pre>
-
 And sign the artifacts:
 <pre>./signArtifacts.sh</pre>
 

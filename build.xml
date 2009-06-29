@@ -53,7 +53,7 @@
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
     </target>
 
-    <target name="dist" depends="generate-eclipse-doc,build,package-binaries" description="Build every artifacts for distribution" />
+    <target name="dist" depends="generate-eclipse-doc,build,package-binaries,package-sources,checksum" description="Build every artifacts for distribution" />
 
     <target name="clean" description="Remove every build artifacts">
         <delete dir="${work.dir}" />
@@ -181,6 +181,28 @@
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}" />
         <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tgz" basedir="${dist.work.dir}" compression="gzip" />
+    </target>
+
+    <target name="package-sources" depends="compute-version">
+        <exec executable="svn" dir="${basedir}" outputproperty="svn.info.url">
+            <arg value="--xml" />
+            <arg value="info" />
+            <redirector>
+                <outputfilterchain>
+                    <containsregex pattern="&lt;url&gt;(.*)&lt;/url&gt;" replace="\1" />
+                </outputfilterchain>
+            </redirector>
+        </exec>
+        <mkdir dir="${work.dir}" />
+        <delete dir="${work.dir}/sources" />
+        <exec executable="svn" dir="${work.dir}" >
+            <arg value="export" />
+            <arg value="${svn.info.url}" />
+            <arg value="sources" />
+        </exec>
+        <mkdir dir="${dist.dir}" />
+        <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources" />
+        <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tgz" basedir="${work.dir}/sources" compression="gzip" />
     </target>
 
     <!-- 
