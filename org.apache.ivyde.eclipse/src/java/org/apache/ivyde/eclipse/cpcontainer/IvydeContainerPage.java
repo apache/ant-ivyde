@@ -100,11 +100,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private boolean exported;
 
-    private boolean newContainer = false;
+    private String oldIvyFile = null;
 
-    private String oldIvyFile;
-
-    private List oldConfs;
+    private List oldConfs = null;
 
     /**
      * Constructor
@@ -121,38 +119,35 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             String ivyFilePath = ivyFilePathText.getIvyFilePath();
             List selectedConfigurations = confTableViewer.getSelectedConfigurations();
 
-            // we will check if there are duplicate if we are creating a new container
-            boolean checkDuplicate = newContainer;
-            if (!checkDuplicate) {
-                // or we are editing a classpath with different ivy and confs than the initial ones
-                checkDuplicate = !ivyFilePath.equals(oldIvyFile)
-                        || (selectedConfigurations.size() != oldConfs.size()
-                        || !oldConfs.containsAll(selectedConfigurations));                
-            }
+            // check that the chosen configuration doesn't already exist
+            // the uniqueness is for xmlivyPath + conf
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(project);
+            if (containers != null) {
+                Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+                while (error == null && itContainers.hasNext()) {
+                    IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+                    IvyClasspathContainerConfiguration cpc = ivycp.getConf();
 
-            if (checkDuplicate) {
-                // check that the chosen configuration doesn't already exist
-                // the uniqueness is for xmlivyPath + conf
-                List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                        .getIvyClasspathContainers(project);
-                if (containers != null) {
-                    Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-                    while (error == null && itContainers.hasNext()) {
-                        IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
-                        IvyClasspathContainerConfiguration cpc = ivycp.getConf();
-                        if (cpc.ivyXmlPath.equals(ivyFilePath)) {
-                            if (selectedConfigurations.isEmpty()
-                                    || selectedConfigurations.contains("*") || cpc.confs.isEmpty()
-                                    || cpc.confs.contains("*")) {
+                    // first check that this is not the one we are editing
+                    if (oldIvyFile != null && cpc.ivyXmlPath.equals(oldIvyFile) && oldConfs != null
+                            && oldConfs.size() == cpc.confs.size()
+                            && oldConfs.containsAll(cpc.confs)) {
+                        continue;
+                    }
+
+                    if (cpc.ivyXmlPath.equals(ivyFilePath)) {
+                        if (selectedConfigurations.isEmpty()
+                                || selectedConfigurations.contains("*") || cpc.confs.isEmpty()
+                                || cpc.confs.contains("*")) {
+                            error = "A container already exists for the selected conf of "
+                                    + "the module descriptor";
+                        } else {
+                            ArrayList list = new ArrayList(cpc.confs);
+                            list.retainAll(selectedConfigurations);
+                            if (!list.isEmpty()) {
                                 error = "A container already exists for the selected conf of "
                                         + "the module descriptor";
-                            } else {
-                                ArrayList list = new ArrayList(cpc.confs);
-                                list.retainAll(selectedConfigurations);
-                                if (!list.isEmpty()) {
-                                    error = "A container already exists for the selected conf of "
-                                            + "the module descriptor";
-                                }
                             }
                         }
                     }
@@ -249,12 +244,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     public void setSelection(IFile ivyfile) {
-        newContainer  = true;
         conf = new IvyClasspathContainerConfiguration(project, ivyfile.getProjectRelativePath()
                 .toString(), true);
         exported = false;
-        oldIvyFile = conf.ivyXmlPath;
-        oldConfs = conf.confs;
     }
 
     public void createControl(Composite parent) {
@@ -324,7 +316,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         Label horizontalLine = new Label(headerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         Composite configComposite = new Composite(composite, SWT.NONE);
         configComposite.setLayout(new GridLayout(3, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
@@ -340,8 +332,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         horizontalLine = new Label(configComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
-        //CheckStyle:MagicNumber| OFN
-        
+        // CheckStyle:MagicNumber| OFN
+
         // Label for ivy file field
         Label pathLabel = new Label(configComposite, SWT.NONE);
         pathLabel.setText("Ivy File");
