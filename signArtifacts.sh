@@ -19,5 +19,5 @@
 
 read -s -p "Key passphrase: " passphrase
 
-for i in dist/apache-ivyde-sources-*.zip; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done
-for i in dist/org.apache.ivyde.feature-*.zip; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done
+for i in dist/apache-ivyde-*.zip; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done
+for i in dist/apache-ivyde-*.tgz; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done

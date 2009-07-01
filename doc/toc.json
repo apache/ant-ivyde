@@ -5,6 +5,20 @@
         "title":"Documentation",
         "children": [
             {
+              "id":"compatibility",
+              "title":"Compatibility",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"install",
+              "title":"Installation",
+              "children": [
+
+                ]
+            },
+            {
               "id":"cp_container",
               "title":"Classpath Container",
               "children": [
@@ -13,64 +27,64 @@
                     "title":"Create a container",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/edit",
                     "title":"Edit the classpath",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/resolve",
                     "title":"Launching resolve",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/retrieve",
                     "title":"Retrieve the dependencies",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/cleancache",
                     "title":"Clean the caches",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/reload_settings",
                     "title":"Reload settings",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/workspace",
                     "title":"Resolve in workspace",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/maven",
                     "title":"Use with maven poms",
                     "children": [
 
-                    ]
+                      ]
                   },
                   {
                     "id":"cpc/wtp",
                     "title":"WTP integration",
                     "children": [
 
-                    ]
-                  },
+                      ]
+                  }
                 ]
             },
             {

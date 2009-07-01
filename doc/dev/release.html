@@ -62,7 +62,20 @@ The header should look like this
 
 <h2>Release notes</h2>
 
-TODO: some release notes exists in ivyde/trunk/org.apache.ivyde.eclipse/CHANGE.txt. Some work need to be done before they can be published on the website.
+Go edit the RELEASE_NOTES.txt files. There are two things to change, marked by some <tt>TODO WHEN RELEASING</tt>:
+<ul>
+    <li>the list of contributors should be filled according to the "thanks to" in the CHANGE.txt file</li>
+    <li>the list of bug/features fixed in the release should be filled from the one in the CHANGE.txt file</li>
+</ul>
+
+Edit the IvyDE doc and add a new page just under the root of the documentation tree:
+<ul>
+    <li>Child page title: Release Notes</li>
+    <li>Child page path: release-notes</li>
+</ul>
+
+As content in that doc, copy paste the content of the RELEASE_NOTES.txt file.
+Then you should improve the style of the page by adding some h1, h2, remove unwanted line break. Normally you shouldn't care about the http link or the jira issue, xooki will take care of them.
 
 <h2>Commit your change</h2>
 
@@ -73,14 +86,22 @@ Don't forget to commit the changes you've done into the release branch.
 Make sure you have a proper working copy with a <tt>svn status</tt>. You should have no modification.
 
 Then launch the build:
-<pre>ant /release clean dist</pre>
+<pre>ant /release clean dist -DbaseLocation=/home/me/...../eclipse/</pre>
+
 And sign the artifacts:
 <pre>./signArtifacts.sh</pre>
+
+Then it is time to tag the release as soon as you are happy with your artifacts:
+
+<code>svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
+           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
+      -m "Tag IvyDE release $VERSION"
+</code>
 
 <h1>Prepare the updatesite</h1>
 
 The instructions to build the updatesite are there:
-http://ant.apache.org/ivy/history/latest-milestone/updatesite.html
+http://ant.apache.org/ivy/history/trunk/dev/updatesite.html
 
 <h1>Vote for the released artifacts</h1>
 
@@ -90,7 +111,7 @@ On people.apache.org, create your "staging" directory:
 <pre>mkdir ~/public_html/ivyde-$VERSION/</pre>
 And then the copy:
 <pre>scp dist/* $LOGIN@people.apache.org:/home/$LOGIN/public_html/ivyde-$VERSION/</pre>
-It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html">that page</a> to know how to proceed.
+It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/trunk/dev/updatesite.html">that page</a> to know how to proceed.
 
 And launch the vote on the ant-dev mailing list:
 <code>
@@ -113,14 +134,6 @@ $ME, IvyDE $VERSION release manager
 </code>
 
 Note: this <a href="http://ant.apache.org/bylaws.html">page</a> is defining when and how a release can be accepted.
-
-<h1>The release has been accepted</h1>
-
-Then it is time to tag the release:
-<code>svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
-           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
-      -m "Tag IvyDE release $VERSION"
-</code>
 
 <h1>Deployment</h1>
 
