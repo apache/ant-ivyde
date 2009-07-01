@@ -8,6 +8,7 @@
 - NEW: Support variables in ivyconf.xml (IVYDE-13) (thanks to Will Gorman)
 - NEW: Allow to manually reload the settings (IVYDE-26)
 - NEW: Allow to not trigger full resolve at startup (IVYDE-74)
+
 - IMPROVE: Split the global configuration panel into sevral ones (IVYDE-151)
 - IMPROVE: Add ivy.xsd to ivy.xml template (IVYDE-165) (thanks to Marko Niemi)
 - IMPROVE: Better support the resolve in workspace feature (IVYDE-153) (thanks to Eugene Goldfarb)
