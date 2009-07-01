@@ -171,7 +171,7 @@
         <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}" />
         <copy todir="${dist.work.dir}">
             <fileset dir="${basedir}">
-                <include name="LICENCE" />
+                <include name="LICENSE" />
                 <include name="NOTICE" />
                 <include name="CHANGES.txt" />
                 <include name="README.txt" />
