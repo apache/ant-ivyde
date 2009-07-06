@@ -40,7 +40,6 @@
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="dist.work.dir" value="${work.dir}/dist" />
     <property name="dist.work.doc.dir" value="${dist.work.dir}/doc" />
-    <property name="dist.work.src.dir" value="${dist.work.dir}/doc" />
     <property name="doc-eclipse.work.dir" value="${work.dir}/doc-eclipse" />
     <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
     <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
@@ -144,8 +143,8 @@
         <condition property="overwrite">
             <isfalse value="${checkUpToDate}" />
         </condition>
-        <mkdir dir="${dist.work.doc.dir}" />
-        <copy todir="${dist.work.doc.dir}" overwrite="${overwrite}">
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <copy todir="${dist.work.dir}/apache-ivyde-${build.version}" overwrite="${overwrite}">
             <fileset dir="${src.doc.dir}">
                 <include name="style/**" />
                 <include name="js/**" />
@@ -157,8 +156,8 @@
     <target name="generate-dist-doc-html">
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
         <property name="checkUpToDate" value="true" />
-        <mkdir dir="${dist.work.doc.dir}" />
-        <xooki:generate destDir="${dist.work.doc.dir}" checkUpToDate="${checkUpToDate}">
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}" checkUpToDate="${checkUpToDate}">
             <fileset dir="${src.doc.dir}">
                 <include name="**/*.html" />
                 <exclude name="template*.html" />
@@ -168,8 +167,9 @@
     </target>
 
     <target name="package-binaries" depends="build,generate-dist-doc-files,generate-dist-doc-html">
-        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}" />
-        <copy todir="${dist.work.dir}">
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
             <fileset dir="${basedir}">
                 <include name="LICENSE" />
                 <include name="NOTICE" />
@@ -193,12 +193,12 @@
                 </outputfilterchain>
             </redirector>
         </exec>
-        <mkdir dir="${work.dir}" />
         <delete dir="${work.dir}/sources" />
-        <exec executable="svn" dir="${work.dir}" >
+        <mkdir dir="${work.dir}/sources" />
+        <exec executable="svn" dir="${work.dir}/sources" >
             <arg value="export" />
             <arg value="${svn.info.url}" />
-            <arg value="sources" />
+            <arg value="apache-ivyde-sources-${build.version}" />
         </exec>
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources" />
