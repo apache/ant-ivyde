@@ -49,6 +49,9 @@
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <tstamp />
+        <condition property="forceContextQualifier" value="${DSTAMP}${TSTAMP}-RELEASE">
+            <length string="${version.qualifier}" trim="true" length="0" />
+        </condition>
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
     </target>
 
@@ -101,6 +104,9 @@
 
     <target name="compute-version">
         <tstamp />
+        <condition property="forceContextQualifier" value="${DSTAMP}${TSTAMP}-dev">
+            <length string="${version.qualifier}" trim="true" length="0" />
+        </condition>
         <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-dev" />
         <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
             <filterchain>
