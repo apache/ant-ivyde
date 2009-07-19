@@ -177,8 +177,7 @@ Then we need to edit svn/site/ivyde/toc.json:
 <pre>
             {
                 "title":"$VERSION",
-                "importRoot":"history/$VERSION",
-                "importNode":"index"
+                "url":"http://ant.apache.org/ivy/ivyde/history/$VERSION/index.html"
             }
 </pre>
 </li>
@@ -204,7 +203,22 @@ In the target <tt>init-imported-history-ivyde</tt>, add a line with:
 
 <h2>Deploy</h2>
 
-Commit your changes, and proceed to the full deployment of the website (regenerate every page as the toc changed: <tt>ant /all generate-site-ivyde</tt>).
+All site editing being done, commit your changes.
+
+And now let's generate the site and deploy it:
+<ol>
+    <li>generate the part of the site for the new version:</li>
+<code>
+ant generate-history-ivyde -Dhistory.version=$VERSION
+</code>
+<u>WARNING:</u> that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
+    <li>generate the website with the new toc:</li>
+<code>
+ant /all generate-site-ivyde
+</code>
+    <li>you should verify that the site generated in target is OK. And once your happy with it, commit the changes in target (some svn add might be needed !)</li>
+    <li>deploy the website: go on people.apache.org and <tt>svn up /www/ant.apache.org/ivy/ivyde</tt></li>
+</ol>
 
 <h1>Post release tasks</h1>
 
