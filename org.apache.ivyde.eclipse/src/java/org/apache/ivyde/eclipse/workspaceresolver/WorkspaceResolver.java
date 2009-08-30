@@ -128,7 +128,7 @@ public class WorkspaceResolver extends AbstractResolver {
 
             // Only report java projects as downloaded
             if (artifacts[i].getType().equals(ECLIPSE_PROJECT_TYPE)) {
-                Message.verbose("\t[WORKSPACE   ] " + artifacts[i]);
+                Message.verbose("\t[IN WORKSPACE] " + artifacts[i]);
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
             } else {
