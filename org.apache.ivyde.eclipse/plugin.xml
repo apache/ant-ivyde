@@ -259,6 +259,16 @@
       </super>
    </extension>
    
+    <extension
+    	id="org.apache.ivyide.eclipse.ivyschema"
+    	name="Ivy Schema" 
+    	point="org.eclipse.wst.xml.core.catalogContributions">
+        <catalogContribution id="ivySchema">
+		<uri 
+		    name="http://ant.apache.org/ivy/schemas/ivy.xsd" 
+			uri="platform:/plugin/org.apache.ivyde.eclipse/xsd/ivy.xsd"/>
+    </catalogContribution>
+   </extension>
 
 
    <!--

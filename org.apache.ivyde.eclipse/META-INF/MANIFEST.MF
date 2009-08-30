@@ -33,5 +33,6 @@ Require-Bundle: org.apache.xerces;resolution:=optional,
  org.eclipse.jdt.ui,
  org.eclipse.ui.console,
  org.apache.ivy,
- org.eclipse.help
+ org.eclipse.help,
+ org.eclipse.wst.xml.core
 Eclipse-LazyStart: true
