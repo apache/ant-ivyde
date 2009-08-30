@@ -26,5 +26,6 @@
         <conf name="default" />
     </configurations>
     <dependencies>
+    	<dependency org="commons-lang" name="commons-lang" rev="2.4" />
     </dependencies>
 </ivy-module>
