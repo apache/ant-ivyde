@@ -120,7 +120,7 @@ public class SettingsEditor extends Composite {
                 File f = getFile(new File("/"));
                 if (f != null) {
                     try {
-                        settingsText.setText(f.toURL().toExternalForm());
+                        settingsText.setText(f.toURI().toURL().toExternalForm());
                         settingsPathUpdated();
                     } catch (MalformedURLException ex) {
                         // this cannot happen

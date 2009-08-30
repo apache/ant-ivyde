@@ -1,6 +1,10 @@
 				IvyDE 
 				============================================
 
+  version 2.1.0
+==========================
+- FIX: "Ivy Settings Path" Browse button results in an incorrectly formatted URL (IVYDE-191) (thanks to Jon Schneider)
+
   version 2.0.0 final
 ==========================
 - NEW: Add the IvyDE documentation to the Eclipse help (IVYDE-150)
