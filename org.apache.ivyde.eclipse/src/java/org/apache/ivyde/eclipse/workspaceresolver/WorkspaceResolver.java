@@ -132,9 +132,9 @@ public class WorkspaceResolver extends AbstractResolver {
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
             } else {
-                Message.verbose("\t[Eclipse Workspace resolver - skipping non-project artifact] "
-                        + artifacts[i]);
-                adr.setDownloadStatus(DownloadStatus.NO);
+                Message.verbose("\t[Eclipse Workspace resolver] "
+                        + "cannot download non-project artifact: " + artifacts[i]);
+                adr.setDownloadStatus(DownloadStatus.FAILED);
             }
         }
         return dr;
@@ -201,8 +201,11 @@ public class WorkspaceResolver extends AbstractResolver {
     }
 
     private DefaultModuleDescriptor cloneMd(ModuleDescriptor md, Artifact af) {
-        DefaultModuleDescriptor newMd = DefaultModuleDescriptor.newDefaultInstance(md
-                .getModuleRevisionId());
+
+        DefaultModuleDescriptor newMd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
+                "release", null, true);
+        newMd.addConfiguration(new Configuration(ModuleDescriptor.DEFAULT_CONFIGURATION));
+        newMd.setLastModified(System.currentTimeMillis());
 
         newMd.setDescription(md.getDescription());
         newMd.setHomePage(md.getHomePage());
