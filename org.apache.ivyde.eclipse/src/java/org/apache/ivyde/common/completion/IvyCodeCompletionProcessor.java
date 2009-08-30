@@ -92,7 +92,8 @@ public class IvyCodeCompletionProcessor {
             // Loop through all proposals
             for (Iterator iter = atts.iterator(); iter.hasNext();) {
                 IvyTagAttribute att = (IvyTagAttribute) iter.next();
-                if (att.getName().startsWith(qualifier) && !existingAtts.containsKey(att.getName())) {
+                if (att.getName().startsWith(qualifier)
+                        && !existingAtts.containsKey(att.getName())) {
                     // Yes -- compute whole proposal text
                     String text = att.getName() + "=\"\"";
                     // Construct proposal

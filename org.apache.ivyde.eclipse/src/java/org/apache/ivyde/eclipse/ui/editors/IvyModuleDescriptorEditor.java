@@ -73,7 +73,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
         IvyFileEditorInput ivyFileEditorInput = null;
         if (input instanceof FileEditorInput) {
             FileEditorInput fei = (FileEditorInput) input;
-            IFile file = ((FileEditorInput) input).getFile();
+            IFile file = fei.getFile();
             ivyFileEditorInput = new IvyFileEditorInput(file);
         } else if (input instanceof IvyFileEditorInput) {
             ivyFileEditorInput = (IvyFileEditorInput) input;
@@ -84,8 +84,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
                 xmlEditor.setFile(ivyFileEditorInput.getFile());
             }
         }
-        // deprectated but we need retro compatibility
-        setTitle(ivyFileEditorInput.getFile().getName());
+        setPartName(ivyFileEditorInput.getFile().getName());
     }
 
     void createPageXML() {

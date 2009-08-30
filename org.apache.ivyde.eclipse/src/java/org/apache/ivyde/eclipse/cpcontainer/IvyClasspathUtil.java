@@ -103,7 +103,8 @@ public final class IvyClasspathUtil {
      *            the project to search into
      * @return the Ivy classpath container if found
      */
-    public static List/*<IvyClasspathContainer>*/ getIvyClasspathContainers(IJavaProject javaProject) {
+    public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(
+            IJavaProject javaProject) {
         List/*<IvyClasspathContainer>*/ containers = new ArrayList();
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();

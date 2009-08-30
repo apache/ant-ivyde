@@ -20,7 +20,7 @@ package org.apache.ivyde.eclipse.ui.editors.xml;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -53,7 +53,7 @@ public class XMLEditor extends TextEditor {
         // This action will fire a CONTENTASSIST_PROPOSALS operation
         // when executed
         IAction action = new TextOperationAction(IvyPlugin.getDefault().getResourceBundle(),
-                "ContentAssistProposal", this, SourceViewer.CONTENTASSIST_PROPOSALS);
+                "ContentAssistProposal", this, ISourceViewer.CONTENTASSIST_PROPOSALS);
         action.setActionDefinitionId(CONTENTASSIST_PROPOSAL_ID);
 
         // Tell the editor about this new action

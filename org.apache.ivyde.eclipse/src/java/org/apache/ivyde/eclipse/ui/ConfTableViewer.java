@@ -65,10 +65,12 @@ public class ConfTableViewer extends Composite {
             new GridData(GridData.FILL, GridData.FILL, true, true));
         TableColumn col1 = new TableColumn(confTableViewer.getTable(), SWT.NONE);
         col1.setText("Name");
+        // CheckStyle:MagicNumber| OFF
         col1.setWidth(100);
         TableColumn col2 = new TableColumn(confTableViewer.getTable(), SWT.NONE);
         col2.setText("Description");
         col2.setWidth(300);
+        // CheckStyle:MagicNumber| ON
         confTableViewer.setColumnProperties(new String[] {"Name", "Description"});
         confTableViewer.getTable().setLayoutData(
             new GridData(GridData.FILL, GridData.FILL, true, true));

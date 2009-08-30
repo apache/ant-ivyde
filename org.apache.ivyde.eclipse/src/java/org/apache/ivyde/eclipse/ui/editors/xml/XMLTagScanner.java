@@ -30,7 +30,9 @@ public class XMLTagScanner extends RuleBasedScanner {
     public XMLTagScanner(ColorManager manager) {
         IToken string = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.STRING)));
 
+        // CheckStyle:MagicNumber| OFF
         IRule[] rules = new IRule[3];
+        // CheckStyle:MagicNumber| ON
 
         // Add rule for double quotes
         rules[0] = new SingleLineRule("\"", "\"", string, '\\');

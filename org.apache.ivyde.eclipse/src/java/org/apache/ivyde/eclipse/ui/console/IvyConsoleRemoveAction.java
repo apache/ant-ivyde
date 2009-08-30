@@ -22,11 +22,11 @@ import org.eclipse.ui.console.actions.CloseConsoleAction;
 
 public class IvyConsoleRemoveAction extends CloseConsoleAction {
 
-	public IvyConsoleRemoveAction(IConsole console) {
+    public IvyConsoleRemoveAction(IConsole console) {
         super(console);
     }
 
     public void run() {
-		IvyConsoleFactory.closeConsole();
-	}
+        IvyConsoleFactory.closeConsole();
+    }
 }

@@ -30,13 +30,21 @@ public class ConsoleDocument {
     private static final int BUFFER_SIZE = 200;
 
     protected static class ConsoleLine {
-        public String line;
+        private String line;
 
-        public int type;
+        private int type;
 
         ConsoleLine(String line, int type) {
             this.line = line;
             this.type = type;
+        }
+
+        public String getLine() {
+            return line;
+        }
+
+        public int getType() {
+            return type;
         }
     }
 
@@ -44,6 +52,7 @@ public class ConsoleDocument {
      * Creates an empty console document.
      */
     public ConsoleDocument() {
+        // nothing to initialize
     }
 
     /**

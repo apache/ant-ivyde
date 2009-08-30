@@ -33,17 +33,17 @@ public class AcceptedSuffixesTypesComposite extends Composite {
     public static final String TOOLTIP_ACCEPTED_TYPES = "Comma separated list of artifact types"
             + " to use in IvyDE Managed Dependencies Library.\n" + "Example: jar, zip";
 
-    public static final String TOOLTIP_SOURCE_TYPES = "Comma separated list of artifact types to be used as sources.\n"
-            + "Example: source, src";
+    public static final String TOOLTIP_SOURCE_TYPES = "Comma separated list of artifact types to"
+            + " be used as sources.\nExample: source, src";
 
-    public static final String TOOLTIP_JAVADOC_TYPES = "Comma separated list of artifact types to be used as javadoc.\n"
-            + "Example: javadoc.";
+    public static final String TOOLTIP_JAVADOC_TYPES = "Comma separated list of artifact types to"
+            + " be used as javadoc.\nExample: javadoc.";
 
-    public static final String TOOLTIP_SOURCE_SUFFIXES = "Comma separated list of suffixes to match sources to artifacts.\n"
-            + "Example: -source, -src";
+    public static final String TOOLTIP_SOURCE_SUFFIXES = "Comma separated list of suffixes to match"
+            + " sources to artifacts.\nExample: -source, -src";
 
-    public static final String TOOLTIP_JAVADOC_SUFFIXES = "Comma separated list of suffixes to match javadocs to artifacts.\n"
-            + "Example: -javadoc, -doc";
+    public static final String TOOLTIP_JAVADOC_SUFFIXES = "Comma separated list of suffixes to"
+            + " match javadocs to artifacts.\nExample: -javadoc, -doc";
 
     private Text acceptedTypesText;
 

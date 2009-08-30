@@ -25,7 +25,6 @@ import org.apache.ivy.util.MessageLogger;
 import org.apache.ivy.util.MessageLoggerHelper;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -51,7 +50,9 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     public static final String PREF_CONSOLE_ERROR_COLOR = IvyPlugin.ID + ".console.color.error";
 
+    // CheckStyle:MagicNumber| OFF
     private MessageConsoleStream[] streams = new MessageConsoleStream[5];
+    // CheckStyle:MagicNumber| ON
 
     private ConsoleDocument document;
 
@@ -160,7 +161,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             ConsoleDocument.ConsoleLine[] lines = document.getLines();
             for (int i = 0; i < lines.length; i++) {
                 ConsoleDocument.ConsoleLine line = lines[i];
-                appendLine(line.type, line.line);
+                appendLine(line.getType(), line.getLine());
             }
             document.clear();
         }

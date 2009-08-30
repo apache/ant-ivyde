@@ -36,8 +36,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -193,6 +191,7 @@ public class IvyFilePathText extends Composite {
                 dialog.setTitle("choose ivy file");
                 dialog.setMessage("choose the ivy file to use to resolve dependencies");
                 dialog.setInput(project.getProject());
+                // deprecated use as of 3.3 but we need to say compatible with 3.2
                 dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
                 if (dialog.open() == Window.OK) {

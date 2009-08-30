@@ -20,7 +20,6 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 

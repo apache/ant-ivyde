@@ -71,7 +71,9 @@ public class SettingsEditor extends Composite {
 
     public SettingsEditor(Composite parent, int style) {
         super(parent, style);
+        // CheckStyle:MagicNumber| OFF
         GridLayout layout = new GridLayout(3, false);
+        // CheckStyle:MagicNumber| ON
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         setLayout(layout);
@@ -133,7 +135,10 @@ public class SettingsEditor extends Composite {
 
         loadOnDemandButton = new Button(this, SWT.CHECK);
         loadOnDemandButton.setText("reload the settings only on demand");
-        loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+        // CheckStyle:MagicNumber| OFF
+        loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3,
+                1));
+        // CheckStyle:MagicNumber| ON
 
         label = new Label(this, SWT.NONE);
         label.setText("Property files:");

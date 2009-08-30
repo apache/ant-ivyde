@@ -48,6 +48,7 @@ public class ReportView extends ViewPart implements ISelectionListener {
     }
 
     public void setFocus() {
+        // nothing to do
     }
 
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {

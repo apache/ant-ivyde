@@ -23,12 +23,11 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.ComparatorLatestStrategy;
-import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 /**
- * A dumb copy of the {@link LatestRevisionStrategy} but that take into account the latest and
- * working revision as superior to any other revision.
+ * A dumb copy of the {@link org.apache.ivy.plugins.latest.LatestRevisionStrategy} but that take
+ * into account the latest and working revision as superior to any other revision.
  */
 public class IvyDEStrategy extends ComparatorLatestStrategy {
 

@@ -20,7 +20,6 @@ package org.apache.ivyde.eclipse.cpcontainer;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -85,7 +84,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
      * @param classpathEntries
      *            the entries to start with
      * @throws IOException
-     * @throws ParseException
      * @throws MalformedURLException
      */
     public IvyClasspathContainer(IJavaProject javaProject, IPath path,

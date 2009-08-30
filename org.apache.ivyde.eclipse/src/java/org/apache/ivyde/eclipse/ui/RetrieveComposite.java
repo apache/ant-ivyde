@@ -33,11 +33,11 @@ public class RetrieveComposite extends Composite {
             + "To copy artifacts in folder named lib without revision by folder"
             + " named like configurations";
 
-    public static final String TOOLTIP_RETRIEVE_CONFS = "Comma separated list of configuration to retrieve\n"
-        +"Exemple: '*' or 'compile,test'";
+    public static final String TOOLTIP_RETRIEVE_CONFS = "Comma separated list of configuration to"
+            + " retrieve\nExemple: '*' or 'compile,test'";
 
-    public static final String TOOLTIP_RETRIEVE_TYPES = "Comma separated list of types to retrieve\n"
-        +"Exemple: '*' or 'jar,source'";
+    public static final String TOOLTIP_RETRIEVE_TYPES = "Comma separated list of types to retrieve"
+            + "\nExemple: '*' or 'jar,source'";
 
     private Button doRetrieveButton;
 

@@ -6,7 +6,6 @@ Bundle-Version: 2.1.0.qualifier
 Bundle-ClassPath: ivyde-eclipse.jar
 Bundle-Activator: org.apache.ivyde.eclipse.IvyPlugin
 Bundle-Vendor: Apache Software Foundation
-Bundle-Localization: plugin
 Export-Package: org.apache.ivyde.eclipse,
  org.apache.ivyde.eclipse.cpcontainer,
  org.apache.ivyde.eclipse.cpcontainer.fragmentinfo,
@@ -35,4 +34,5 @@ Require-Bundle: org.apache.xerces;resolution:=optional,
  org.apache.ivy,
  org.eclipse.help,
  org.eclipse.wst.xml.core
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

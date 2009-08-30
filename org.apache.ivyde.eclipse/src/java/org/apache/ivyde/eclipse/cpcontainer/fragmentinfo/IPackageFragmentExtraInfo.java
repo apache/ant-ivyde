@@ -34,5 +34,5 @@ public interface IPackageFragmentExtraInfo {
 
     public void setSourceAttachmentRootPath(IPath containerPath, String entryPath, IPath rootPath);
 
-    public void setJavaDocLocation(IPath containerPath, String entryPath, URL libraryJavadocLocation);
+    public void setJavaDocLocation(IPath containerPath, String entryPath, URL libraryJavadocLoc);
 }

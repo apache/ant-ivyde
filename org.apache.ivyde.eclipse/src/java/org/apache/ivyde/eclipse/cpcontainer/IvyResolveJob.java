@@ -198,7 +198,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
         try {
             this.ivy = conf.getIvy();
-            // IVYDE-168 : Ivy needs the IvyContext in the threadlocal in order to found the default branch
+            // IVYDE-168 : Ivy needs the IvyContext in the threadlocal in order to found the
+            // default branch
             ivy.pushContext();
             this.md = conf.getModuleDescriptor(ivy);
         } catch (IvyDEException e) {
@@ -550,7 +551,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
         // we haven't found source artifact in resolved artifacts,
         // let's look in the module declaring the artifact
-        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(artifact.getId().getModuleRevisionId());
+        ModuleRevisionId mrid = artifact.getId().getModuleRevisionId();
+        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(mrid);
         if (artifacts != null) {
             for (int i = 0; i < artifacts.length; i++) {
                 Artifact metaArtifact = artifacts[i];
@@ -584,7 +586,8 @@ public class IvyResolveJob extends Job implements TransferListener, IvyListener 
         }
         // we haven't found javadoc artifact in resolved artifacts,
         // let's look in the module declaring the artifact
-        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(artifact.getId().getModuleRevisionId());
+        ModuleRevisionId mrid = artifact.getId().getModuleRevisionId();
+        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(mrid);
         if (artifacts != null) {
             for (int i = 0; i < artifacts.length; i++) {
                 Artifact metaArtifact = artifacts[i];

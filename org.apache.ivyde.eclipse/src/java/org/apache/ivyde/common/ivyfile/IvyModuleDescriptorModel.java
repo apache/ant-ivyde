@@ -627,13 +627,11 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 new ListValueProvider(getDefault("ext"))));
         exclude.addAttribute(new IvyTagAttribute("matcher",
                 "the matcher to use to match the modules to include", false, matcherNamesProvider));
-        exclude
-                .addAttribute(new IvyTagAttribute(
-                        "conf",
-                        "comma separated list of the master configurations \n"
-                                + "in which this artifact should be excluded. \n"
-                                + "'*' wildcard can be used to designate all configurations of this module",
-                        false, masterConfsValueProvider));
+        exclude.addAttribute(new IvyTagAttribute("conf",
+                "comma separated list of the master configurations \n"
+                        + "in which this artifact should be excluded. \n"
+                        + "'*' wildcard can be used to designate all configurations of"
+                        + " this module", false, masterConfsValueProvider));
         IvyTag conf6 = new IvyTag("conf", "configuration in which the artifact should be excluded");
         conf6.addAttribute(new IvyTagAttribute("name",
                 "the name of the master configuration in which \n"
