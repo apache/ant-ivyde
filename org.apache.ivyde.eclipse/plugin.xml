@@ -89,6 +89,20 @@
             class="org.apache.ivyde.eclipse.ui.actions.ResolveAction" 
             enablesFor="1"
 			/> 
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.apache.ivyde.eclipse.ui.actions.ProjectMenuAction"
+            nameFilter="*"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
+               enablesFor="+"
+               id="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
+               label="Ivy"
+               menubarPath="additions"
+               tooltip="Ivy Dependency Manager">
+         </action>
       </objectContribution> 
       <objectContribution 
          id="org.apache.ivyde.eclipse.ui.actions.OpenIvyFileAction" 

@@ -4,6 +4,7 @@
   version 2.1.0
 ==========================
 - NEW: Inclusion of Ivy related schemas into the Eclipse XML Catalog (IVYDE-190) (thanks to Miguel Griffa)
+- NEW: Add "Resolve Dependencies" extension to Java Project in the Package Explorer (IVYDE-153) (thanks to Jon Schneider and Troy Gaines)
 
 - FIX: "Ivy Settings Path" Browse button results in an incorrectly formatted URL (IVYDE-191) (thanks to Jon Schneider)
 - FIX: Workspace Resolver Prevents Source Download (IVYDE-188) (thanks to Phillip Webb)
