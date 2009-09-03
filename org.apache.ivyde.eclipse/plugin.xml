@@ -98,6 +98,7 @@
          <action
                class="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
                enablesFor="+"
+               icon="icons/logo16x16.gif"
                id="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
                label="Ivy"
                menubarPath="additions"
