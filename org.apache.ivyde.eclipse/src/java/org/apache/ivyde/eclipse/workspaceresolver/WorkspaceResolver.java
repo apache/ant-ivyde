@@ -179,7 +179,8 @@ public class WorkspaceResolver extends AbstractResolver {
                 }
 
                 // Found one; check if it is for the module we need
-                if (versionMatcher.accept(dd.getDependencyRevisionId(), md)) {
+                if (md.getModuleRevisionId().getRevision().startsWith("working@")
+                        || versionMatcher.accept(dd.getDependencyRevisionId(), md)) {
 
                     Artifact af = new DefaultArtifact(md.getModuleRevisionId(), md
                             .getPublicationDate(), javaProject.getPath().toString(),

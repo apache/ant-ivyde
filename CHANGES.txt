@@ -8,6 +8,7 @@
 
 - FIX: "Ivy Settings Path" Browse button results in an incorrectly formatted URL (IVYDE-191) (thanks to Jon Schneider)
 - FIX: Workspace Resolver Prevents Source Download (IVYDE-188) (thanks to Phillip Webb)
+- FIX: Resolve in Workspace fails to find projects under certain conditions (IVYDE-186) (thanks to Adam Karl)
 
   version 2.0.0 final
 ==========================
