@@ -166,9 +166,11 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
         List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
                 .getIvyFileClasspathContainers(file);
         Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-        while (itContainers.hasNext()) {
-            IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
-            ivycp.launchResolve(false, true, null);
+        if (IvyPlugin.getPreferenceStoreHelper().getAutoResolveOnChange()) {
+            while (itContainers.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+                ivycp.launchResolve(false, true, null);
+            }
         }
     }
 

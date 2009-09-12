@@ -211,4 +211,11 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.AUTO_RESOLVE_ON_OPEN, autoResolveOnOpen);
     }
 
+    public boolean getAutoResolveOnChange() {
+        return prefStore.getBoolean(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE);
+    }
+
+    public void setAutoResolveOnChange(boolean autoResolveChange) {
+        prefStore.setValue(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, autoResolveChange);
+    }
 }

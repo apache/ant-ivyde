@@ -57,7 +57,11 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private Button resolveOnStartupButton;
 
-    private Button doNothingButton;
+    private Button doNothingOnStartupButton;
+
+    private Button resolveOnChangeButton;
+
+    private Button doNothingOnChangeButton;
 
     public IvyPreferencePage() {
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
@@ -86,9 +90,10 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         startupGroup.setLayout(new GridLayout());
         startupGroup.setText("On Eclipse startup");
 
-        doNothingButton = new Button(startupGroup, SWT.RADIO);
-        doNothingButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        doNothingButton.setText("Do nothing");
+        doNothingOnStartupButton = new Button(startupGroup, SWT.RADIO);
+        doNothingOnStartupButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false));
+        doNothingOnStartupButton.setText("Do nothing");
 
         refreshOnStartupButton = new Button(startupGroup, SWT.RADIO);
         refreshOnStartupButton
@@ -99,6 +104,21 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         resolveOnStartupButton
                 .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         resolveOnStartupButton.setText("Trigger resolve");
+
+        Group fileChangeGroup = new Group(composite, SWT.NONE);
+        fileChangeGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        fileChangeGroup.setLayout(new GridLayout());
+        fileChangeGroup.setText("On Ivy File Change");
+
+        doNothingOnChangeButton = new Button(fileChangeGroup, SWT.RADIO);
+        doNothingOnChangeButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false));
+        doNothingOnChangeButton.setText("Do nothing");
+
+        resolveOnChangeButton = new Button(fileChangeGroup, SWT.RADIO);
+        resolveOnChangeButton
+                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        resolveOnChangeButton.setText("Trigger resolve");
 
         Group editorGroup = new Group(composite, SWT.NONE);
         editorGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
@@ -127,7 +147,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         switch (helper.getResolveOnStartup()) {
             case IvyClasspathInitializer.ON_STARTUP_NOTHING:
-                doNothingButton.setSelection(true);
+                doNothingOnStartupButton.setSelection(true);
                 break;
             case IvyClasspathInitializer.ON_STARTUP_REFRESH:
                 refreshOnStartupButton.setSelection(true);
@@ -136,19 +156,34 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
         }
+
+        if (helper.getAutoResolveOnChange()) {
+            resolveOnChangeButton.setSelection(true);
+        } else {
+            doNothingOnChangeButton.setSelection(true);
+        }
+
         organizationText.setText(helper.getIvyOrg());
         organizationUrlText.setText(helper.getIvyOrgUrl());
     }
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        if (doNothingButton.getSelection()) {
+
+        if (doNothingOnStartupButton.getSelection()) {
             helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_NOTHING);
         } else if (refreshOnStartupButton.getSelection()) {
             helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_REFRESH);
         } else {
             helper.setResolveOnStartup(IvyClasspathInitializer.ON_STARTUP_RESOLVE);
         }
+
+        if (resolveOnChangeButton.getSelection()) {
+            helper.setAutoResolveOnChange(true);
+        } else {
+            helper.setAutoResolveOnChange(false);
+        }
+
         helper.setOrganization(organizationText.getText());
         helper.setOrganizationUrl(organizationUrlText.getText());
         return true;
@@ -157,7 +192,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
     protected void performDefaults() {
         switch (PreferenceInitializer.DEFAULT_RESOLVE_ON_STARTUP) {
             case IvyClasspathInitializer.ON_STARTUP_NOTHING:
-                doNothingButton.setSelection(true);
+                doNothingOnStartupButton.setSelection(true);
                 break;
             case IvyClasspathInitializer.ON_STARTUP_REFRESH:
                 refreshOnStartupButton.setSelection(true);
@@ -166,6 +201,13 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
         }
+
+        if (PreferenceInitializer.DEFAULT_AUTO_RESOLVE_ON_CHANGE) {
+            resolveOnChangeButton.setSelection(true);
+        } else {
+            doNothingOnChangeButton.setSelection(true);
+        }
+
         organizationText.setText(PreferenceInitializer.DEFAULT_ORGANISATION);
         organizationUrlText.setText(PreferenceInitializer.DEFAULT_ORGANISATION_URL);
     }
