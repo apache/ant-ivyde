@@ -17,14 +17,9 @@
  */
 package org.apache.ivyde.eclipse.ui.editors;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
 import org.apache.ivyde.common.model.IvyModel;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
 import org.apache.ivyde.eclipse.ui.editors.pages.OverviewFormPage;
 import org.apache.ivyde.eclipse.ui.editors.xml.EclipseIvyModelSettings;
@@ -94,12 +89,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
                     return new IvyModuleDescriptorModel(new EclipseIvyModelSettings(
                             file));
                 }
-            }) {
-                public void doSave(IProgressMonitor progressMonitor) {
-                    super.doSave(progressMonitor);
-                    triggerResolve();
-                }
-            };
+            });
             xmlEditor.setFile(((IvyFileEditorInput) getEditorInput()).getFile());
             int index = addPage(xmlEditor, getEditorInput());
             setPageText(index, xmlEditor.getTitle());
@@ -159,19 +149,6 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
      */
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
-    }
-
-    private void triggerResolve() {
-        IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
-        List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                .getIvyFileClasspathContainers(file);
-        Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-        if (IvyPlugin.getPreferenceStoreHelper().getAutoResolveOnChange()) {
-            while (itContainers.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
-                ivycp.launchResolve(false, true, null);
-            }
-        }
     }
 
     /**

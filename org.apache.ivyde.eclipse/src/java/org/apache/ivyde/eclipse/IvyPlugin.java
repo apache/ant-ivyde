@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
@@ -32,6 +33,8 @@ import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResourceChangeListener;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -129,8 +132,11 @@ public class IvyPlugin extends AbstractUIPlugin {
         });
 
         // Listen for project open/close events to auto-update inter-project dependencies
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(
-            new WorkspaceResourceChangeListener());
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
+        workspace.addResourceChangeListener(new WorkspaceResourceChangeListener());
+        workspace.addResourceChangeListener(new IvyFileResourceListener(),
+            IResourceChangeEvent.PRE_BUILD);
 
         log(IStatus.INFO, "IvyDE plugin started", null);
     }
