@@ -115,47 +115,60 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         String error = null;
         if (ivyFilePathText.getIvyFilePath().length() == 0) {
             error = "Choose an ivy file";
-        } else {
-            String ivyFilePath = ivyFilePathText.getIvyFilePath();
-            List selectedConfigurations = confTableViewer.getSelectedConfigurations();
+        } else if (project != null) {
+            error = checkConf();
+        }
+        setErrorMessage(error);
+        setPageComplete(error == null);
+    }
 
-            // check that the chosen configuration doesn't already exist
-            // the uniqueness is for xmlivyPath + conf
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(project);
-            if (containers != null) {
-                Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-                while (error == null && itContainers.hasNext()) {
-                    IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
-                    IvyClasspathContainerConfiguration cpc = ivycp.getConf();
+    /**
+     * Check that the chosen configuration doesn't already exist within the current project
+     * <p>
+     * The uniqueness is for xmlivyPath + conf
+     * 
+     * @return
+     */
+    private String checkConf() {
+        String error = null;
 
-                    // first check that this is not the one we are editing
-                    if (oldIvyFile != null && cpc.ivyXmlPath.equals(oldIvyFile) && oldConfs != null
-                            && oldConfs.size() == cpc.confs.size()
-                            && oldConfs.containsAll(cpc.confs)) {
-                        continue;
-                    }
+        String ivyFilePath = ivyFilePathText.getIvyFilePath();
+        List selectedConfigurations = confTableViewer.getSelectedConfigurations();
 
-                    if (cpc.ivyXmlPath.equals(ivyFilePath)) {
-                        if (selectedConfigurations.isEmpty()
-                                || selectedConfigurations.contains("*") || cpc.confs.isEmpty()
-                                || cpc.confs.contains("*")) {
-                            error = "A container already exists for the selected conf of "
-                                    + "the module descriptor";
-                        } else {
-                            ArrayList list = new ArrayList(cpc.confs);
-                            list.retainAll(selectedConfigurations);
-                            if (!list.isEmpty()) {
-                                error = "A container already exists for the selected conf of "
-                                        + "the module descriptor";
-                            }
-                        }
+        List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                .getIvyClasspathContainers(project);
+        if (containers == null) {
+            return null;
+        }
+
+        Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+        while (error == null && itContainers.hasNext()) {
+            IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+            IvyClasspathContainerConfiguration cpc = ivycp.getConf();
+
+            // first check that this is not the one we are editing
+            if (oldIvyFile != null && cpc.ivyXmlPath.equals(oldIvyFile) && oldConfs != null
+                    && oldConfs.size() == cpc.confs.size() && oldConfs.containsAll(cpc.confs)) {
+                continue;
+            }
+
+            if (cpc.ivyXmlPath.equals(ivyFilePath)) {
+                if (selectedConfigurations.isEmpty() || selectedConfigurations.contains("*")
+                        || cpc.confs.isEmpty() || cpc.confs.contains("*")) {
+                    error = "A container already exists for the selected conf of "
+                            + "the module descriptor";
+                } else {
+                    ArrayList list = new ArrayList(cpc.confs);
+                    list.retainAll(selectedConfigurations);
+                    if (!list.isEmpty()) {
+                        error = "A container already exists for the selected conf of "
+                                + "the module descriptor";
                     }
                 }
             }
         }
-        setErrorMessage(error);
-        setPageComplete(error == null);
+
+        return error;
     }
 
     void checkIvyXmlPath() {
