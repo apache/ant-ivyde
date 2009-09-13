@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -179,7 +180,7 @@ public class WorkspaceResolver extends AbstractResolver {
                 }
 
                 // Found one; check if it is for the module we need
-                if (md.getModuleRevisionId().getRevision().startsWith("working@")
+                if (md.getModuleRevisionId().getRevision().equals(Ivy.getWorkingRevision())
                         || versionMatcher.accept(dd.getDependencyRevisionId(), md)) {
 
                     Artifact af = new DefaultArtifact(md.getModuleRevisionId(), md
