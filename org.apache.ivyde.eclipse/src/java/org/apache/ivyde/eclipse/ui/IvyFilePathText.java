@@ -166,7 +166,7 @@ public class IvyFilePathText extends Composite {
     private class BrowseButtonListener extends SelectionAdapter {
         public void widgetSelected(SelectionEvent e) {
             String path = null;
-            if (project != null) {
+            if (project != null && project.getProject().getLocation() != null) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display
                         .getDefault().getActiveShell(), new WorkbenchLabelProvider(),
                         new WorkbenchContentProvider());

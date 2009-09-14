@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -105,7 +106,10 @@ public final class IvyClasspathUtil {
      */
     public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(
             IJavaProject javaProject) {
-        List/*<IvyClasspathContainer>*/ containers = new ArrayList();
+        List/* <IvyClasspathContainer> */containers = new ArrayList();
+        if (FakeProjectManager.isFake(javaProject)) {
+            return containers;
+        }
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();
             for (int i = 0; i < entries.length; i++) {
@@ -127,9 +131,9 @@ public final class IvyClasspathUtil {
         return containers;
     }
 
-    public static List/*<IvyClasspathContainer>*/ getIvyFileClasspathContainers(IFile ivyfile) {
+    public static List/* <IvyClasspathContainer> */getIvyFileClasspathContainers(IFile ivyfile) {
         IJavaProject javaProject = JavaCore.create(ivyfile.getProject());
-        List/*<IvyClasspathContainer>*/ containers = new ArrayList();
+        List/* <IvyClasspathContainer> */containers = new ArrayList();
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();
             for (int i = 0; i < entries.length; i++) {
@@ -140,7 +144,8 @@ public final class IvyClasspathUtil {
                         IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
                         if (cp instanceof IvyClasspathContainer) {
                             IvyClasspathContainer ivycp = (IvyClasspathContainer) cp;
-                            if (ivycp.getConf().getIvyXmlPath().equals(ivyfile.getProjectRelativePath().toString())) {
+                            if (ivycp.getConf().getIvyXmlPath().equals(
+                                ivyfile.getProjectRelativePath().toString())) {
                                 containers.add(ivycp);
                             }
                         }
@@ -154,9 +159,10 @@ public final class IvyClasspathUtil {
         return containers;
     }
 
-    public static List/*<IvyClasspathContainer>*/ getIvySettingsClasspathContainers(IFile ivySettings) {
+    public static List/* <IvyClasspathContainer> */getIvySettingsClasspathContainers(
+            IFile ivySettings) {
         IJavaProject javaProject = JavaCore.create(ivySettings.getProject());
-        List/*<IvyClasspathContainer>*/ containers = new ArrayList();
+        List/* <IvyClasspathContainer> */containers = new ArrayList();
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();
             for (int i = 0; i < entries.length; i++) {
@@ -211,7 +217,8 @@ public final class IvyClasspathUtil {
 
     /**
      * Just a verbatim copy of the internal Eclipse function:
-     * org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations#getLibraryJavadocLocation(IClasspathEntry)
+     * org.eclipse.jdt.internal.corext.javadoc
+     * .JavaDocLocations#getLibraryJavadocLocation(IClasspathEntry)
      * 
      * @param entry
      * @return
@@ -237,6 +244,36 @@ public final class IvyClasspathUtil {
                     return null;
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * Search the Ivy classpath entry within the specified Java project with the specific path
+     * 
+     * @param containerPath
+     *            the path of the container
+     * @param javaProject
+     *            the project to search into
+     * @return the Ivy classpath container if found, otherwise return <code>null</code>
+     */
+    public static IClasspathEntry getIvyClasspathEntry(IPath containerPath, IJavaProject javaProject) {
+        if (FakeProjectManager.isFake(javaProject)) {
+            return null;
+        }
+        try {
+            IClasspathEntry[] entries = javaProject.getRawClasspath();
+            for (int i = 0; i < entries.length; i++) {
+                IClasspathEntry entry = entries[i];
+                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+                    if (containerPath.equals(entry.getPath())) {
+                        return entry;
+                    }
+                }
+            }
+        } catch (JavaModelException e) {
+            // unless there are issues with the JDT, this should never happen
+            IvyPlugin.log(e);
         }
         return null;
     }

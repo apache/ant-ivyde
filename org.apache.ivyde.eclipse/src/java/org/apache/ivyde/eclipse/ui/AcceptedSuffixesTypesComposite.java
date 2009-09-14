@@ -17,9 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import java.util.Collection;
-import java.util.List;
-
+import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -47,9 +45,9 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     private Text acceptedTypesText;
 
-    private Text sourcesTypesText;
+    private Text sourceTypesText;
 
-    private Text sourcesSuffixesText;
+    private Text sourceSuffixesText;
 
     private Text javadocTypesText;
 
@@ -72,17 +70,17 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         label = new Label(this, SWT.NONE);
         label.setText("Sources types:");
 
-        sourcesTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        sourcesTypesText
+        sourceTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
+        sourceTypesText
                 .setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-        sourcesTypesText.setToolTipText(TOOLTIP_SOURCE_TYPES);
+        sourceTypesText.setToolTipText(TOOLTIP_SOURCE_TYPES);
 
         label = new Label(this, SWT.NONE);
         label.setText("Sources suffixes:");
 
-        sourcesSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        sourcesSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        sourcesSuffixesText.setToolTipText(TOOLTIP_SOURCE_SUFFIXES);
+        sourceSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
+        sourceSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        sourceSuffixesText.setToolTipText(TOOLTIP_SOURCE_SUFFIXES);
 
         label = new Label(this, SWT.NONE);
         label.setText("Javadoc types:");
@@ -99,48 +97,30 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         javadocSuffixesText.setToolTipText(TOOLTIP_JAVADOC_SUFFIXES);
     }
 
-    public void init(Collection acceptedTypes, Collection sourceTypes, Collection sourceSuffixes,
-            Collection javadocTypes, Collection javadocSuffixes) {
-        init(IvyClasspathUtil.concat(acceptedTypes), IvyClasspathUtil.concat(sourceTypes),
-            IvyClasspathUtil.concat(sourceSuffixes), IvyClasspathUtil.concat(javadocTypes),
-            IvyClasspathUtil.concat(javadocSuffixes));
-    }
-
-    public void init(String acceptedTypes, String sourceTypes, String sourceSuffixes,
-            String javadocTypes, String javadocSuffixes) {
-        acceptedTypesText.setText(acceptedTypes);
-        sourcesTypesText.setText(sourceTypes);
-        sourcesSuffixesText.setText(sourceSuffixes);
-        javadocTypesText.setText(javadocTypes);
-        javadocSuffixesText.setText(javadocSuffixes);
+    public void init(ContainerMappingSetup setup) {
+        acceptedTypesText.setText(IvyClasspathUtil.concat(setup.getAcceptedTypes()));
+        sourceTypesText.setText(IvyClasspathUtil.concat(setup.getSourceTypes()));
+        sourceSuffixesText.setText(IvyClasspathUtil.concat(setup.getSourceSuffixes()));
+        javadocTypesText.setText(IvyClasspathUtil.concat(setup.getJavadocTypes()));
+        javadocSuffixesText.setText(IvyClasspathUtil.concat(setup.getJavadocSuffixes()));
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         acceptedTypesText.setEnabled(enabled);
-        sourcesTypesText.setEnabled(enabled);
-        sourcesSuffixesText.setEnabled(enabled);
+        sourceTypesText.setEnabled(enabled);
+        sourceSuffixesText.setEnabled(enabled);
         javadocTypesText.setEnabled(enabled);
         javadocSuffixesText.setEnabled(enabled);
     }
 
-    public List getAcceptedTypes() {
-        return IvyClasspathUtil.split(acceptedTypesText.getText());
-    }
-
-    public List getSourcesTypes() {
-        return IvyClasspathUtil.split(sourcesTypesText.getText());
-    }
-
-    public List getJavadocTypes() {
-        return IvyClasspathUtil.split(javadocTypesText.getText());
-    }
-
-    public List getSourceSuffixes() {
-        return IvyClasspathUtil.split(sourcesSuffixesText.getText());
-    }
-
-    public List getJavadocSuffixes() {
-        return IvyClasspathUtil.split(javadocSuffixesText.getText());
+    public ContainerMappingSetup getContainerMappingSetup() {
+        ContainerMappingSetup setup = new ContainerMappingSetup();
+        setup.setAcceptedTypes(IvyClasspathUtil.split(acceptedTypesText.getText()));
+        setup.setSourceTypes(IvyClasspathUtil.split(sourceTypesText.getText()));
+        setup.setJavadocTypes(IvyClasspathUtil.split(javadocTypesText.getText()));
+        setup.setSourceSuffixes(IvyClasspathUtil.split(sourceSuffixesText.getText()));
+        setup.setJavadocSuffixes(IvyClasspathUtil.split(javadocSuffixesText.getText()));
+        return setup;
     }
 }

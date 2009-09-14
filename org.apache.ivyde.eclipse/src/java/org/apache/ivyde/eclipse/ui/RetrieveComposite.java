@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
+import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -90,7 +91,7 @@ public class RetrieveComposite extends Composite {
         typesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         typesText.setEnabled(doRetrieveButton.getSelection());
         typesText.setToolTipText(TOOLTIP_RETRIEVE_TYPES);
-        
+
         doRetrieveButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 retrievePatternText.setEnabled(doRetrieveButton.getSelection());
@@ -101,32 +102,22 @@ public class RetrieveComposite extends Composite {
         });
     }
 
-    public boolean isRetrieveEnabled() {
-        return doRetrieveButton.getSelection();
+    public RetrieveSetup getRetrieveSetup() {
+        RetrieveSetup setup = new RetrieveSetup();
+        setup.setDoRetrieve(doRetrieveButton.getSelection());
+        setup.setRetrieveSync(retrieveSyncButton.getSelection());
+        setup.setRetrievePattern(retrievePatternText.getText());
+        setup.setRetrieveConfs(confsText.getText());
+        setup.setRetrieveTypes(typesText.getText());
+        return setup;
     }
 
-    public boolean isSyncEnabled() {
-        return retrieveSyncButton.getSelection();
-    }
-
-    public String getRetrievePattern() {
-        return retrievePatternText.getText();
-    }
-
-    public String getRetrieveConfs() {
-        return confsText.getText();
-    }
-
-    public String getRetrieveTypes() {
-        return typesText.getText();
-    }
-
-    public void init(boolean doRetrieve, String retrievePattern, String confs, String types, boolean retrieveSync) {
-        doRetrieveButton.setSelection(doRetrieve);
-        retrievePatternText.setText(retrievePattern);
-        retrieveSyncButton.setSelection(retrieveSync);
-        confsText.setText(confs);
-        typesText.setText(types);
+    public void init(RetrieveSetup setup) {
+        doRetrieveButton.setSelection(setup.isDoRetrieve());
+        retrievePatternText.setText(setup.getRetrievePattern());
+        retrieveSyncButton.setSelection(setup.isRetrieveSync());
+        confsText.setText(setup.getRetrieveConfs());
+        typesText.setText(setup.getRetrieveTypes());
         setEnabled(true);
     }
 

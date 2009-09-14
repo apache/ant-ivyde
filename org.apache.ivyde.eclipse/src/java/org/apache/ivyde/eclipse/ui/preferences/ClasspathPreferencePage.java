@@ -34,7 +34,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class ClasspathPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
+    public static final String PEREFERENCE_PAGE_ID =
+        "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
 
     private Button resolveInWorkspaceCheck;
 
@@ -88,29 +89,20 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
-        acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
-            helper.getSourceSuffixes(), helper.getJavadocTypes(), helper.getJavadocSuffixes());
+        acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
     }
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         helper.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
         helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
-        helper.setAcceptedTypes(acceptedSuffixesTypesComposite.getAcceptedTypes());
-        helper.setSourceTypes(acceptedSuffixesTypesComposite.getSourcesTypes());
-        helper.setSourceSuffixes(acceptedSuffixesTypesComposite.getSourceSuffixes());
-        helper.setJavadocTypes(acceptedSuffixesTypesComposite.getJavadocTypes());
-        helper.setJavadocSuffixes(acceptedSuffixesTypesComposite.getJavadocSuffixes());
+        helper.setContainerMappingSetup(acceptedSuffixesTypesComposite.getContainerMappingSetup());
         return true;
     }
 
     protected void performDefaults() {
         resolveInWorkspaceCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_IN_WORKSPACE);
         alphaOrderCheck.select(PreferenceInitializer.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
-        acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_ACCEPTED_TYPES,
-            PreferenceInitializer.DEFAULT_SOURCES_TYPES,
-            PreferenceInitializer.DEFAULT_SOURCES_SUFFIXES,
-            PreferenceInitializer.DEFAULT_JAVADOC_TYPES,
-            PreferenceInitializer.DEFAULT_JAVADOC_SUFFIXES);
+        acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_CONTAINER_MAPPING_SETUP);
     }
 }

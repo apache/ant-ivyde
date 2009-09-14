@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -47,13 +48,13 @@ import org.eclipse.swt.widgets.Text;
 
 public class SettingsEditor extends Composite {
 
-    public static final String TOOLTIP_SETTINGS_PATH = "The url where your ivysettings file can be found. \n"
-            + "Leave it empty to reference the default ivy settings. \n"
+    public static final String TOOLTIP_SETTINGS_PATH = "The url where your ivysettings file can be"
+            + " found. \nLeave it empty to reference the default ivy settings. \n"
             + "Relative paths are handled relative to the project.\n"
             + " Example: 'project:///ivysettings.xml' or 'project://myproject/ivysettings.xml'.";
 
-    public static final String TOOLTIP_PROPERTY_FILES = "Comma separated list of build property files.\n"
-            + "Example: build.properties, override.properties";
+    public static final String TOOLTIP_PROPERTY_FILES = "Comma separated list of build property"
+            + " files.\nExample: build.properties, override.properties";
 
     private Text settingsText;
 
@@ -85,8 +86,8 @@ public class SettingsEditor extends Composite {
             FieldDecorationRegistry.DEC_ERROR);
 
         settingsTextDeco = new DecoratedField(this, SWT.LEFT | SWT.TOP, new IControlCreator() {
-            public Control createControl(Composite parent, int style) {
-                return new Text(parent, SWT.SINGLE | SWT.BORDER);
+            public Control createControl(Composite p, int s) {
+                return new Text(p, SWT.SINGLE | SWT.BORDER);
             }
         });
         settingsTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
@@ -153,20 +154,16 @@ public class SettingsEditor extends Composite {
         });
     }
 
-    public String getSettingsPath() {
-        return settingsText.getText();
-    }
-
-    public boolean getLoadOnDemand() {
-        return loadOnDemandButton.getSelection();
-    }
-
-    public List getPropertyFiles() {
-        return IvyClasspathUtil.split(propFilesText.getText());
+    public IvySettingsSetup getIvySettingsSetup() {
+        IvySettingsSetup setup = new IvySettingsSetup();
+        setup.setIvySettingsPath(settingsText.getText());
+        setup.setLoadSettingsOnDemand(loadOnDemandButton.getSelection());
+        setup.setPropertyFiles(IvyClasspathUtil.split(propFilesText.getText()));
+        return setup;
     }
 
     public interface SettingsEditorListener {
-        void settingsEditorUpdated(String path);
+        void settingsEditorUpdated(IvySettingsSetup setup);
     }
 
     public void addListener(SettingsEditorListener listener) {
@@ -183,9 +180,10 @@ public class SettingsEditor extends Composite {
 
     void settingsPathUpdated() {
         synchronized (listeners) {
+            IvySettingsSetup setup = getIvySettingsSetup();
             Iterator it = listeners.iterator();
             while (it.hasNext()) {
-                ((SettingsEditorListener) it.next()).settingsEditorUpdated(settingsText.getText());
+                ((SettingsEditorListener) it.next()).settingsEditorUpdated(setup);
             }
         }
     }
@@ -230,14 +228,10 @@ public class SettingsEditor extends Composite {
         return null;
     }
 
-    public void init(String ivySettingsPath, String propertyFiles, boolean loadOnDemand) {
-        settingsText.setText(ivySettingsPath);
-        propFilesText.setText(propertyFiles);
-        loadOnDemandButton.setSelection(loadOnDemand);
-    }
-
-    public void init(String ivySettingsPath, List propertyFiles, boolean loadOnDemand) {
-        init(ivySettingsPath, IvyClasspathUtil.concat(propertyFiles), loadOnDemand);
+    public void init(IvySettingsSetup setup) {
+        settingsText.setText(setup.getIvySettingsPath());
+        propFilesText.setText(IvyClasspathUtil.concat(setup.getPropertyFiles()));
+        loadOnDemandButton.setSelection(setup.isLoadSettingsOnDemand());
     }
 
     public void setEnabled(boolean enabled) {

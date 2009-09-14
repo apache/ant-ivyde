@@ -57,23 +57,24 @@ public class IvyFileResourceListener implements IResourceChangeListener {
         }
 
         private static void resourceChanged(IResource resource) {
-            if (resource instanceof IFile
-                    && IvyPlugin.getPreferenceStoreHelper().getAutoResolveOnChange()) {
-                IFile resourceFile = (IFile) resource;
-                IJavaProject javaProject = JavaCore.create(resource.getProject());
-                if (javaProject != null) {
-                    List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                            .getIvyClasspathContainers(javaProject);
-                    Iterator containerIter = containers.iterator();
-                    while (containerIter.hasNext()) {
-                        IvyClasspathContainer container = (IvyClasspathContainer) containerIter
-                                .next();
-                        File containerIvyFile = container.getConf().getIvyFile();
-                        if (containerIvyFile.equals(resourceFile.getLocation().toFile())) {
-                            container.launchResolve(false, false, null);
-                            return;
-                        }
-                    }
+            if (!(resource instanceof IFile)
+                    || !IvyPlugin.getPreferenceStoreHelper().getAutoResolveOnChange()) {
+                return;
+            }
+            IFile resourceFile = (IFile) resource;
+            IJavaProject javaProject = JavaCore.create(resource.getProject());
+            if (javaProject == null) {
+                return;
+            }
+            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
+                    .getIvyClasspathContainers(javaProject);
+            Iterator containerIter = containers.iterator();
+            while (containerIter.hasNext()) {
+                IvyClasspathContainer container = (IvyClasspathContainer) containerIter.next();
+                File containerIvyFile = container.getState().getIvyFile();
+                if (containerIvyFile.equals(resourceFile.getLocation().toFile())) {
+                    container.launchResolve(false, false, null);
+                    return;
                 }
             }
         }

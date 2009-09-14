@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -34,6 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IElementChangedListener;
@@ -55,7 +55,8 @@ import org.osgi.framework.Constants;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID =
+        "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     private IClasspathEntry[] classpathEntries;
 
@@ -64,6 +65,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
     private IvyResolveJob job;
 
     private IvyClasspathContainerConfiguration conf;
+
+    private final IvyClasspathContainerState state;
 
     private String jdtVersion;
 
@@ -83,13 +86,12 @@ public class IvyClasspathContainer implements IClasspathContainer {
      *            the configuration that will be resolved
      * @param classpathEntries
      *            the entries to start with
-     * @throws IOException
-     * @throws MalformedURLException
      */
     public IvyClasspathContainer(IJavaProject javaProject, IPath path,
-            IClasspathEntry[] classpathEntries) throws IOException {
+            IClasspathEntry[] classpathEntries, IClasspathAttribute[] attributes) {
         this.path = path;
-        conf = new IvyClasspathContainerConfiguration(javaProject, path, false);
+        conf = new IvyClasspathContainerConfiguration(javaProject, path, false, attributes);
+        state = new IvyClasspathContainerState(conf);
         this.classpathEntries = classpathEntries;
     }
 
@@ -97,14 +99,24 @@ public class IvyClasspathContainer implements IClasspathContainer {
         path = cp.path;
         conf = cp.conf;
         classpathEntries = cp.classpathEntries;
+        state = cp.state;
     }
 
     public IvyClasspathContainerConfiguration getConf() {
         return conf;
     }
 
+    public void setConf(IvyClasspathContainerConfiguration conf) {
+        this.conf = conf;
+        state.setConf(conf);
+    }
+
+    public IvyClasspathContainerState getState() {
+        return state;
+    }
+
     public String getDescription() {
-        return conf.ivyXmlPath + " " + conf.confs;
+        return conf.getIvyXmlPath() + " " + conf.getConfs();
     }
 
     public int getKind() {
@@ -193,12 +205,12 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
     void notifyUpdateClasspathEntries() {
         try {
-            JavaCore.setClasspathContainer(path, new IJavaProject[] {conf.javaProject},
+            JavaCore.setClasspathContainer(path, new IJavaProject[] {conf.getJavaProject()},
                 new IClasspathContainer[] {new IvyClasspathContainer(IvyClasspathContainer.this)},
                 null);
 
             // the following code was imported from:
-            //http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide/eclipse
+          // http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide/eclipse
             // /embedder/BuildPathManager.java
             // revision: 370; function setClasspathContainer; line 215
 
@@ -212,12 +224,12 @@ public class IvyClasspathContainer implements IClasspathContainer {
             // reconcile PackageExplorer with actual classpath
             // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154071
             if (getJDTVersion().startsWith("3.3")) {
-                DeltaProcessingState state = JavaModelManager.getJavaModelManager().deltaState;
-                synchronized (state) {
-                    IElementChangedListener[] listeners = state.elementChangedListeners;
+                DeltaProcessingState s = JavaModelManager.getJavaModelManager().deltaState;
+                synchronized (s) {
+                    IElementChangedListener[] listeners = s.elementChangedListeners;
                     for (int i = 0; i < listeners.length; i++) {
                         if (listeners[i] instanceof PackageExplorerContentProvider) {
-                            JavaElementDelta delta = new JavaElementDelta(conf.javaProject);
+                            JavaElementDelta delta = new JavaElementDelta(conf.getJavaProject());
                             delta.changed(IJavaElementDelta.F_CLASSPATH_CHANGED);
                             listeners[i].elementChanged(new ElementChangedEvent(delta,
                                     ElementChangedEvent.POST_CHANGE));
@@ -245,8 +257,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     public URL getReportUrl() throws IvyDEException {
-        Ivy ivy = conf.getIvy();
-        ModuleDescriptor md = conf.getModuleDescriptor();
+        Ivy ivy = state.getIvy();
+        ModuleDescriptor md = state.getModuleDescriptor();
         String resolveId = ResolveOptions.getDefaultResolveId(md);
         try {
             return ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(resolveId,
@@ -262,7 +274,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     public void reloadSettings() {
-        conf.ivySettingsLastModified = -1;
+        state.setIvySettingsLastModified(-1);
         launchResolve(false, true, null);
     }
 

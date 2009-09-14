@@ -65,7 +65,7 @@ public class EclipseIvyModelSettings implements IvyModelSettings {
             return null;
         }
         try {
-            return ivycp.getConf().getIvy();
+            return ivycp.getState().getIvy();
         } catch (IvyDEException e) {
             e.log(IStatus.WARNING, null);
             return null;

@@ -18,23 +18,21 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
-import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Initializer the ivy class path container. It will create a container from the persisted class
- * path entries, and then schedule the refresh of the container.
+ * path entries (the .classpath file), and then schedule the refresh of the container.
  */
 public class IvyClasspathInitializer extends ClasspathContainerInitializer {
 
@@ -45,7 +43,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     public static final int ON_STARTUP_RESOLVE = 2;
 
     /**
-     * Initialize the container with the "persisted" class path entries, and then schedule the
+     * Initialize the container with the "persisted" classpath entries, and then schedule the
      * refresh
      */
     public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
@@ -65,31 +63,36 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             try {
                 IvyClasspathContainer ivycp;
 
-                if (container == null) {
-                    ivycp = new IvyClasspathContainer(project, containerPath,
-                            new IClasspathEntry[0]);
-                } else if (!(container instanceof IvyClasspathContainer)) {
-                    // this might be the persisted one : reuse the persisted entries
-                    ivycp = new IvyClasspathContainer(project, containerPath, container
-                            .getClasspathEntries());
-                } else {
+                if (container instanceof IvyClasspathContainer) {
                     ivycp = (IvyClasspathContainer) container;
+                } else {
+
+                    IClasspathEntry entry =
+                            IvyClasspathUtil.getIvyClasspathEntry(containerPath, project);
+                    IClasspathAttribute[] attributes = null;
+                    if (entry != null) {
+                        attributes = entry.getExtraAttributes();
+                    }
+
+                    if (container == null) {
+                        ivycp = new IvyClasspathContainer(project, containerPath,
+                                new IClasspathEntry[0], attributes);
+                    } else {
+                        // this might be the persisted one : reuse the persisted entries
+                        ivycp = new IvyClasspathContainer(project, containerPath, container
+                                .getClasspathEntries(), attributes);
+                    }                    
                 }
 
+                // set the container
                 JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project},
                     new IClasspathContainer[] {ivycp}, null);
 
-                IvyDEPreferenceStoreHelper prefHelper = IvyPlugin.getPreferenceStoreHelper();
-                boolean refresh = true;
-
-                // if we have a non ivy cp, it means Eclipse is starting
-                // maybe we don't want to trigger the resolve
-                if (container != null && !(container instanceof IvyClasspathContainer)) {
-                    if (prefHelper.getResolveOnStartup() == ON_STARTUP_NOTHING) {
-                        return;
-                    }
-                    refresh = prefHelper.getResolveOnStartup() == ON_STARTUP_REFRESH;
+                int startupMode = IvyPlugin.getPreferenceStoreHelper().getResolveOnStartup();
+                if (startupMode == ON_STARTUP_NOTHING) {
+                    return;
                 }
+                boolean refresh = startupMode == ON_STARTUP_REFRESH;
 
                 // now refresh the container to be synchronized with the ivy.xml
                 ivycp.launchResolve(refresh, false, null);
@@ -102,44 +105,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     }
 
     public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
-        return true;
-    }
-
-    public void requestClasspathContainerUpdate(final IPath containerPath,
-            final IJavaProject project, IClasspathContainer containerSuggestion)
-            throws CoreException {
-        if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
-            IClasspathEntry[] ice = containerSuggestion.getClasspathEntries();
-            IPackageFragmentExtraInfo ei = IvyPlugin.getDefault().getPackageFragmentExtraInfo();
-            for (int i = 0; i < ice.length; i++) {
-                IClasspathEntry entry = ice[i];
-                IPath path = entry.getSourceAttachmentPath();
-                String entryPath = entry.getPath().toPortableString();
-                ei.setSourceAttachmentPath(containerPath, entryPath, path);
-                ei.setSourceAttachmentRootPath(containerPath, entryPath, path);
-                ei.setJavaDocLocation(containerPath, entryPath, IvyClasspathUtil
-                        .getLibraryJavadocLocation(entry));
-            }
-            // force refresh of ivy classpath entry in ui thread
-            Display.getDefault().asyncExec(new Runnable() {
-                public void run() {
-                    IClasspathContainer cp;
-                    try {
-                        cp = JavaCore.getClasspathContainer(containerPath, project);
-                    } catch (JavaModelException e) {
-                        IvyPlugin.log(e);
-                        return;
-                    }
-                    if (cp instanceof IvyClasspathContainer) {
-                        ((IvyClasspathContainer) cp).launchResolve(false, true, null);
-                    }
-                }
-            });
-        }
-    }
-
-    public String getDescription(IPath containerPath, IJavaProject project) {
-        return "my description";
+        return false;
     }
 
     public Object getComparisonID(IPath containerPath, IJavaProject project) {

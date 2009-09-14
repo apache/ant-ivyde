@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
@@ -38,10 +39,14 @@ import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
@@ -61,6 +66,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+/**
+ * Editor of the classpath container configuration at the project level.
+ */
 public class IvydeContainerPage extends NewElementWizardPage implements IClasspathContainerPage,
         IClasspathContainerPageExtension {
 
@@ -98,11 +106,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private Link retrieveGeneralSettingsLink;
 
-    private boolean exported;
+    private boolean exported = false;
 
     private String oldIvyFile = null;
 
     private List oldConfs = null;
+
+    private IvyClasspathContainerState state;
 
     /**
      * Constructor
@@ -147,18 +157,19 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             IvyClasspathContainerConfiguration cpc = ivycp.getConf();
 
             // first check that this is not the one we are editing
-            if (oldIvyFile != null && cpc.ivyXmlPath.equals(oldIvyFile) && oldConfs != null
-                    && oldConfs.size() == cpc.confs.size() && oldConfs.containsAll(cpc.confs)) {
+            if (oldIvyFile != null && cpc.getIvyXmlPath().equals(oldIvyFile) && oldConfs != null
+                    && oldConfs.size() == cpc.getConfs().size()
+                    && oldConfs.containsAll(cpc.getConfs())) {
                 continue;
             }
 
-            if (cpc.ivyXmlPath.equals(ivyFilePath)) {
+            if (cpc.getIvyXmlPath().equals(ivyFilePath)) {
                 if (selectedConfigurations.isEmpty() || selectedConfigurations.contains("*")
-                        || cpc.confs.isEmpty() || cpc.confs.contains("*")) {
+                        || cpc.getConfs().isEmpty() || cpc.getConfs().contains("*")) {
                     error = "A container already exists for the selected conf of "
                             + "the module descriptor";
                 } else {
-                    ArrayList list = new ArrayList(cpc.confs);
+                    ArrayList list = new ArrayList(cpc.getConfs());
                     list.retainAll(selectedConfigurations);
                     if (!list.isEmpty()) {
                         error = "A container already exists for the selected conf of "
@@ -174,7 +185,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     void checkIvyXmlPath() {
         ModuleDescriptor md;
         try {
-            md = conf.getModuleDescriptor();
+            md = state.getModuleDescriptor();
             ivyFilePathText.setIvyXmlError(null);
         } catch (IvyDEException e) {
             md = null;
@@ -185,54 +196,50 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     public boolean finish() {
-        conf.confs = confTableViewer.getSelectedConfigurations();
-        if (conf.confs.isEmpty()) {
-            conf.confs = Collections.singletonList("*");
+        List confs = confTableViewer.getSelectedConfigurations();
+        if (confs.isEmpty()) {
+            confs = Collections.singletonList("*");
         }
+        conf.setConfs(confs);
 
         if (settingsProjectSpecificButton.getSelection()) {
-            conf.isSettingsSpecific = true;
-            conf.ivySettingsPath = settingsEditor.getSettingsPath();
-            conf.loadSettingsOnDemand = settingsEditor.getLoadOnDemand();
-            conf.propertyFiles = settingsEditor.getPropertyFiles();
-            conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
-            conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
-            conf.javadocTypes = acceptedSuffixesTypesComposite.getJavadocTypes();
-            conf.sourceSuffixes = acceptedSuffixesTypesComposite.getSourceSuffixes();
-            conf.javadocSuffixes = acceptedSuffixesTypesComposite.getJavadocSuffixes();
-            conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
-            conf.retrievePattern = retrieveComposite.getRetrievePattern();
-            conf.retrieveSync = retrieveComposite.isSyncEnabled();
-            conf.retrieveConfs = retrieveComposite.getRetrieveConfs();
-            conf.retrieveTypes = retrieveComposite.getRetrieveTypes();
-            conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
-            conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
+            conf.setSettingsProjectSpecific(true);
+            conf.setIvySettingsSetup(settingsEditor.getIvySettingsSetup());
         } else {
-            conf.isSettingsSpecific = false;
+            conf.setSettingsProjectSpecific(false);
         }
         if (retrieveProjectSpecificButton.getSelection()) {
-            conf.isRetrieveProjectSpecific = true;
-            conf.doRetrieve = retrieveComposite.isRetrieveEnabled();
-            conf.retrievePattern = retrieveComposite.getRetrievePattern();
-            conf.retrieveSync = retrieveComposite.isSyncEnabled();
-            conf.retrieveConfs = retrieveComposite.getRetrieveConfs();
-            conf.retrieveTypes = retrieveComposite.getRetrieveTypes();
+            conf.setRetrieveProjectSpecific(true);
+            conf.setRetrieveSetup(retrieveComposite.getRetrieveSetup());
         } else {
-            conf.isRetrieveProjectSpecific = false;
+            conf.setRetrieveProjectSpecific(false);
         }
         if (advancedProjectSpecificButton.getSelection()) {
-            conf.isAdvancedProjectSpecific = true;
-            conf.acceptedTypes = acceptedSuffixesTypesComposite.getAcceptedTypes();
-            conf.sourceTypes = acceptedSuffixesTypesComposite.getSourcesTypes();
-            conf.javadocTypes = acceptedSuffixesTypesComposite.getJavadocTypes();
-            conf.sourceSuffixes = acceptedSuffixesTypesComposite.getSourceSuffixes();
-            conf.javadocSuffixes = acceptedSuffixesTypesComposite.getJavadocSuffixes();
-            conf.alphaOrder = alphaOrderCheck.getSelectionIndex() == 1;
-            conf.resolveInWorkspace = resolveInWorkspaceCheck.getSelection();
+            conf.setAdvancedProjectSpecific(true);
+            conf
+                    .setContainerMappingSetup(acceptedSuffixesTypesComposite
+                            .getContainerMappingSetup());
+            conf.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
+            conf.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
         } else {
-            conf.isAdvancedProjectSpecific = false;
+            conf.setAdvancedProjectSpecific(false);
         }
-        entry = JavaCore.newContainerEntry(conf.getPath(), exported);
+
+        IPath path = IvyClasspathContainerConfAdapter.getPath(conf);
+        IClasspathAttribute[] atts = IvyClasspathContainerConfAdapter.getAttributes(conf);
+
+        entry = JavaCore.newContainerEntry(path, null, atts, exported);
+
+        try {
+            IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
+                    new IClasspathEntry[0], atts);
+            JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
+                new IClasspathContainer[] {ivycp}, null);
+            ivycp.launchResolve(false, true, null);
+        } catch (JavaModelException e) {
+            IvyPlugin.log(e);
+        }
+
         return true;
     }
 
@@ -245,21 +252,30 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     public void setSelection(IClasspathEntry entry) {
+        checkProject();
         if (entry == null) {
             conf = new IvyClasspathContainerConfiguration(project, "ivy.xml", true);
-            exported = false;
         } else {
-            conf = new IvyClasspathContainerConfiguration(project, entry.getPath(), true);
+            conf = new IvyClasspathContainerConfiguration(project, entry.getPath(), true, entry
+                    .getExtraAttributes());
             exported = entry.isExported();
         }
-        oldIvyFile = conf.ivyXmlPath;
-        oldConfs = conf.confs;
+        state = new IvyClasspathContainerState(conf);
+        oldIvyFile = conf.getIvyXmlPath();
+        oldConfs = conf.getConfs();
     }
 
     public void setSelection(IFile ivyfile) {
+        checkProject();
         conf = new IvyClasspathContainerConfiguration(project, ivyfile.getProjectRelativePath()
                 .toString(), true);
-        exported = false;
+        state = new IvyClasspathContainerState(conf);
+    }
+
+    private void checkProject() {
+        if (project == null) {
+            project = FakeProjectManager.createPlaceholderProject();
+        }
     }
 
     public void createControl(Composite parent) {
@@ -309,7 +325,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         settingsProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateFieldsStatusSettings();
-                conf.ivySettingsPath = settingsEditor.getSettingsPath();
+                conf.setIvySettingsSetup(settingsEditor.getIvySettingsSetup());
                 settingsUpdated();
             }
         });
@@ -337,8 +353,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         settingsEditor = new SettingsEditor(configComposite, SWT.NONE);
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
         settingsEditor.addListener(new SettingsEditorListener() {
-            public void settingsEditorUpdated(String path) {
-                conf.ivySettingsPath = path;
+            public void settingsEditorUpdated(IvySettingsSetup setup) {
+                conf.setIvySettingsSetup(setup);
                 settingsUpdated();
             }
         });
@@ -354,7 +370,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project);
         ivyFilePathText.addListener(new IvyXmlPathListener() {
             public void ivyXmlPathUpdated(String path) {
-                conf.ivyXmlPath = path;
+                conf.setIvyXmlPath(path);
                 checkIvyXmlPath();
             }
         });
@@ -382,7 +398,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             public void widgetSelected(SelectionEvent ev) {
                 ModuleDescriptor md;
                 try {
-                    md = conf.getModuleDescriptor();
+                    md = state.getModuleDescriptor();
                 } catch (IvyDEException e) {
                     md = null;
                     e.show(IStatus.ERROR, "Ivy configuration error",
@@ -500,8 +516,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     void settingsUpdated() {
         try {
-            conf.ivySettingsLastModified = -1;
-            conf.getIvy();
+            state.setIvySettingsLastModified(-1);
+            state.getIvy();
             settingsEditor.setSettingsError(null);
             checkIvyXmlPath();
         } catch (IvyDEException e) {
@@ -510,41 +526,35 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     private void loadFromConf() {
-        ivyFilePathText.init(conf.ivyXmlPath);
-        confTableViewer.init(conf.confs);
+        ivyFilePathText.init(conf.getIvyXmlPath());
+        confTableViewer.init(conf.getConfs());
 
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
 
         if (conf.isSettingsProjectSpecific()) {
             settingsProjectSpecificButton.setSelection(true);
-            settingsEditor
-                    .init(conf.ivySettingsPath, conf.propertyFiles, conf.loadSettingsOnDemand);
+            settingsEditor.init(conf.getIvySettingsSetup());
         } else {
             settingsProjectSpecificButton.setSelection(false);
-            settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
-                    .getLoadSettingsOnDemand());
+            settingsEditor.init(helper.getIvySettingsSetup());
         }
 
         if (conf.isRetrieveProjectSpecific()) {
             retrieveProjectSpecificButton.setSelection(true);
-            retrieveComposite.init(conf.doRetrieve, conf.retrievePattern, conf.retrieveConfs,
-                conf.retrieveTypes, conf.retrieveSync);
+            retrieveComposite.init(conf.getRetrieveSetup());
         } else {
             retrieveProjectSpecificButton.setSelection(false);
-            retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
-                    .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
+            retrieveComposite.init(helper.getRetrieveSetup());
         }
 
         if (conf.isAdvancedProjectSpecific()) {
             advancedProjectSpecificButton.setSelection(true);
-            acceptedSuffixesTypesComposite.init(conf.acceptedTypes, conf.sourceTypes,
-                conf.sourceSuffixes, conf.javadocTypes, conf.javadocSuffixes);
-            alphaOrderCheck.select(conf.alphaOrder ? 1 : 0);
-            resolveInWorkspaceCheck.setSelection(this.conf.resolveInWorkspace);
+            acceptedSuffixesTypesComposite.init(conf.getContainerMappingSetup());
+            alphaOrderCheck.select(conf.isAlphaOrder() ? 1 : 0);
+            resolveInWorkspaceCheck.setSelection(conf.isResolveInWorkspace());
         } else {
             advancedProjectSpecificButton.setSelection(false);
-            acceptedSuffixesTypesComposite.init(helper.getAcceptedTypes(), helper.getSourceTypes(),
-                helper.getSourceSuffixes(), helper.getJavadocTypes(), helper.getJavadocSuffixes());
+            acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         }

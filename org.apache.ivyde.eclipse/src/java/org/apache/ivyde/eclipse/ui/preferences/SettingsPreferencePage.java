@@ -31,7 +31,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class SettingsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage";
+    public static final String PEREFERENCE_PAGE_ID =
+        "org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage";
 
     private SettingsEditor settingsEditor;
 
@@ -60,21 +61,16 @@ public class SettingsPreferencePage extends PreferencePage implements IWorkbench
 
     private void initPreferences() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        settingsEditor.init(helper.getIvySettingsPath(), helper.getPropertyFiles(), helper
-                .getLoadSettingsOnDemand());
+        settingsEditor.init(helper.getIvySettingsSetup());
     }
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        helper.setIvySettingsPath(settingsEditor.getSettingsPath());
-        helper.setPropertyFiles(settingsEditor.getPropertyFiles());
-        helper.setLoadSettingsOnDemand(settingsEditor.getLoadOnDemand());
+        helper.setIvySettingsSetup(settingsEditor.getIvySettingsSetup());
         return true;
     }
 
     protected void performDefaults() {
-        settingsEditor.init(PreferenceInitializer.DEFAULT_IVYSETTINGS_PATH,
-            PreferenceInitializer.DEFAULT_PROPERTY_FILES,
-            PreferenceInitializer.DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        settingsEditor.init(PreferenceInitializer.DEFAULT_IVY_SETTINGS_SETUP);
     }
 }

@@ -18,6 +18,10 @@
 package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -26,11 +30,23 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-    public static final String DEFAULT_IVYSETTINGS_PATH = "";
-
     public static final String DEFAULT_ORGANISATION = "";
 
     public static final String DEFAULT_ORGANISATION_URL = "";
+
+    public static final String DEFAULT_IVYSETTINGS_PATH = "";
+
+    public static final String DEFAULT_PROPERTY_FILES = "";
+
+    public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
+
+    public static final IvySettingsSetup DEFAULT_IVY_SETTINGS_SETUP = new IvySettingsSetup();
+
+    static {
+        DEFAULT_IVY_SETTINGS_SETUP.setIvySettingsPath(DEFAULT_IVYSETTINGS_PATH);
+        DEFAULT_IVY_SETTINGS_SETUP.setLoadSettingsOnDemand(DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        DEFAULT_IVY_SETTINGS_SETUP.setPropertyFiles(IvyClasspathUtil.split(DEFAULT_PROPERTY_FILES));
+    }
 
     public static final String DEFAULT_ACCEPTED_TYPES = "jar,bundle,ejb,maven-plugin";
 
@@ -42,6 +58,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
 
+    public static final ContainerMappingSetup DEFAULT_CONTAINER_MAPPING_SETUP =
+        new ContainerMappingSetup();
+
+    static {
+        DEFAULT_CONTAINER_MAPPING_SETUP.setAcceptedTypes(IvyClasspathUtil
+                .split(DEFAULT_ACCEPTED_TYPES));
+        DEFAULT_CONTAINER_MAPPING_SETUP.setSourceTypes(IvyClasspathUtil
+                .split(DEFAULT_SOURCES_TYPES));
+        DEFAULT_CONTAINER_MAPPING_SETUP.setJavadocTypes(IvyClasspathUtil
+                .split(DEFAULT_JAVADOC_TYPES));
+        DEFAULT_CONTAINER_MAPPING_SETUP.setSourceSuffixes(IvyClasspathUtil
+                .split(DEFAULT_SOURCES_SUFFIXES));
+        DEFAULT_CONTAINER_MAPPING_SETUP.setJavadocSuffixes(IvyClasspathUtil
+                .split(DEFAULT_JAVADOC_SUFFIXES));
+    }
+
     public static final boolean DEFAULT_DO_RETRIEVE = false;
 
     public static final String DEFAULT_RETRIEVE_PATTERN = "lib/[conf]/[artifact].[ext]";
@@ -52,13 +84,19 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final String DEFAULT_RETRIEVE_TYPES = "*";
 
+    public static final RetrieveSetup DEFAULT_RETRIEVE_SETUP = new RetrieveSetup();
+
+    static {
+        DEFAULT_RETRIEVE_SETUP.setDoRetrieve(DEFAULT_DO_RETRIEVE);
+        DEFAULT_RETRIEVE_SETUP.setRetrievePattern(DEFAULT_RETRIEVE_PATTERN);
+        DEFAULT_RETRIEVE_SETUP.setRetrieveSync(DEFAULT_RETRIEVE_SYNC);
+        DEFAULT_RETRIEVE_SETUP.setRetrieveConfs(DEFAULT_RETRIEVE_CONFS);
+        DEFAULT_RETRIEVE_SETUP.setRetrieveTypes(DEFAULT_RETRIEVE_TYPES);
+    }
+
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
-
-    public static final String DEFAULT_PROPERTY_FILES = "";
-
-    public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
 
     public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
 

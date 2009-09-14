@@ -17,10 +17,10 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import java.util.Collection;
-import java.util.List;
-
+import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class IvyDEPreferenceStoreHelper {
@@ -47,96 +47,68 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.ORGANISATION_URL, url);
     }
 
-    public String getIvySettingsPath() {
-        return prefStore.getString(PreferenceConstants.IVYSETTINGS_PATH);
+    public IvySettingsSetup getIvySettingsSetup() {
+        IvySettingsSetup setup = new IvySettingsSetup();
+        setup.setIvySettingsPath(prefStore.getString(PreferenceConstants.IVYSETTINGS_PATH));
+        setup.setLoadSettingsOnDemand(prefStore
+                .getBoolean(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND));
+        setup.setPropertyFiles(IvyClasspathUtil.split(prefStore
+                .getString(PreferenceConstants.PROPERTY_FILES)));
+        return setup;
     }
 
-    public void setIvySettingsPath(String path) {
-        prefStore.setValue(PreferenceConstants.IVYSETTINGS_PATH, path);
+    public void setIvySettingsSetup(IvySettingsSetup setup) {
+        prefStore.setValue(PreferenceConstants.IVYSETTINGS_PATH, setup.getIvySettingsPath());
+        prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(setup
+                .getPropertyFiles()));
+        prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND, setup
+                .isLoadSettingsOnDemand());
     }
 
-    public List getAcceptedTypes() {
-        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.ACCEPTED_TYPES));
+    public ContainerMappingSetup getContainerMappingSetup() {
+        ContainerMappingSetup setup = new ContainerMappingSetup();
+        setup.setAcceptedTypes(IvyClasspathUtil.split(prefStore
+                .getString(PreferenceConstants.ACCEPTED_TYPES)));
+        setup.setSourceTypes(IvyClasspathUtil.split(prefStore
+                .getString(PreferenceConstants.SOURCES_TYPES)));
+        setup.setJavadocTypes(IvyClasspathUtil.split(prefStore
+                .getString(PreferenceConstants.JAVADOC_TYPES)));
+        setup.setSourceSuffixes(IvyClasspathUtil.split(prefStore
+                .getString(PreferenceConstants.SOURCES_SUFFIXES)));
+        setup.setJavadocSuffixes(IvyClasspathUtil.split(prefStore
+                .getString(PreferenceConstants.JAVADOC_SUFFIXES)));
+        return setup;
     }
 
-    public void setAcceptedTypes(Collection acceptedTypes) {
-        prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES, IvyClasspathUtil
-                .concat(acceptedTypes));
+    public void setContainerMappingSetup(ContainerMappingSetup setup) {
+        prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES, IvyClasspathUtil.concat(setup
+                .getAcceptedTypes()));
+        prefStore.setValue(PreferenceConstants.SOURCES_TYPES, IvyClasspathUtil.concat(setup
+                .getSourceTypes()));
+        prefStore.setValue(PreferenceConstants.JAVADOC_TYPES, IvyClasspathUtil.concat(setup
+                .getJavadocTypes()));
+        prefStore.setValue(PreferenceConstants.SOURCES_SUFFIXES, IvyClasspathUtil.concat(setup
+                .getSourceSuffixes()));
+        prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil.concat(setup
+                .getJavadocSuffixes()));
     }
 
-    public List getSourceTypes() {
-        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.SOURCES_TYPES));
+    public RetrieveSetup getRetrieveSetup() {
+        RetrieveSetup setup = new RetrieveSetup();
+        setup.setDoRetrieve(prefStore.getBoolean(PreferenceConstants.DO_RETRIEVE));
+        setup.setRetrieveConfs(prefStore.getString(PreferenceConstants.RETRIEVE_CONFS));
+        setup.setRetrievePattern(prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN));
+        setup.setRetrieveSync(prefStore.getBoolean(PreferenceConstants.RETRIEVE_SYNC));
+        setup.setRetrieveTypes(prefStore.getString(PreferenceConstants.RETRIEVE_TYPES));
+        return setup;
     }
 
-    public void setSourceTypes(Collection sourceTypes) {
-        prefStore.setValue(PreferenceConstants.SOURCES_TYPES, IvyClasspathUtil.concat(sourceTypes));
-    }
-
-    public List getJavadocTypes() {
-        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.JAVADOC_TYPES));
-    }
-
-    public void setJavadocTypes(Collection javadocTypes) {
-        prefStore
-                .setValue(PreferenceConstants.JAVADOC_TYPES, IvyClasspathUtil.concat(javadocTypes));
-    }
-
-    public List getSourceSuffixes() {
-        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.SOURCES_SUFFIXES));
-    }
-
-    public void setSourceSuffixes(Collection sourceSuffixes) {
-        prefStore.setValue(PreferenceConstants.SOURCES_SUFFIXES, IvyClasspathUtil
-                .concat(sourceSuffixes));
-    }
-
-    public List getJavadocSuffixes() {
-        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.JAVADOC_SUFFIXES));
-    }
-
-    public void setJavadocSuffixes(Collection javadocSuffixes) {
-        prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil
-                .concat(javadocSuffixes));
-    }
-
-    public boolean getDoRetrieve() {
-        return prefStore.getBoolean(PreferenceConstants.DO_RETRIEVE);
-    }
-
-    public void setDoRetrieve(boolean doretrieve) {
-        prefStore.setValue(PreferenceConstants.DO_RETRIEVE, doretrieve);
-    }
-
-    public String getRetrievePattern() {
-        return prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN);
-    }
-
-    public void setRetrievePattern(String pattern) {
-        prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN, pattern);
-    }
-
-    public boolean getRetrieveSync() {
-        return prefStore.getBoolean(PreferenceConstants.RETRIEVE_SYNC);
-    }
-
-    public void setRetrieveSync(boolean sync) {
-        prefStore.setValue(PreferenceConstants.RETRIEVE_SYNC, sync);
-    }
-
-    public String getRetrieveConfs() {
-        return prefStore.getString(PreferenceConstants.RETRIEVE_CONFS);
-    }
-
-    public void setRetrieveConfs(String confs) {
-        prefStore.setValue(PreferenceConstants.RETRIEVE_CONFS, confs);
-    }
-
-    public String getRetrieveTypes() {
-        return prefStore.getString(PreferenceConstants.RETRIEVE_TYPES);
-    }
-
-    public void setRetrieveTypes(String types) {
-        prefStore.setValue(PreferenceConstants.RETRIEVE_TYPES, types);
+    public void setRetrieveSetup(RetrieveSetup setup) {
+        prefStore.setValue(PreferenceConstants.DO_RETRIEVE, setup.isDoRetrieve());
+        prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN, setup.getRetrievePattern());
+        prefStore.setValue(PreferenceConstants.RETRIEVE_SYNC, setup.isRetrieveSync());
+        prefStore.setValue(PreferenceConstants.RETRIEVE_CONFS, setup.getRetrieveConfs());
+        prefStore.setValue(PreferenceConstants.RETRIEVE_TYPES, setup.getRetrieveTypes());
     }
 
     public boolean isAlphOrder() {
@@ -169,22 +141,6 @@ public class IvyDEPreferenceStoreHelper {
 
     public void setOrganizationUrl(String url) {
         prefStore.setValue(PreferenceConstants.ORGANISATION_URL, url);
-    }
-
-    public List getPropertyFiles() {
-        return IvyClasspathUtil.split(prefStore.getString(PreferenceConstants.PROPERTY_FILES));
-    }
-
-    public void setPropertyFiles(List files) {
-        prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(files));
-    }
-
-    public boolean getLoadSettingsOnDemand() {
-        return prefStore.getBoolean(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND);
-    }
-
-    public void setLoadSettingsOnDemand(boolean onDemand) {
-        prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND, onDemand);
     }
 
     public int getResolveOnStartup() {

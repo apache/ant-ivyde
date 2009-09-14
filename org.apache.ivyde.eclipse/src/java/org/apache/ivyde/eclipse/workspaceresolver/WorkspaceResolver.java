@@ -166,7 +166,7 @@ public class WorkspaceResolver extends AbstractResolver {
                 IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
                 ModuleDescriptor md;
                 try {
-                    md = ivycp.getConf().getCachedModuleDescriptor();
+                    md = ivycp.getState().getCachedModuleDescriptor();
                 } catch (IvyDEException e) {
                     IvyPlugin.log(IStatus.WARNING, "Resolve in workspace for '"
                             + resolvingJavaProject.getElementName() + "' cannot depend on "

@@ -12,6 +12,7 @@
 - FIX: Workspace Resolver Prevents Source Download (IVYDE-188) (thanks to Phillip Webb)
 - FIX: Resolve in Workspace fails to find projects under certain conditions (IVYDE-186) (thanks to Adam Karl)
 - FIX: The gui wizard crash when adding a IvyDE Managed Dependencies library to a .launch file's classpath (IVYDE-200)
+- FIX: Ivy Library removed from the list of Java EE Module Dependencies after changing its properties (IVYDE-178)
 
   version 2.0.0 final
 ==========================

@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +26,6 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvydeContainerPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -56,7 +54,7 @@ public class NewIvyDEContainerWizard extends Wizard {
         IJavaProject project = containerPage.getProject();
         try {
             IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
-                    new IClasspathEntry[0]);
+                    new IClasspathEntry[0], null);
             JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
                 new IClasspathContainer[] {ivycp}, null);
             IClasspathEntry[] entries = project.getRawClasspath();
@@ -68,9 +66,6 @@ public class NewIvyDEContainerWizard extends Wizard {
             ivycp.launchResolve(false, true, null);
         } catch (JavaModelException e) {
             IvyPlugin.log(e);
-            return false;
-        } catch (IOException e) {
-            IvyPlugin.log(IStatus.ERROR, "", e);
             return false;
         }
         return true;

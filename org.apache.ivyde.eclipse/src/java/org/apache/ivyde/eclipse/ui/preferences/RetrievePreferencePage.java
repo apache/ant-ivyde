@@ -31,7 +31,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class RetrievePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage";
+    public static final String PEREFERENCE_PAGE_ID =
+        "org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage";
 
     private RetrieveComposite retrieveComposite;
 
@@ -60,25 +61,16 @@ public class RetrievePreferencePage extends PreferencePage implements IWorkbench
 
     private void initPreferences() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        retrieveComposite.init(helper.getDoRetrieve(), helper.getRetrievePattern(), helper
-                .getRetrieveConfs(), helper.getRetrieveTypes(), helper.getRetrieveSync());
+        retrieveComposite.init(helper.getRetrieveSetup());
     }
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        helper.setDoRetrieve(retrieveComposite.isRetrieveEnabled());
-        helper.setRetrievePattern(retrieveComposite.getRetrievePattern());
-        helper.setRetrieveSync(retrieveComposite.isSyncEnabled());
-        helper.setRetrieveConfs(retrieveComposite.getRetrieveConfs());
-        helper.setRetrieveTypes(retrieveComposite.getRetrieveTypes());
+        helper.setRetrieveSetup(retrieveComposite.getRetrieveSetup());
         return true;
     }
 
     protected void performDefaults() {
-        retrieveComposite.init(PreferenceInitializer.DEFAULT_DO_RETRIEVE,
-            PreferenceInitializer.DEFAULT_RETRIEVE_PATTERN,
-            PreferenceInitializer.DEFAULT_RETRIEVE_CONFS,
-            PreferenceInitializer.DEFAULT_RETRIEVE_TYPES,
-            PreferenceInitializer.DEFAULT_RETRIEVE_SYNC);
+        retrieveComposite.init(PreferenceInitializer.DEFAULT_RETRIEVE_SETUP);
     }
 }

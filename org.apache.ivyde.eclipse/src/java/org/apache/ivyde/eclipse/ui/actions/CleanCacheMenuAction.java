@@ -33,7 +33,7 @@ public class CleanCacheMenuAction extends IvyDEContainerMenuAction {
 
     protected void fill(Menu menu, IvyClasspathContainer ivycp) {
         try {
-            fill(menu, ivycp.getConf().getIvy());
+            fill(menu, ivycp.getState().getIvy());
         } catch (IvyDEException e) {
             e.log(IStatus.WARNING,
                 "Cache delection actions in the context menu could not be populated. ");
