@@ -284,6 +284,15 @@
 			uri="platform:/plugin/org.apache.ivyde.eclipse/xsd/ivy.xsd"/>
     </catalogContribution>
    </extension>
+   <extension
+         point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
+      <runtimeClasspathEntryResolver
+            class="org.apache.ivyde.eclipse.FixedRuntimeClasspathEntryResolver"
+            container="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER"
+            id="org.apache.ivyde.eclipse.runtimeClasspathEntryResolver"
+            variable="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">
+      </runtimeClasspathEntryResolver>
+   </extension>
 
 
    <!--
