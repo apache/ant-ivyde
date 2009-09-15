@@ -226,7 +226,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         }
 
         IPath path = IvyClasspathContainerConfAdapter.getPath(conf);
-        IClasspathAttribute[] atts = IvyClasspathContainerConfAdapter.getAttributes(conf);
+        IClasspathAttribute[] atts = conf.getAttributes();
 
         entry = JavaCore.newContainerEntry(path, null, atts, exported);
 

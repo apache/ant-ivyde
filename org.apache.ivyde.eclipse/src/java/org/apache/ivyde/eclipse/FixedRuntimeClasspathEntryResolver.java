@@ -20,10 +20,12 @@ package org.apache.ivyde.eclipse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -61,6 +63,7 @@ public class FixedRuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
                     IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, null));
             // execution will not reach here - exception will be thrown
         }
+        ((IvyClasspathContainer) container).launchResolve(false, false, new NullProgressMonitor());
         IClasspathEntry[] cpes = container.getClasspathEntries();
         int property = -1;
         switch (container.getKind()) {

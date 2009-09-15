@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -58,7 +57,7 @@ public class IvyClasspathContainerConfiguration {
     /**
      * attributes attached to the container but not IvyDE related (Webtools or AspectJfor instance)
      */
-    private List/* <IClasspathAttribute> */extraAttributes = new ArrayList();
+    private IClasspathAttribute[] attributes;
 
     /**
      * Constructor
@@ -183,12 +182,12 @@ public class IvyClasspathContainerConfiguration {
         return javaProject;
     }
 
-    public void addExtraAttribute(IClasspathAttribute attribute) {
-        extraAttributes.add(attribute);
+    public void setAttributes(IClasspathAttribute[] attributes) {
+        this.attributes = attributes;
     }
 
-    public List/* <IClasspathAttribute> */getExtraAttributes() {
-        return extraAttributes;
+    public IClasspathAttribute[] getAttributes() {
+        return attributes;
     }
 
     // ///////////////////////////

@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.jdt.core.JavaCore;
 
 /**
  * This class maps the IvyDE classpath container configuration into Eclipse objects representing
@@ -57,7 +55,7 @@ public final class IvyClasspathContainerConfAdapter {
         } else {
             loadV1(conf, path);
         }
-        loadAttributes(conf, attributes);
+        conf.setAttributes(attributes);
     }
 
     /**
@@ -178,90 +176,6 @@ public final class IvyClasspathContainerConfAdapter {
         }
     }
 
-    private static void loadAttributes(IvyClasspathContainerConfiguration conf,
-            IClasspathAttribute[] attributes) {
-        ContainerMappingSetup mappingSetup = conf.getContainerMappingSetup();
-        RetrieveSetup retrieveSetup = conf.getRetrieveSetup();
-        IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
-
-        if (attributes != null) {
-            for (int i = 0; i < attributes.length; i++) {
-                String name = attributes[i].getName();
-                String value = attributes[i].getValue();
-                if (name.equals("ivyXmlPath")) {
-                    conf.setIvyXmlPath(value);
-                } else if (name.equals("confs")) {
-                    List confs = IvyClasspathUtil.split(value);
-                    if (confs.isEmpty()) {
-                        confs = Collections.singletonList("*");
-                    }
-                    conf.setConfs(confs);
-                } else if (name.equals("ivySettingsPath")) {
-                    settingsSetup.setIvySettingsPath(readOldSettings(conf, value));
-                    conf.setSettingsProjectSpecific(true);
-                } else if (name.equals("loadSettingsOnDemand")) {
-                    settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(value).booleanValue());
-                    conf.setSettingsProjectSpecific(true);
-                } else if (name.equals("propertyFiles")) {
-                    settingsSetup.setPropertyFiles(IvyClasspathUtil.split(value));
-                    conf.setSettingsProjectSpecific(true);
-                } else if (name.equals("doRetrieve")) {
-                    // if the value is not actually "true" or "false", the Boolean class ensure to
-                    // return false, so it is fine
-                    retrieveSetup.setDoRetrieve(Boolean.valueOf(value).booleanValue());
-                    conf.setRetrieveProjectSpecific(true);
-                } else if (name.equals("retrievePattern")) {
-                    retrieveSetup.setRetrievePattern(value);
-                    conf.setRetrieveProjectSpecific(true);
-                } else if (name.equals("retrieveSync")) {
-                    retrieveSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
-                    conf.setRetrieveProjectSpecific(true);
-                } else if (name.equals("retrieveConfs")) {
-                    retrieveSetup.setRetrieveConfs(value);
-                    conf.setRetrieveProjectSpecific(true);
-                } else if (name.equals("retrieveTypes")) {
-                    retrieveSetup.setRetrieveTypes(value);
-                    conf.setRetrieveProjectSpecific(true);
-                } else if (name.equals("acceptedTypes")) {
-                    mappingSetup.setAcceptedTypes(IvyClasspathUtil.split(value));
-                    conf.setAdvancedProjectSpecific(true);
-                } else if (name.equals("sourceTypes")) {
-                    mappingSetup.setSourceTypes(IvyClasspathUtil.split(value));
-                    conf.setAdvancedProjectSpecific(true);
-                } else if (name.equals("javadocTypes")) {
-                    mappingSetup.setJavadocTypes(IvyClasspathUtil.split(value));
-                    conf.setAdvancedProjectSpecific(true);
-                } else if (name.equals("sourceSuffixes")) {
-                    mappingSetup.setSourceSuffixes(IvyClasspathUtil.split(value));
-                    conf.setAdvancedProjectSpecific(true);
-                } else if (name.equals("javadocSuffixes")) {
-                    mappingSetup.setJavadocSuffixes(IvyClasspathUtil.split(value));
-                    conf.setAdvancedProjectSpecific(true);
-                } else if (name.equals("alphaOrder")) {
-                    // if the value is not actually "true" or "false", the Boolean class ensure to
-                    // return false, so it is fine
-                    conf.setAlphaOrder(Boolean.valueOf(value).booleanValue());
-                    conf.setAdvancedProjectSpecific(true);
-                } else if (name.equals("resolveInWorkspace")) {
-                    conf.setResolveInWorkspace(Boolean.valueOf(value).booleanValue());
-                    conf.setAdvancedProjectSpecific(true);
-                } else {
-                    conf.addExtraAttribute(attributes[i]);
-                }
-            }
-        }
-        if (conf.isAdvancedProjectSpecific()) {
-            // in this V1 version, it is just some paranoid check
-            checkNonNullConf(conf);
-        }
-        if (conf.isRetrieveProjectSpecific()) {
-            if (retrieveSetup.getRetrievePattern() == null) {
-                retrieveSetup.setRetrievePattern(IvyPlugin.getPreferenceStoreHelper()
-                        .getRetrieveSetup().getRetrievePattern());
-            }
-        }
-    }
-
     /**
      * Read old configuration that were based on relative urls, like: "file://./ivysettings.xml" or
      * "file:./ivysettings.xml". This kind of URL "project:///ivysettings.xml" should be used now.
@@ -324,8 +238,31 @@ public final class IvyClasspathContainerConfAdapter {
         path.append("ivyXmlPath=");
         try {
             path.append(URLEncoder.encode(conf.getIvyXmlPath(), "UTF-8"));
-            path.append("&confs=");
-            path.append(URLEncoder.encode(IvyClasspathUtil.concat(conf.getConfs()), "UTF-8"));
+            append(path, "confs", conf.getConfs());
+            if (conf.isSettingsProjectSpecific()) {
+                IvySettingsSetup setup = conf.getIvySettingsSetup();
+                append(path, "ivySettingsPath", setup.getIvySettingsPath());
+                append(path, "loadSettingsOnDemand", setup.isLoadSettingsOnDemand());
+                append(path, "propertyFiles", setup.getPropertyFiles());
+            }
+            if (conf.isRetrieveProjectSpecific()) {
+                RetrieveSetup setup = conf.getRetrieveSetup();
+                append(path, "doRetrieve", setup.isDoRetrieve());
+                append(path, "retrievePattern", setup.getRetrievePattern());
+                append(path, "retrieveSync", setup.isRetrieveSync());
+                append(path, "retrieveConfs", setup.getRetrieveConfs());
+                append(path, "retrieveTypes", setup.getRetrieveTypes());
+            }
+            if (conf.isAdvancedProjectSpecific()) {
+                ContainerMappingSetup setup = conf.getContainerMappingSetup();
+                append(path, "acceptedTypes", setup.getAcceptedTypes());
+                append(path, "sourceTypes", setup.getSourceTypes());
+                append(path, "javadocTypes", setup.getJavadocTypes());
+                append(path, "sourceSuffixes", setup.getSourceSuffixes());
+                append(path, "javadocSuffixes", setup.getJavadocSuffixes());
+                append(path, "alphaOrder", conf.isAlphaOrder());
+                append(path, "resolveInWorkspace", conf.isResolveInWorkspace());
+            }
         } catch (UnsupportedEncodingException e) {
             IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
             throw new RuntimeException(UTF8_ERROR, e);
@@ -333,45 +270,21 @@ public final class IvyClasspathContainerConfAdapter {
         return new Path(IvyClasspathContainer.CONTAINER_ID).append(path.toString());
     }
 
-    public static IClasspathAttribute[] getAttributes(IvyClasspathContainerConfiguration conf) {
-        List atts = new ArrayList(conf.getExtraAttributes());
-        if (conf.isSettingsProjectSpecific()) {
-            IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
-            addAttribute(atts, "ivySettingsPath", settingsSetup.getIvySettingsPath());
-            addAttribute(atts, "loadSettingsOnDemand", settingsSetup.isLoadSettingsOnDemand());
-            addAttribute(atts, "propertyFiles", settingsSetup.getPropertyFiles());
-        }
-        if (conf.isRetrieveProjectSpecific()) {
-            RetrieveSetup retrieveSetup = conf.getRetrieveSetup();
-            addAttribute(atts, "doRetrieve", retrieveSetup.isDoRetrieve());
-            addAttribute(atts, "retrievePattern", retrieveSetup.getRetrievePattern());
-            addAttribute(atts, "retrieveSync", retrieveSetup.isRetrieveSync());
-            addAttribute(atts, "retrieveConfs", retrieveSetup.getRetrieveConfs());
-            addAttribute(atts, "retrieveTypes", retrieveSetup.getRetrieveTypes());
-        }
-        if (conf.isAdvancedProjectSpecific()) {
-            ContainerMappingSetup mappingSetup = conf.getContainerMappingSetup();
-            addAttribute(atts, "acceptedTypes", mappingSetup.getAcceptedTypes());
-            addAttribute(atts, "sourceTypes", mappingSetup.getSourceTypes());
-            addAttribute(atts, "javadocTypes", mappingSetup.getJavadocTypes());
-            addAttribute(atts, "sourceSuffixes", mappingSetup.getSourceSuffixes());
-            addAttribute(atts, "javadocSuffixes", mappingSetup.getJavadocSuffixes());
-            addAttribute(atts, "alphaOrder", conf.isAlphaOrder());
-            addAttribute(atts, "resolveInWorkspace", conf.isResolveInWorkspace());
-        }
-        return (IClasspathAttribute[]) atts.toArray(new IClasspathAttribute[0]);
+    private static void append(StringBuffer path, String name, String value)
+            throws UnsupportedEncodingException {
+        path.append('&');
+        path.append(name);
+        path.append('=');
+        path.append(URLEncoder.encode(value, "UTF-8"));
     }
 
-    private static void addAttribute(List atts, String name, String value) {
-        atts.add(JavaCore.newClasspathAttribute(name, value));
+    private static void append(StringBuffer path, String name, List values)
+            throws UnsupportedEncodingException {
+        append(path, name, IvyClasspathUtil.concat(values));
     }
 
-    private static void addAttribute(List atts, String name, List values) {
-        addAttribute(atts, name, IvyClasspathUtil.concat(values));
+    private static void append(StringBuffer path, String name, boolean value)
+            throws UnsupportedEncodingException {
+        append(path, name, Boolean.toString(value));
     }
-
-    private static void addAttribute(List atts, String name, boolean bool) {
-        addAttribute(atts, name, Boolean.toString(bool));
-    }
-
 }
