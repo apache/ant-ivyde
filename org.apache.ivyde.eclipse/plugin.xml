@@ -287,7 +287,7 @@
    <extension
          point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
       <runtimeClasspathEntryResolver
-            class="org.apache.ivyde.eclipse.FixedRuntimeClasspathEntryResolver"
+            class="org.apache.ivyde.eclipse.IvyDERuntimeClasspathEntryResolver"
             container="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER"
             id="org.apache.ivyde.eclipse.runtimeClasspathEntryResolver"
             variable="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">

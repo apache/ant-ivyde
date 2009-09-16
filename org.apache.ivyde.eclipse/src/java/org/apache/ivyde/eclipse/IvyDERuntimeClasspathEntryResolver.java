@@ -39,7 +39,13 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
-public class FixedRuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver {
+/**
+ * Resolver that doesn't include the non exported library of the imported project in the IvyDE
+ * container, contrary to the default behavior.
+ * <p>
+ * See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=284150
+ */
+public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver {
 
     public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry,
             ILaunchConfiguration configuration) throws CoreException {
@@ -63,7 +69,11 @@ public class FixedRuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
                     IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, null));
             // execution will not reach here - exception will be thrown
         }
-        ((IvyClasspathContainer) container).launchResolve(false, false, new NullProgressMonitor());
+        IvyClasspathContainer ivycp = (IvyClasspathContainer) container;
+        if (FakeProjectManager.isFake(ivycp.getConf().getJavaProject())) {
+            // only launch a resolve if the container is standalone in a launch configuration
+            ivycp.launchResolve(false, false, new NullProgressMonitor());
+        }
         IClasspathEntry[] cpes = container.getClasspathEntries();
         int property = -1;
         switch (container.getKind()) {
