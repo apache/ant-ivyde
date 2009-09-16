@@ -65,30 +65,33 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                     return;
                 }
                 IResource res = event.getResource();
-                IJavaProject javaProject;
+                IProject project;
                 switch (res.getType()) {
                     case IResource.FOLDER:
-                        javaProject = JavaCore.create(((IFolder) res).getProject());
+                        project = ((IFolder) res).getProject();
                         break;
                     case IResource.FILE:
-                        javaProject = JavaCore.create(((IFile) res).getProject());
+                        project = ((IFile) res).getProject();
                         break;
                     case IResource.PROJECT:
-                        javaProject = JavaCore.create((IProject) res);
+                        project = (IProject) res;
                         break;
                     default:
                         return;
                 }
-                projectClosed(javaProject);
+                try {
+                    if (project.hasNature(JavaCore.NATURE_ID)) {
+                        projectClosed(JavaCore.create(project));
+                    }
+                } catch (CoreException e) {
+                    // project doesn't exist or is not open: ignore
+                }
             } else if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
                 if (!IvyPlugin.getPreferenceStoreHelper().getAutoResolveOnOpen()) {
                     return;
                 }
                 projectOpened(event);
             }
-        } catch (JavaModelException jme) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Errors occurred trying to find projects affected by closure", jme);
         } catch (OperationCanceledException oce) {
             IvyPlugin.log(IStatus.CANCEL,
                 "Ivy update of dependent proejects affected by project close operation canceled",
