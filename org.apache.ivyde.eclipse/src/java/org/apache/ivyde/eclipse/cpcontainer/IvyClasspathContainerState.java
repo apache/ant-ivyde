@@ -185,7 +185,7 @@ public class IvyClasspathContainerState {
                     setConfStatus(ex);
                     throw ex;
                 }
-                File file = conf.getJavaProject().getProject().getFile(path).getLocation().toFile();
+                File file = conf.getJavaProject().getProject().getLocation().append(path).toFile();
                 if (!file.exists()) {
                     IvyDEException ex = new IvyDEException("Ivy settings file not found",
                             "The Ivy settings file '" + settingsPath + "' cannot be found", null);
@@ -319,8 +319,8 @@ public class IvyClasspathContainerState {
                 Path p = new Path(file);
                 if (conf.getJavaProject() != null && !p.isAbsolute()) {
                     try {
-                        is = new FileInputStream(conf.getJavaProject().getProject().getFile(file)
-                                .getFullPath().toFile());
+                        is = new FileInputStream(conf.getJavaProject().getProject().getLocation()
+                                .append(file).toFile());
                     } catch (FileNotFoundException e) {
                         IvyDEException ex = new IvyDEException("Property file not found",
                                 "The property file '" + file + "' could not be found", e);
@@ -366,7 +366,7 @@ public class IvyClasspathContainerState {
     public File getIvyFile() {
         File file = new File(conf.getIvyXmlPath());
         if (!file.isAbsolute() && !FakeProjectManager.isFake(conf.getJavaProject())) {
-            file = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath()).getLocation()
+            file = conf.getJavaProject().getProject().getLocation().append(conf.getIvyXmlPath())
                     .toFile();
         }
         return file;
@@ -413,6 +413,10 @@ public class IvyClasspathContainerState {
             setConfStatus(ex);
             throw ex;
         }
+    }
+
+    public String toString() {
+        return conf.toString();
     }
 
 }

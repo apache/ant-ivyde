@@ -14,6 +14,7 @@
 - FIX: The gui wizard crash when adding a IvyDE Managed Dependencies library to a .launch file's classpath (IVYDE-200)
 - FIX: Ivy Library removed from the list of Java EE Module Dependencies after changing its properties (IVYDE-178)
 - FIX: Ivy Classpath Contributed to Dependent Projects When not Exported (IVYDE-193)
+- FIX: Incorrect project:// path in the ivysettings configuration make the UI crash (IVYDE-203)
 
   version 2.0.0 final
 ==========================
