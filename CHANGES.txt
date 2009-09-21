@@ -8,6 +8,7 @@
 - NEW: Add option to not launch a resolve after saving a file with the IvyEditor (IVYDE-197) (thanks to Jon Schneider)
 - NEW: File resource listener on Ivy files launches resolve when it detects modifications (IVYDE-199) (thanks to Jon Schneider)
 - NEW: Add an option in the container to automatically laucnh a resolve before each launch (IVYDE-204)
+- NEW: "Reverse Dependency Explorer" View for synchronizing revisions across multiple projects in a workspace (IVYDE-195) (thanks to Jon Schneider)
 
 - FIX: "Ivy Settings Path" Browse button results in an incorrectly formatted URL (IVYDE-191) (thanks to Jon Schneider)
 - FIX: Workspace Resolver Prevents Source Download (IVYDE-188) (thanks to Phillip Webb)

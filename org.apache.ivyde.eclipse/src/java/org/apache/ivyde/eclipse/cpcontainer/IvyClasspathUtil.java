@@ -17,17 +17,24 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -278,4 +285,30 @@ public final class IvyClasspathUtil {
         return null;
     }
 
+    public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(IProject project) {
+        IJavaProject javaProject = JavaCore.create(project);
+        if (javaProject.exists()) {
+            return getIvyClasspathContainers(javaProject);
+        }
+        return Arrays.asList(new IvyClasspathContainer[] {});
+    }
+
+    /**
+     * Rewrites the module descriptor back to project's ivy file.
+     * 
+     * @throws IOException
+     * @throws ParseException
+     */
+    public static void toIvyFile(ModuleDescriptor descriptor, IvyClasspathContainer container)
+            throws ParseException, IOException {
+        IvyClasspathContainerConfiguration conf = container.getConf();
+        // TODO the ivy file might not be in the workspace or may be an absolute path
+        // in a such case the Eclipse API will state the file a read only
+        IFile ivyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
+        IStatus writable = ivyFile.getWorkspace().validateEdit(new IFile[] {ivyFile},
+            IWorkspace.VALIDATE_PROMPT);
+        if (writable.isOK()) {
+            descriptor.toIvyFile(container.getState().getIvyFile());
+        }
+    }
 }

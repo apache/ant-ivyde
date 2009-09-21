@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -30,7 +31,9 @@ import org.eclipse.swt.widgets.MenuItem;
 
 public class IvyDEProjectMenuAction extends IvyDEProjectAction implements IMenuCreator {
     private boolean selectionChanged;
+
     private IAction proxyAction;
+
     private IProject[] projects;
 
     private MenuListener menuListener = new MenuAdapter() {
@@ -49,7 +52,12 @@ public class IvyDEProjectMenuAction extends IvyDEProjectAction implements IMenuC
 
     protected void fill(Menu menu, IProject[] projects) {
         ProjectResolveAction resolveAction = new ProjectResolveAction(projects);
+        ProjectViewReverseDependenciesAction viewReverseAction = new ProjectViewReverseDependenciesAction(
+                projects, getPage());
+
         new ActionContributionItem(resolveAction).fill(menu, -1);
+        new Separator().fill(menu, -1);
+        new ActionContributionItem(viewReverseAction).fill(menu, -1);
     }
 
     public Menu getMenu(Control parent) {
@@ -74,10 +82,10 @@ public class IvyDEProjectMenuAction extends IvyDEProjectAction implements IMenuC
             proxyAction.setMenuCreator(this);
         }
     }
-    
+
     public void run(IAction action) {
         // nothing to run
-    }    
+    }
 
     public void dispose() {
         // nothing to dispose

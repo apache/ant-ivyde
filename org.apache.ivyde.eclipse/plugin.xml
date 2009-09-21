@@ -102,6 +102,7 @@
                id="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
                label="Ivy"
                menubarPath="additions"
+               style="pulldown"
                tooltip="Ivy Dependency Manager">
          </action>
       </objectContribution> 
@@ -224,6 +225,14 @@
 		   category="org.apache.ivyde.eclipse.ui.views"
 		   class="org.apache.ivyde.eclipse.ui.views.ReportView">
 		</view>
+  <view
+        category="org.apache.ivyde.eclipse.ui.views"
+        class="org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorerView"
+        icon="icons/logo16x16.gif"
+        id="org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorer"
+        name="Reverse Dependency Explorer"
+        restorable="true">
+  </view>
 	</extension>
 
    <extension point = "org.eclipse.ui.actionSets">

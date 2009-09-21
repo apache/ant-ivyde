@@ -26,21 +26,25 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Abstract class for helping with project delegation of actions <br>
  */
-public abstract class IvyDEProjectAction implements IActionDelegate {
+public abstract class IvyDEProjectAction implements IObjectActionDelegate {
     protected abstract void selectionChanged(IAction action, IProject[] projects);
-    
-    /**
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-     *      org.eclipse.jface.viewers.ISelection)
-     */
+
+    protected IWorkbenchPage page;
+
+    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+        this.page = targetPart.getSite().getPage();
+    }
+
     public final void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
-            Collection/*<IProject>*/ projects = new ArrayList/*<IProject>*/();
+            Collection/* <IProject> */projects = new ArrayList/* <IProject> */();
 
             for (Iterator it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
                 Object element = it.next();
@@ -52,18 +56,23 @@ public abstract class IvyDEProjectAction implements IActionDelegate {
                 }
 
                 if (project != null) {
-                    // TODO validate a project's "Ivy nature" here (has an ivy.xml or an ivy classpath container)
+                    // TODO validate a project's "Ivy nature" here (has an ivy.xml or an ivy
+                    // classpath container)
                     projects.add(project);
                 }
             }
-            
-            if(projects.size() > 0) {
+
+            if (projects.size() > 0) {
                 action.setEnabled(true);
-                selectionChanged(action, (IProject[]) projects.toArray(new IProject[projects.size()]));
-            }
-            else {
+                selectionChanged(action, (IProject[]) projects
+                        .toArray(new IProject[projects.size()]));
+            } else {
                 action.setEnabled(false);
             }
         }
+    }
+
+    protected IWorkbenchPage getPage() {
+        return page;
     }
 }

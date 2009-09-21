@@ -123,6 +123,13 @@
                 ]
             },
             {
+              "id":"revdepexplorer",
+              "title":"Reverse Dependency Explorer",
+              "children": [
+
+                ]
+            },
+            {
               "id":"dev",
               "title":"Developer doc",
               "children": [
