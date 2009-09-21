@@ -127,6 +127,14 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.RESOLVE_IN_WORKSPACE, inWorkspace);
     }
 
+    public boolean isResolveBeforeLaunch() {
+        return prefStore.getBoolean(PreferenceConstants.RESOLVE_BEFORE_LAUNCH);
+    }
+
+    public void setResolveBeforeLaunch(boolean resolveBeforeLaunch) {
+        prefStore.setValue(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, resolveBeforeLaunch);
+    }
+
     public String getOrganization() {
         return prefStore.getString(PreferenceConstants.ORGANISATION);
     }

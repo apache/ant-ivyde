@@ -70,8 +70,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
             // execution will not reach here - exception will be thrown
         }
         IvyClasspathContainer ivycp = (IvyClasspathContainer) container;
-        if (FakeProjectManager.isFake(ivycp.getConf().getJavaProject())) {
-            // only launch a resolve if the container is standalone in a launch configuration
+        if (ivycp.getConf().isInheritedResolveBeforeLaunch()) {
             ivycp.launchResolve(false, false, new NullProgressMonitor());
         }
         IClasspathEntry[] cpes = container.getClasspathEntries();

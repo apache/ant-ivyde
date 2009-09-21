@@ -162,6 +162,9 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("resolveInWorkspace")) {
                 conf.setResolveInWorkspace(Boolean.valueOf(value).booleanValue());
                 conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("resolveBeforeLaunch")) {
+                conf.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
+                conf.setAdvancedProjectSpecific(true);
             }
         }
         if (conf.isAdvancedProjectSpecific()) {
@@ -262,6 +265,7 @@ public final class IvyClasspathContainerConfAdapter {
                 append(path, "javadocSuffixes", setup.getJavadocSuffixes());
                 append(path, "alphaOrder", conf.isAlphaOrder());
                 append(path, "resolveInWorkspace", conf.isResolveInWorkspace());
+                append(path, "resolveBeforeLaunch", conf.isResolveBeforeLaunch());
             }
         } catch (UnsupportedEncodingException e) {
             IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);

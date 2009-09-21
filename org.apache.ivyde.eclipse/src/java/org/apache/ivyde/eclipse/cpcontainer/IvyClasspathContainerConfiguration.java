@@ -54,6 +54,8 @@ public class IvyClasspathContainerConfiguration {
 
     private boolean isSettingsProjectSpecific;
 
+    private boolean resolveBeforeLaunch;
+
     /**
      * attributes attached to the container but not IvyDE related (Webtools or AspectJfor instance)
      */
@@ -176,6 +178,14 @@ public class IvyClasspathContainerConfiguration {
 
     public void setSettingsProjectSpecific(boolean isSettingsProjectSpecific) {
         this.isSettingsProjectSpecific = isSettingsProjectSpecific;
+    }
+
+    public boolean isResolveBeforeLaunch() {
+        return resolveBeforeLaunch;
+    }
+
+    public void setResolveBeforeLaunch(boolean resolveBeforeLaunch) {
+        this.resolveBeforeLaunch = resolveBeforeLaunch;
     }
 
     public IJavaProject getJavaProject() {
@@ -307,6 +317,13 @@ public class IvyClasspathContainerConfiguration {
             return IvyPlugin.getPreferenceStoreHelper().isResolveInWorkspace();
         }
         return resolveInWorkspace;
+    }
+
+    public boolean isInheritedResolveBeforeLaunch() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().isResolveBeforeLaunch();
+        }
+        return resolveBeforeLaunch;
     }
 
     public String toString() {

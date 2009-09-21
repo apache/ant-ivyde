@@ -84,6 +84,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private Button resolveInWorkspaceCheck;
 
+    private Button resolveBeforeLaunchCheck;
+
     private Button settingsProjectSpecificButton;
 
     private Button advancedProjectSpecificButton;
@@ -221,6 +223,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                             .getContainerMappingSetup());
             conf.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
             conf.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
+            conf.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
         } else {
             conf.setAdvancedProjectSpecific(false);
         }
@@ -496,6 +499,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         resolveInWorkspaceCheck
                 .setToolTipText("Will replace jars on the classpath with workspace projects");
 
+        resolveBeforeLaunchCheck = new Button(configComposite, SWT.CHECK);
+        resolveBeforeLaunchCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+        resolveBeforeLaunchCheck.setText("Resolve before launch");
+        resolveBeforeLaunchCheck
+                .setToolTipText("Trigger a resolve before each run of any kind of java launch configuration");
+
         Label label = new Label(configComposite, SWT.NONE);
         label.setText("Order of the classpath entries:");
 
@@ -552,11 +562,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             acceptedSuffixesTypesComposite.init(conf.getContainerMappingSetup());
             alphaOrderCheck.select(conf.isAlphaOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(conf.isResolveInWorkspace());
+            resolveBeforeLaunchCheck.setSelection(conf.isResolveBeforeLaunch());
         } else {
             advancedProjectSpecificButton.setSelection(false);
             acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
+            resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
         }
 
         updateFieldsStatusSettings();
@@ -582,6 +594,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
+        resolveBeforeLaunchCheck.setEnabled(projectSpecific);
     }
 
     public void initialize(IJavaProject p, IClasspathEntry[] currentEntries) {

@@ -98,6 +98,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
 
+    public static final boolean DEFAULT_RESOLVE_BEFORE_LAUNCH = false;
+
     public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
 
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_CLOSE = true;
@@ -144,6 +146,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.RETRIEVE_SYNC, DEFAULT_RETRIEVE_SYNC);
         store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
+        store.setDefault(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, DEFAULT_RESOLVE_BEFORE_LAUNCH);
         store.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);
         store.setDefault(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
             DEFAULT_LOAD_SETTINGS_ON_DEMAND);

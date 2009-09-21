@@ -66,6 +66,8 @@ public final class PreferenceConstants {
 
     public static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
 
+    public static final String RESOLVE_BEFORE_LAUNCH = "resolveBeforeLaunch";
+
     public static final String PROPERTY_FILES = "propertyFiles";
 
     public static final String LOAD_SETTINGS_ON_DEMAND = "loadSettingsOnDemand";
