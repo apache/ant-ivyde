@@ -28,14 +28,21 @@ public class IvyConsolePageParticipant implements IConsolePageParticipant {
 
     private CloseConsoleAction closeAction;
 
+    private IvyConsoleFilterAction filterLogAction;
+
     public void init(IPageBookViewPage page, IConsole console) {
-        closeAction = new IvyConsoleRemoveAction(console);
         IToolBarManager manager = page.getSite().getActionBars().getToolBarManager();
+
+        closeAction = new IvyConsoleRemoveAction(console);
         manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, closeAction);
+
+        filterLogAction = new IvyConsoleFilterAction((IvyConsole) console);
+        manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, filterLogAction);
     }
 
     public void dispose() {
         closeAction = null;
+        filterLogAction = null;
     }
 
     public Object getAdapter(Class adapter) {
@@ -43,9 +50,11 @@ public class IvyConsolePageParticipant implements IConsolePageParticipant {
     }
 
     public void activated() {
+        // nothing to do
     }
 
     public void deactivated() {
+        // nothing to do
     }
 
 }

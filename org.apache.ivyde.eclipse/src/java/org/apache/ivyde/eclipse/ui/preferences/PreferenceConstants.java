@@ -79,4 +79,6 @@ public final class PreferenceConstants {
     public static final String AUTO_RESOLVE_ON_CLOSE = "autoResolve.close";
 
     public static final String AUTO_RESOLVE_ON_CHANGE = "autoResolve.change";
+
+    public static final String IVY_CONSOLE_LOG_LEVEL = "ivyConsole.logLevel";
 }

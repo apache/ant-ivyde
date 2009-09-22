@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
@@ -57,6 +58,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public static final String DEFAULT_SOURCES_SUFFIXES = "-source,-sources,-src";
 
     public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
+
+    public static final int DEFAULT_IVY_CONSOLE_LOG_MESSAGE = Message.MSG_INFO;
 
     public static final ContainerMappingSetup DEFAULT_CONTAINER_MAPPING_SETUP =
         new ContainerMappingSetup();
@@ -155,6 +158,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CLOSE, DEFAULT_AUTO_RESOLVE_ON_CLOSE);
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_OPEN, DEFAULT_AUTO_RESOLVE_ON_OPEN);
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, DEFAULT_AUTO_RESOLVE_ON_CHANGE);
+
+        store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
     }
 
 }

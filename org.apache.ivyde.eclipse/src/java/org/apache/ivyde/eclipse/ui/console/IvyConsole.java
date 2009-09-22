@@ -64,11 +64,23 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     private IConsoleManager consoleManager;
 
+    private int logLevel;
+
     public IvyConsole() {
         super("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$
         consoleManager = ConsolePlugin.getDefault().getConsoleManager();
         document = new ConsoleDocument();
         Message.setDefaultLogger(this);
+        logLevel = IvyPlugin.getPreferenceStoreHelper().getIvyConsoleLogLevel();
+    }
+
+    public void setLogLevel(int logLevel) {
+        this.logLevel = logLevel;
+        IvyPlugin.getPreferenceStoreHelper().setIvyConsoleLogLevel(logLevel);
+    }
+
+    public int getLogLevel() {
+        return logLevel;
     }
 
     public void endProgress(String msg) {
@@ -168,6 +180,10 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     }
 
     private void appendLine(int level, String line) {
+        if (level > logLevel) {
+            // log message filtered by its level
+            return;
+        }
         showConsole();
         synchronized (document) {
             if (visible) {

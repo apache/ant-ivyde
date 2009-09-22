@@ -96,12 +96,6 @@ public class IvyPlugin extends AbstractUIPlugin {
         super.start(context);
         this.bundleContext = context;
         log(IStatus.INFO, "starting IvyDE plugin", null);
-        try {
-            console = new IvyConsole();
-        } catch (RuntimeException e) {
-            // Don't let the console bring down the CVS UI
-            log(IStatus.ERROR, "Errors occurred starting the Ivy console", e);
-        }
         javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
         prefStoreHelper = new IvyDEPreferenceStoreHelper(getPreferenceStore());
         getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
@@ -130,6 +124,13 @@ public class IvyPlugin extends AbstractUIPlugin {
                 }
             }
         });
+
+        try {
+            console = new IvyConsole();
+        } catch (RuntimeException e) {
+            // Don't let the console bring down the IvyDE UI
+            log(IStatus.ERROR, "Errors occurred starting the Ivy console", e);
+        }
 
         // Listen for project open/close events to auto-update inter-project dependencies
         IWorkspace workspace = ResourcesPlugin.getWorkspace();

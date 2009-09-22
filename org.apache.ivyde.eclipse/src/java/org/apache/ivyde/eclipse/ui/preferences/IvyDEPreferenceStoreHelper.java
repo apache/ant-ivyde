@@ -182,4 +182,12 @@ public class IvyDEPreferenceStoreHelper {
     public void setAutoResolveOnChange(boolean autoResolveChange) {
         prefStore.setValue(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, autoResolveChange);
     }
+
+    public int getIvyConsoleLogLevel() {
+        return prefStore.getInt(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL);
+    }
+
+    public void setIvyConsoleLogLevel(int logLevel) {
+        prefStore.setValue(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, logLevel);
+    }
 }
