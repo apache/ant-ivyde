@@ -20,45 +20,61 @@ package org.apache.ivyde.eclipse.ui.actions;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 
 public class CleanCacheAction extends Action {
 
     private final Cleanable[] cleanables;
 
-    public static interface Cleanable {
-        public void clean();
-        public String getName();
+    public static abstract class Cleanable {
+        public void launchClean() {
+            Job cleanJob = new Job("Cleaning cache " + getName()) {
+                protected IStatus run(IProgressMonitor monitor) {
+                    clean();
+                    return Status.OK_STATUS;
+                }
+            };
+
+            cleanJob.setUser(true);
+            cleanJob.schedule();
+        }
+
+        protected abstract void clean();
+
+        public abstract String getName();
     }
 
-    public static class ResolutionCacheCleanable implements Cleanable {
+    public static class ResolutionCacheCleanable extends Cleanable {
         private final ResolutionCacheManager manager;
 
         public ResolutionCacheCleanable(ResolutionCacheManager manager) {
             this.manager = manager;
         }
 
-        public void clean() {
+        protected void clean() {
             manager.clean();
         }
-        
+
         public String getName() {
             return "resolution";
         }
     }
 
-    public static class RepositoryCacheCleanable implements Cleanable {
+    public static class RepositoryCacheCleanable extends Cleanable {
         private final RepositoryCacheManager manager;
 
         public RepositoryCacheCleanable(RepositoryCacheManager manager) {
             this.manager = manager;
         }
 
-        public void clean() {
+        protected void clean() {
             manager.clean();
         }
-        
+
         public String getName() {
             return manager.getName();
         }
@@ -75,7 +91,7 @@ public class CleanCacheAction extends Action {
     public void run() {
         StringBuffer builder = new StringBuffer("Ivy cache cleaned: ");
         for (int i = 0; i < cleanables.length; i++) {
-            cleanables[i].clean();
+            cleanables[i].launchClean();
             builder.append(cleanables[i].getName());
             if (i < cleanables.length - 1) {
                 builder.append(", ");
