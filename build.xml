@@ -468,7 +468,7 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="hudson-check-unzip-eclipse">
         <condition property="hudson.eclipse.unzipped">
-            <available file="${hudson.eclipse.name}" />
+            <available file="${hudson.download.sdk.name}" />
         </condition>
     </target>
 
@@ -484,16 +484,20 @@ You have to specify the Ivy to install with one of the following property:
     <target name="hudson-prepare-properties">
         <tstamp />
         <property name="baseLocation" value="${basedir}/${hudson.eclipse.name}" />
+        <condition property="hudson.version.qualifier" value="${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}">
+            <length string="${version.qualifier}" trim="true" length="0" />
+        </condition>
+        <property name="hudson.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}" />
         <echo file="local.build.properties">
-baseLocation=${basedir}/${hudson.eclipse.name}
-forceContextQualifier=${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}
+baseLocation=${basedir}/${hudson.download.sdk.name}
+forceContextQualifier=${hudson.version.qualifier}
 </echo>
     </target>
 
     <target name="hudson-install-ivy">
         <ant antfile="build.xml" target="install-ivy">
             <property name="ivy.version" value="${hudson.ivy.version}" />
-            <property name="baseLocation" location="${basedir}/${hudson.eclipse.name}" />
+            <property name="baseLocation" location="${basedir}/${hudson.download.sdk.name}" />
         </ant>
     </target>
 
