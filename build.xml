@@ -405,15 +405,66 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="hudson-prepare-eclipse" depends="hudson-get-eclipse,hudson-unzip-eclipse" />
 
-    <target name="hudson-check-download-eclipse">
-        <condition property="hudson.eclipse.downloaded">
-            <available file="${hudson.eclipse.name}.zip" />
+    <target name="hudson-check-download-sdk">
+        <condition property="hudson.sdk.downloaded">
+            <available file="${hudson.download.sdk.name}.zip" />
         </condition>
     </target>
 
-    <target name="hudson-get-eclipse" depends="hudson-check-download-eclipse" unless="hudson.eclipse.downloaded">
-        <get src="${hudson.eclipse.url}" dest="${hudson.eclipse.name}.zip" verbose="yes" />
+    <target name="hudson-get-sdk" depends="hudson-check-download-sdk" unless="hudson.sdk.downloaded">
+        <eclipse-download name="${hudson.download.sdk.name}" dropdir="${hudson.download.sdk.dropdir}" />
     </target>
+
+    <target name="hudson-check-download-wtp">
+        <condition property="hudson.wtp.downloaded">
+            <available file="${hudson.download.wtp.name}.zip" />
+        </condition>
+    </target>
+
+    <target name="hudson-get-wtp" depends="hudson-check-download-wtp" unless="hudson.wtp.downloaded">
+        <eclipse-download name="${hudson.download.wtp.name}" dropdir="${hudson.download.wtp.dropdir}" />
+    </target>
+
+    <target name="hudson-check-download-emf">
+        <condition property="hudson.emf.downloaded">
+            <available file="${hudson.download.emf.name}.zip" />
+        </condition>
+    </target>
+
+    <target name="hudson-get-emf" depends="hudson-check-download-emf" unless="hudson.emf.downloaded">
+        <eclipse-download name="${hudson.download.emf.name}" dropdir="${hudson.download.emf.dropdir}" />
+    </target>
+
+    <target name="hudson-check-download-xsd">
+        <condition property="hudson.xsd.downloaded">
+            <available file="${hudson.download.xsd.name}.zip" />
+        </condition>
+    </target>
+
+    <target name="hudson-get-xsd" depends="hudson-check-download-xsd" unless="hudson.xsd.downloaded">
+        <eclipse-download name="${hudson.download.xsd.name}" dropdir="${hudson.download.xsd.dropdir}" />
+    </target>
+
+    <target name="hudson-check-download-gef">
+        <condition property="hudson.gef.downloaded">
+            <available file="${hudson.download.gef.name}.zip" />
+        </condition>
+    </target>
+
+    <target name="hudson-get-gef" depends="hudson-check-download-gef" unless="hudson.gef.downloaded">
+        <eclipse-download name="${hudson.download.gef.name}" dropdir="${hudson.download.gef.dropdir}" />
+    </target>
+
+    <target name="hudson-get-eclipse" depends="hudson-get-sdk,hudson-get-wtp,hudson-get-emf,hudson-get-xsd,hudson-get-gef" />
+
+    <!-- wrapper of eclipse download urls which have a common pattern -->
+    <macrodef name="eclipse-download">
+        <attribute name="name" />
+        <attribute name="dropdir" />
+        <sequential>
+            <get src="${hudson.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;url=${hudson.download.mirror.url}/@{dropdir}/@{name}.zip&amp;mirror_id=${hudson.download.mirror.id}" dest="@{name}.zip" verbose="yes" />            
+        </sequential>
+    </macrodef>
 
     <target name="hudson-check-unzip-eclipse">
         <condition property="hudson.eclipse.unzipped">
@@ -422,8 +473,12 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-unzip-eclipse" depends="hudson-check-unzip-eclipse" unless="hudson.eclipse.unzipped">
-        <unzip src="${hudson.eclipse.name}.zip" dest="${basedir}" />
-        <move file="eclipse" tofile="${hudson.eclipse.name}" />
+        <unzip src="${hudson.download.sdk.name}.zip" dest="${basedir}" />
+        <unzip src="${hudson.download.wtp.name}.zip" dest="${basedir}" />
+        <unzip src="${hudson.download.emf.name}.zip" dest="${basedir}" />
+        <unzip src="${hudson.download.xsd.name}.zip" dest="${basedir}" />
+        <unzip src="${hudson.download.gef.name}.zip" dest="${basedir}" />
+        <move file="eclipse" tofile="${hudson.download.sdk.name}" />
     </target>
 
     <target name="hudson-prepare-properties">
