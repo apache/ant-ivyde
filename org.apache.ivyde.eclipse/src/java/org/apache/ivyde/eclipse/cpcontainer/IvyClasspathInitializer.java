@@ -69,7 +69,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
 
                     IClasspathEntry entry =
                             IvyClasspathUtil.getIvyClasspathEntry(containerPath, project);
-                    IClasspathAttribute[] attributes = null;
+                    IClasspathAttribute[] attributes = new IClasspathAttribute[0];
                     if (entry != null) {
                         attributes = entry.getExtraAttributes();
                     }

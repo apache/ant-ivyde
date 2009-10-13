@@ -26,6 +26,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvydeContainerPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -54,7 +55,7 @@ public class NewIvyDEContainerWizard extends Wizard {
         IJavaProject project = containerPage.getProject();
         try {
             IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
-                    new IClasspathEntry[0], null);
+                    new IClasspathEntry[0], new IClasspathAttribute[0]);
             JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
                 new IClasspathContainer[] {ivycp}, null);
             IClasspathEntry[] entries = project.getRawClasspath();
