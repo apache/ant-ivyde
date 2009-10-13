@@ -20,6 +20,7 @@
 - FIX: Ivy Library removed from the list of Java EE Module Dependencies after changing its properties (IVYDE-178)
 - FIX: Ivy Classpath Contributed to Dependent Projects When not Exported (IVYDE-193)
 - FIX: Incorrect project:// path in the ivysettings configuration make the UI crash (IVYDE-203)
+- FIX: conf attributes must not be null (IVYDE-209) (thanks to Ivica Loncar)
 
   version 2.0.0 final
 ==========================

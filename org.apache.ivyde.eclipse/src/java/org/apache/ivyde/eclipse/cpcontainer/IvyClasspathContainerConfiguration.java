@@ -59,7 +59,7 @@ public class IvyClasspathContainerConfiguration {
     /**
      * attributes attached to the container but not IvyDE related (Webtools or AspectJfor instance)
      */
-    private IClasspathAttribute[] attributes;
+    private IClasspathAttribute[] attributes = new IClasspathAttribute[0];
 
     /**
      * Constructor
