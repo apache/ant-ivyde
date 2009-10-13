@@ -190,4 +190,13 @@ public class IvyDEPreferenceStoreHelper {
     public void setIvyConsoleLogLevel(int logLevel) {
         prefStore.setValue(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, logLevel);
     }
+
+    public boolean getIgnoreVersionOnWorkspaceProjects() {
+        return prefStore.getBoolean(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
+    }
+
+    public void setIgnoreVersionOnWorkspaceProjects(boolean ignoreVersionOnWorkspaceProjects) {
+        prefStore.setValue(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
+            ignoreVersionOnWorkspaceProjects);
+    }
 }

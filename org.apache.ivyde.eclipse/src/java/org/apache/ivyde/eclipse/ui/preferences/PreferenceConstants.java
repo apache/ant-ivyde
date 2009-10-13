@@ -81,4 +81,6 @@ public final class PreferenceConstants {
     public static final String AUTO_RESOLVE_ON_CHANGE = "autoResolve.change";
 
     public static final String IVY_CONSOLE_LOG_LEVEL = "ivyConsole.logLevel";
+
+    public static final String IGNORE_VERSION_ON_WORKSPACE_PROJECTS = "workspaceResolver.ignoreVersion";
 }

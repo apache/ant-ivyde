@@ -111,6 +111,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_CHANGE = true;
     
+    public static final boolean DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS = false;
+    
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
@@ -160,6 +162,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, DEFAULT_AUTO_RESOLVE_ON_CHANGE);
 
         store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
+
+        store.setDefault(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS, DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
     }
 
 }

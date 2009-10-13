@@ -20,6 +20,8 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
@@ -56,8 +58,7 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
 
         BooleanFieldEditor autoResolveOnOpen = new BooleanFieldEditor(
                 PreferenceConstants.AUTO_RESOLVE_ON_OPEN,
-                "On project opening trigger resolve on every other project",
-                fieldParent) {
+                "On project opening trigger resolve on every other project", fieldParent) {
             protected Label getLabelControl() {
                 Label label = super.getLabelControl();
                 label.setToolTipText("Will automatically resolve projects in the "
@@ -67,6 +68,26 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
         };
         addField(autoResolveOnOpen);
 
+        BooleanFieldEditor ignoreVersionOnWorkspaceProjects = new BooleanFieldEditor(
+                PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
+                "Ignore version when resolving workspace projects", fieldParent) {
+            protected Label getLabelControl() {
+                Label label = super.getLabelControl();
+                label.setToolTipText("Will ignore the artifact version when resolving "
+                        + "against workspace projects");
+                return label;
+            }
+        };
+
+        addField(ignoreVersionOnWorkspaceProjects);
+
+        Label warning = new Label(fieldParent, SWT.NONE);
+        warning.setText("WARNING: you should use this only if you are sure the projets opened\n"
+                + "in your workspace can actually work with each other, be carefull with\n"
+                + "branch management for instance)");
+        GridData gridData = new GridData();
+        gridData.horizontalIndent = 40;
+        warning.setLayoutData(gridData);
     }
 
     public void init(IWorkbench workbench) {

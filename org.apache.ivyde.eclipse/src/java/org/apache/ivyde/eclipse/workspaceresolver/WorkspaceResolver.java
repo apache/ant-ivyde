@@ -62,31 +62,31 @@ import org.eclipse.jdt.core.JavaModelException;
  * changes, this resolver will link dependent projects when they are open in the same workspace,
  * allowing full-fledged linked project functionality Eclipse provides, such as incremental
  * compilation, debugging, mouseover javadocs, and source browsing across projects.
- * 
+ *
  * <b>How it works</b> During a resolve, it looks at all open projects in the workspace that have
  * Ivy containers. The <b>first</b> project that publishes the module on which the project being
  * resolved depends, will be picked and returned as a special type of artifact called "project".
- * 
+ *
  * The IvyClasspathContainer will recognize the artifact as a project and put the eclipse project as
  * a dependent project within the classpath container of the parent.
- * 
+ *
  * If you do not want a project to be linked as a dependency, close it or delete from the workspace.
  * As soon as you do that, any projects that were linked to it will automatically re-resolve (see
  * {@link WorkspaceResourceChangeListener}) and use the standard Ivy means of finding the
  * dependency.
- * 
+ *
  * The {@link WorkspaceResourceChangeListener} will also auto-resolve when a new project is added or
  * opened, so opening a project will automatically link it into the currently open projects where
  * necessary.
- * 
+ *
  * Since the resolver is not aware which module revision a project is publishing, it optimistically
  * matches any revision of the module.
- * 
+ *
  * Since the resolver stops after finding the first open project which matches the module, having
  * multiple open versions of the same project in the workspace (for example, different branches) may
  * set the wrong version as a dependency. You are advised to only open the version of the project
  * which you want other projects in the workspace to depend on.
- * 
+ *
  * NOTE: Transitive dependencies are not passed from the dependent project to the parent when
  * projects are linked. If you find you are missing some transitive dependencies, just set your
  * dependent eclipse project to export its ivy dependencies. (Project->Properties->Java Build
@@ -106,6 +106,8 @@ public class WorkspaceResolver extends AbstractResolver {
 
     private IJavaProject[] projects;
 
+    private boolean ignoreVersionOnWorkspaceProjects;
+
     public WorkspaceResolver(IJavaProject javaProject, IvySettings ivySettings) {
         this.resolvingJavaProject = javaProject;
         setName(javaProject.getElementName() + "-ivyde-workspace-resolver");
@@ -118,6 +120,8 @@ public class WorkspaceResolver extends AbstractResolver {
             IvyPlugin.log(IStatus.ERROR, "JDT Error while resolving in workspace for "
                     + resolvingJavaProject.getElementName(), e);
         }
+
+        ignoreVersionOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper().getIgnoreVersionOnWorkspaceProjects();
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
@@ -180,7 +184,8 @@ public class WorkspaceResolver extends AbstractResolver {
                 }
 
                 // Found one; check if it is for the module we need
-                if (md.getModuleRevisionId().getRevision().equals(Ivy.getWorkingRevision())
+                if (ignoreVersionOnWorkspaceProjects
+                        || md.getModuleRevisionId().getRevision().equals(Ivy.getWorkingRevision())
                         || versionMatcher.accept(dd.getDependencyRevisionId(), md)) {
 
                     Artifact af = new DefaultArtifact(md.getModuleRevisionId(), md
