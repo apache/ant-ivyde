@@ -17,7 +17,18 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 
 /**
  * This class is just a simple bean defining the properties which configure an IvyDE classpath
@@ -44,7 +55,28 @@ public class IvySettingsSetup {
         this.loadSettingsOnDemand = setup.loadSettingsOnDemand;
     }
 
-    public String getIvySettingsPath() {
+    public String getResolvedIvySettingsPath() throws IvyDEException {
+        String url;
+        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+        try {
+            url = manager.performStringSubstitution(ivySettingsPath, false);
+        } catch (CoreException e) {
+            throw new IvyDEException("Unrecognized variables",
+                    "Unrecognized variables in the Ivy settings file " + ivySettingsPath, e);
+        }
+        if (ivySettingsPath.trim().startsWith("$")) {
+            // it starts with a variable, let's add the file protocol.
+            try {
+                url = new File(url).toURI().toURL().toExternalForm();
+            } catch (MalformedURLException e) {
+                IvyPlugin.log(IStatus.ERROR,
+                    "The file got from the workspace browser has not a valid URL", e);
+            }
+        }
+        return url;
+    }
+
+    public String getRawIvySettingsPath() {
         return ivySettingsPath;
     }
 
@@ -52,8 +84,25 @@ public class IvySettingsSetup {
         this.ivySettingsPath = ivySettingsPath;
     }
 
-    public List getPropertyFiles() {
+    public List getRawPropertyFiles() {
         return propertyFiles;
+    }
+
+    public List getResolvedPropertyFiles() throws IvyDEException {
+        List resolvedProps = new ArrayList();
+        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+        try {
+            Iterator it = propertyFiles.iterator();
+            while (it.hasNext()) {
+                String propFile = (String) it.next();
+                String resolvedProp = manager.performStringSubstitution(propFile, false);
+                resolvedProps.add(resolvedProp);
+            }
+        } catch (CoreException e) {
+            throw new IvyDEException("Unrecognized variables",
+                    "Unrecognized variables in the Ivy settings file " + ivySettingsPath, e);
+        }
+        return resolvedProps;
     }
 
     public void setPropertyFiles(List propertyFiles) {

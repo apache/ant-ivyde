@@ -58,9 +58,9 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public void setIvySettingsSetup(IvySettingsSetup setup) {
-        prefStore.setValue(PreferenceConstants.IVYSETTINGS_PATH, setup.getIvySettingsPath());
+        prefStore.setValue(PreferenceConstants.IVYSETTINGS_PATH, setup.getRawIvySettingsPath());
         prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(setup
-                .getPropertyFiles()));
+                .getRawPropertyFiles()));
         prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND, setup
                 .isLoadSettingsOnDemand());
     }

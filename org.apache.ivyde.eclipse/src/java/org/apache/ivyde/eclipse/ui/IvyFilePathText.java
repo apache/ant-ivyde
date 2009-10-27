@@ -98,7 +98,7 @@ public class IvyFilePathText extends Composite {
 
         ivyFilePathText = (Text) ivyFilePathTextDeco.getControl();
         ivyFilePathTextDeco.getLayoutControl().setLayoutData(
-            new GridData(GridData.FILL, GridData.FILL, true, false));
+            new GridData(GridData.FILL, GridData.CENTER, true, false));
         ivyFilePathText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent ev) {
                 ivyXmlPathUpdated();

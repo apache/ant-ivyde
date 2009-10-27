@@ -10,6 +10,7 @@
 - NEW: Add an option in the container to automatically laucnh a resolve before each launch (IVYDE-204)
 - NEW: "Reverse Dependency Explorer" View for synchronizing revisions across multiple projects in a workspace (IVYDE-195) (thanks to Jon Schneider)
 - NEW: Make the Ivy console filter on the logging level (IVYDE-205)
+- NEW: Support for Eclipse variables (IVYDE-152)
 
 - IMPROVE: Wrap cache cleaning in a job so that it does not block the workspace (IVYDE-207) (thanks to Jon Schneider)
 - IMPROVE: Allow workspace resolver to skip version matcher (IVYDE-187) (thanks to Phillip Webb)

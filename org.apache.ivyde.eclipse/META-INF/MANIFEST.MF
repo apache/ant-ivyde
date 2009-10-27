@@ -35,6 +35,8 @@ Require-Bundle: org.apache.xerces;resolution:=optional,
  org.eclipse.help,
  org.eclipse.wst.xml.core,
  org.eclipse.debug.core,
- org.eclipse.jdt.launching
+ org.eclipse.jdt.launching,
+ org.eclipse.debug.ui,
+ org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

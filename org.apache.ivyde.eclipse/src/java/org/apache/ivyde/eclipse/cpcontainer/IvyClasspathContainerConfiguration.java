@@ -21,8 +21,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -204,11 +208,11 @@ public class IvyClasspathContainerConfiguration {
     // Getters that take into account the global preferences
     // ///////////////////////////
 
-    public String getInheritedIvySettingsPath() {
+    public String getInheritedIvySettingsPath() throws IvyDEException {
         if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup().getIvySettingsPath();
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup().getResolvedIvySettingsPath();
         }
-        return ivySettingsSetup.getIvySettingsPath();
+        return ivySettingsSetup.getResolvedIvySettingsPath();
     }
 
     public boolean getInheritedLoadSettingsOnDemandPath() {
@@ -219,11 +223,11 @@ public class IvyClasspathContainerConfiguration {
         return ivySettingsSetup.isLoadSettingsOnDemand();
     }
 
-    public Collection getInheritedPropertyFiles() {
+    public Collection getInheritedPropertyFiles() throws IvyDEException {
         if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup().getPropertyFiles();
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup().getResolvedPropertyFiles();
         } else {
-            return ivySettingsSetup.getPropertyFiles();
+            return ivySettingsSetup.getResolvedPropertyFiles();
         }
     }
 

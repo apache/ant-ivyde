@@ -43,22 +43,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class SettingsEditor extends Composite {
 
     public static final String TOOLTIP_SETTINGS_PATH = "The url where your ivysettings file can be"
             + " found. \nLeave it empty to reference the default ivy settings. \n"
-            + "Relative paths are handled relative to the project.\n"
-            + " Example: 'project:///ivysettings.xml' or 'project://myproject/ivysettings.xml'.";
+            + "Relative paths are handled relative to the project.";
 
     public static final String TOOLTIP_PROPERTY_FILES = "Comma separated list of build property"
             + " files.\nExample: build.properties, override.properties";
-
-    private Text settingsText;
-
-    private DecoratedField settingsTextDeco;
 
     private final List listeners = new ArrayList();
 
@@ -66,99 +60,120 @@ public class SettingsEditor extends Composite {
 
     private FieldDecoration errorDecoration;
 
-    private Text propFilesText;
+    private PathEditor propFilesEditor;
+
+    private DecoratedField settingsTextDeco;
 
     private Button loadOnDemandButton;
 
+    private PathEditor settingsEditor;
+
+    private Button defaultButton;
+
     public SettingsEditor(Composite parent, int style) {
         super(parent, style);
-        // CheckStyle:MagicNumber| OFF
-        GridLayout layout = new GridLayout(3, false);
-        // CheckStyle:MagicNumber| ON
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
+
+        GridLayout layout = new GridLayout();
         setLayout(layout);
-
-        Label label = new Label(this, SWT.NONE);
-        label.setText("Ivy settings path:");
-
-        errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
-            FieldDecorationRegistry.DEC_ERROR);
-
-        settingsTextDeco = new DecoratedField(this, SWT.LEFT | SWT.TOP, new IControlCreator() {
-            public Control createControl(Composite p, int s) {
-                return new Text(p, SWT.SINGLE | SWT.BORDER);
-            }
-        });
-        settingsTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
-        // settingsTextDeco.setMarginWidth(2);
-        settingsTextDeco.hideDecoration(errorDecoration);
-        // this doesn't work well: we want the decoration image to be clickable, but it actually
-        // hides the clickable area
-        // settingsTextDeco.getLayoutControl().addMouseListener(new MouseAdapter() {
-        // public void mouseDoubleClick(MouseEvent e) {
-        // super.mouseDoubleClick(e);
-        // }
-        // public void mouseDown(MouseEvent e) {
-        // if (settingsError != null) {
-        // settingsError.show(IStatus.ERROR, "IvyDE configuration problem", null);
-        // }
-        // }
-        // });
-
-        settingsText = (Text) settingsTextDeco.getControl();
-        settingsText.setToolTipText(TOOLTIP_SETTINGS_PATH);
-        settingsTextDeco.getLayoutControl().setLayoutData(
-            new GridData(GridData.FILL, GridData.FILL, true, false));
-        settingsText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                settingsPathUpdated();
-            }
-        });
-
-        Button browse = new Button(this, SWT.NONE);
-        browse.setText("Browse");
-        browse.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                File f = getFile(new File("/"));
-                if (f != null) {
-                    try {
-                        settingsText.setText(f.toURI().toURL().toExternalForm());
-                        settingsPathUpdated();
-                    } catch (MalformedURLException ex) {
-                        // this cannot happen
-                        IvyPlugin.log(IStatus.ERROR,
-                            "The file got from the file browser has not a valid URL", ex);
-                    }
-                }
-            }
-        });
 
         loadOnDemandButton = new Button(this, SWT.CHECK);
         loadOnDemandButton.setText("reload the settings only on demand");
-        // CheckStyle:MagicNumber| OFF
-        loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3,
-                1));
-        // CheckStyle:MagicNumber| ON
+        loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        label = new Label(this, SWT.NONE);
-        label.setText("Property files:");
+        settingsEditor = new PathEditor(this, SWT.NONE, "Ivy settings path:", null) {
 
-        propFilesText = new Text(this, SWT.BORDER);
-        propFilesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        propFilesText.setToolTipText(TOOLTIP_PROPERTY_FILES);
-        propFilesText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            protected Text createText(Composite parent) {
+                errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
+                    FieldDecorationRegistry.DEC_ERROR);
+
+                settingsTextDeco = new DecoratedField(parent, SWT.LEFT | SWT.TOP,
+                        new IControlCreator() {
+                            public Control createControl(Composite p, int s) {
+                                return new Text(p, SWT.SINGLE | SWT.BORDER);
+                            }
+                        });
+                settingsTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
+                // settingsTextDeco.setMarginWidth(2);
+                settingsTextDeco.hideDecoration(errorDecoration);
+                // this doesn't work well: we want the decoration image to be clickable, but it
+                // actually
+                // hides the clickable area
+                // settingsTextDeco.getLayoutControl().addMouseListener(new MouseAdapter() {
+                // public void mouseDoubleClick(MouseEvent e) {
+                // super.mouseDoubleClick(e);
+                // }
+                // public void mouseDown(MouseEvent e) {
+                // if (settingsError != null) {
+                // settingsError.show(IStatus.ERROR, "IvyDE configuration problem", null);
+                // }
+                // }
+                // });
+
+                Text settingsText = (Text) settingsTextDeco.getControl();
+                settingsText.setToolTipText(TOOLTIP_SETTINGS_PATH);
+                settingsTextDeco.getLayoutControl().setLayoutData(
+                    new GridData(GridData.FILL, GridData.CENTER, true, false));
+                settingsText.addModifyListener(new ModifyListener() {
+                    public void modifyText(ModifyEvent e) {
+                        settingsPathUpdated();
+                    }
+                });
+
+                return settingsText;
+            }
+
+            protected boolean addButtons(Composite buttons) {
+                defaultButton = new Button(buttons, SWT.NONE);
+                defaultButton
+                        .setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
+                defaultButton.setText("Default");
+                defaultButton.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e) {
+                        getText().setText("");
+                    }
+                });
+                return true;
+            }
+
+            protected void setFile(String f) {
+                try {
+                    getText().setText(new File(f).toURI().toURL().toExternalForm());
+                } catch (MalformedURLException ex) {
+                    // this cannot happen
+                    IvyPlugin.log(IStatus.ERROR,
+                        "The file got from the file browser has not a valid URL", ex);
+                }
+            }
+
+            protected void textUpdated() {
                 settingsPathUpdated();
             }
-        });
+        };
+        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        propFilesEditor = new PathEditor(this, SWT.NONE, "Property files:", null) {
+            protected void textUpdated() {
+                settingsPathUpdated();
+            }
+
+            protected void setFile(String file) {
+                text.insert(file);
+                textUpdated();
+            }
+
+            protected void setWorkspaceLoc(String workspaceLoc) {
+                text.insert(workspaceLoc);
+                textUpdated();
+            }
+        };
+        propFilesEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
     }
 
     public IvySettingsSetup getIvySettingsSetup() {
         IvySettingsSetup setup = new IvySettingsSetup();
-        setup.setIvySettingsPath(settingsText.getText());
+        setup.setIvySettingsPath(settingsEditor.getText().getText());
         setup.setLoadSettingsOnDemand(loadOnDemandButton.getSelection());
-        setup.setPropertyFiles(IvyClasspathUtil.split(propFilesText.getText()));
+        setup.setPropertyFiles(IvyClasspathUtil.split(propFilesEditor.getText().getText()));
         return setup;
     }
 
@@ -196,7 +211,7 @@ public class SettingsEditor extends Composite {
         } else if (!error.equals(settingsError)) {
             settingsError = error;
             settingsTextDeco.showDecoration(errorDecoration);
-            if (settingsText.isVisible()) {
+            if (settingsEditor.getText().isVisible()) {
                 errorDecoration.setDescription(error.getShortMsg());
                 settingsTextDeco.showHoverText(error.getShortMsg());
             }
@@ -229,15 +244,16 @@ public class SettingsEditor extends Composite {
     }
 
     public void init(IvySettingsSetup setup) {
-        settingsText.setText(setup.getIvySettingsPath());
-        propFilesText.setText(IvyClasspathUtil.concat(setup.getPropertyFiles()));
+        settingsEditor.getText().setText(setup.getRawIvySettingsPath());
+        propFilesEditor.getText().setText(IvyClasspathUtil.concat(setup.getRawPropertyFiles()));
         loadOnDemandButton.setSelection(setup.isLoadSettingsOnDemand());
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        settingsText.setEnabled(enabled);
-        propFilesText.setEnabled(enabled);
+        settingsEditor.setEnabled(enabled);
+        defaultButton.setEnabled(enabled);
+        propFilesEditor.setEnabled(enabled);
         loadOnDemandButton.setEnabled(enabled);
     }
 

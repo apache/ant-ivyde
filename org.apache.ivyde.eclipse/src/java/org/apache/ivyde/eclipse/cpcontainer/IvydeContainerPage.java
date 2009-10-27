@@ -292,6 +292,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
 
+        TabItem settingsTab = new TabItem(tabs, SWT.NONE);
+        settingsTab.setText("Settings");
+        settingsTab.setControl(createSettingsTab(tabs));
+
         TabItem retrieveTab = new TabItem(tabs, SWT.NONE);
         retrieveTab.setText("Retrieve");
         retrieveTab.setControl(createRetrieveTab(tabs));
@@ -315,6 +319,64 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     private Control createMainTab(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+        // CheckStyle:MagicNumber| OFF
+        Composite configComposite = new Composite(composite, SWT.NONE);
+        configComposite.setLayout(new GridLayout(3, false));
+        configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+        // Label for ivy file field
+        Label pathLabel = new Label(configComposite, SWT.NONE);
+        pathLabel.setText("Ivy File");
+
+        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project);
+        ivyFilePathText.addListener(new IvyXmlPathListener() {
+            public void ivyXmlPathUpdated(String path) {
+                conf.setIvyXmlPath(path);
+                checkIvyXmlPath();
+            }
+        });
+        ivyFilePathText
+                .setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+
+        // Label for ivy configurations field
+        Label confLabel = new Label(configComposite, SWT.NONE);
+        confLabel.setText("Configurations");
+
+        // table for configuration selection
+        confTableViewer = new ConfTableViewer(configComposite, SWT.NONE);
+        confTableViewer.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+        confTableViewer.addListener(new ConfTableListener() {
+            public void confTableUpdated(List confs) {
+                checkCompleted();
+            }
+        });
+
+        // refresh
+        Button refreshConf = new Button(configComposite, SWT.NONE);
+        refreshConf.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
+        refreshConf.setText("Refresh");
+        refreshConf.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent ev) {
+                ModuleDescriptor md;
+                try {
+                    md = state.getModuleDescriptor();
+                } catch (IvyDEException e) {
+                    md = null;
+                    e.show(IStatus.ERROR, "Ivy configuration error",
+                        "The configurations of the ivy.xml could not be retrieved: ");
+                }
+                confTableViewer.setModuleDescriptor(md);
+            }
+        });
+
+        return composite;
+    }
+
+    private Control createSettingsTab(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
@@ -359,55 +421,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             public void settingsEditorUpdated(IvySettingsSetup setup) {
                 conf.setIvySettingsSetup(setup);
                 settingsUpdated();
-            }
-        });
-
-        horizontalLine = new Label(configComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
-        // CheckStyle:MagicNumber| OFN
-
-        // Label for ivy file field
-        Label pathLabel = new Label(configComposite, SWT.NONE);
-        pathLabel.setText("Ivy File");
-
-        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project);
-        ivyFilePathText.addListener(new IvyXmlPathListener() {
-            public void ivyXmlPathUpdated(String path) {
-                conf.setIvyXmlPath(path);
-                checkIvyXmlPath();
-            }
-        });
-        ivyFilePathText
-                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-
-        // Label for ivy configurations field
-        Label confLabel = new Label(configComposite, SWT.NONE);
-        confLabel.setText("Configurations");
-
-        // table for configuration selection
-        confTableViewer = new ConfTableViewer(configComposite, SWT.NONE);
-        confTableViewer.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-        confTableViewer.addListener(new ConfTableListener() {
-            public void confTableUpdated(List confs) {
-                checkCompleted();
-            }
-        });
-
-        // refresh
-        Button refreshConf = new Button(configComposite, SWT.NONE);
-        refreshConf.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
-        refreshConf.setText("Refresh");
-        refreshConf.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent ev) {
-                ModuleDescriptor md;
-                try {
-                    md = state.getModuleDescriptor();
-                } catch (IvyDEException e) {
-                    md = null;
-                    e.show(IStatus.ERROR, "Ivy configuration error",
-                        "The configurations of the ivy.xml could not be retrieved: ");
-                }
-                confTableViewer.setModuleDescriptor(md);
             }
         });
 

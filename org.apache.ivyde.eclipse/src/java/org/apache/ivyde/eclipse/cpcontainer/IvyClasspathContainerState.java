@@ -43,7 +43,6 @@ import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -56,10 +55,6 @@ import org.osgi.framework.BundleContext;
  * build the Ivy bean on demand and can cache it.
  */
 public class IvyClasspathContainerState {
-
-    private static final String PROJECT_SCHEME_PREFIX = "project://";
-
-    private static final int PROJECT_SCHEME_PREFIX_LENGTH = PROJECT_SCHEME_PREFIX.length();
 
     private Ivy ivy;
 
@@ -172,47 +167,6 @@ public class IvyClasspathContainerState {
             return ivy;
         }
 
-        if (settingsPath.startsWith(PROJECT_SCHEME_PREFIX)) {
-            int pathIndex = settingsPath.indexOf("/", PROJECT_SCHEME_PREFIX_LENGTH);
-            String projectName = settingsPath.substring(PROJECT_SCHEME_PREFIX_LENGTH, pathIndex);
-            String path = settingsPath.substring(pathIndex + 1);
-            if (projectName.equals("")) {
-                if (FakeProjectManager.isFake(conf.getJavaProject())) {
-                    // this is a fake project, we are in the launch config, project:// is forbidden
-                    IvyDEException ex = new IvyDEException("Invalid Ivy settings path",
-                            "the project:/// scheme is not allowed in the launch configurations '"
-                                    + settingsPath + "'", null);
-                    setConfStatus(ex);
-                    throw ex;
-                }
-                File file = conf.getJavaProject().getProject().getLocation().append(path).toFile();
-                if (!file.exists()) {
-                    IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                            "The Ivy settings file '" + settingsPath + "' cannot be found", null);
-                    setConfStatus(ex);
-                    throw ex;
-                }
-                return getIvy(file);
-            } else {
-                IResource p = ResourcesPlugin.getWorkspace().getRoot().findMember(projectName);
-                if (p == null) {
-                    IvyDEException ex = new IvyDEException("Project '" + projectName
-                            + "' not found", "The project name '" + projectName + "' from '"
-                            + settingsPath + "' was not found", null);
-                    setConfStatus(ex);
-                    throw ex;
-                }
-                File file = p.getProject().getFile(path).getLocation().toFile();
-                if (!file.exists()) {
-                    IvyDEException ex = new IvyDEException("Ivy settings file not found",
-                            "The Ivy settings file '" + path + "' cannot be found in project '"
-                                    + projectName + "'", null);
-                    setConfStatus(ex);
-                    throw ex;
-                }
-                return getIvy(file);
-            }
-        }
         // before returning the found ivy, try to refresh it if the settings changed
         URL url;
         try {
@@ -255,7 +209,7 @@ public class IvyClasspathContainerState {
     }
 
     private Ivy getIvy(File file) throws IvyDEException {
-        String ivySettingsPath = conf.getIvySettingsSetup().getIvySettingsPath();
+        String ivySettingsPath = conf.getIvySettingsSetup().getResolvedIvySettingsPath();
         if (!file.exists()) {
             IvyDEException ex = new IvyDEException("Ivy settings file not found",
                     "The Ivy settings file '" + ivySettingsPath + "' cannot be found", null);

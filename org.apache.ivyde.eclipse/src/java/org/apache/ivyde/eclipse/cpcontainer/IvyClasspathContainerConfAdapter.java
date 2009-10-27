@@ -44,6 +44,8 @@ public final class IvyClasspathContainerConfAdapter {
 
     private static final String PROJECT_SCHEME_PREFIX = "project://";
 
+    private static final int PROJECT_SCHEME_PREFIX_LENGTH = PROJECT_SCHEME_PREFIX.length();
+
     private IvyClasspathContainerConfAdapter() {
         // utility class
     }
@@ -181,7 +183,9 @@ public final class IvyClasspathContainerConfAdapter {
 
     /**
      * Read old configuration that were based on relative urls, like: "file://./ivysettings.xml" or
-     * "file:./ivysettings.xml". This kind of URL "project:///ivysettings.xml" should be used now.
+     * "file:./ivysettings.xml", and also URL like "project:///ivysettings.xml".
+     * <p>
+     * It will be replaced by the Eclipse variable ${workspace_loc: ... }
      * 
      * @param value
      *            the value to read
@@ -190,6 +194,13 @@ public final class IvyClasspathContainerConfAdapter {
     private static String readOldSettings(IvyClasspathContainerConfiguration conf, String value) {
         if (FakeProjectManager.isFake(conf.getJavaProject())) {
             return value;
+        }
+        if (value.startsWith(PROJECT_SCHEME_PREFIX)) {
+            String path = value.substring(PROJECT_SCHEME_PREFIX_LENGTH);
+            if (path.startsWith("/")) {
+                path = conf.getJavaProject().getProject().getName() + path;
+            }
+            return "${workspace_loc:" + path + "}";
         }
         URL url;
         try {
@@ -206,7 +217,8 @@ public final class IvyClasspathContainerConfAdapter {
         if (urlpath != null && urlpath.startsWith("./")) {
             urlpath = urlpath.substring(1);
         }
-        return PROJECT_SCHEME_PREFIX + urlpath;
+        conf.getJavaProject().getProject().getName();
+        return "${workspace_loc:" + conf.getJavaProject().getProject().getName() + urlpath + "}";
     }
 
     private static void checkNonNullConf(IvyClasspathContainerConfiguration conf) {
@@ -214,9 +226,9 @@ public final class IvyClasspathContainerConfAdapter {
         IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
         ContainerMappingSetup prefStoreMappingSetup = IvyPlugin.getPreferenceStoreHelper()
                 .getContainerMappingSetup();
-        if (settingsSetup.getPropertyFiles() == null) {
+        if (settingsSetup.getRawPropertyFiles() == null) {
             settingsSetup.setPropertyFiles(IvyPlugin.getPreferenceStoreHelper()
-                    .getIvySettingsSetup().getPropertyFiles());
+                    .getIvySettingsSetup().getRawPropertyFiles());
         }
         if (mappingSetup.getAcceptedTypes() == null) {
             mappingSetup.setAcceptedTypes(prefStoreMappingSetup.getAcceptedTypes());
@@ -244,9 +256,9 @@ public final class IvyClasspathContainerConfAdapter {
             append(path, "confs", conf.getConfs());
             if (conf.isSettingsProjectSpecific()) {
                 IvySettingsSetup setup = conf.getIvySettingsSetup();
-                append(path, "ivySettingsPath", setup.getIvySettingsPath());
+                append(path, "ivySettingsPath", setup.getRawIvySettingsPath());
                 append(path, "loadSettingsOnDemand", setup.isLoadSettingsOnDemand());
-                append(path, "propertyFiles", setup.getPropertyFiles());
+                append(path, "propertyFiles", setup.getRawPropertyFiles());
             }
             if (conf.isRetrieveProjectSpecific()) {
                 RetrieveSetup setup = conf.getRetrieveSetup();

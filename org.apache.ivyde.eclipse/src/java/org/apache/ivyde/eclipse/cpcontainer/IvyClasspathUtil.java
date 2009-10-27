@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.FakeProjectManager;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -180,7 +181,14 @@ public final class IvyClasspathUtil {
                         IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
                         if (cp instanceof IvyClasspathContainer) {
                             IvyClasspathContainer ivycp = (IvyClasspathContainer) cp;
-                            if (ivycp.getConf().getInheritedIvySettingsPath().equals(
+                            String settingsPath;
+                            try {
+                                settingsPath = ivycp.getConf().getInheritedIvySettingsPath();
+                            } catch (IvyDEException e) {
+                                // cannot resolve the ivy settings so just ignore
+                                continue;
+                            }
+                            if (settingsPath.equals(
                                 ivySettings.getProjectRelativePath().toString())) {
                                 containers.add(ivycp);
                             }
