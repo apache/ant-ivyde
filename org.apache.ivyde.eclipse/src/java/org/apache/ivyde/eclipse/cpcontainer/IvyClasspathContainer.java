@@ -25,12 +25,12 @@ import java.util.Comparator;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -45,7 +45,6 @@ import org.eclipse.jdt.internal.core.DeltaProcessingState;
 import org.eclipse.jdt.internal.core.JavaElementDelta;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.ui.packageview.PackageExplorerContentProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -55,8 +54,7 @@ import org.osgi.framework.Constants;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String CONTAINER_ID =
-        "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     private IClasspathEntry[] classpathEntries;
 
@@ -141,39 +139,27 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
     };
 
-    private IvyResolveJob computeClasspathEntries(final boolean usePreviousResolveIfExist,
-            boolean isUser) {
-        try {
-            synchronized (this) {
-                if (job != null) {
-                    // resolve job already running
-                    return job;
-                }
-                job = new IvyResolveJob(this, usePreviousResolveIfExist);
-                job.setUser(isUser);
-                job.setRule(RESOLVE_EVENT_RULE);
+    private IvyResolveJob createResolveJob(final boolean usePreviousResolveIfExist, boolean isUser) {
+        synchronized (this) {
+            if (job != null) {
+                // resolve job already running
                 return job;
             }
-        } catch (Throwable e) {
-            // IVYDE-79 : catch Throwable in order to catch java.lang.NoClassDefFoundError too
-            Message.error(e.getMessage());
-            IvyPlugin.log(IStatus.ERROR, "The creation of the job failed", e);
-            MessageDialog.openError(IvyPlugin.getActiveWorkbenchShell(), "Resolve failed", e
-                    .getMessage());
-            return null;
+            job = new IvyResolveJob(this, usePreviousResolveIfExist);
+            job.setUser(isUser);
+            job.setRule(RESOLVE_EVENT_RULE);
+            return job;
         }
     }
 
-    public void launchResolve(boolean usePreviousResolveIfExist, boolean isUser,
+    public IStatus launchResolve(boolean usePreviousResolveIfExist, boolean isUser,
             IProgressMonitor monitor) {
-        IvyResolveJob j = computeClasspathEntries(usePreviousResolveIfExist, isUser);
-        if (j != null) {
-            if (monitor != null) {
-                j.run(monitor);
-            } else {
-                j.schedule();
-            }
+        IvyResolveJob j = createResolveJob(usePreviousResolveIfExist, isUser);
+        if (monitor != null) {
+            return j.run(monitor);
         }
+        j.schedule();
+        return Status.OK_STATUS;
     }
 
     void updateClasspathEntries(final IClasspathEntry[] newEntries) {
@@ -210,7 +196,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 null);
 
             // the following code was imported from:
-          // http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide/eclipse
+            // http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide/eclipse
             // /embedder/BuildPathManager.java
             // revision: 370; function setClasspathContainer; line 215
 

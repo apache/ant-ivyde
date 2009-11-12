@@ -17,58 +17,31 @@
  */
 package org.apache.ivyde.eclipse.ui.actions;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvyMultiResolveJob;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.Action;
 
 public class ProjectResolveAction extends Action {
-    IProject[] projects;
-    
+
+    private final IProject[] projects;
+
     public ProjectResolveAction(IProject[] projects) {
         this.projects = projects;
         this.setText("Resolve");
     }
-    
+
     public void run() {
-        final IProject[] finalProjects = projects;
+        List allContainers = new ArrayList();
+        for (int i = 0; i < projects.length; i++) {
+            allContainers.addAll(IvyClasspathUtil.getIvyClasspathContainers(projects[i]));
+        }
 
-        Job multipleResolveJob = new Job("Resolving dependencies") {
-            protected IStatus run(IProgressMonitor monitor) {
-                for (int i = 0; i < finalProjects.length; i++) {
-                    IJavaProject javaProject = JavaCore.create(finalProjects[i]);
-                    if (javaProject == null)
-                        continue;
-
-                    List/* <IvyClasspathContainer> */classpathContainers = IvyClasspathUtil
-                            .getIvyClasspathContainers(javaProject);
-
-                    Iterator containerIterator = classpathContainers.iterator();
-                    while (containerIterator.hasNext()) {
-                        if (monitor.isCanceled()) {
-                            return Status.CANCEL_STATUS;
-                        }
-                        SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-                        IvyClasspathContainer container = (IvyClasspathContainer) containerIterator
-                                .next();
-                        container.launchResolve(false, true, subMonitor);
-                    }
-                }
-                
-                return Status.OK_STATUS;
-            }
-        };
-
+        Job multipleResolveJob = new IvyMultiResolveJob(allContainers);
         multipleResolveJob.setUser(true);
         multipleResolveJob.schedule();
     }

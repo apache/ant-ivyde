@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.workspaceresolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -25,6 +26,7 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvyMultiResolveJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -35,14 +37,10 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -113,21 +111,10 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         // dependent projects after the close operation has finished.
         IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
         ISchedulingRule modifyRule = ruleFactory.modifyRule(javaProject.getCorrespondingResource());
-        class IvyClosedProjectJob extends WorkspaceJob {
-
-            public IvyClosedProjectJob() {
-                super("IvyClosedProjectJob");
-            }
-
-            public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-                resolveAffectedProjects(javaProject.getPath(), isUser(), monitor);
-                return Status.OK_STATUS;
-            }
-        }
-
-        IvyClosedProjectJob job = new IvyClosedProjectJob();
-        job.setRule(modifyRule);
-        job.schedule();
+        List affectedContainers = getAffectedContainers(javaProject.getPath());
+        IvyMultiResolveJob multiResolveJob = new IvyMultiResolveJob(affectedContainers);
+        multiResolveJob.setRule(modifyRule);
+        multiResolveJob.schedule();
 
     }
 
@@ -172,30 +159,27 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
         ISchedulingRule modifyRule = ruleFactory.modifyRule(ResourcesPlugin.getWorkspace()
                 .getRoot());
-        class IvyOpenProjectJob extends WorkspaceJob {
-
-            public IvyOpenProjectJob() {
-                super("IvyOpenProjectJob");
-            }
-
-            public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-                resolveAllProjectsExcept(projects, isUser(), monitor);
-                return Status.OK_STATUS;
-            }
-        }
-
-        IvyOpenProjectJob job = new IvyOpenProjectJob();
-        job.setRule(modifyRule);
-        job.schedule();
+        List allContainers = getAllContainersExcludingProjects(projects);
+        IvyMultiResolveJob multiResolveJob = new IvyMultiResolveJob(allContainers);
+        multiResolveJob.setRule(modifyRule);
+        multiResolveJob.schedule();
     }
 
-    /*
-     * Only resolve those projects which include the specified project path as ivy dependency
+    /**
+     * Return the IvyDE container which include the specified project path as ivy dependency
      */
-    private void resolveAffectedProjects(IPath projectPath, boolean isUser, IProgressMonitor monitor)
-            throws JavaModelException {
+    private List getAffectedContainers(IPath projectPath) {
+        List/* <IvyClasspathContainer> */allContainers = new ArrayList();
+
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        IJavaProject[] projects = JavaCore.create(root).getJavaProjects();
+        IJavaProject[] projects;
+        try {
+            projects = JavaCore.create(root).getJavaProjects();
+        } catch (JavaModelException e) {
+            // something bad happend in the JDT...
+            IvyPlugin.log(e);
+            return allContainers;
+        }
 
         for (int i = 0; i < projects.length; i++) {
             IJavaProject javaProject = projects[i];
@@ -212,44 +196,35 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                             || !containerEntry.getPath().equals(projectPath)) {
                         continue;
                     }
-
-                    SubProgressMonitor subMonitor = null;
-                    if (monitor != null) {
-                        if (monitor.isCanceled()) {
-                            return;
-                        }
-                        subMonitor = new SubProgressMonitor(monitor, 1);
-                    }
-                    ivycp.launchResolve(false, isUser, subMonitor);
+                    allContainers.add(ivycp);
                     break;
                 }
             }
         }
+
+        return allContainers;
     }
 
-    private void resolveAllProjectsExcept(Collection sourceProjects, boolean isUser,
-            IProgressMonitor monitor) throws JavaModelException {
-        IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot())
-                .getJavaProjects();
+    private List getAllContainersExcludingProjects(Collection sourceProjects) {
+        List/* <IvyClasspathContainer> */allContainers = new ArrayList();
+
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IJavaProject[] projects;
+        try {
+            projects = JavaCore.create(root).getJavaProjects();
+        } catch (JavaModelException e) {
+            // something bad happend in the JDT...
+            IvyPlugin.log(e);
+            return allContainers;
+        }
+
         for (int i = 0; i < projects.length; i++) {
-            if (sourceProjects.contains(projects[i])) {
-                continue;
-            }
-            SubProgressMonitor subMonitor = null;
-            if (monitor != null) {
-                if (monitor.isCanceled()) {
-                    return;
-                }
-                subMonitor = new SubProgressMonitor(monitor, 1);
-            }
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(projects[i]);
-            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
-            while (itContainer.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
-                ivycp.launchResolve(false, isUser, subMonitor);
+            if (!sourceProjects.contains(projects[i])) {
+                allContainers.addAll(IvyClasspathUtil.getIvyClasspathContainers(projects[i]));
             }
         }
+
+        return allContainers;
     }
 
 }

@@ -22,8 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -295,10 +295,10 @@ public final class IvyClasspathUtil {
 
     public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(IProject project) {
         IJavaProject javaProject = JavaCore.create(project);
-        if (javaProject.exists()) {
+        if (javaProject != null && javaProject.exists()) {
             return getIvyClasspathContainers(javaProject);
         }
-        return Arrays.asList(new IvyClasspathContainer[] {});
+        return Collections.EMPTY_LIST;
     }
 
     /**
