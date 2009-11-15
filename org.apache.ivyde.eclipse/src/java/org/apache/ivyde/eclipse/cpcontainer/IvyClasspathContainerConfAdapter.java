@@ -208,6 +208,9 @@ public final class IvyClasspathContainerConfAdapter {
         } catch (MalformedURLException e) {
             return value;
         }
+        if (url.getProtocol() != null && !url.getProtocol().equals("file")) {
+            return value;
+        }
         File file = new File(url.getPath());
         if (file.exists()) {
             return value;
