@@ -8,3 +8,8 @@ Environment:
 Expectation:
  * each IvyDE classpath container to resolve correctly
  * the projects are expected to compile correctly
+
+Exception:
+ * project 'linked-folder': it is relying on some Eclipse linked folder which
+   requires some absolute path. You probably will require to change it to make
+   it resolve correctly

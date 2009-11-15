@@ -40,6 +40,7 @@ import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceIvySettings;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -320,8 +321,14 @@ public class IvyClasspathContainerState {
     public File getIvyFile() {
         File file = new File(conf.getIvyXmlPath());
         if (!file.isAbsolute() && !FakeProjectManager.isFake(conf.getJavaProject())) {
-            file = conf.getJavaProject().getProject().getLocation().append(conf.getIvyXmlPath())
-                    .toFile();
+            Path ivyPath = new Path(conf.getIvyXmlPath());
+            // get the file location in Eclipse "space"
+            IFile ivyfile = conf.getJavaProject().getProject().getFile(ivyPath);
+            // compute the actual file system location, following Eclipse's linked folders (see
+            // IVYDE-211)
+            IPath ivyLocation = ivyfile.getLocation();
+            // get the corresponding java.io.File instance
+            file = ivyLocation.toFile();
         }
         return file;
     }
