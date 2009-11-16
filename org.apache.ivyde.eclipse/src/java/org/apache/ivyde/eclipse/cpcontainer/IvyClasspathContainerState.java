@@ -210,7 +210,7 @@ public class IvyClasspathContainerState {
     }
 
     private Ivy getIvy(File file) throws IvyDEException {
-        String ivySettingsPath = conf.getIvySettingsSetup().getResolvedIvySettingsPath();
+        String ivySettingsPath = conf.getInheritedIvySettingsPath();
         if (!file.exists()) {
             IvyDEException ex = new IvyDEException("Ivy settings file not found",
                     "The Ivy settings file '" + ivySettingsPath + "' cannot be found", null);
