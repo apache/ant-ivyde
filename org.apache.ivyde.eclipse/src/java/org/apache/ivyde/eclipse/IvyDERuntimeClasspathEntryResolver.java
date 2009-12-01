@@ -129,6 +129,9 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
 
     public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry,
             IJavaProject project) throws CoreException {
+        if(!(entry instanceof IRuntimeClasspathEntry2))
+            return new IRuntimeClasspathEntry[] { entry };
+        
         IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
         IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(null);
         List resolved = new ArrayList();
