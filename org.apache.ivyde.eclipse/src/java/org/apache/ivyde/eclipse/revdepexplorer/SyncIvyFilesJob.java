@@ -85,7 +85,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             }
     
             public ModuleRevisionId transform(ModuleRevisionId mrid) {
-                if(mrid.getRevision().contains("working@")) {
+                if(mrid.getRevision().indexOf("working@") > -1) {
                     return new NullableRevisionModuleRevisionId(mrid.getModuleId(), null);
                 }
                 return new ModuleRevisionId(mrid.getModuleId(), mrid.getRevision());
