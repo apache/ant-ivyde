@@ -43,7 +43,8 @@ public class XMLEditor extends TextEditor {
         super.dispose();
     }
 
-    private static final String CONTENTASSIST_PROPOSAL_ID = "org.apache.ivyde.ContentAssistProposal";
+    private static final String CONTENTASSIST_PROPOSAL_ID
+            = "org.apache.ivyde.ContentAssistProposal";
 
     private XMLConfiguration configuration;
 

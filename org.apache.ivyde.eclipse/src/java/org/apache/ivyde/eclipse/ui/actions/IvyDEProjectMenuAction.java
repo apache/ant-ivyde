@@ -52,8 +52,8 @@ public class IvyDEProjectMenuAction extends IvyDEProjectAction implements IMenuC
 
     protected void fill(Menu menu, IProject[] projects) {
         ProjectResolveAction resolveAction = new ProjectResolveAction(projects);
-        ProjectViewReverseDependenciesAction viewReverseAction = new ProjectViewReverseDependenciesAction(
-                projects, getPage());
+        ProjectViewReverseDependenciesAction viewReverseAction =
+            new ProjectViewReverseDependenciesAction(projects, getPage());
 
         new ActionContributionItem(resolveAction).fill(menu, -1);
         new Separator().fill(menu, -1);

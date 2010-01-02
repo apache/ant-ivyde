@@ -80,17 +80,15 @@ public class IvyFileResourceListener implements IResourceChangeListener {
         }
     }
 
-    private static final IResourceDeltaVisitor visitor = new IvyVisitor();
+    private static final IResourceDeltaVisitor VISITOR = new IvyVisitor();
 
     public void resourceChanged(IResourceChangeEvent event) {
-        switch (event.getType()) {
-            case IResourceChangeEvent.PRE_BUILD:
-                try {
-                    event.getDelta().accept(visitor);
-                } catch (CoreException e) {
-                    IvyPlugin.log(e);
-                }
-                break;
+        if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
+            try {
+                event.getDelta().accept(VISITOR);
+            } catch (CoreException e) {
+                IvyPlugin.log(e);
+            }
         }
     }
 }

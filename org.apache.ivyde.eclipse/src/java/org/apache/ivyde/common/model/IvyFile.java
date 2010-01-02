@@ -86,8 +86,8 @@ public abstract class IvyFile {
                 return false;
             }
             if (c == '<'
-                    && (documentOffset + 1 >= doc.length() || (doc.charAt(documentOffset + 1) != '!' && doc
-                            .charAt(documentOffset + 1) != '?'))) {
+                    && (documentOffset + 1 >= doc.length() || (doc.charAt(documentOffset + 1) != '!'
+                    && doc.charAt(documentOffset + 1) != '?'))) {
                 return hasSpace;
             }
         }

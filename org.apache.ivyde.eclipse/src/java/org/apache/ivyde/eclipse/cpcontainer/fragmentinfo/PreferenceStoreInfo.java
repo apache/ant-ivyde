@@ -79,7 +79,8 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
                 .toPortableString());
     }
 
-    public void setJavaDocLocation(IPath containerPath, String entryPath, URL libraryJavadocLocation) {
+    public void setJavaDocLocation(IPath containerPath, String entryPath,
+            URL libraryJavadocLocation) {
         preferenceStore.setValue(entryPath + DOC_SUFFIX, libraryJavadocLocation == null ? ""
                 : libraryJavadocLocation.toString());
     }

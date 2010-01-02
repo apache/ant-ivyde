@@ -32,16 +32,21 @@ import org.apache.ivy.util.FileUtil;
 public class IvyFileUpdater {
     private static final String NL = System.getProperty("line.separator");
 
-    private static class UpdateInfo {
-        int insertFromIndex = 0;
+    private static final class UpdateInfo {
 
-        int insertToIndex = 0;
+        private int insertFromIndex = 0;
 
-        String prefix = "";
+        private int insertToIndex = 0;
 
-        String suffix = "";
+        private String prefix = "";
 
-        String insert = "";
+        private String suffix = "";
+
+        private String insert = "";
+
+        private UpdateInfo() {
+            // nothing to do
+        }
     }
 
     public void addDependency(File ivyFile, String org, String name, String revision,
@@ -78,7 +83,8 @@ public class IvyFileUpdater {
         }
     }
 
-    private void update(File ivyFile, String content, UpdateInfo info) throws FileNotFoundException {
+    private void update(File ivyFile, String content, UpdateInfo info)
+            throws FileNotFoundException {
         PrintWriter w = new PrintWriter(new FileOutputStream(ivyFile));
         try {
             w.print(content.substring(0, info.insertFromIndex));

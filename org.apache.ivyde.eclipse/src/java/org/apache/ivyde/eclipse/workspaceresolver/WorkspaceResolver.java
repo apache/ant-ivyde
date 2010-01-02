@@ -121,7 +121,8 @@ public class WorkspaceResolver extends AbstractResolver {
                     + resolvingJavaProject.getElementName(), e);
         }
 
-        ignoreVersionOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper().getIgnoreVersionOnWorkspaceProjects();
+        ignoreVersionOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper()
+                .getIgnoreVersionOnWorkspaceProjects();
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {

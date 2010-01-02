@@ -23,10 +23,7 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -210,7 +207,8 @@ public class IvyClasspathContainerConfiguration {
 
     public String getInheritedIvySettingsPath() throws IvyDEException {
         if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup().getResolvedIvySettingsPath();
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
+                    .getResolvedIvySettingsPath();
         }
         return ivySettingsSetup.getResolvedIvySettingsPath();
     }
@@ -225,7 +223,8 @@ public class IvyClasspathContainerConfiguration {
 
     public Collection getInheritedPropertyFiles() throws IvyDEException {
         if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup().getResolvedPropertyFiles();
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
+                    .getResolvedPropertyFiles();
         } else {
             return ivySettingsSetup.getResolvedPropertyFiles();
         }

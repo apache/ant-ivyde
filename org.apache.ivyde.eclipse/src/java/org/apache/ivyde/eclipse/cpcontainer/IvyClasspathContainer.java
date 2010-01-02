@@ -54,7 +54,8 @@ import org.osgi.framework.Constants;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID =
+        "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     private IClasspathEntry[] classpathEntries;
 
@@ -139,7 +140,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
     };
 
-    private IvyResolveJob createResolveJob(final boolean usePreviousResolveIfExist, boolean isUser) {
+    private IvyResolveJob createResolveJob(final boolean usePreviousResolveIfExist,
+            boolean isUser) {
         synchronized (this) {
             if (job != null) {
                 // resolve job already running
@@ -196,8 +198,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 null);
 
             // the following code was imported from:
-            // http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide/eclipse
-            // /embedder/BuildPathManager.java
+            // http://svn.codehaus.org/m2eclipse/trunk/org.maven.ide.eclipse/src/org/maven/ide
+            // /eclipse/embedder/BuildPathManager.java
             // revision: 370; function setClasspathContainer; line 215
 
             // XXX In Eclipse 3.3, changes to resolved classpath are not announced by JDT Core

@@ -157,12 +157,12 @@ public class SettingsEditor extends Composite {
             }
 
             protected void setFile(String file) {
-                text.insert(file);
+                getText().insert(file);
                 textUpdated();
             }
 
             protected void setWorkspaceLoc(String workspaceLoc) {
-                text.insert(workspaceLoc);
+                getText().insert(workspaceLoc);
                 textUpdated();
             }
         };

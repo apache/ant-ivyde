@@ -65,6 +65,9 @@ public class IvyMultiResolveJob extends Job {
                 case IStatus.ERROR:
                     errorsStatus.add(jobStatus);
                     break;
+                default:
+                    IvyPlugin.log(IStatus.WARNING, "Unknown IStatus: " + jobStatus.getCode(),
+                        null);
             }
         }
 

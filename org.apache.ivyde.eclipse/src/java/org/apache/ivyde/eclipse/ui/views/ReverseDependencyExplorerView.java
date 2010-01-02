@@ -60,6 +60,15 @@ import org.eclipse.ui.part.ViewPart;
  * This is a view to manage synchronizing ivy files in a workspace
  */
 public class ReverseDependencyExplorerView extends ViewPart {
+
+    private static final int COLUMN_MIN_WITH = 75;
+
+    private static final int COLUMN_DEFAULT_WEIGHT = 50;
+
+    private static final int COLUMN_LIGHT_WEIGHT = 25;
+
+    private static final RGB LIGHT_GREEEN = new RGB(50, 150, 50);
+
     private static TreeViewer viewer;
 
     private static MultiRevisionDependencyDescriptor[] dependencies;
@@ -140,10 +149,10 @@ public class ReverseDependencyExplorerView extends ViewPart {
         tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         TableLayout layout = new TableLayout();
-        layout.addColumnData(new ColumnWeightData(50, 75, true));
-        layout.addColumnData(new ColumnWeightData(50, 75, true));
-        layout.addColumnData(new ColumnWeightData(25, 75, true));
-        layout.addColumnData(new ColumnWeightData(50, 75, true));
+        layout.addColumnData(new ColumnWeightData(COLUMN_DEFAULT_WEIGHT, COLUMN_MIN_WITH, true));
+        layout.addColumnData(new ColumnWeightData(COLUMN_DEFAULT_WEIGHT, COLUMN_MIN_WITH, true));
+        layout.addColumnData(new ColumnWeightData(COLUMN_LIGHT_WEIGHT, COLUMN_MIN_WITH, true));
+        layout.addColumnData(new ColumnWeightData(COLUMN_DEFAULT_WEIGHT, COLUMN_MIN_WITH, true));
         tree.setLayout(layout);
 
         new TreeColumn(tree, SWT.LEFT).setText("Organization");
@@ -162,7 +171,9 @@ public class ReverseDependencyExplorerView extends ViewPart {
         editors[0] = new TextCellEditor(tree);
         editors[1] = new TextCellEditor(tree);
         editors[2] = new TextCellEditor(tree);
+        // CheckStyle:MagicNumber| OFF
         editors[3] = new TextCellEditor(tree);
+        // CheckStyle:MagicNumber| ON
 
         viewer.setCellModifier(new CellModifier());
         viewer.setCellEditors(editors);
@@ -186,14 +197,14 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 for (int i = 0; i < items.length; i++) {
                     TreeItem item = items[i];
-                    MultiRevisionDependencyDescriptor multiRevisionDescriptor = (MultiRevisionDependencyDescriptor) item
-                            .getData();
+                    MultiRevisionDependencyDescriptor multiRevisionDescriptor
+                        = (MultiRevisionDependencyDescriptor) item.getData();
 
                     if (multiRevisionDescriptor.hasMultipleRevisons()
                             && !multiRevisionDescriptor.hasNewRevision()) {
                         item.setForeground(display.getSystemColor(SWT.COLOR_RED));
                     } else if (multiRevisionDescriptor.hasNewRevision()) {
-                        item.setForeground(new Color(Display.getDefault(), new RGB(50, 150, 50)));
+                        item.setForeground(new Color(Display.getDefault(), LIGHT_GREEEN));
                     } else {
                         item.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
                     }
@@ -222,22 +233,25 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
         public String getColumnText(Object obj, int index) {
             if (obj instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor dependencyDescriptor = (MultiRevisionDependencyDescriptor) obj;
+                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) obj;
 
                 switch (index) {
                     case 0:
-                        return dependencyDescriptor.getOrganization();
+                        return mrdd.getOrganization();
                     case 1:
-                        return dependencyDescriptor.getModule();
+                        return mrdd.getModule();
                     case 2:
-                        return toRevisionList(dependencyDescriptor.getRevisions());
+                        return toRevisionList(mrdd.getRevisions());
+                        // CheckStyle:MagicNumber| OFF
                     case 3:
-                        return dependencyDescriptor.getNewRevision();
+                        // CheckStyle:MagicNumber| ON
+                        return mrdd.getNewRevision();
                     default:
                         break;
                 }
             } else if (obj instanceof ClasspathContainerDependencyDescriptorComposite) {
-                ClasspathContainerDependencyDescriptorComposite containerDescriptorComposite = (ClasspathContainerDependencyDescriptorComposite) obj;
+                ClasspathContainerDependencyDescriptorComposite containerDescriptorComposite
+                        = (ClasspathContainerDependencyDescriptorComposite) obj;
                 switch (index) {
                     case 0:
                         return containerDescriptorComposite.getIvyClasspathContainer()
@@ -282,10 +296,9 @@ public class ReverseDependencyExplorerView extends ViewPart {
         public Image getImage(Object obj) {
             ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
             if (obj instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor multiRevisionDescriptor = (MultiRevisionDependencyDescriptor) obj;
+                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) obj;
 
-                if (multiRevisionDescriptor.hasMultipleRevisons()
-                        && !multiRevisionDescriptor.hasNewRevision()) {
+                if (mrdd.hasMultipleRevisons() && !mrdd.hasNewRevision()) {
                     return sharedImages.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
                 } else {
                     return IvyPlugin.getImageDescriptor("icons/synced.gif").createImage();
@@ -300,14 +313,13 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
         public Object[] getChildren(Object parent) {
             if (parent instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor multiRevisionDescriptor = (MultiRevisionDependencyDescriptor) parent;
-                IvyClasspathContainer[] containers = multiRevisionDescriptor
-                        .getIvyClasspathContainers();
+                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) parent;
+                IvyClasspathContainer[] containers = mrdd.getIvyClasspathContainers();
 
                 Object[] wrappedProjects = new Object[containers.length];
                 for (int i = 0; i < containers.length; i++) {
                     wrappedProjects[i] = new ClasspathContainerDependencyDescriptorComposite(
-                            containers[i], multiRevisionDescriptor);
+                            containers[i], mrdd);
                 }
 
                 return wrappedProjects;
@@ -322,9 +334,9 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
         public boolean hasChildren(Object parent) {
             if (parent instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor multiRevisionDescriptor = (MultiRevisionDependencyDescriptor) parent;
+                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) parent;
 
-                if (multiRevisionDescriptor.getIvyClasspathContainers().length > 0) {
+                if (mrdd.getIvyClasspathContainers().length > 0) {
                     return true;
                 }
             }
@@ -370,20 +382,16 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
 
         public Object getValue(Object element, String property) {
-            if (property.equals(NEW_REVISION)) {
-                if (element instanceof MultiRevisionDependencyDescriptor) {
-                    MultiRevisionDependencyDescriptor dependencyDescriptor = (MultiRevisionDependencyDescriptor) element;
-                    String revision = dependencyDescriptor.getNewRevision();
-
-                    if (revision == null) {
-                        return "";
-                    } else {
-                        return revision;
-                    }
-                }
+            if (!property.equals(NEW_REVISION)
+                    || !(element instanceof MultiRevisionDependencyDescriptor)) {
+                return null;
             }
-
-            return null;
+            MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) element;
+            String revision = mrdd.getNewRevision();
+            if (revision == null) {
+                return "";
+            }
+            return revision;
         }
 
         public void modify(Object element, String property, Object value) {
@@ -393,8 +401,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
             if (element instanceof MultiRevisionDependencyDescriptor
                     && property.equals(NEW_REVISION)) {
-                MultiRevisionDependencyDescriptor multiRevisionDescriptor = (MultiRevisionDependencyDescriptor) element;
-                multiRevisionDescriptor.setNewRevision((String) value);
+                ((MultiRevisionDependencyDescriptor) element).setNewRevision((String) value);
 
                 refresh(false);
             }

@@ -31,7 +31,11 @@ import org.eclipse.jdt.core.JavaCore;
  * see also:
  * org.eclipse.jdt.internal.ui.preferencesUserLibraryPreferencePage#createPlaceholderProject()
  */
-public class FakeProjectManager {
+public final class FakeProjectManager {
+
+    private FakeProjectManager() {
+        // utility class
+    }
 
     public static boolean isFake(IJavaProject project) {
         // a fake project doesn't have real path

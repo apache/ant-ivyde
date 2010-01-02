@@ -31,7 +31,10 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 public class MultiRevisionDependencyDescriptor {
     private final ModuleId moduleId;
 
-    private final Map/* <IvyClasspathContainer, Collection<DependencyDescriptor>> */dependenciesByContainer = new HashMap();
+    /**
+     * Map<IvyClasspathContainer, Collection<DependencyDescriptor>>
+     */
+    private final Map dependenciesByContainer = new HashMap();
 
     private String newRevision;
 
@@ -46,11 +49,11 @@ public class MultiRevisionDependencyDescriptor {
 
     public boolean equals(Object o) {
         if (o instanceof MultiRevisionDependencyDescriptor) {
-            MultiRevisionDependencyDescriptor dependencyDescriptor = (MultiRevisionDependencyDescriptor) o;
+            MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) o;
 
-            if (getOrganization().equals(dependencyDescriptor.getOrganization())
-                    && getModule().equals(dependencyDescriptor.getModule())
-                    && dependenciesByContainer.equals(dependencyDescriptor.dependenciesByContainer)) {
+            if (getOrganization().equals(mrdd.getOrganization())
+                    && getModule().equals(mrdd.getModule())
+                    && dependenciesByContainer.equals(mrdd.dependenciesByContainer)) {
                 return true;
             }
         }
@@ -101,13 +104,12 @@ public class MultiRevisionDependencyDescriptor {
     public String[] getRevisions() {
         Set/* <String> */revisions = new HashSet/* <String> */();
 
-        Collection/* <Collection<DependencyDescriptor>> */projectDependencyDescriptors = dependenciesByContainer
-                .values();
+        /* Collection<Collection<DependencyDescriptor>> */
+        Collection projectDependencyDescriptors = dependenciesByContainer.values();
 
-        Iterator projectCollectionIter = projectDependencyDescriptors.iterator();
-        while (projectCollectionIter.hasNext()) {
-            Collection/* <DependencyDescriptor> */projectCollection = (Collection) projectCollectionIter
-                    .next();
+        Iterator it = projectDependencyDescriptors.iterator();
+        while (it.hasNext()) {
+            Collection/* <DependencyDescriptor> */projectCollection = (Collection) it.next();
             Iterator descriptorIter = projectCollection.iterator();
             while (descriptorIter.hasNext()) {
                 DependencyDescriptor descriptor = (DependencyDescriptor) descriptorIter.next();
@@ -185,7 +187,8 @@ public class MultiRevisionDependencyDescriptor {
      * @return revision
      */
     public String[] getRevisions(IvyClasspathContainer container) {
-        Collection/* <DependencyDescriptor> */containerDependencyDescriptors = (Collection) dependenciesByContainer
+        /* Collection<DependencyDescriptor> */
+        Collection containerDependencyDescriptors = (Collection) dependenciesByContainer
                 .get(container);
 
         if (containerDependencyDescriptors == null) {

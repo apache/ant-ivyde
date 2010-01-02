@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -47,7 +48,8 @@ import org.osgi.framework.Constants;
 public class IvyPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
+    public static final String PEREFERENCE_PAGE_ID
+            = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
 
     private Text organizationText;
 
@@ -155,6 +157,9 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
             case IvyClasspathInitializer.ON_STARTUP_RESOLVE:
                 resolveOnStartupButton.setSelection(true);
                 break;
+            default:
+                IvyPlugin.log(IStatus.WARNING, "Unkwnon resolve-on-startup mode: "
+                        + helper.getResolveOnStartup(), null);
         }
 
         if (helper.getAutoResolveOnChange()) {
@@ -200,6 +205,9 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
             case IvyClasspathInitializer.ON_STARTUP_RESOLVE:
                 resolveOnStartupButton.setSelection(true);
                 break;
+            default:
+                IvyPlugin.log(IStatus.WARNING, "Unkwnon resolve-on-startup mode: "
+                        + PreferenceInitializer.DEFAULT_RESOLVE_ON_STARTUP, null);
         }
 
         if (PreferenceInitializer.DEFAULT_AUTO_RESOLVE_ON_CHANGE) {

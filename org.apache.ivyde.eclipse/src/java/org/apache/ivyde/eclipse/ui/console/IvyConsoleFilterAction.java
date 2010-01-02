@@ -58,7 +58,7 @@ public class IvyConsoleFilterAction extends Action implements IMenuCreator {
         }
 
         fMenu = new Menu(parent);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < LOG_LEVEL_MESSAGES.length; i++) {
             final int logLevel = i;
             Action action = new Action(LOG_LEVEL_MESSAGES[i]) {
                 public void run() {

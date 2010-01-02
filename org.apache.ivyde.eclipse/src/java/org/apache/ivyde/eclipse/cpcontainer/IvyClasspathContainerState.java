@@ -158,7 +158,8 @@ public class IvyClasspathContainerState {
                 } catch (IOException e) {
                     IvyDEException ex = new IvyDEException(
                             "Read error of the default Ivy settings",
-                            "The default Ivy settings file could not be read: " + e.getMessage(), e);
+                            "The default Ivy settings file could not be read: "
+                            + e.getMessage(), e);
                     setConfStatus(ex);
                     throw ex;
                 }
@@ -359,7 +360,8 @@ public class IvyClasspathContainerState {
             return md;
         } catch (MalformedURLException e) {
             IvyDEException ex = new IvyDEException("Incorrect URL of the Ivy file",
-                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "'", e);
+                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath()
+                    + "'", e);
             setConfStatus(ex);
             throw ex;
         } catch (ParseException e) {

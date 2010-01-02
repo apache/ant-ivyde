@@ -38,7 +38,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public abstract class PathEditor extends Composite {
 
-    protected Text text;
+    private Text text;
 
     private Button variableButton;
 
@@ -62,7 +62,9 @@ public abstract class PathEditor extends Composite {
 
         Composite buttons = new Composite(this, SWT.NONE);
         buttons.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true, 2, 1));
+        // CheckStyle:MagicNumber| OFF
         layout = new GridLayout(4, false);
+        // CheckStyle:MagicNumber| ON
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         buttons.setLayout(layout);

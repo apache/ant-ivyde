@@ -168,7 +168,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
         ivyTag.addChildIvyTag(info);
 
         // configurations
-        IvyTag configurations = new IvyTag("configurations", "container for configuration elements");
+        IvyTag configurations = new IvyTag("configurations",
+            "container for configuration elements");
         IvyTag conf = new IvyTag("conf", "declares a configuration of this module");
         conf.addAttribute(new IvyTagAttribute("name", "the name of the declared configuration",
                 true));
@@ -424,12 +425,11 @@ public class IvyModuleDescriptorModel extends IvyModel {
 
         });
         IvyTag conf3 = new IvyTag("conf", "defines configuration mapping has sub element");
-        conf3
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the master configuration to map. \n"
-                                + "'*' wildcard can be used to designate all configurations of this module",
-                        true, masterConfValueProvider));
+        conf3.addAttribute(new IvyTagAttribute(
+            "name",
+            "the name of the master configuration to map. \n"
+            + "'*' wildcard can be used to designate all configurations of this module",
+            true, masterConfValueProvider));
         conf3.addAttribute(new IvyTagAttribute("mapped",
                 "a comma separated list of dependency configurations \n"
                         + "to which this master configuration should be mapped", false,
@@ -485,53 +485,45 @@ public class IvyModuleDescriptorModel extends IvyModel {
         allConf.add(conf3);
         IvyTag mapped = new IvyTag("mapped",
                 "map dependency configurations for this master configuration");
-        mapped
-                .addAttribute(new IvyTagAttribute(
-                        "name",
-                        "the name of the dependency configuration mapped. \n"
-                                + "'*' wildcard can be used to designate all configurations of this module",
-                        true, new IValueProvider() {
-                            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                                Ivy ivy = getIvy();
-                                int[] indexes = ivyFile.getParentTagIndex();
-                                if (indexes != null && ivy != null) {
-                                    indexes = ivyFile.getParentTagIndex(indexes[0]);
-                                    if (indexes != null) {
-                                        Map otherAttValues = ivyFile
-                                                .getAllAttsValues(indexes[0] + 1);
-                                        String org = ((IvyModuleDescriptorFile) ivyFile)
-                                                .getDependencyOrganisation(otherAttValues);
-                                        if (org != null && otherAttValues != null
-                                                && otherAttValues.get("name") != null
-                                                && otherAttValues.get("rev") != null) {
-                                            ResolveData data = new ResolveData(ivy
-                                                    .getResolveEngine(), new ResolveOptions());
-                                            ModuleRevisionId mrid = ModuleRevisionId.newInstance(
-                                                org, (String) otherAttValues.get("name"),
-                                                (String) otherAttValues.get("rev"));
-                                            DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(
-                                                    mrid, false);
-                                            try {
-                                                String[] confs = ivy.getSettings()
-                                                        .getResolver(mrid).getDependency(ddd, data)
-                                                        .getDescriptor().getConfigurationsNames();
-                                                List ret = new ArrayList(Arrays.asList(confs));
-                                                ret.add("*");
-                                                return (String[]) ret
-                                                        .toArray(new String[ret.size()]);
-                                            } catch (ParseException e) {
-                                                getSettings().logError(
-                                                    "The dependencies of " + mrid
-                                                            + " could not be parsed", e);
-                                                return new String[] {"*"};
-                                            }
-                                        }
-                                    }
-                                }
-                                return new String[] {"*"};
-                            }
-
-                        }));
+        mapped.addAttribute(new IvyTagAttribute("name",
+            "the name of the dependency configuration mapped. \n"
+                + "'*' wildcard can be used to designate all configurations of this module",
+            true, new IValueProvider() {
+                public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                    Ivy ivy = getIvy();
+                    int[] indexes = ivyFile.getParentTagIndex();
+                    if (indexes == null || ivy == null) {
+                        return new String[] {"*"};
+                    }
+                    indexes = ivyFile.getParentTagIndex(indexes[0]);
+                    if (indexes == null) {
+                        return new String[] {"*"};
+                    }
+                    Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
+                    String org = ((IvyModuleDescriptorFile) ivyFile)
+                        .getDependencyOrganisation(otherAttValues);
+                    if (org == null || otherAttValues == null || otherAttValues.get("name") == null
+                            || otherAttValues.get("rev") == null) {
+                        return new String[] {"*"};
+                    }
+                    ResolveData data = new ResolveData(ivy.getResolveEngine(),
+                        new ResolveOptions());
+                    ModuleRevisionId mrid = ModuleRevisionId.newInstance(org,
+                        (String) otherAttValues.get("name"), (String) otherAttValues.get("rev"));
+                    DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
+                    try {
+                        String[] confs = ivy.getSettings().getResolver(mrid)
+                            .getDependency(ddd, data).getDescriptor().getConfigurationsNames();
+                        List ret = new ArrayList(Arrays.asList(confs));
+                        ret.add("*");
+                        return (String[]) ret.toArray(new String[ret.size()]);
+                    } catch (ParseException e) {
+                        getSettings().logError("The dependencies of " + mrid
+                            + " could not be parsed", e);
+                    }
+                    return new String[] {"*"};
+                }
+            }));
         conf3.addChildIvyTag(mapped);
         addTag(mapped);
 
@@ -560,13 +552,11 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "an url where this artifact can be found \n"
                         + "if it isn't present at the standard \n" + "location in the repository",
                 false));
-        artifact2
-                .addAttribute(new IvyTagAttribute(
-                        "conf",
-                        "comma separated list of the master configurations \n"
-                                + "in which this artifact should be included. \n"
-                                + "'*' wildcard can be used to designate all configurations of this module",
-                        false, masterConfsValueProvider));
+        artifact2.addAttribute(new IvyTagAttribute("conf",
+            "comma separated list of the master configurations \n"
+                + "in which this artifact should be included. \n"
+                + "'*' wildcard can be used to designate all configurations of this module",
+            false, masterConfsValueProvider));
         IvyTag conf4 = new IvyTag("conf", "configuration in which the artifact should be included");
         conf4.addAttribute(new IvyTagAttribute("name",
                 "the name of the master configuration in which \n"
@@ -591,13 +581,11 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         getDefault("ext"))));
         include.addAttribute(new IvyTagAttribute("matcher",
                 "the matcher to use to match the modules to include", false, matcherNamesProvider));
-        include
-                .addAttribute(new IvyTagAttribute(
-                        "conf",
-                        "comma separated list of the master configurations \n"
-                                + "in which this artifact should be included. \n"
-                                + "'*' wildcard can be used to designate all configurations of this module",
-                        false, masterConfsValueProvider));
+        include.addAttribute(new IvyTagAttribute("conf",
+            "comma separated list of the master configurations \n"
+                + "in which this artifact should be included. \n"
+                + "'*' wildcard can be used to designate all configurations of this module",
+            false, masterConfsValueProvider));
         IvyTag conf5 = new IvyTag("conf", "configuration in which the artifact should be included");
         conf5.addAttribute(new IvyTagAttribute("name",
                 "the name of the master configuration in which \n"

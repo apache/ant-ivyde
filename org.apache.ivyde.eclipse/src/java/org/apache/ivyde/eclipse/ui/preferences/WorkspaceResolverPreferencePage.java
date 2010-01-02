@@ -30,6 +30,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {
 
+    private static final int HORIZ_INDENT = 40;
+
     public WorkspaceResolverPreferencePage() {
         super(GRID);
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
@@ -86,11 +88,12 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
                 + "in your workspace can actually work with each other, be carefull with\n"
                 + "branch management for instance)");
         GridData gridData = new GridData();
-        gridData.horizontalIndent = 40;
+        gridData.horizontalIndent = HORIZ_INDENT;
         warning.setLayoutData(gridData);
     }
 
     public void init(IWorkbench workbench) {
+        // nothing to do
     }
 
 }

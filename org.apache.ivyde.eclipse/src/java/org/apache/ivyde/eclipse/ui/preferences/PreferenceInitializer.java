@@ -159,11 +159,14 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CLOSE, DEFAULT_AUTO_RESOLVE_ON_CLOSE);
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_OPEN, DEFAULT_AUTO_RESOLVE_ON_OPEN);
-        store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, DEFAULT_AUTO_RESOLVE_ON_CHANGE);
+        store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE,
+            DEFAULT_AUTO_RESOLVE_ON_CHANGE);
 
-        store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
+        store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL,
+            DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
 
-        store.setDefault(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS, DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
+        store.setDefault(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
+            DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
     }
 
 }

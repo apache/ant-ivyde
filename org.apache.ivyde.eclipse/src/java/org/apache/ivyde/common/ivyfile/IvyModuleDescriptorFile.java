@@ -39,7 +39,8 @@ public class IvyModuleDescriptorFile extends IvyFile {
         this(settings, projectName, doc, 0);
     }
 
-    public IvyModuleDescriptorFile(IvyModelSettings settings, String projectName, String doc, int currentOffset) {
+    public IvyModuleDescriptorFile(IvyModelSettings settings, String projectName, String doc,
+            int currentOffset) {
         super(settings, projectName, doc, currentOffset);
     }
 

@@ -272,7 +272,8 @@ public final class IvyClasspathUtil {
      *            the project to search into
      * @return the Ivy classpath container if found, otherwise return <code>null</code>
      */
-    public static IClasspathEntry getIvyClasspathEntry(IPath containerPath, IJavaProject javaProject) {
+    public static IClasspathEntry getIvyClasspathEntry(IPath containerPath,
+            IJavaProject javaProject) {
         if (FakeProjectManager.isFake(javaProject)) {
             return null;
         }

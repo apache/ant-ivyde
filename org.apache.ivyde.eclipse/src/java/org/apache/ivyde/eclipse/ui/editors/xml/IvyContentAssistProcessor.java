@@ -50,7 +50,8 @@ public abstract class IvyContentAssistProcessor implements IContentAssistProcess
     /**
      * Call by viewer to retrieve a list of ICompletionProposal
      */
-    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
+    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
+            int documentOffset) {
         // Retrieve current document
         IDocument doc = viewer.getDocument();
         // Retrieve current selection range

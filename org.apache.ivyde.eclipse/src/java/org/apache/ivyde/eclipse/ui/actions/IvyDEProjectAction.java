@@ -36,7 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public abstract class IvyDEProjectAction implements IObjectActionDelegate {
     protected abstract void selectionChanged(IAction action, IProject[] projects);
 
-    protected IWorkbenchPage page;
+    private IWorkbenchPage page;
 
     public void setActivePart(IAction action, IWorkbenchPart targetPart) {
         this.page = targetPart.getSite().getPage();

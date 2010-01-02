@@ -85,7 +85,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             }
     
             public ModuleRevisionId transform(ModuleRevisionId mrid) {
-                if(mrid.getRevision().indexOf("working@") > -1) {
+                if (mrid.getRevision().indexOf("working@") > -1) {
                     return new NullableRevisionModuleRevisionId(mrid.getModuleId(), null);
                 }
                 return new ModuleRevisionId(mrid.getModuleId(), mrid.getRevision());
@@ -120,17 +120,20 @@ public class SyncIvyFilesJob extends WorkspaceJob {
                                         + container.getConf().getIvyXmlPath(), e));
                 continue;
             }
-            
-            Map/*<ModuleRevisionId, String> */ newRevisions = new HashMap/*<ModuleRevisionId, String>*/();
-            
-            DependencyDescriptor[] dependencies = moduleDescriptor.getDependencies();            
-            for(int j = 0; j < dependencies.length; j++) {
+
+            Map/* <ModuleRevisionId, String> */newRevisions = new HashMap();
+
+            DependencyDescriptor[] dependencies = moduleDescriptor.getDependencies();
+            for (int j = 0; j < dependencies.length; j++) {
                 for (int k = 0; k < multiRevisionDependencies.length; k++) {
                     MultiRevisionDependencyDescriptor multiRevision = multiRevisionDependencies[k];
-                    ModuleRevisionId dependencyRevisionId = dependencies[j].getDependencyRevisionId(); 
-                    if (dependencies[j].getDependencyId().equals(multiRevision.getModuleId()) &&
-                            multiRevision.hasNewRevision() && multiRevision.isForContainer(container)) {
-                        newRevisions.put(dependencyRevisionId, multiRevisionDependencies[k].getNewRevision());
+                    ModuleRevisionId dependencyRevisionId = dependencies[j]
+                            .getDependencyRevisionId();
+                    if (dependencies[j].getDependencyId().equals(multiRevision.getModuleId())
+                            && multiRevision.hasNewRevision()
+                            && multiRevision.isForContainer(container)) {
+                        newRevisions.put(dependencyRevisionId, multiRevisionDependencies[k]
+                                .getNewRevision());
                         break; // move on to the next dependency
                     }
                 }
@@ -144,8 +147,9 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             File ivyFile = container.getState().getIvyFile();
             
             File ivyTempFile = new File(ivyFile.toString() + ".temp");
-            try {                
-                XmlModuleDescriptorUpdater.update(ivyFile.toURI().toURL(), ivyTempFile, updateOptions);
+            try {
+                XmlModuleDescriptorUpdater.update(ivyFile.toURI().toURL(), ivyTempFile,
+                    updateOptions);
                 saveChanges(container, ivyFile, ivyTempFile);
             } catch (MalformedURLException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
@@ -196,7 +200,8 @@ public class SyncIvyFilesJob extends WorkspaceJob {
                 .size()]);
     }
 
-    private void saveChanges(IvyClasspathContainer container, File permanentSaveTarget, File temporaryChanges) throws IOException {
+    private void saveChanges(IvyClasspathContainer container, File permanentSaveTarget,
+            File temporaryChanges) throws IOException {
         IvyClasspathContainerConfiguration conf = container.getConf();
         IFile virtualIvyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
         IStatus writable = virtualIvyFile.getWorkspace().validateEdit(new IFile[] {virtualIvyFile},
@@ -204,7 +209,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         if (writable.isOK()) {            
             FileWriter writer = new FileWriter(permanentSaveTarget, false);            
             BufferedReader reader = new BufferedReader(new FileReader(temporaryChanges));
-            while(reader.ready()) {
+            while (reader.ready()) {
                 writer.write(reader.readLine() + "\n");
             }
             writer.flush();

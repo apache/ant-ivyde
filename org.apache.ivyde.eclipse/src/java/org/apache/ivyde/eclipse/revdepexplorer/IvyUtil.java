@@ -35,7 +35,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 
-public class IvyUtil {
+public final class IvyUtil {
+
+    private IvyUtil() {
+        // utility class
+    }
 
     /**
      * This will return all ivy projects in the workspace <br>
@@ -73,8 +77,9 @@ public class IvyUtil {
                             .getDependencies();
                     for (int j = 0; j < descriptors.length; j++) {
                         DependencyDescriptor descriptor = descriptors[j];
-                        MultiRevisionDependencyDescriptor syncableDependencyDescriptor = (MultiRevisionDependencyDescriptor) moduleDescriptorMap
-                                .get(descriptor.getDependencyId());
+                        MultiRevisionDependencyDescriptor syncableDependencyDescriptor
+                                = (MultiRevisionDependencyDescriptor) moduleDescriptorMap
+                                        .get(descriptor.getDependencyId());
 
                         if (syncableDependencyDescriptor == null) {
                             syncableDependencyDescriptor = new MultiRevisionDependencyDescriptor(

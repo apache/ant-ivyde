@@ -30,7 +30,7 @@ public class CleanCacheAction extends Action {
 
     private final Cleanable[] cleanables;
 
-    public static abstract class Cleanable {
+    public abstract static class Cleanable {
         public void launchClean() {
             Job cleanJob = new Job("Cleaning cache " + getName()) {
                 protected IStatus run(IProgressMonitor monitor) {
