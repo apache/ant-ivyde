@@ -72,6 +72,13 @@
                       ]
                   },
                   {
+                    "id":"cpc/launch",
+                    "title":"Launch configuration",
+                    "children": [
+
+                      ]
+                  },
+                  {
                     "id":"cpc/maven",
                     "title":"Use with maven poms",
                     "children": [
@@ -104,6 +111,13 @@
             {
               "id":"preferences",
               "title":"Eclipse global preferences",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"eclipsevar",
+              "title":"Eclipse variables",
               "children": [
 
                 ]

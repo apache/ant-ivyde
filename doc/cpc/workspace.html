@@ -40,6 +40,22 @@ To enable resolution in the workspace, go into the advanced configuration panel 
     <li>the <i>status</i> should match the required one: a dependency with <i>latest.integration</i> will only match if there is <i>status="interation"</i> in the info of the dependant module</li>
 </ul>
 
+Having two projects "A" and "B" configured to use IvyDE and the workspace resolver, here is the expected resolved dependencies:
+
+<table class="ant">
+<tr><th>A dependency on B</th><th>B declared revision</th><th>result</th></tr>
+<tr><td>latest.integration</td><td>1.2</td><td>B wired on A</td></tr>
+<tr><td>1.2</td><td>1.2</td><td>B wired on A</td></tr>
+<tr><td>[1.2,1.3)</td><td>1.2</td><td>B wired on A</td></tr>
+<tr><td>1.0</td><td>1.2</td><td>no project wiring</td></tr>
+<tr><td>latest.integration</td><td><i>none</i></td><td>B wired on A</td></tr>
+<tr><td>1.2</td><td><i>none</i></td><td>B wired on A</td></tr>
+<tr><td>[1.2,1.3)</td><td><i>none</i></td><td>B wired on A</td></tr>
+<tr><td>latest.integration</td><td>$version</td><td>no project wiring</td></tr>
+<tr><td>1.2</td><td>$version</td><td>no project wiring</td></tr>
+<tr><td>[1.2,1.3)</td><td>$version</td><td>no project wiring</td></tr>
+</table>
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

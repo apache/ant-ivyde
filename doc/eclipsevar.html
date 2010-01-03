@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+In Eclipse there is a <a href="http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/preferences/run-debug/ref-string_substitution.htm">string substitution mecanism</a>. This feature allows you to specify a path location that can be shared between developpers.
+
+IvyDE use it to find the ivysettings.xml and properties files in both the <a href="preferences.html#settings">glogal preference page</a> and the <a href="cpc/create.html#localconf">project specific one</a>.
+
+Using the "Workspace..." button will open a windows to choose a file in the workspace. Then IvyDE will automatically fill the field with the proper variable.
+
+<center><img src="images/eclipsevar_workspace.jpg" /></center>
+
+Using the "File System..." button will allow you to choose a file in the file system. But then this path will not be portable.
+
+And you can choose to depend on the Eclipse variable system by clicking on "Variable...".
+
+<center><img src="images/eclipsevar_variables.jpg" /></center>
+
+<b>Backward compatibility</b>
+
+IvyDE used to support the <tt>project://projectName/path/to/file.ext</tt> protocol. It sill does but it will be automatically changed in the saved settings to the Eclipse variable way of defining this path: <tt>${workspace_loc:projectName/path/to/file.ext}</tt>
+
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
