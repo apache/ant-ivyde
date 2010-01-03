@@ -551,9 +551,6 @@ forceContextQualifier=${hudson.version.qualifier}
             <attribute name="destFile" />
             <![CDATA[
                 importPackage(java.io);
-                importPackage(javax.xml.xpath);
-                importPackage(org.xml.sax);
-                importPackage(javax.xml.parsers);
 
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
                 r = new BufferedReader(new FileReader(tocfile));
