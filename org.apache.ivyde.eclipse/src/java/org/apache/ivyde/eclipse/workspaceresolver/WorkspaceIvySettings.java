@@ -18,6 +18,7 @@
 package org.apache.ivyde.eclipse.workspaceresolver;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -30,6 +31,7 @@ public class WorkspaceIvySettings extends IvySettings {
     public WorkspaceIvySettings(IJavaProject javaProject) {
         this.javaProject = javaProject;
         setDefaultLatestStrategy(new IvyDEStrategy());
+        setDefaultResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC);
     }
 
     public DependencyResolver getResolver(ModuleRevisionId mrid) {
