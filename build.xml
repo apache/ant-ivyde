@@ -187,6 +187,11 @@
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}" />
         <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tgz" basedir="${dist.work.dir}" compression="gzip" />
+        <!-- put the version in a file so it will be easier in the build of the
+            updatesite on hudson to find out which version it is -->
+        <echo file="${dist.dir}/version.properties">
+ivyde.build.version=${build.version}
+        </echo>
     </target>
 
     <target name="package-sources" depends="compute-version">
