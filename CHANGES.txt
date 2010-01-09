@@ -26,6 +26,7 @@
 - FIX: Errors are not reported when multiple resolve are launched (IVYDE-219)
 - FIX: Ivy settings file cannot be loaded via http url (IVYDE-218)
 - FIX: The workspace resolver doesn't resolve conflicts correctly (IVYDE-212)
+- FIX: dependency order not preserved causing failed builds (IVYDE-170)
 
   version 2.0.0 final
 ==========================

@@ -35,6 +35,7 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -74,7 +75,7 @@ public class IvyResolveJobThread extends Thread {
 
     private IClasspathEntry[] classpathEntries = null;
 
-    private LinkedHashSet all;
+    private LinkedHashSet/* <ArtifactDownloadReport> */all;
 
     private List problemMessages;
 
@@ -222,7 +223,18 @@ public class IvyResolveJobThread extends Thread {
         resolveOption.setValidate(ivy.getSettings().doValidate());
         ResolveReport report = ivy.resolve(md, resolveOption);
         problemMessages = report.getAllProblemMessages();
-        all = new LinkedHashSet(Arrays.asList(report.getArtifactsReports(null, false)));
+
+        all = new LinkedHashSet();
+        for (int i = 0; i < confs.length; i++) {
+            ConfigurationResolveReport configurationReport = report.getConfigurationReport(confs[i]);
+            Set revisions = configurationReport.getModuleRevisionIds();
+            for (Iterator it = revisions.iterator(); it.hasNext();) {
+                ModuleRevisionId revId = (ModuleRevisionId) it.next();
+                ArtifactDownloadReport[] aReports = configurationReport.getDownloadReports(revId);
+                all.addAll(Arrays.asList(aReports));
+            }
+        }
+
         confs = report.getConfigurations();
         artifactsByDependency.putAll(getArtifactsByDependency(report));
         if (monitor.isCanceled()) {
