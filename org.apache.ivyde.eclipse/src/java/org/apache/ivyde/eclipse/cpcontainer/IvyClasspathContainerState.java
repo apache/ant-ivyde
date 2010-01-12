@@ -355,7 +355,7 @@ public class IvyClasspathContainerState {
         }
         try {
             md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(i.getSettings(),
-                file.toURL(), false);
+                file.toURI().toURL(), false);
             setConfStatus(null);
             return md;
         } catch (MalformedURLException e) {
