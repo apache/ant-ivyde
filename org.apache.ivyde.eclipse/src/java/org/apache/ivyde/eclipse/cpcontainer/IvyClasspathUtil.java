@@ -115,7 +115,7 @@ public final class IvyClasspathUtil {
     public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(
             IJavaProject javaProject) {
         List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (FakeProjectManager.isFake(javaProject)) {
+        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
             return containers;
         }
         try {
@@ -142,6 +142,9 @@ public final class IvyClasspathUtil {
     public static List/* <IvyClasspathContainer> */getIvyFileClasspathContainers(IFile ivyfile) {
         IJavaProject javaProject = JavaCore.create(ivyfile.getProject());
         List/* <IvyClasspathContainer> */containers = new ArrayList();
+        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
+            return containers;
+        }
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();
             for (int i = 0; i < entries.length; i++) {
@@ -171,6 +174,9 @@ public final class IvyClasspathUtil {
             IFile ivySettings) {
         IJavaProject javaProject = JavaCore.create(ivySettings.getProject());
         List/* <IvyClasspathContainer> */containers = new ArrayList();
+        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
+            return containers;
+        }
         try {
             IClasspathEntry[] entries = javaProject.getRawClasspath();
             for (int i = 0; i < entries.length; i++) {
@@ -274,7 +280,7 @@ public final class IvyClasspathUtil {
      */
     public static IClasspathEntry getIvyClasspathEntry(IPath containerPath,
             IJavaProject javaProject) {
-        if (FakeProjectManager.isFake(javaProject)) {
+        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
             return null;
         }
         try {
