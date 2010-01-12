@@ -591,18 +591,21 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     void updateFieldsStatusSettings() {
         boolean projectSpecific = settingsProjectSpecificButton.getSelection();
+        conf.setSettingsProjectSpecific(projectSpecific);
         mainGeneralSettingsLink.setEnabled(!projectSpecific);
         settingsEditor.setEnabled(projectSpecific);
     }
 
     void updateFieldsStatusRetrieve() {
         boolean projectSpecific = retrieveProjectSpecificButton.getSelection();
+        conf.setRetrieveProjectSpecific(projectSpecific);
         retrieveGeneralSettingsLink.setEnabled(!projectSpecific);
         retrieveComposite.setEnabled(projectSpecific);
     }
 
     void updateFieldsStatusAdvanced() {
         boolean projectSpecific = advancedProjectSpecificButton.getSelection();
+        conf.setAdvancedProjectSpecific(projectSpecific);
         advancedGeneralSettingsLink.setEnabled(!projectSpecific);
         acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);

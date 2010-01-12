@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -59,6 +61,11 @@ public abstract class PathEditor extends Composite {
         l.setText(label);
 
         text = createText(this);
+        text.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                textUpdated();
+            }
+        });
 
         Composite buttons = new Composite(this, SWT.NONE);
         buttons.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true, 2, 1));

@@ -113,11 +113,6 @@ public class SettingsEditor extends Composite {
                 settingsText.setToolTipText(TOOLTIP_SETTINGS_PATH);
                 settingsTextDeco.getLayoutControl().setLayoutData(
                     new GridData(GridData.FILL, GridData.CENTER, true, false));
-                settingsText.addModifyListener(new ModifyListener() {
-                    public void modifyText(ModifyEvent e) {
-                        settingsPathUpdated();
-                    }
-                });
 
                 return settingsText;
             }
@@ -138,6 +133,7 @@ public class SettingsEditor extends Composite {
             protected void setFile(String f) {
                 try {
                     getText().setText(new File(f).toURI().toURL().toExternalForm());
+                    textUpdated();
                 } catch (MalformedURLException ex) {
                     // this cannot happen
                     IvyPlugin.log(IStatus.ERROR,
@@ -152,6 +148,7 @@ public class SettingsEditor extends Composite {
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
         propFilesEditor = new PathEditor(this, SWT.NONE, "Property files:", null) {
+
             protected void textUpdated() {
                 settingsPathUpdated();
             }
