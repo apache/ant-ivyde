@@ -7,7 +7,7 @@
 - NEW: Add "Resolve Dependencies" extension to Java Project in the Package Explorer (IVYDE-153) (thanks to Jon Schneider and Troy Gaines)
 - NEW: Add option to not launch a resolve after saving a file with the IvyEditor (IVYDE-197) (thanks to Jon Schneider)
 - NEW: File resource listener on Ivy files launches resolve when it detects modifications (IVYDE-199) (thanks to Jon Schneider)
-- NEW: Add an option in the container to automatically laucnh a resolve before each launch (IVYDE-204)
+- NEW: Add an option in the container to automatically launch a resolve before each launch (IVYDE-204)
 - NEW: "Reverse Dependency Explorer" View for synchronizing revisions across multiple projects in a workspace (IVYDE-195) (thanks to Jon Schneider)
 - NEW: Make the Ivy console filter on the logging level (IVYDE-205)
 - NEW: Support for Eclipse variables (IVYDE-152)
