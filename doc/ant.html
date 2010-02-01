@@ -24,30 +24,30 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Most Eclipse distribution includes a plugin to launch ant build files. The provided Ant is a standard distribution of Ant and so it doesn't include Ivy. But you probably want to use Ivy targets within the Eclipse's Ant.
+Most Eclipse distributions include a plugin to launch Ant build files. The provided Ant distribution is a standard distribution of Ant that doesn't include Ivy.  You may wish to run Ivy targets against Eclipse's Ant distribution.
 
 <h1>Configure Ant classpath</h1>
-For now IvyDE doesn't contribute to the Ant classpath of the Eclipse plugin, so you will have to do it manually.
+For now, IvyDE doesn't contribute to the Ant classpath of the Eclipse plugin, so you will have to do it manually.
 
 In the global preference page of the Ant runtime, click on <b>Add External JARs...</b>
 
 <center><img src="images/antpref.jpg" /></center>
 
-Then browse your filesystem into the <tt>plugins</tt> directory of your Eclipse install, and select the Ivy jar named <tt>org.apache.ivy_2.X.X.XXXXXXXXX.jar</tt>. And that's it, Ivy has been added to the classpath of Ant embedded in Eclipse.
+Then browse your filesystem to the <tt>plugins</tt> directory of your Eclipse installation and select the Ivy jar named <tt>org.apache.ivy_2.X.X.XXXXXXXXX.jar</tt>. Now Ivy has been added to the classpath of the Ant distribution embedded in Eclipse.
 
 <h1>Run Ivy targets</h1>
 
-Create an Ant build file and just declare the Ivy targets with:
+Create an Ant build file and declare the Ivy targets with:
 <code>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" />
 </code>
 And don't forgot to declare the namespace <tt>xmlns:ivy="antlib:org.apache.ivy.ant"</tt>.
 
-Then you will be able to have completion on Ivy tasks:
+After the taskdefs have been added, you will have code completion on Ivy tasks:
 
 <center><img src="images/antedit.jpg" /></center>
 
-And run successul build:
+The build will now be successful:
 
 <center><img src="images/antrun.jpg" /></center>
 

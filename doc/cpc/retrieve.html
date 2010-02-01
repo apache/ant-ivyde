@@ -24,19 +24,17 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-It is possible to make IvyDE copy the resolved dependencies in your project: a retrieve of the dependencies can be triggered on each resolve of the classpath container.
+It is possible to make IvyDE copy resolved dependencies into your project: a retrieve of the dependencies can be triggered on each resolve of the classpath container.
 
-To enable it, enter the classpath container configuration panel, and hit the second tab "Retrieve".
+To enable this behavior, enter the classpath container configuration panel, and select the second tab, "Retrieve".
 
 <center><img src="../images/retrieve.jpg"/></center>
 
-So you can choose to <b>do retrieve after resolve</b> the dependencies.
+The <b>Retrieve pattern</b> specifies the location where the dependencies should be copied relative to the containing project.
 
-The <b>Retrieve pattern</b> specified the location where the deendencies should be copied, location raltive to the containing project.
+The <b>Delete old retrieved artifacts</b> check box will cause IvyDE to clean the output directory before each retrieve.  Note that any other artifacts other than those previously retrieved by IvyDE in this container will be deleted as well if this option is selected.
 
-The <b>Delete old retrieved artifacts</b> check box will enable the wipe out the output directory before each retrieve.
-
-And finally you can select in which <b>Configurations</b> the dependencies should be resolved and you can select which <b>Types</b> of artifact should be actually retrieved. In both fields, <i>*</i> will means <i>all</i>.
+Finally, you can select which <b>Configurations</b> should be resolved and you can select which <b>Types</b> of artifacts should actually be retrieved. In both fields, <i>*</i> means <i>all</i>.
 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>

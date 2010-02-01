@@ -25,23 +25,21 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-The IvyDE classpath container can also be used in the launch configuration, run or debug. The container will be used because it is included in the default classpath of you project, or by adding it yourself to your launch classpath.
+The IvyDE classpath container can also be used in the launch configuration, run or debug.
 
-<h1>In the project's classpath</h1>
+<h1>Default behavior</h1>
 
-It is the simpler configuration, configuration that you implicetely have when you do a "Run As..." on a Java class. The container you see in the launch classpath is actually the one you have in your project in the package explorer.
+By default, the container will be used because it is included in the default classpath of you project.  This is the configuration that you implicitly have when you do a "Run As..." on a Java class. The container you see in the launch classpath is the same as the one you have in your project in the package explorer.
 
 <center><img src="../images/launch_default.jpg"></img></center>
 
-It is the same when launching unit tests. Idem for the debug mode.
+Launching with the default the compile classpath might not be appropriate for some situations.  For example, you may have additional libraries included in the container under a configuration intended to support unit testing but that may cause some instability in the runtime application.
 
-But having the compile classpath might not be appropriate for some launch configuration, so you will have to manage it yourself.
+<h1>Managing the classpath manually</h1>
 
-<h1>Managing manually</h1>
+When you do need to have finer-grained control over which configurations are visible to the runtime classpath, it is possible to edit the runtime classpath manually.
 
-You want to have more control over the classpath of your launch configuration, so you will have to edit it, and manage the IvyDE container in there.
-
-Creating a launch configuration, you will get the default classpath as above. So the first step is to remove it. And you probably want to readd your project in the user entries. Then to add an IvyDE container, choose "Advanced":
+By creating a launch configuration, you will get the default classpath as described above. So the first step is to remove it. Most likely, you will want to re-add your project in the user entries. Then to add an IvyDE container, choose "Advanced":
 
 <center><img src="../images/launch_advanced.jpg"></img></center>
 

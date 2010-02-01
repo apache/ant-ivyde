@@ -27,25 +27,25 @@
 	<textarea id="xooki-source">
 <h1>Introduction</h1>
 
-When working with multiple projects in a workspace that represent the whole or part of a larger application, you may want to simultaneously change the revisions of dependencies in several ivy files to a single new revision all at the same time (notwithstanding the eviction mechanism inherent to Ivy). 
+When working with multiple projects in a workspace that represent the whole or part of a larger application, you may want to simultaneously change the revisions of dependencies in several Ivy files to a single new revision all at the same time (notwithstanding the eviction mechanism inherent to Ivy). 
 
 At other times it is instructive just to see what dependencies are being utilized by projects in the workspace by revision without having to dig into each project and look at each individual module descriptor.
 
 The Reverse Dependency Explorer turns the dependency tree upside-down, exploring the workspace by organization, module, and revision and providing a mechanism to synchronize revisions across projects/classpath containers.
 
-Consider the following workspace, with three projects, all of which have an ivy.xml file at their project root.  Each of these ivy files has an associated IvyDE managed classpath container.
+Consider the following workspace, with three projects, all of which have an ivy.xml file at their project root.  Each of these Ivy files has an associated IvyDE managed classpath container.
 
 <center><img src="images/revexplorer_project.jpg"></center><br/>
 
-Right clicking on any (or all) of the projects and selecting Ivy -> Reverse Dependency Explorer opens the view.  The explorer displays a tree structure with an item for each organization/module pair.  The third column lists all of the revisions of this pair for the selected projects.  Expanding a tree item, you can see the module revision that a given ivy classpath container depends on (if at all).  Note that the view only shows direct dependencies and no transitive dependencies.
+Right clicking on any (or all) of the projects and selecting Ivy > Reverse Dependency Explorer opens the view.  The explorer displays a tree structure with an item for each organization/module pair.  The third column lists all of the revisions of this pair for the selected projects.  Expanding a tree item, you can see the module revision that a given Ivy classpath container depends on (if at all).  Note that the view only shows direct dependencies and <i>no transitive dependencies</i>.
 
 <center><img src="images/revexplorer_view.jpg"></center><br/>
 
-Organization/module pairs that have conflicting revisions are highlighted in red (junit in the above example).  Note that in the above example, though the revisions do not match, these two revision attributes may actually resolve to the same artifact, depending on the what is available in the repository.  The view does not attempt to perform a resolve and match the resolved artifacts.  It simply compares the text of the attributes.
+Organization/module pairs that have conflicting revisions are highlighted in red (junit in the above example).  Note that in the above example, though the revisions do not match, these two revision attributes may actually resolve to the same artifact, depending on what is available in the repository.  The view does not attempt to perform a resolve and match the resolved artifacts.  It simply compares the text of the attributes.
 
 <h1>Synchronizing revisions</h1>
 
-To synchronize revisions, click in column and row of the item you want to change and type in the new revision.  The item should be highlighted green to indicate that it is tagged for synchronization.  Click the synchronize button as shown to make your changes.
+To synchronize revisions, click in the column and row of the item you want to change and type in the new revision.  The item should be highlighted green to indicate that it is tagged for synchronization.  Click the synchronize button as shown to save your changes.
 
 <center><img src="images/revexplorer_sync.jpg"></center><br/>
 

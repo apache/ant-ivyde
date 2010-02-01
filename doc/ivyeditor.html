@@ -24,67 +24,57 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Edit your ivy files easily in eclipse with the <a href="index.html">IvyDE</a> Plugin editor.
-<a href="index.html">IvyDE</a> brings creation wizard, html preview and completion for Ivy xml tag, attributes but also for attributes' values!
-Choose an organisation and browse thru its projects and revisions.
+IvyDE comes with an Ivy file editor that provides an editor that performs code completion for Ivy xml tags based on the real-time state of your repository.  It also packs with an Ivy file creation wizard and HTML preview.
 
-<h1><a name="wizard"></a>Wizard</h1>
+<h1><a name="wizard"></a>Creation Wizard</h1>
 
-IvyDE comes with a wizard that allows you to create an ivy.xml file for your project.
-To open the wizard choose File->New->Other in the Eclipse menu (Ctrl+N by default)
-The Ivy wizard is accessible in the category Other. Select it then click Next
+To use the creation wizard, choose File > New > Other > IvyDE > Ivy file in the Eclipse menu (Ctrl+N by default). Select it and click Next.
 
 <center><img src="images/wizard1.jpg"/></center>
-
 
 The wizard contains only one page, and is very simple.
 
 <center><img src="images/wizard2.jpg"/></center>
 
-
 <ol><b>Wizard fields:</b>
-	<li> Container: you have to select the targeted project. (This is already set if you access the wizard thanks right click menu on your project root folder)</li>
-	<li> File name: the ivy file name. (ivy.xml by default and its better to keep it in most of case)</li>
-	<li> Organisation: the component owner name. (your company name or the company that provides the component if you are writing ivy.xml file for 3rd party jars). Note this value can be set in the <a href="preferences.html">Ivy preference page</a></li>
+	<li> Container: you must select a target project. (This is already set if you access the wizard through the context menu on your project root folder).</li>
+	<li> File name: the Ivy file name (ivy.xml by default).</li>
+	<li> Organisation: the component owner name. (your company name or the company that provides the component if you are writing an ivy.xml file for 3rd party jars). Note that this value can be set in the <a href="preferences.html">Ivy preference page.</a></li>
 	<li> Module name: the component name.</li>
-	<li> Status: the status of the project. (integration by default since we have just created its ivy file :-). Please refer to <a href="../../../history/latest-milestone/index.html">Ivy documentation for more details</a>)</li>
+	<li> Status: the status of the project. (integration by default since we have just created its ivy file. Please refer to the <a href="../../../history/latest-milestone/index.html">Ivy documentation for more details</a>).</li>
 </ol>
-When the form is correctly filled you can press Finish button. Eclipse will automatically open the Ivy <a href="#editor">editor</a>.
-
 
 <h1><a name="editor"></a>Ivy Editor</h1>
 
 <center><img src="images/editor1.jpg"/></center>
 
+IvyDE's Eclipse editor provides XML syntax coloration, tag completion, tag attribute name completion, and dependency and configuration tag value completion.
 
-The Ivy's eclipse editor provides xml syntax coloration, tag completion, tag's attribute names completion, and for dependency and configuration tag value completion.
-
-Completion comes with contextual help. The completion popup is displayed when hitting simultaneously the CTRL and the SPACE keys.
-
+Completion comes with contextual help. The completion popup is displayed when through the CTRL + SPACE shortcut.
 
 <b>Available completions:</b><ul>
-	<li><b>Xml structure</b>: allows you quickly to insert the good tag at its right place. If the tag can have nested children both notations, simple tag and open tag, are proposed
+	<li><b>XML structure</b>: Allows you quickly to insert valid tags at the right place. If the tag can have nested children, both notations, simple tag and open tag, are proposed.
 	    
 	    <center><img src="images/completion1.jpg"/></center>
 	    
 	</li>
-	<li><b>Tag attributes</b>: when your cursor is placed in a tag bracket the completion show available attributes for the enclosing tag.
+	<li><b>Tag attributes</b>: When your cursor is placed in a tag bracket, the completion shows available attributes for the enclosing tag.
 	    
 	    <center><img src="images/completion2.jpg"/></center>
 	    
 	</li>
-	<li><b>Attributes values</b>: when your cursor is placed in the quote of an attribute value the completion shows available values for the matching attribute.
+	<li><b>Attributes values</b>: When your cursor is placed inside the quotes of an attribute value, the completion shows available values for the matching attribute.
 		<br/>
 		<ul>Available value completion
-			<li> <i>info:</i> organisation (pref based), module (eclipse project name),  </li>
-			<li> <i>info/ivyauthor: </i>name (pref based), url (pref based)</li>
+			<li> <i>info:</i> organisation (preference based), module (Eclipse project name),  </li>
+			<li> <i>info/ivyauthor: </i>name (preference based), url (pref based)</li>
 			<li> <i>info/description: </i>homepage (pref based)</li>
-			<li> <i>info/license: </i>name </li>
-			<li> <i>info/repository: </i> name (the other attributes depend on it), url, ivys, pattern, artifacts</li>
-			<li> <i>configurations/conf: </i> visibility,  deprecated, extends </li>
+			<li> <i>info/license: </i>name</li>
+			<li> <i>info/repository: </i>name (the other attributes depend on it), url, ivys, pattern, artifacts</li>
+			<li> <i>configurations/conf: </i> visibility,  deprecated, extends</li>
 			<li> <i>publications/artifact: </i>type, conf, ext</li>
-			<li> <i>dependencies/dependency: </i>org, name, rev are resolved thanks to Ivy using the ivyconf set in the <a href="cpc/edit.html">project Ivy preference page</a>. If not set to "default" Ivy uses its defaults resolvers configuration (ie ivyrep + ibiblio), and if not set Ivy uses the ivyconf set in the <a href="preferences.html">Eclipse Ivy preference page</a>. conf values are computed from current ivy.xml file and the dependency ivy.xml file if any.
-			    
+			<li> <i>dependencies/dependency: </i>org, name, rev are resolved thanks to Ivy using the ivyconf set in the <a href="cpc/edit.html">project Ivy preference page</a>. If not set to "default" Ivy uses its defaults resolvers configuration (ie Ivyrep + ibiblio), and if these are not set Ivy uses the ivyconf set in the <a href="preferences.html">Eclipse Ivy preference page</a>. conf values are computed from the current ivy.xml file and the dependency ivy.xml file if any.
+
 			    <center><img src="images/completion4.jpg"/></center>
 			
 			</li>

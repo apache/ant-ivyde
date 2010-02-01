@@ -24,19 +24,19 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-IvyDE maintain a global configuration, which control the behaviour of every Ivy instance in every project in the workspace. Though this global configuration can be overided in each <a href="cpc/edit.html">project</a>.
+IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overrided in each <a href="cpc/edit.html">project</a>.
 
-The global configuration can be found in the preferences of Eclipse (menu Window>Preferences for Windows and Linux users, Eclipse>Preferences for mac users), and select the item Ivy.
+The global configuration can be found in the preferences of Eclipse (menu Window > Preferences for Windows and Linux users, Eclipse > Preferences for mac users), and select the item Ivy.
 
 <h1><a name="global"></a>Global Ivy preferences</h1>
 
 <center><img src="images/pref.jpg"/></center>
 
 <ul>
-     <li><u>On Eclipse startup:</u> it specifies what IvyDE should do in every project when Eclipse is starting up</li>
-     <li><u>On Ivy file change:</u> each time Eclipse detects a change on an ivy.xml file configured in an IvyDE container, via a save in the editor, a refresh, or a team/update, IvyDE can trigger resolve, or not.</li>
-	<li><u>Organisation:</u> your company name for ivy editor completion </li>
-	<li><u>Organisation URL:</u> your company web site url for ivy editor completion </li>
+     <li><u>On Eclipse startup:</u> Specifies what IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse is starting up.</li>
+     <li><u>On Ivy file change:</u> Controls whether a resolve is performed each time Eclipse detects a change on an ivy.xml file configured by an IvyDE container via a save in the editor, a refresh, or a team/update.</li>
+	<li><u>Organisation:</u> Your company name for Ivy editor completion. </li>
+	<li><u>Organisation URL:</u> Your company web site url for Ivy editor completion.</li>
 </ul>
 
 <h1><a name="classpath"></a>Classpath configuration</h1>
@@ -44,11 +44,11 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <center><img src="images/pref_classpath.jpg"/></center>
 
 <ul>
-	<li><u>Resolve dependencies in workpace:</u> IvyDE can try to make dependencies between project more than to jars into a repository. See the <a href="cpc/workspace.html">documentation</a> for further info.</li>
-        <li><u>Resolve before launch:</u> an IvyDE container can be used in the classpath of a launch configuration; and the container can be resolved on each launch. See also the documentation about <a href="cpc/launch.html">launch configurations</a></li>
-	<li><u>Order of the classpath entries:</u> by default in the classpath container the entries are ordered by order of declaration in the ivy.xml. When there are many entries, it could be useful to have them ordered alphabetically so that you can find them faster.</li>
-	<li><u>Accepted types:</u> a comma separated list of extensions which will make IvyDE add the artifact to the classpath</li>
-	<li><u>Sources types:</u> a comma separated list of Ivy "type" which will make IvyDE consider them as sources</li>
+	<li><u>Resolve dependencies in workpace:</u> IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</li>
+        <li><u>Resolve before launch:</u> an IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about <a href="cpc/launch.html">launch configurations</a> for further information on this feature.</li>
+	<li><u>Order of the classpath entries:</u> By default, the classpath container entries are ordered by order of declaration in the ivy.xml. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.</li>
+	<li><u>Accepted types:</u> A comma separated list of extensions which will make IvyDE add the artifact to the classpath</li>
+	<li><u>Sources types:</u> A comma separated list of Ivy "type" names which should be considered sources.</li>
 	<li><u>Sources suffixes:</u> a comma separated list of suffixes which will make IvyDE attach as source the artifact with the suffix to the artifact without the suffix. For instance, "commons-lang-sources.jar" will be attached as source to "commons-lang.jar" with the default value.</li>
 	<li><u>Javadoc types:</u> same as sources types but for javadocs</li>
 	<li><u>Javadoc suffixes:</u> same as sources suffixes but for javadocs</li>
@@ -59,11 +59,11 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <center><img src="images/pref_retrieve.jpg"/></center>
 
 <ul>
-    If checked, some retrieve job will be triggered after each the resolve.<br/>
-	<li><u>Retrieve pattern:</u> the pattern to use for the retrieve. Check <a href="../../../history/latest-milestone/use/retrieve.html">Ivy documentation</a> for pattern explanation.</li>
-        <li><u>Delete old retrieve artifacts:</u> on each retrieve, the previously retrieved libraries will be removed (similar to the sync argument in the ant task)</li>
-        <li><u>Retrieve configurations:</u> the configurations to retrieve (a comma separated list)</li>
-        <li><u>Retrieve types:</u> the types of artifact to retrieve (a comma separated list)</li>
+    If checked, a retrieve job will be triggered after each the resolve.<br/>
+	<li><u>Retrieve pattern:</u> The pattern to use for the retrieve. Check <a href="../../../history/latest-milestone/use/retrieve.html">Ivy documentation</a> for pattern explanation.</li>
+        <li><u>Delete old retrieve artifacts:</u> On each retrieve, the previously retrieved libraries will be removed (similar to the sync argument in the Ant task).</li>
+        <li><u>Retrieve configurations:</u> The configurations to retrieve (a comma separated list)</li>
+        <li><u>Retrieve types:</u> The types of artifact to retrieve (a comma separated list)</li>
 </ul>
 
 <h1><a name="settings"></a>Ivy settings</h1>
@@ -71,10 +71,9 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <center><img src="images/pref_settings.jpg"/></center>
 
 <ul>
-	<li><u>Reload the settings only on demand:</u> by default IvyDE will parse the ivysettings each times it needs it (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow down dramatically the UI, so it is possible to make IvyDE keep the settings in cache and only reload it via the context menu on the container)</li>
-	<li><u>Ivy settings path:</u> specify here the path to your ivy settings file. Leave it blank to use Ivy default resolvers.
-See also the documentation about <a href="eclipsevar.html">Eclipse variables</a></li>
-	<li><u>Property files:</u> this is a comma separated ist if java properties files which are loaded along with the settings.</li>
+	<li><u>Reload the settings only on demand:</u> By default, IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).</li>
+	<li><u>Ivy settings path:</u> The path to your ivy settings file. Leave it blank to use Ivy default resolvers.  See also the documentation about <a href="eclipsevar.html">Eclipse variables</a>.</li>
+	<li><u>Property files:</u> This is a comma separated list of Java properties files to be loaded along with the settings.</li>
 </ul>
 
 <h1><a name="workspace"></a>Workspace resolver</h1>
@@ -82,9 +81,9 @@ See also the documentation about <a href="eclipsevar.html">Eclipse variables</a>
 <center><img src="images/pref_workspace.jpg"/></center>
 
 <ul>
-	<li><u>closing trigger resolve:</u> closing a project which has the workspace resolver enabled will trigger a resolve on every project that depends on it.</li>
-	<li><u>opening trigger resolve:</u> when a project is opened IvyDE will trigger the resolve of every other project which has the workspace resolver enabled</li>
-        <li><u>Ignore version when resolving workspace projects:</u> in you are sure of what you are doing, this option will make the workspace resolver not taking into account the version specified in the ivy.xml.</li>
+	<li><u>Closing trigger resolve:</u> Closing a project which has the workspace resolver enabled will trigger a resolve on every project that depends on it.</li>
+	<li><u>Opening trigger resolve:</u> When a project is opened, IvyDE will trigger the resolve of every other project which has the workspace resolver enabled.</li>
+        <li><u>Ignore version when resolving workspace projects:</u> This option forces the workspace resolver to ignore the version of a module specified in an ivy.xml if a project containing an Ivy file with that module organization and name is found in the workspace, instead substituting a project reference.  This may have unintended consequences.</li>
 </ul>
 
 

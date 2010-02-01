@@ -24,20 +24,24 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Some projects are composed of mulpliple modules, modules having dependencies between them, dependencies managed by Ivy (of course!). Then sometimes we need to build and publish some modules before building the dependant one. Eclipse can handle classpath composed of Java project, it can handles dependencies between projects, and IvyDE can use that feature.
+Some projects are composed of mulpliple modules.  Often, these modules have dependencies between them, dependencies managed by Ivy (of course!). 
 
-First every of your modules should be separated projects in Eclipse, and each of this project should have an IvyDE classpath container configured.
+Eclipse is capable of calculating the workspace's build order according to dependencies between projects.  To leverage this advantage, IvyDE has the ability to add a project reference to a dependency located in the workspace in place of downloading its published artifact(s) from the repository.  In this way, developers can develop multi-module applications, and test the interaction between these modules, before building and publishing artifacts to the repository.
 
-To enable resolution in the workspace, go into the advanced configuration panel of the classpath container and select <b>Resolve dependencies in workspace</b>.
+Consider a multi-module application with a considerable amount of code in each of several projects.  Many developers have experienced the delays involved in waiting for Eclipse to build code across all of these projects even though development is only being conducted in one isolated part of the application (maybe just one or two projects).  If the latest published artifact in the Ivy repository has the same source code as a module that the developer is not currently working on, simply closing that project in the Eclipse workspace and resolving dependencies on dependent projects that would resolve that artifact speeds the compilation process considerably.
+
+First, each application module should be separate a project in Eclipse, and each of these projects should have a configured IvyDE classpath container.
+
+To enable resolution in the workspace, go to the advanced configuration panel of the classpath container and select <b>Resolve dependencies in workspace</b>.
 
 <center><img src="../images/workspace.jpg"/></center>
 
 <u>Important notes:</u> to make the resolve in workspace work correctly the <i>info</i> in the ivy.xml should be properly set:
 <ul>
-    <li>obviously the <i>org</i> and <i>name</i> </li>
-    <li>if there is a <i>rev</i> specified, dependencies should specify the appropriate range</li>
-    <li>if there is no <i>rev</i> specified, only dependencies with <i>lastest</i> will match</li>
-    <li>the <i>status</i> should match the required one: a dependency with <i>latest.integration</i> will only match if there is <i>status="interation"</i> in the info of the dependant module</li>
+    <li>The <i>org</i> and <i>name</i> </li>
+    <li>If there is a <i>rev</i> specified, dependencies should specify the appropriate range</li>
+    <li>If there is no <i>rev</i> specified, only dependencies with <i>lastest</i> will match</li>
+    <li>The <i>status</i> should match the required one: a dependency with <i>latest.integration</i> will only match if there is <i>status="interation"</i> in the info of the dependant module</li>
 </ul>
 
 Having two projects "A" and "B" configured to use IvyDE and the workspace resolver, here is the expected resolved dependencies:

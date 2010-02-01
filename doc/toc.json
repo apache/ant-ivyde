@@ -45,7 +45,7 @@
                   },
                   {
                     "id":"cpc/retrieve",
-                    "title":"Retrieve the dependencies",
+                    "title":"Retrieve dependencies",
                     "children": [
 
                       ]
@@ -131,7 +131,7 @@
             },
             {
               "id":"ant",
-              "title":"Eclipse's Ant interation",
+              "title":"Eclipse's Ant integration",
               "children": [
 
                 ]
