@@ -1,0 +1,10 @@
+<ivysettings>
+    <caches defaultCacheDir="${ivy.settings.dir}/../cache-fakerepo" useOrigin="false" />
+    <settings defaultResolver="fakerepo" checkUpToDate="false" />
+    <resolvers>
+        <filesystem name="fakerepo" checkmodified="true">
+            <ivy pattern="${ivy.settings.dir}/../fakerepo/[organisation]/[module]/ivy-[revision].xml"/>
+            <artifact pattern="${ivy.settings.dir}/../fakerepo/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+        </filesystem>
+    </resolvers>
+</ivysettings>

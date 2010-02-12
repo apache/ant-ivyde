@@ -1,0 +1,176 @@
+{
+  "children": [
+      {
+        "id":"index",
+        "title":"Documentation",
+        "children": [
+            {
+              "id":"release-notes",
+              "title":"Release Notes",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"compatibility",
+              "title":"Compatibility",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"install",
+              "title":"Installation",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"cp_container",
+              "title":"Classpath Container",
+              "children": [
+                  {
+                    "id":"cpc/create",
+                    "title":"Create a container",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/edit",
+                    "title":"Edit the classpath",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/resolve",
+                    "title":"Launching resolve",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/retrieve",
+                    "title":"Retrieve dependencies",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/cleancache",
+                    "title":"Clean the caches",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/reload_settings",
+                    "title":"Reload settings",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/workspace",
+                    "title":"Resolve in workspace",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/launch",
+                    "title":"Launch configuration",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/maven",
+                    "title":"Use with maven poms",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"cpc/wtp",
+                    "title":"WTP integration",
+                    "children": [
+
+                      ]
+                  }
+                ]
+            },
+            {
+              "id":"ivyeditor",
+              "title":"Ivy file editor",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"settingseditor",
+              "title":"Ivy settings editor",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"preferences",
+              "title":"Eclipse global preferences",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"eclipsevar",
+              "title":"Eclipse variables",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"console",
+              "title":"Ivy Console",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"ant",
+              "title":"Eclipse's Ant integration",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"revdepexplorer",
+              "title":"Reverse Dependency Explorer",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"dev",
+              "title":"Developer doc",
+              "children": [
+                  {
+                    "id":"dev/build",
+                    "title":"Building",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"dev/release",
+                    "title":"Releasing",
+                    "children": [
+
+                      ]
+                  }
+                ]
+            }
+          ]
+      }
+    ]
+}

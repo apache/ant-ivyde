@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+This documentation is defining every steps that needs to be accomplished when releasing IvyDE.
+In this doc, the released version is denoted as $VERSION, so it HAVE to be replaced in the command line argument accordingly. There is also some $LOGIN which is referencing your login on the Apache machines.
+
+<h1>Prepare</h1>
+
+<h2>Jira</h2>
+
+First in <a href="https://issues.apache.org/jira/browse/IVYDE">Jira</a> make sure that no more issues are opened for the target release.
+
+<h2>Release branch</h2>
+
+Some modifications of the branch are need to do the release. So a new branch is needed:
+<pre>
+svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk \
+           https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
+      -m "Creating a release branch for IvyDE $VERSION"
+</pre>
+
+and then checkout it:
+<pre>
+svn co https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION ivyde-$VERSION
+</pre>
+
+<h2>Documentation release</h2>
+
+The documentation have to specify the correct version number:
+In the files:
+<ul>
+<li>doc/template.html</li>
+</ul>
+The header should look like this
+<code>
+<title>${title} | IvyDE $VERSION Documentation</title>
+</code>
+
+<h2>Release notes</h2>
+
+Go edit the RELEASE_NOTES.txt files. There are two things to change, marked by some <tt>TODO WHEN RELEASING</tt>:
+<ul>
+    <li>the list of contributors should be filled according to the "thanks to" in the CHANGE.txt file</li>
+    <li>the list of bug/features fixed in the release should be filled from the one in the CHANGE.txt file</li>
+</ul>
+
+Edit the IvyDE doc and add a new page just under the root of the documentation tree:
+<ul>
+    <li>Child page title: Release Notes</li>
+    <li>Child page path: release-notes</li>
+</ul>
+
+As content in that doc, copy paste the content of the RELEASE_NOTES.txt file.
+Then you should improve the style of the page by adding some h1, h2, remove unwanted line break. Normally you shouldn't care about the http link or the jira issue, xooki will take care of them.
+
+<h2>Commit your change</h2>
+
+Don't forget to commit the changes you've done into the release branch.
+
+<h1>Building</h1>
+
+Make sure you have a proper working copy with a <tt>svn status</tt>. You should have no modification.
+
+Then launch the build:
+<pre>ant /release clean dist -DbaseLocation=/home/me/...../eclipse/</pre>
+
+And sign the artifacts:
+<pre>./signArtifacts.sh</pre>
+
+Then it is time to tag the release as soon as you are happy with your artifacts:
+
+<code>svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
+           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
+      -m "Tag IvyDE release $VERSION"
+</code>
+
+And don't forget to set the svn:external on doc/xooki to a fixed revision. Edit the svn:external property on the folder doc/xooki in the tag and set it to the revision of the commit of the tag. It should look like:
+<pre>
+xooki -r790212 https://svn.apache.org/repos/asf/ant/ivy/site/xooki/
+</pre>
+
+And commit that modification.
+
+<h1>Prepare the updatesite</h1>
+
+The instructions to build the updatesite are there:
+http://ant.apache.org/ivy/history/trunk/dev/updatesite.html
+
+<h1>Vote for the released artifacts</h1>
+
+It is recommended to publish the distribution artifacts and the updatesite in your public_html on people.apache.org directory so not only committers can test it.
+
+On people.apache.org, create your "staging" directory:
+<pre>mkdir ~/public_html/ivyde-$VERSION/</pre>
+And then the copy:
+<pre>scp dist/* $LOGIN@people.apache.org:/home/$LOGIN/public_html/ivyde-$VERSION/</pre>
+It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/trunk/dev/updatesite.html">that page</a> to know how to proceed.
+
+And launch the vote on the ant-dev mailing list:
+<code>
+Subject: [VOTE] IvyDE $VERSION Release
+
+I have built a release candidate for IvyDE $VERSION
+
+You can download the distribution from this URL: http://people.apache.org/~$LOGIN/ivyde-$VERSION/
+
+And a staging update site has been setup there: http://people.apache.org/~$LOGIN/staging/updatesite
+
+Do you vote for the release of these binaries?
+
+[ ] Yes
+[ ] No
+
+Regards,
+
+$ME, IvyDE $VERSION release manager
+</code>
+
+Note: this <a href="http://ant.apache.org/bylaws.html">page</a> is defining when and how a release can be accepted.
+
+<h1>Deployment</h1>
+
+<h2>Publish the artifacts</h2>
+
+The binaries have to be pushed with their signatures and checksums in the apache dist directory. On people.apache.org:
+<pre>
+cp -R ~/public_html/ivyde-$VERSION /www/www.apache.org/dist/ant/ivyde/$VERSION
+</pre>
+
+<h2>Deploy the updatesite</h2>
+
+Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html#deployment
+
+<h1>Update the documentation</h1>
+
+<h2>Update the table of content</h2>
+
+The table of content needs to be updated so that the last documentation point to that new release.
+
+First we need to update the external links. In svn/site/ivyde/history:
+<pre>svn pe svn:externals .</pre>
+And: <ul><li>update latest-milestone:
+<code>
+latest-milestone https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION/doc </code>
+</li>
+<li>add an entry:
+<code>$VERSION https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION/doc </code></li>
+</ul>
+
+Then we need to edit svn/site/ivyde/toc.json:
+<ul>
+<li>add the following data to the correct abstract node:
+<pre>
+            {
+                "title":"$VERSION",
+                "url":"http://ant.apache.org/ivy/ivyde/history/$VERSION/index.html"
+            }
+</pre>
+</li>
+<li>update the title of the latest-milestone history entry:
+<pre>
+            "title":"Documentation ($VERSION)"
+</pre>
+</li></ul>
+
+Then svn update your working copy (to retrieve the new history branch).
+
+<h2>Update the download page</h2>
+
+In the page svn/site/ivyde/download.html change every reference of the old version to the new one.
+
+<h2>Update the build script</h2>
+
+In the build script which generate the website (svn/site/build.xml), add the fix for the history import of the new release.
+In the target <tt>init-imported-history-ivyde</tt>, add a line with:
+<code>
+<init-imported-version basepath="ivyde" version="$VERSION" />
+</code>
+
+<h2>Deploy</h2>
+
+All site editing being done, commit your changes.
+
+And now let's generate the site and deploy it:
+<ol>
+    <li>generate the part of the site for the new version:</li>
+<code>
+ant generate-history-ivyde -Dhistory.version=$VERSION
+</code>
+<u>WARNING:</u> that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
+    <li>generate the website with the new toc:</li>
+<code>
+ant /all generate-site-ivyde
+</code>
+    <li>you should verify that the site generated in target is OK. And once your happy with it, commit the changes in target (some svn add might be needed !)</li>
+    <li>deploy the website: go on people.apache.org and <tt>svn up /www/ant.apache.org/ivy/ivyde</tt></li>
+</ol>
+
+<h1>Post release tasks</h1>
+
+<h2>Jira</h2>
+
+Update the <a href="https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=12310640">IvyDE Jira project</a>: mark the version as released.
+
+<h2>Bump the version</h2>
+
+Update the versions needs to be updated in the following files:
+<ul>
+<li>build.properties (edit the qualifier)</li>
+<li>org.apache.ivyde.eclipse/META-INF/MANIFEST.MF</li>
+<li>org.apache.ivyde.feature/feature.xml</li>
+</ul>
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

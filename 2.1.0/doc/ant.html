@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Most Eclipse distributions include a plugin to launch Ant build files. The provided Ant distribution is a standard distribution of Ant that doesn't include Ivy.  You may wish to run Ivy targets against Eclipse's Ant distribution.
+
+<h1>Configure Ant classpath</h1>
+For now, IvyDE doesn't contribute to the Ant classpath of the Eclipse plugin, so you will have to do it manually.
+
+In the global preference page of the Ant runtime, click on <b>Add External JARs...</b>
+
+<center><img src="images/antpref.jpg" /></center>
+
+Then browse your filesystem to the <tt>plugins</tt> directory of your Eclipse installation and select the Ivy jar named <tt>org.apache.ivy_2.X.X.XXXXXXXXX.jar</tt>. Now Ivy has been added to the classpath of the Ant distribution embedded in Eclipse.
+
+<h1>Run Ivy targets</h1>
+
+Create an Ant build file and declare the Ivy targets with:
+<code>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" />
+</code>
+And don't forgot to declare the namespace <tt>xmlns:ivy="antlib:org.apache.ivy.ant"</tt>.
+
+After the taskdefs have been added, you will have code completion on Ivy tasks:
+
+<center><img src="images/antedit.jpg" /></center>
+
+The build will now be successful:
+
+<center><img src="images/antrun.jpg" /></center>
+
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

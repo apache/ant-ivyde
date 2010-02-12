@@ -1,0 +1,185 @@
+				IvyDE 
+				============================================
+
+  version 2.1.0
+==========================
+- NEW: Inclusion of Ivy related schemas into the Eclipse XML Catalog (IVYDE-190) (thanks to Miguel Griffa)
+- NEW: Add "Resolve Dependencies" extension to Java Project in the Package Explorer (IVYDE-153) (thanks to Jon Schneider and Troy Gaines)
+- NEW: Add option to not launch a resolve after saving a file with the IvyEditor (IVYDE-197) (thanks to Jon Schneider)
+- NEW: File resource listener on Ivy files launches resolve when it detects modifications (IVYDE-199) (thanks to Jon Schneider)
+- NEW: Add an option in the container to automatically launch a resolve before each launch (IVYDE-204)
+- NEW: "Reverse Dependency Explorer" View for synchronizing revisions across multiple projects in a workspace (IVYDE-195) (thanks to Jon Schneider)
+- NEW: Make the Ivy console filter on the logging level (IVYDE-205)
+- NEW: Support for Eclipse variables (IVYDE-152)
+
+- IMPROVE: Wrap cache cleaning in a job so that it does not block the workspace (IVYDE-207) (thanks to Jon Schneider)
+- IMPROVE: Allow workspace resolver to skip version matcher (IVYDE-187) (thanks to Phillip Webb)
+
+- FIX: "Ivy Settings Path" Browse button results in an incorrectly formatted URL (IVYDE-191) (thanks to Jon Schneider)
+- FIX: Workspace Resolver Prevents Source Download (IVYDE-188) (thanks to Phillip Webb)
+- FIX: Resolve in Workspace fails to find projects under certain conditions (IVYDE-186) (thanks to Adam Karl)
+- FIX: The gui wizard crash when adding a IvyDE Managed Dependencies library to a .launch file's classpath (IVYDE-200)
+- FIX: Ivy Library removed from the list of Java EE Module Dependencies after changing its properties (IVYDE-178)
+- FIX: Ivy Classpath Contributed to Dependent Projects When not Exported (IVYDE-193)
+- FIX: Incorrect project:// path in the ivysettings configuration make the UI crash (IVYDE-203)
+- FIX: conf attributes must not be null (IVYDE-209) (thanks to Ivica Loncar)
+- FIX: Errors are not reported when multiple resolve are launched (IVYDE-219)
+- FIX: Ivy settings file cannot be loaded via http url (IVYDE-218)
+- FIX: The workspace resolver doesn't resolve conflicts correctly (IVYDE-212)
+- FIX: dependency order not preserved causing failed builds (IVYDE-170)
+- FIX: Can not add a project specific property file when adding a library (IVYDE-228)
+- FIX: IvyDE fail on project close to trigger resolve on dependent project (IVYDE-229)
+
+  version 2.0.0 final
+==========================
+- NEW: Add the IvyDE documentation to the Eclipse help (IVYDE-150)
+- NEW: Export IVY_HOME as a classpath variable (IVYDE-141)
+- NEW: Support variables in ivyconf.xml (IVYDE-13) (thanks to Will Gorman)
+- NEW: Allow to manually reload the settings (IVYDE-26)
+- NEW: Allow to not trigger full resolve at startup (IVYDE-74)
+- IMPROVE: Split the global configuration panel into sevral ones (IVYDE-151)
+- IMPROVE: Add ivy.xsd to ivy.xml template (IVYDE-165) (thanks to Marko Niemi)
+- IMPROVE: Better support the resolve in workspace feature (IVYDE-153) (thanks to Eugene Goldfarb)
+
+- FIX: When migrating from ivyde alpha to ivyde beta eclipse is throwing NPE at startup (IVYDE-136) (thanks to Daniel Becheanu)
+- FIX: The retrieve configuration doesn't support '*' as accepted types (IVYDE-137) (thanks to Daniel Becheanu)
+- FIX: NPE when a project:/// path is used and path does not exist (IVYDE-144)
+- FIX: project://[projectname]/ scheme for settings only work with java projects, not simple projects (IVYDE-145)
+- FIX: source and javadoc attachment regression (IVYDE-146)
+- FIX: IvyDE does not save "Configurations" and "Types" field values for "Retrive" tab  (IVYDE-142) (thanks to Daniel Becheanu)
+- FIX: Retrieve after resolve task fails because of wrong resolve configuration (IVYDE-140) (thanks to Daniel Becheanu)
+- FIX: Conversion from "file:" to "project:" fails (IVYDE-143) (thanks to Will Gorman)
+- FIX: The decorators can throw a NPE at startup (IVYDE-133)
+- FIX: Changing any setting for the classpath container loses the "exported" setting of the classpath container (IVYDE-149)
+- FIX: IvyConsole:java.io.IOException: Output Stream is closed (IVYDE-130)
+- FIX: "Delete old retrieved artifacts" gets grayed out after OK'ing the dialog (IVYDE-155)
+- FIX: REGRESSION: Resolving does no longer respect configurations (IVYDE-161)
+- FIX: Parsing ivy file fails in IvyDE while it succeeds in Ant (IVYDE-35)
+- FIX: Sources attach but Javadocs don't (IVYDE-166)
+- FIX: Branch in repository pattern and defaultBranch (IVYDE-168)
+- FIX: The resolve in workspace is being evicted by transitive dependencies (IVYDE-169)
+- FIX: Error messages when setting path to ivy settings file covers what is being typed in (IVYDE-172)
+- FIX: ResolveAllAction does not resolve multiple IvyDE containers in a single project (IVYDE-175)
+- FIX: The sources/javadocs are not added for dependencies which don't have a fixed revision (IVYDE-174)
+- FIX: Refresh action is detaching javadoc and sources (IVYDE-176)
+- FIX: Add Ivy Library command adds classpath container even though it already exists (IVYDE-164)
+- FIX: Importing a project with Ivy configured with an embedded ivysettings fails (IVYDE-181)
+- FIX: Importing a project with Ivy fails if properties files are specified in settings (IVYDE-182)
+- FIX: IvyDE does not set javadoc archive path properly (IVYDE-179)
+
+  version 2.0.0 beta1
+==========================
+- NEW: settings files code completion support (IVYDE-22)
+- NEW: Option to resolve to local eclipse projects (IVYDE-89) (thanks to Antony James Wilkins and Matt Goldspink)
+- NEW: Add errors marker to the Ivy container (IVYDE-78)
+- NEW: Handle a project: scheme for the path of the ivysettings.xml (IVYDE-94)
+- NEW: Need CleanCache task in context menu (IVYDE-114)
+- NEW: Retrieve after resolve feature does not fetch only accepted jar types artifact (IVYDE-106)
+
+- IMPROVE: Split the configuration panel (IVYDE-119)
+- IMPROVE: Support latest dev version of ivy.jar in IVYDE build (IVYDE-122)
+- IMPROVE: IVYDE classpath container should support bundle types by default (IVYDE-121)
+- IMPROVE: Set current working dir to eclipse project location (IVYDE-52)
+- IMPROVE: Make the classpath entries order configuration UI more intuitive (IVYDE-104)
+- IMPROVE: Retrieve after resolve feature does not clean target directory first (IVYDE-105)
+
+- FIX: IvyDE IvyPreferencePage does not work with eclipse 3.2 (IVYDE-120)
+- FIX: Can't close ivy console in eclipse (IVYDE-123)
+- FIX: IvyDE does not do property value expansion (IVYDE-90)
+- FIX: Resolve in workspace does not pick up all projects in workspace (IVYDE-118) (thanks to Matt Goldspink)
+- FIX: Ivy editor: code completion missing for matcher attribute of conflicts manager (IVYDE-99)
+- FIX: The project dependencies and the errors markers are conflicting (IVYDE-116) 
+- FIX: same jar files get downloaded 3 times (binary, javadoc and sources jar files are identical) (IVYDE-117)
+- FIX: IvyDE crashes during resolve due to an incompatibility with Eclipse 3.2 (IVYDE-108)
+- FIX: Ivy preferences page mentions ivyconf not ivysettings (IVYDE-103)
+- FIX: Resolve is not triggered anymore with Eclipse 3.4 (IVYDE-110)
+- FIX: An incorrect configuration of a container make 3 error popup (IVYDE-112)
+- FIX: IvyDE does not honour the "validate" Attribute in a ivysetting file (IVYDE-96)
+
+  version 2.0.0 alpha1
+===========================
+- NEW: [build] Use the latest ivy to resolve dependencies (IVYDE-62) (thanks to Nicolas Lalevee) 
+- NEW: Order alphabetically the entries in the class path container (IVYDE-69) (thanks to Nicolas Lalevee)
+
+- IMPROVE: The dialog box opened for resolve failure should show the status message on several lines (IVYDE-95)
+- IMPROVE: Recognize more source and javadoc artifacts names (IVYDE-66) (thanks to Nicolas Lalevee)
+- IMPROVE: Use Ivy Bundle instead of packaging ivy.jar in IvyDE bundle (IVYDE-67)
+- IMPROVE: enable 'Resolve all' action (IVYDE-42) (thanks to Thomas FRIOL)
+- IMPROVE: Support javadoc and sources even in modules where they are not declared (IVYDE-46)
+- IMPROVE: Simplify the resolve process (IVYDE-64) (thanks to Nicolas Lalevee) 
+- IMPROVE: Add new target to build.xml to build the plugin with Ant (IVYDE-88)
+
+- FIX: On classpath issues the user is not notified (IVYDE-85)
+- FIX: Loading config causes BuildException and eclipse freaks out (IVYDE-79)
+- FIX: NPE that break eclipse: the Java project becomes empty (IVYDE-84)
+- FIX: IvyDE is dependant on environment variable MOZILLA_FIVE_HOME (IVYDE-10)
+- FIX: no support of organization spelling (IVYDE-19)
+- FIX: NPE when setting a bad file for the ivy setting path in the global configuration panel (IVYDE-91)
+- FIX: IvyDE 1.0.3 "Run configuration" problem with Eclipse 3.x (IVYDE-32)
+- FIX: Error while trying to edit an ivy.xml without a configured container (IVYDE-83)
+- FIX: IvyDE resolve also evicted artifacts (IVYDE-76) (thanks to Nicolas Lalevee)
+- FIX: IvyDE is using some internal classes of Eclipse (IVYDE-68) (thanks to Nicolas Lalevee) 
+- FIX: "Add Ivy library" not working in eclipse 3.3 (IVYDE-57)
+- FIX: Automatic javadoc attachment is not working (IVYDE-55)
+- FIX: On startup IvyIDE can freeze eclipse (IVYDE-63) (thanks to Nicolas Lalevee)
+- FIX: The project ivy configuration is not taken into account on the first run: the configuration is no longer stored in the preferences but in the .classpath (IVYDE-70)
+- FIX: An error occurs when closing a project while the ivy editor is opened (IVYDE-81)
+- FIX: Compilation fails on Europa due to API change (IVYDE-58)
+- FIX: "memory effect" even after resolve/refresh command (IVYDE-40)
+- FIX: No debug info in console (IVYDE-39)
+- FIX: Internal error when doing resolve (IVYDE-34)
+
+- moved to apache, packages renamed to org.apache.ivyde
+  				
+
+  version 1.2.0
+===========================
+- upgraded to Ivy 1.4.1
+- NEW: Link Sources to Classes by Artifact Type in Classpath Container (IVYDE-12) (thanks to Peter Blstak)
+- FIX: No resolve messages in console (IVYDE-39)
+
+  version 1.1.0
+===========================
+- NEW: enabling user to choose what types get added to the classpath (IVYDE-24)
+- NEW: Provide [create ivy aware library] when opening the context menu of an ivy.xml file (IVYDE-21)
+- NEW: report view (Windows -> Show View -> IvyDE > Report) (IVYDE-20)
+- IMPROVE: Deal with cancel resolve job (IVYDE-30)
+- IMPROVE: Support for relative path in the prefence fields when declaring location of ivyconf.xml file. (IVYDE-25) (thanks to Peter Chanthamynavong)
+- IMPROVE: store per project settings in a shareable file (namely .settings/org.jayasoft.ivyde.eclipse.prefs) (IVYDE-15)
+- FIX: junit classpath not resolved correctly with several IvyDE classpath containers (IVYDE-31)
+
+   version 1.0.4 - 
+===========================
+- remove PDE plugin requirement
+- prevent NPE when ivy resolve failed
+
+   version 1.0.3 - 
+===========================
+- add sources in distrib
+
+   version 1.0.2 - 
+===========================
+- Include IVY 1.3.1 release
+- Fix common-logging classloader issue
+
+   version 1.0.1 - 
+===========================
+- Include IVY 1.3 release
+
+   version 0.9.8 - 
+===========================
+- Fix source attachment from class editor
+
+   version 0.9.7 - 
+===========================
+- Fix source attachment for contained in ivycontainer 
+
+   version 0.9.6 - 
+===========================
+- Fix startup refresh problem
+
+   version 0.9.3 - 
+===========================
+initial public version
+- integration of plugin formerly known as ivyeclipseui
+- added IvyClasspathContainer and configuration stuff

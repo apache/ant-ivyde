@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.4">
+    <info organisation="org.apache.ivyde" module="ivydetest-workspaceresolver-common" revision="1.1.20100901120000-dev" status="integration" publication="20080811152510" />
+    <configurations>
+        <conf name="default" />
+    </configurations>
+    <publications>
+        <artifact name="workspaceresolver-common" type="jar" ext="jar" conf="default" />
+    </publications>
+</ivy-module>
