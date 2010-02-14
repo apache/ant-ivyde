@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ivy-module version="1.0">
-    <info organisation="myorg" module="bom-module" revision="1.1" />
-    <publications>
-    </publications>
-    <dependencies>
-    </dependencies>
-</ivy-module>

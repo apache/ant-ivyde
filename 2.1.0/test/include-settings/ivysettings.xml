@@ -1,4 +1,0 @@
-<ivysettings>
-    <settings defaultResolver="public" />
-    <include url="${ivy.default.conf.dir}/ivyconf-public.xml"/>
-</ivysettings>
