@@ -23,7 +23,7 @@
       version="2.1.0.qualifier"
       provider-name="%providerName">
 
-   <description url="http://ant.apache.org/ivy/ivyde">
+   <description url="http://www.apache.org/dist/ant/ivyde/updatesite">
       %description
    </description>
 
@@ -32,8 +32,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://ant.apache.org/ivy/ivyde/updatesite"/>
-      <discovery label="%updateSiteName" url="http://ant.apache.org/ivy/ivyde/updatesite"/>
+      <update label="%updateSiteName" url="http://www.apache.org/dist/ant/ivyde/updatesite"/>
+      <discovery label="%updateSiteName" url="http://www.apache.org/dist/ant/ivyde/updatesite"/>
    </url>
 
    <requires>
