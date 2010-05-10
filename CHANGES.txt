@@ -25,7 +25,6 @@
 - FIX: conf attributes must not be null (IVYDE-209) (thanks to Ivica Loncar)
 - FIX: Errors are not reported when multiple resolve are launched (IVYDE-219)
 - FIX: Ivy settings file cannot be loaded via http url (IVYDE-218)
-- FIX: The workspace resolver doesn't resolve conflicts correctly (IVYDE-212)
 - FIX: dependency order not preserved causing failed builds (IVYDE-170)
 - FIX: Can not add a project specific property file when adding a library (IVYDE-228)
 - FIX: IvyDE fail on project close to trigger resolve on dependent project (IVYDE-229)
