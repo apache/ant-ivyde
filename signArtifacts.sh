@@ -20,4 +20,4 @@
 read -s -p "Key passphrase: " passphrase
 
 for i in dist/apache-ivyde-*.zip; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done
-for i in dist/apache-ivyde-*.tgz; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done
+for i in dist/apache-ivyde-*.tar.gz; do gpg --passphrase "$passphrase" --output $i.asc --detach-sig --armor $i; done
