@@ -18,4 +18,4 @@
 #   under the License.
 
 for i in dist/apache-ivyde-*.zip; do gpg --verify $i.asc; done
-for i in dist/apache-ivyde-*.tgz; do gpg --verify $i.asc; done
+for i in dist/apache-ivyde-*.tar.gz; do gpg --verify $i.asc; done
