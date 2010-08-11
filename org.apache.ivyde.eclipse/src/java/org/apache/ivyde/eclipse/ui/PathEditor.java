@@ -18,10 +18,13 @@
 package org.apache.ivyde.eclipse.ui;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -112,6 +115,15 @@ public abstract class PathEditor extends Composite {
                 new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
         dialog.setTitle("Select a workspace relative file:");
         dialog.setMessage("Select a workspace relative file:");
+        // Filter closed projects
+        dialog.addFilter(new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof IProject)
+                    return ((IProject) element).isAccessible();
+
+                return true;
+            }
+        });
         dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
         // TODO try to preselect the current file
         dialog.open();
