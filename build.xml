@@ -149,8 +149,8 @@
         <condition property="overwrite">
             <isfalse value="${checkUpToDate}" />
         </condition>
-        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
-        <copy todir="${dist.work.dir}/apache-ivyde-${build.version}" overwrite="${overwrite}">
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
+        <copy todir="${dist.work.dir}/apache-ivyde-${build.version}/doc" overwrite="${overwrite}">
             <fileset dir="${src.doc.dir}">
                 <include name="style/**" />
                 <include name="js/**" />
@@ -162,8 +162,8 @@
     <target name="generate-dist-doc-html">
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
         <property name="checkUpToDate" value="true" />
-        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
-        <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}" checkUpToDate="${checkUpToDate}">
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
+        <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}/doc" checkUpToDate="${checkUpToDate}">
             <fileset dir="${src.doc.dir}">
                 <include name="**/*.html" />
                 <exclude name="template*.html" />
