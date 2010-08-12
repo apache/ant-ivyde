@@ -186,7 +186,7 @@
         </copy>
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}" />
-        <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tgz" basedir="${dist.work.dir}" compression="gzip" />
+        <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tar.gz" basedir="${dist.work.dir}" compression="gzip" />
         <!-- put the version in a file so it will be easier in the build of the
             updatesite on hudson to find out which version it is -->
         <echo file="${dist.dir}/version.properties">
@@ -213,7 +213,7 @@ ivyde.build.version=${build.version}
         </exec>
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources" />
-        <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tgz" basedir="${work.dir}/sources" compression="gzip" />
+        <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz" basedir="${work.dir}/sources" compression="gzip" />
     </target>
 
     <!-- 
@@ -330,13 +330,13 @@ You have to specify the Ivy to install with one of the following property:
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM">
             <fileset dir="${dist.dir}">
                 <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tgz" />
+                <include name="apache-ivyde-*.tar.gz" />
             </fileset>
         </checksum>
         <checksum algorithm="SHA" fileext=".sha" format="MD5SUM">
             <fileset dir="${dist.dir}">
                 <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tgz" />
+                <include name="apache-ivyde-*.tar.gz" />
             </fileset>
         </checksum>
     </target>
@@ -345,7 +345,7 @@ You have to specify the Ivy to install with one of the following property:
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" verifyproperty="checksum.md5.ok">
             <fileset dir="${dist.dir}">
                 <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tgz" />
+                <include name="apache-ivyde-*.tar.gz" />
             </fileset>
         </checksum>
         <fail message="MD5 Checksum verify failed !">
@@ -357,7 +357,7 @@ You have to specify the Ivy to install with one of the following property:
         <checksum algorithm="SHA" fileext=".sha" format="MD5SUM" verifyproperty="checksum.sha.ok">
             <fileset dir="${dist.dir}">
                 <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tgz" />
+                <include name="apache-ivyde-*.tar.gz" />
             </fileset>
         </checksum>
         <fail message="SHA Checksum verify failed !">
