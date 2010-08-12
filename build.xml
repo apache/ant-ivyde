@@ -46,6 +46,7 @@
     <property name="checkstyle.src.dir" value="${basedir}/org.apache.ivyde.eclipse/src/etc/checkstyle" />
     <property name="checkstyle.report.dir" value="${basedir}/checkstyle/report" />
     <property name="checkstyle.lib" value="${basedir}/checkstyle/lib" />
+    <property name="rat.dir" value="${work.dir}/rat" />
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <tstamp />
@@ -587,10 +588,16 @@ forceContextQualifier=${hudson.version.qualifier}
     </target>
 
 
+    <!--
+        ======================================================================================
+        Targets related to the RAT reports
+        ======================================================================================
+     -->
+
     <target name="init-ivy">
         <property name="ivy.version"  value="2.2.0-rc1"/>
         <property name="ivy.jar.url"  value="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
-        <property name="ivy.jar.dir"  value="${java.io.tmpdir}/ivy"/>
+        <property name="ivy.jar.dir"  value="${work.dir}"/>
         <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
         <mkdir dir="${ivy.jar.dir}"/>
         <get src="${ivy.jar.url}" dest="${ivy.jar.file}" usetimestamp="true"/>
@@ -601,15 +608,7 @@ forceContextQualifier=${hudson.version.qualifier}
     </target>
 
     <!-- RAT Release Auditing Tool -->
-    <property name="rat.report.dir"
-              value="rat/report"
-              description="Where to store the RAT reports"/>
-    <property name="rat.report.file"
-              value="${rat.report.dir}/report.html"
-              description="RAT-Report file"/>
-    <property name="rat.version"
-              value="0.7"
-              description="Which Version of RAT to use"/>
+    <property name="rat.version" value="0.7" description="Which Version of RAT to use"/>
 
     <target name="rat" description="--> Runs the ReleaseAuditingTool"  depends="init-ivy" xmlns:ivy="antlib:org.apache.ivy.ant">
         <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="${rat.version}"
@@ -617,20 +616,20 @@ forceContextQualifier=${hudson.version.qualifier}
         <typedef resource="org/apache/rat/anttasks/antlib.xml"
                  uri="antlib:org.apache.rat.anttasks"
                  classpathref="rat.classpath"/>
-        <delete dir="${rat.report.dir}"/>
-        <mkdir dir="${rat.report.dir}"/>
-        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportfile="${rat.report.dir}/report.txt">
-            <!-- Check all files ... -->
-            <fileset dir=".">
-                <!-- ... without standard Eclipse/Jar files -->
-                <exclude name="**/MANIFEST.MF"/>
-                <exclude name="**/.classpath"/>
-                <exclude name="**/.project"/>
-                <exclude name="**/.settings/"/>
-                <!-- ... without Archives -->
-                <exclude name="**/*.jar"/>
-                <exclude name="**/*.zip"/>
-            </fileset>
+        <delete dir="${rat.dir}"/>
+        <mkdir dir="${rat.dir}"/>
+        <property file="${dist.dir}/version.properties" />
+        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportfile="${rat.dir}/report.txt">
+            <tarfileset>
+                <gzipresource>
+                    <file file="${dist.dir}/apache-ivyde-${ivyde.build.version}.tar.gz"/>
+                </gzipresource>
+            </tarfileset>
+            <tarfileset>
+                <gzipresource>
+                    <file file="${dist.dir}/apache-ivyde-sources-${ivyde.build.version}.tar.gz"/>
+                </gzipresource>
+            </tarfileset>
         </rat:report>
     </target>
 
