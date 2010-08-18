@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IvyDE Eclipse Plug-in
 Bundle-SymbolicName: org.apache.ivyde.eclipse; singleton:=true
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-ClassPath: ivyde-eclipse.jar
 Bundle-Activator: org.apache.ivyde.eclipse.IvyPlugin
 Bundle-Vendor: Apache Software Foundation

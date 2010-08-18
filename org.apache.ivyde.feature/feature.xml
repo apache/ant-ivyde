@@ -20,7 +20,7 @@
 <feature
       id="org.apache.ivyde.feature"
       label="%featureName"
-      version="2.1.0.qualifier"
+      version="2.2.0.qualifier"
       provider-name="%providerName">
 
    <description url="http://www.apache.org/dist/ant/ivyde/updatesite">
