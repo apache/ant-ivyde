@@ -193,14 +193,6 @@ Then svn update your working copy (to retrieve the new history branch).
 
 In the page svn/site/ivyde/download.html change every reference of the old version to the new one.
 
-<h2>Update the build script</h2>
-
-In the build script which generate the website (svn/site/build.xml), add the fix for the history import of the new release.
-In the target <tt>init-imported-history-ivyde</tt>, add a line with:
-<code>
-<init-imported-version basepath="ivyde" version="$VERSION" />
-</code>
-
 <h2>Deploy</h2>
 
 All site editing being done, commit your changes.
