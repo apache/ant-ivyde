@@ -84,4 +84,15 @@ public final class PreferenceConstants {
 
     public static final String IGNORE_VERSION_ON_WORKSPACE_PROJECTS
         = "workspaceResolver.ignoreVersion";
+
+    public static final String EDITOR_COLOR_XML_COMMENT = "editor.color.xmlComment";
+
+    public static final String EDITOR_COLOR_PROC_INSTR = "editor.color.procInstr";
+
+    public static final String EDITOR_COLOR_STRING = "editor.color.string";
+
+    public static final String EDITOR_COLOR_DEFAULT = "editor.color.default";
+
+    public static final String EDITOR_COLOR_TAG = "editor.color.tag";
+
 }

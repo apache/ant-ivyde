@@ -22,6 +22,8 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
 import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.graphics.RGB;
 
 public class IvyDEPreferenceStoreHelper {
 
@@ -198,5 +200,45 @@ public class IvyDEPreferenceStoreHelper {
     public void setIgnoreVersionOnWorkspaceProjects(boolean ignoreVersionOnWorkspaceProjects) {
         prefStore.setValue(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
             ignoreVersionOnWorkspaceProjects);
+    }
+
+    public RGB getEditorColorXmlComment() {
+        return PreferenceConverter.getColor(prefStore, PreferenceConstants.EDITOR_COLOR_XML_COMMENT);
+    }
+
+    public void setEditorColorXmlComment(RGB color) {
+        PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_XML_COMMENT, color);
+    }
+
+    public RGB getEditorColorProcInst() {
+        return PreferenceConverter.getColor(prefStore, PreferenceConstants.EDITOR_COLOR_PROC_INSTR);
+    }
+
+    public void setEditorColorProcInst(RGB color) {
+        PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_PROC_INSTR, color);
+    }
+
+    public RGB getEditorColorString() {
+        return PreferenceConverter.getColor(prefStore, PreferenceConstants.EDITOR_COLOR_STRING);
+    }
+
+    public void setEditorColorString(RGB color) {
+        PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_STRING, color);
+    }
+
+    public RGB getEditorColorDefault() {
+        return PreferenceConverter.getColor(prefStore, PreferenceConstants.EDITOR_COLOR_DEFAULT);
+    }
+
+    public void setEditorColorDefault(RGB color) {
+        PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_DEFAULT, color);
+    }
+
+    public RGB getEditorColorTag() {
+        return PreferenceConverter.getColor(prefStore, PreferenceConstants.EDITOR_COLOR_TAG);
+    }
+
+    public void setEditorColorTag(RGB color) {
+        PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_TAG, color);
     }
 }

@@ -30,6 +30,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
+import org.apache.ivyde.eclipse.ui.editors.xml.ColorManager;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResourceChangeListener;
@@ -81,6 +82,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private BundleContext bundleContext;
 
+    private ColorManager colorManager;
+
     /**
      * The constructor.
      */
@@ -97,6 +100,8 @@ public class IvyPlugin extends AbstractUIPlugin {
         this.bundleContext = context;
         log(IStatus.INFO, "starting IvyDE plugin", null);
         javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+        colorManager = new ColorManager();
+        colorManager.refreshFromStore(getPreferenceStore());
         prefStoreHelper = new IvyDEPreferenceStoreHelper(getPreferenceStore());
         getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
@@ -149,6 +154,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         super.stop(context);
         plugin = null;
         resourceBundle = null;
+        colorManager = null;
         // if (console != null)
         // console.shutdown();
     }
@@ -328,5 +334,9 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public BundleContext getBundleContext() {
         return this.bundleContext;
+    }
+
+    public ColorManager getColorManager() {
+        return colorManager;
     }
 }

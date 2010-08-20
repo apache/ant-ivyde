@@ -203,6 +203,12 @@
             id="org.apache.ivyde.eclipse.ui.preferences.WorkspaceResolverPreferencePage"
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage">
       </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.eclipse.ui.preferences.XMLEditorPreferencesPage"
+            id="org.apache.ivyde.eclipse.ui.preferences.XMLEditorPreferencesPage"
+            name="XML Editor">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

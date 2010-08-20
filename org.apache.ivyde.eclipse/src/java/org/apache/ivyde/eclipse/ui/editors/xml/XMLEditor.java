@@ -31,16 +31,10 @@ public class XMLEditor extends TextEditor {
 
     public XMLEditor(IvyContentAssistProcessor processor) {
         super();
-        colorManager = new ColorManager();
+        colorManager = IvyPlugin.getDefault().getColorManager();
         configuration = new XMLConfiguration(colorManager, processor);
         setSourceViewerConfiguration(configuration);
         setDocumentProvider(new XMLDocumentProvider());
-
-    }
-
-    public void dispose() {
-        colorManager.dispose();
-        super.dispose();
     }
 
     private static final String CONTENTASSIST_PROPOSAL_ID

@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
+import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -28,7 +29,7 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 public class XMLTagScanner extends RuleBasedScanner {
 
     public XMLTagScanner(ColorManager manager) {
-        IToken string = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.STRING)));
+        IToken string = new Token(new TextAttribute(manager.getColor(PreferenceConstants.EDITOR_COLOR_STRING)));
 
         // CheckStyle:MagicNumber| OFF
         IRule[] rules = new IRule[3];

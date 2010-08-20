@@ -21,27 +21,89 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class ColorManager {
 
-    private Map fColorTable = new HashMap();
+    protected Map fKeyTable = new HashMap();
 
-    public void dispose() {
-        Iterator e = fColorTable.values().iterator();
-        while (e.hasNext()) {
-            ((Color) e.next()).dispose();
+    protected Map fDisplayTable = new HashMap();
+
+    public void dispose(Display display) {
+        Map colorTable = (Map) fDisplayTable.get(display);
+        if (colorTable != null) {
+            Iterator e = colorTable.values().iterator();
+            while (e.hasNext()) {
+                Color color = (Color) e.next();
+                if (color != null && !color.isDisposed()) {
+                    color.dispose();
+                }
+            }
         }
     }
 
     public Color getColor(RGB rgb) {
-        Color color = (Color) fColorTable.get(rgb);
+        if (rgb == null) {
+            return null;
+        }
+
+        final Display display = Display.getCurrent();
+        Map colorTable = (Map) fDisplayTable.get(display);
+        if (colorTable == null) {
+            colorTable = new HashMap(10);
+            fDisplayTable.put(display, colorTable);
+            display.disposeExec(new Runnable() {
+                public void run() {
+                    dispose(display);
+                }
+            });
+        }
+
+        Color color = (Color) colorTable.get(rgb);
         if (color == null) {
             color = new Color(Display.getCurrent(), rgb);
-            fColorTable.put(rgb, color);
+            colorTable.put(rgb, color);
         }
+
         return color;
+    }
+
+    public Color getColor(String key) {
+        if (key == null) {
+            return null;
+        }
+        RGB rgb = (RGB) fKeyTable.get(key);
+        return getColor(rgb);
+    }
+
+    public void bindColor(String key, RGB rgb) {
+        Object value = fKeyTable.get(key);
+        if (value != null) {
+            throw new UnsupportedOperationException();
+        }
+
+        fKeyTable.put(key, rgb);
+    }
+
+    public void unbindColor(String key) {
+        fKeyTable.remove(key);
+    }
+
+    public void refreshFromStore(IPreferenceStore store) {
+        rebind(store, PreferenceConstants.EDITOR_COLOR_XML_COMMENT);
+        rebind(store, PreferenceConstants.EDITOR_COLOR_PROC_INSTR);
+        rebind(store, PreferenceConstants.EDITOR_COLOR_STRING);
+        rebind(store, PreferenceConstants.EDITOR_COLOR_DEFAULT);
+        rebind(store, PreferenceConstants.EDITOR_COLOR_TAG);
+    }
+
+    private void rebind(IPreferenceStore store, String colorId) {
+        unbindColor(colorId);
+        bindColor(colorId, PreferenceConverter.getColor(store, colorId));
     }
 }

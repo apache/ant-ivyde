@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
+import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -29,7 +30,7 @@ public class XMLScanner extends RuleBasedScanner {
 
     public XMLScanner(ColorManager manager) {
         IToken procInstr = new Token(new TextAttribute(manager
-                .getColor(IXMLColorConstants.PROC_INSTR)));
+                .getColor(PreferenceConstants.EDITOR_COLOR_PROC_INSTR)));
 
         IRule[] rules = new IRule[2];
         // Add rule for processing instructions

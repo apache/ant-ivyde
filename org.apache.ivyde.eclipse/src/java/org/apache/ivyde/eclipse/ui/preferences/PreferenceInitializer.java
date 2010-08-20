@@ -23,8 +23,10 @@ import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
 import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
+import org.apache.ivyde.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 
 /**
  * Class used to initialize default preference values.
@@ -167,6 +169,17 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
             DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
+
+        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_XML_COMMENT,
+            IXMLColorConstants.XML_COMMENT);
+        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_PROC_INSTR,
+            IXMLColorConstants.PROC_INSTR);
+        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_STRING,
+            IXMLColorConstants.STRING);
+        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_DEFAULT,
+            IXMLColorConstants.DEFAULT);
+        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_TAG,
+            IXMLColorConstants.TAG);
     }
 
 }

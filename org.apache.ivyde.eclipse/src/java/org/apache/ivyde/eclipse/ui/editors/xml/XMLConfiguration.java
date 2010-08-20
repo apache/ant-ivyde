@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
+import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -72,7 +73,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
         if (scanner == null) {
             scanner = new XMLScanner(colorManager);
             scanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager
-                    .getColor(IXMLColorConstants.DEFAULT))));
+                    .getColor(PreferenceConstants.EDITOR_COLOR_DEFAULT))));
         }
         return scanner;
     }
@@ -81,7 +82,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
         if (tagScanner == null) {
             tagScanner = new XMLTagScanner(colorManager);
             tagScanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager
-                    .getColor(IXMLColorConstants.TAG))));
+                    .getColor(PreferenceConstants.EDITOR_COLOR_TAG))));
         }
         return tagScanner;
     }
@@ -98,7 +99,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
         reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
         NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(
-                colorManager.getColor(IXMLColorConstants.XML_COMMENT)));
+                colorManager.getColor(PreferenceConstants.EDITOR_COLOR_XML_COMMENT)));
         reconciler.setDamager(ndr, XMLPartitionScanner.XML_COMMENT);
         reconciler.setRepairer(ndr, XMLPartitionScanner.XML_COMMENT);
 
