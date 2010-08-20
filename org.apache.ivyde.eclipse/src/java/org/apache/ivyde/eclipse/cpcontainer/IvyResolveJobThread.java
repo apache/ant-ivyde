@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -48,6 +49,9 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -337,7 +341,20 @@ public class IvyResolveJobThread extends Thread {
             c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil
                     .split(inheritedRetrieveTypes)));
         }
-        ivy.retrieve(md.getModuleRevisionId(), pattern, c);
+        int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, c);
+        try {
+            if (numberOfItemsRetrieved > 0 ){
+                // Only refresh if we actually retrieved a file.
+                monitor.setTaskName("refreshing after retrieve for pattern: " + pattern);
+                String refreshPath = IvyPatternHelper.getTokenRoot(conf.getInheritedRetrievePattern());
+                IFolder folder = conf.getJavaProject().getProject().getFolder(refreshPath);
+                folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+            }
+        } catch (CoreException e) {
+            // we shouldn't get any conflict in resource changes notifications, the job running
+            // this thread should be started with proper exclude rules
+            throw new RuntimeException("Refresh after resolve is conflicting with another job", e);
+        }
     }
 
     private Map/* <ModuleRevisionId, Artifact[]> */getArtifactsByDependency(ResolveReport r) {
