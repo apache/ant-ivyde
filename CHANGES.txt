@@ -4,6 +4,8 @@
   version 2.2.0
 ==========================
 
+- NEW: Custom color in XML editors (IVYDE-73)
+
 - IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)
 
   version 2.1.0
