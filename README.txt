@@ -1,5 +1,5 @@
-            Apache IvyDE v2.0.0 final
-           ---------------------------
+            Apache IvyDE v2.2.0
+           ---------------------
 
 
 Supported Platforms

@@ -1,4 +1,4 @@
-	                      Apache IvyDE v2.0.0 final
+                            Apache IvyDE v2.2.0
                                Release Notes
    -----------------------------------------------------------------------
 
@@ -21,19 +21,12 @@ not least IvyDE offer editors of ivy.xml and ivysettings.xml files with completi
 
 2. Status of this release 
 
-This is the first release considered as stable since the project as been hosted
-by the Apache Software Foundation.
+This is a minor update from the previous version and is considered as stable. Some
+bugs were fixed, and some feature have been added with backward compatibility in mind.
 
 3. Major Changes in this Release
 
-The "resolve in workspace" feature (make IvyDE search for Ivy dependencies
-directly into the Eclipse projects) has been introduced in the last release
-but was quite experimental. It has been refactored to be more reliable and
-have been reported to be working like a charm by some of the IvyDE early users.
-
-The IvyDE user documentation is now available directly into the Eclipse help center.
-
-IvyDE can now load property files along with the Ivy settings.
+TODO WHEN RELEASING: highlight some big feature here
 
 4. Committers and Contributors for this Release
 
@@ -46,6 +39,7 @@ long, but IvyDE couldn't be what it is without you!
     Maarten Coene
     Xavier Hanin
     Nicolas Lalevee
+    Jon Schneider
     Gilles Scokart
 
  Contributors
