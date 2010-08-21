@@ -230,7 +230,8 @@ public class IvyResolveJobThread extends Thread {
 
         all = new LinkedHashSet();
         for (int i = 0; i < confs.length; i++) {
-            ConfigurationResolveReport configurationReport = report.getConfigurationReport(confs[i]);
+            ConfigurationResolveReport configurationReport = report
+                    .getConfigurationReport(confs[i]);
             Set revisions = configurationReport.getModuleRevisionIds();
             for (Iterator it = revisions.iterator(); it.hasNext();) {
                 ModuleRevisionId revId = (ModuleRevisionId) it.next();
@@ -342,18 +343,12 @@ public class IvyResolveJobThread extends Thread {
                     .split(inheritedRetrieveTypes)));
         }
         int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, c);
-        try {
-            if (numberOfItemsRetrieved > 0 ){
-                // Only refresh if we actually retrieved a file.
-                monitor.setTaskName("refreshing after retrieve for pattern: " + pattern);
-                String refreshPath = IvyPatternHelper.getTokenRoot(conf.getInheritedRetrievePattern());
-                IFolder folder = conf.getJavaProject().getProject().getFolder(refreshPath);
-                folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-            }
-        } catch (CoreException e) {
-            // we shouldn't get any conflict in resource changes notifications, the job running
-            // this thread should be started with proper exclude rules
-            throw new RuntimeException("Refresh after resolve is conflicting with another job", e);
+        if (numberOfItemsRetrieved > 0) {
+            // Only refresh if we actually retrieved a file.
+            String refreshPath = IvyPatternHelper.getTokenRoot(conf.getInheritedRetrievePattern());
+            IFolder folder = conf.getJavaProject().getProject().getFolder(refreshPath);
+            RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
+            refreshFolderJob.schedule();
         }
     }
 

@@ -130,7 +130,7 @@ public class IvyResolveJob extends Job {
             WarningNonMatchingVersionReporter nonMatchingVersionReporter = new WarningNonMatchingVersionReporter();
             CircularDependencyStrategy circularDependencyStrategy = WarnCircularDependencyStrategy
                     .getInstance();
-            ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(inworkspaceModules.values(),
+            ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(inworkspaceModules.keySet(),
                     versionMatcher, nonMatchingVersionReporter, circularDependencyStrategy);
             List sortedModuleDescriptors = sorter.sortModuleDescriptors();
 
@@ -198,6 +198,7 @@ public class IvyResolveJob extends Job {
         boolean usePreviousResolveIfExist = request.isUsePreviousResolveIfExist();
         IvyResolveJobThread resolver = new IvyResolveJobThread(conf, ivy, md,
                 usePreviousResolveIfExist, monitor);
+        resolver.setName("IvyDE resolver thread");
 
         resolver.start();
         while (true) {
