@@ -110,8 +110,8 @@ public class IvyResolveJobThread extends Thread {
             IvyResolveJobListener ivyResolveJobListener = new IvyResolveJobListener(monitor);
             ivy.getEventManager().addIvyListener(ivyResolveJobListener);
 
-            monitor.beginTask("resolving dependencies", MONITOR_LENGTH);
-            monitor.setTaskName("resolving dependencies...");
+            monitor.beginTask("Resolve of " + conf.toString(), MONITOR_LENGTH);
+            monitor.setTaskName("Resolve of " + conf.toString());
 
             // context Classloader hook for commons logging used by httpclient
             // It will also be used by the SaxParserFactory in Ivy

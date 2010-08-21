@@ -330,7 +330,7 @@ public class IvyClasspathContainerConfiguration {
     }
 
     public String toString() {
-        return ivyXmlPath
+        return ivyXmlPath + confs
                 + (javaProject == null ? "" : " in '" + javaProject.getProject().getName() + "'");
     }
 

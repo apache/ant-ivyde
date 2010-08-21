@@ -57,7 +57,7 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
     public void transferProgress(TransferEvent evt) {
         switch (evt.getEventType()) {
             case TransferEvent.TRANSFER_INITIATED:
-                monitor.setTaskName("downloading " + evt.getResource());
+                monitor.subTask("downloading " + evt.getResource());
                 break;
             case TransferEvent.TRANSFER_STARTED:
                 currentLength = 0;
@@ -73,7 +73,7 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
                     int progress = (int) (currentLength * DOWNLOAD_MONITOR_LENGTH
                             / expectedTotalLength);
                     dlmonitor.worked(progress);
-                    monitor.subTask((currentLength / KILO_BITS_UNIT) + " / "
+                    monitor.subTask("downloading " + evt.getResource() + ": " + (currentLength / KILO_BITS_UNIT) + " / "
                             + (expectedTotalLength / KILO_BITS_UNIT) + "kB");
                 }
                 break;
@@ -94,7 +94,7 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
             }
         } else if (event instanceof StartArtifactDownloadEvent) {
             StartArtifactDownloadEvent evt = (StartArtifactDownloadEvent) event;
-            monitor.setTaskName("downloading " + evt.getArtifact());
+            monitor.subTask("downloading " + evt.getArtifact());
             if (dlmonitor != null) {
                 dlmonitor.done();
             }
