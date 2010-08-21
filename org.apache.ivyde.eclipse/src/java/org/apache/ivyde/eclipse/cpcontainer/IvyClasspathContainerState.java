@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
@@ -181,7 +182,14 @@ public class IvyClasspathContainerState {
             throw ex;
         }
         if (url.getProtocol().startsWith("file")) {
-            File file = new File(url.getPath());
+            // first try the standard way
+            File file;
+            try {
+                file = new File(url.toURI());
+            } catch (URISyntaxException e) {
+                // probably a badly constructed url: "file://" + filename
+                file = new File(url.getPath());
+            }
             return getIvy(file);
         } else {
             // an URL but not a file

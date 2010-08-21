@@ -8,6 +8,8 @@
 
 - IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)
 
+- FIX: Variable based path for ivysettings doesn't work it there are some spaces in the path (IVYDE-253)
+
   version 2.1.0
 ==========================
 - NEW: Inclusion of Ivy related schemas into the Eclipse XML Catalog (IVYDE-190) (thanks to Miguel Griffa)
