@@ -7,6 +7,7 @@
 - NEW: Custom color in XML editors (IVYDE-73)
 
 - IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)
+- IMPROVE: IvyDE now resolve by batch, then preventing too many workspace build (IVYDE-177)
 
 - FIX: Variable based path for ivysettings doesn't work it there are some spaces in the path (IVYDE-253)
 
