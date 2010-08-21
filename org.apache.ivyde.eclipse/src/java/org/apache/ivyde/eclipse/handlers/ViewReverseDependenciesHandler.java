@@ -15,31 +15,26 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.actions;
+package org.apache.ivyde.eclipse.handlers;
+
+import java.util.Map;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorerView;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
-public class ProjectViewReverseDependenciesAction extends Action {
+public class ViewReverseDependenciesHandler extends AbstractIvyDEHandler {
 
-    private IProject[] projects;
+    public static final String COMMAND_ID = "org.apache.ivyde.commands.revdepexplorer";
 
-    private IWorkbenchPage page;
-
-    public ProjectViewReverseDependenciesAction(IProject[] projects, IWorkbenchPage workbenchPage) {
-        this.projects = projects;
-        this.page = workbenchPage;
-        this.setText("Show in Reverse Dependency Explorer");
-    }
-
-    public void run() {
+    protected void handleProjects(Map projects) {
         try {
-            ReverseDependencyExplorerView.setSelectedProjects(projects);
+            ReverseDependencyExplorerView.setSelectedProjects((IProject[]) projects.keySet()
+                    .toArray());
+            IWorkbenchPage page = IvyPlugin.getActivePage();
             page.showView("org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorer");
             ReverseDependencyExplorerView.refresh(true);
         } catch (PartInitException e) {

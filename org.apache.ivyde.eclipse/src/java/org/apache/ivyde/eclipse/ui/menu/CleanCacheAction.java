@@ -15,7 +15,10 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.actions;
+package org.apache.ivyde.eclipse.ui.menu;
+
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -28,7 +31,7 @@ import org.eclipse.jface.action.Action;
 
 public class CleanCacheAction extends Action {
 
-    private final Cleanable[] cleanables;
+    private final List/* <Cleanable> */cleanables;
 
     public abstract static class Cleanable {
         public void launchClean() {
@@ -80,20 +83,18 @@ public class CleanCacheAction extends Action {
         }
     }
 
-    public CleanCacheAction(Cleanable cleanable) {
-        this.cleanables = new Cleanable[] {cleanable};
-    }
-
-    public CleanCacheAction(Cleanable[] cleanables) {
+    public CleanCacheAction(List/* <Cleanable> */cleanables) {
         this.cleanables = cleanables;
     }
 
     public void run() {
         StringBuffer builder = new StringBuffer("Ivy cache cleaned: ");
-        for (int i = 0; i < cleanables.length; i++) {
-            cleanables[i].launchClean();
-            builder.append(cleanables[i].getName());
-            if (i < cleanables.length - 1) {
+        Iterator itCleanable = cleanables.iterator();
+        while (itCleanable.hasNext()) {
+            Cleanable cleanable = (Cleanable) itCleanable.next();
+            cleanable.launchClean();
+            builder.append(cleanable.getName());
+            if (itCleanable.hasNext()) {
                 builder.append(", ");
             }
         }

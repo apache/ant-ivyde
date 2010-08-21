@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+<?eclipse version="3.3"?>
 <!--
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -58,86 +58,6 @@
       </classpathContainerInitializer>
    </extension>
 
-   <extension point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="false"
-            id="org.apache.ivyde.eclipse.ui.actions.ReloadSettingsAction"
-            objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
-         <action
-               class="org.apache.ivyde.eclipse.ui.actions.ReloadSettingsAction"
-               enablesFor="1"
-               id="org.apache.ivyde.eclipse.ui.actions.ReloadSettingsAction"
-               label="Reload &amp;settings">
-         </action>
-      </objectContribution> 
-      <objectContribution 
-         id="org.apache.ivyde.eclipse.ui.actions.RefreshAction" 
-         objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 
-         <action
-            id="org.apache.ivyde.eclipse.ui.actions.RefreshAction" 
-            label="Re&amp;fresh"
-            class="org.apache.ivyde.eclipse.ui.actions.RefreshAction" 
-            enablesFor="1"
-			/> 
-      </objectContribution> 
-      <objectContribution 
-         id="org.apache.ivyde.eclipse.ui.actions.ResolveAction" 
-         objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 
-         <action
-            id="org.apache.ivyde.eclipse.ui.actions.ResolveAction" 
-            label="&amp;Resolve"
-            class="org.apache.ivyde.eclipse.ui.actions.ResolveAction" 
-            enablesFor="1"
-			/> 
-      </objectContribution>
-      <objectContribution
-            adaptable="true"
-            id="org.apache.ivyde.eclipse.ui.actions.ProjectMenuAction"
-            nameFilter="*"
-            objectClass="org.eclipse.core.resources.IProject">
-         <action
-               class="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
-               enablesFor="+"
-               icon="icons/logo16x16.gif"
-               id="org.apache.ivyde.eclipse.ui.actions.IvyDEProjectMenuAction"
-               label="Ivy"
-               menubarPath="additions"
-               style="pulldown"
-               tooltip="Ivy Dependency Manager">
-         </action>
-      </objectContribution> 
-      <objectContribution 
-         id="org.apache.ivyde.eclipse.ui.actions.OpenIvyFileAction" 
-         objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"> 
-         <action
-            id="org.apache.ivyde.eclipse.ui.actions.OpenIvyFileAction" 
-            label="&amp;Edit"
-            class="org.apache.ivyde.eclipse.ui.actions.OpenIvyFileAction" 
-            enablesFor="1"
-			/> 
-      </objectContribution> 
-      <objectContribution 
-         id="org.apache.ivyde.eclipse.ui.actions.CreateContainerAction" 
-         objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="*.xml"> 
-         <action
-            id="org.apache.ivyde.eclipse.ui.actions.CreateContainerAction" 
-            label="Add &amp;Ivy Library..."
-            class="org.apache.ivyde.eclipse.ui.actions.CreateContainerAction" 
-            enablesFor="1"
-			/> 
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.apache.ivyde.eclipse.ui.actions.CleanCacheMenuAction"
-            objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
-         <action
-               class="org.apache.ivyde.eclipse.ui.actions.CleanCacheMenuAction"
-               id="org.apache.ivyde.eclipse.ui.actions.CleanCacheMenuAction"
-               label="Clean Ivy cache">
-         </action>
-      </objectContribution> 
-   </extension> 
 
    <extension
          point="org.eclipse.ui.editors">
@@ -241,28 +161,7 @@
   </view>
 	</extension>
 
-   <extension point = "org.eclipse.ui.actionSets">
-	   <actionSet id="org.apache.ivyde.eclipse.ui.actions.actionSet"
-		   label="IvyDE Actions"
-		   visible="true">
-		   <action id="org.apache.ivyde.eclipse.ui.actions.resolveAll"
-			   toolbarPath="readme"
-			   label="Resolve All Dependencies"
-			   icon="icons/resolve-all.gif"
-			   class="org.apache.ivyde.eclipse.ui.actions.ResolveAllAction"
-			   definitionID="org.apache.ivyde.eclipse.ui.actions.resolveAll">
-		   </action>
-	   </actionSet>
-   </extension>
    
-   <extension point="org.eclipse.ui.commands">
-      <command
-            name="Resolve All Dependencies"
-            description="Resolve All Project Dependencies with Ivy"
-            categoryId="org.eclipse.ui.category.project"
-            id="org.apache.ivyde.eclipse.ui.actions.resolveAll">
-      </command>
-   </extension>
    <extension
          point="org.eclipse.help.toc">
       <toc
@@ -307,6 +206,238 @@
             id="org.apache.ivyde.eclipse.runtimeClasspathEntryResolver"
             variable="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">
       </runtimeClasspathEntryResolver>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.apache.ivyde.commands"
+            name="IvyDE commands">
+      </category>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.resolve"
+            name="Resolve">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.refresh"
+            name="Refresh">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.reloadsettings"
+            name="Reload settings">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.resolveall"
+            name="Resolve All">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.openivyfile"
+            name="Open Ivy file">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.revdepexplorer"
+            name="Show in Reverse Dependency Explorer">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.createcontainer"
+            name="Add Ivy Library...">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.addivynature"
+            name="Add Ivy dependency management">
+      </command>
+      <command
+            categoryId="org.apache.ivyde.commands"
+            id="org.apache.ivyde.commands.removeivynature"
+            name="Remove Ivy dependency management...">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.ResolveHandler"
+            commandId="org.apache.ivyde.commands.resolve">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.RefreshHandler"
+            commandId="org.apache.ivyde.commands.refresh">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.ReloadSettingsHandler"
+            commandId="org.apache.ivyde.commands.reloadsettings">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.ResolveAllHandler"
+            commandId="org.apache.ivyde.commands.resolveall">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.OpenIvyFileHandler"
+            commandId="org.apache.ivyde.commands.openivyfile">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.ViewReverseDependenciesHandler"
+            commandId="org.apache.ivyde.commands.revdepexplorer">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.CreateContainerHandler"
+            commandId="org.apache.ivyde.commands.createcontainer">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.AddIvyNatureHandler"
+            commandId="org.apache.ivyde.commands.addivynature">
+      </handler>
+      <handler
+            class="org.apache.ivyde.eclipse.handlers.RemoveIvyNatureHandler"
+            commandId="org.apache.ivyde.commands.removeivynature">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.apache.ivyde.definition.ivyproject">
+         <iterate
+               ifEmpty="false"
+               operator="or">
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.apache.ivyde.eclipse.ivyNature">
+               </test>
+            </adapt>
+         </iterate>
+      </definition>
+      <definition
+            id="org.apache.ivyde.definition.nonivyproject">
+         <iterate>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <not>
+                  <test
+                        property="org.eclipse.core.resources.projectNature"
+                        value="org.apache.ivyde.eclipse.ivyNature">
+                  </test>
+               </not>
+            </adapt>
+         </iterate>
+      </definition>
+      <definition
+            id="org.apache.ivyde.definition.ivycontainer">
+         <iterate
+               ifEmpty="false"
+               operator="or">
+            <instanceof
+                  value="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
+            </instanceof>
+         </iterate>
+      </definition>
+      <definition
+            id="org.apache.ivyde.definition.workingset">
+         <iterate
+               ifEmpty="false"
+               operator="or">
+            <adapt
+                  type="org.eclipse.ui.IWorkingSet">
+            </adapt>
+         </iterate>
+      </definition>
+      <definition
+            id="org.apache.ivyde.definition.ivyfile">
+         <and>
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="*.xml">
+                  </test>
+               </adapt>
+            </iterate>
+            <count
+                  value="1">
+            </count>
+         </and>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.apache.ivyde.commands.createcontainer"
+               label="Add Ivy Library..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.apache.ivyde.definition.ivyfile">
+               </reference>
+            </visibleWhen>
+         </command>
+         <dynamic
+               class="org.apache.ivyde.eclipse.ui.menu.IvyMenuContributionItem"
+               id="org.apache.ivyde.eclipse.ivymenu">
+            <visibleWhen
+                  checkEnabled="false">
+               <or>
+                  <reference
+                        definitionId="org.apache.ivyde.definition.ivyproject">
+                  </reference>
+                  <reference
+                        definitionId="org.apache.ivyde.definition.ivycontainer">
+                  </reference>
+                  <reference
+                        definitionId="org.apache.ivyde.definition.workingset">
+                  </reference>
+               </or>
+            </visibleWhen>
+         </dynamic>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.apache.ivyde.eclipse.toolbar">
+            <command
+                  commandId="org.apache.ivyde.commands.resolveall"
+                  icon="icons/resolve-all.gif"
+                  label="Resolve all"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="org.apache.ivyde.commands.addivynature"
+               label="Add Ivy dependency management"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.apache.ivyde.definition.nonivyproject">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="ivyNature"
+         name="Ivy nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.apache.ivyde.eclipse.IvyNature">
+         </run>
+      </runtime>
    </extension>
 
 

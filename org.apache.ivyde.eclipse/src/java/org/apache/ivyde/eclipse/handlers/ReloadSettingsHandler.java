@@ -15,21 +15,17 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.actions;
+package org.apache.ivyde.eclipse.handlers;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.core.resources.IProject;
 
-public class ResolveAction extends IvyDEContainerAction {
+public class ReloadSettingsHandler extends AbstractIvyDEHandler {
 
-    private IvyClasspathContainer cp;
+    public static final String COMMAND_ID = "org.apache.ivyde.commands.reloadsettings";
 
-    protected void selectionChanged(IAction a, IvyClasspathContainer ivycp) {
-        this.cp = ivycp;
-    }
-
-    public void run(IAction action) {
-        cp.launchResolve(false, null);
+    protected void handleContainer(IProject project, IvyClasspathContainer cp) {
+        cp.reloadSettings();
     }
 
 }

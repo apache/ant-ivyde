@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.FakeProjectManager;
+import org.apache.ivyde.eclipse.IvyNature;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -58,6 +59,9 @@ public final class IvyClasspathContainerConfAdapter {
             loadV1(conf, path);
         }
         conf.setAttributes(attributes);
+
+        // ensure that the project has the Ivy nature
+        IvyNature.addNature(conf.getJavaProject().getProject());
     }
 
     /**

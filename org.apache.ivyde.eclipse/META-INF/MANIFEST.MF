@@ -9,7 +9,6 @@ Bundle-Vendor: Apache Software Foundation
 Export-Package: org.apache.ivyde.eclipse,
  org.apache.ivyde.eclipse.cpcontainer,
  org.apache.ivyde.eclipse.cpcontainer.fragmentinfo,
- org.apache.ivyde.eclipse.ui.actions,
  org.apache.ivyde.eclipse.ui.console,
  org.apache.ivyde.eclipse.ui.core,
  org.apache.ivyde.eclipse.ui.editors,

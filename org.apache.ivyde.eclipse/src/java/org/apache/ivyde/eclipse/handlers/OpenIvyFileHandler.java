@@ -15,15 +15,15 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.actions;
+package org.apache.ivyde.eclipse.handlers;
 
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -33,15 +33,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class OpenIvyFileAction extends IvyDEContainerAction {
+public class OpenIvyFileHandler extends AbstractIvyDEHandler {
 
-    private IvyClasspathContainer cp;
+    public static final String COMMAND_ID = "org.apache.ivyde.commands.openivyfile";
 
-    protected void selectionChanged(IAction a, IvyClasspathContainer ivycp) {
-        this.cp = ivycp;
-    }
-
-    public void run(IAction action) {
+    protected void handleContainer(IProject project, IvyClasspathContainer cp) {
         IvyClasspathContainerConfiguration conf = cp.getConf();
         if (FakeProjectManager.isFake(conf.getJavaProject())) {
             return;

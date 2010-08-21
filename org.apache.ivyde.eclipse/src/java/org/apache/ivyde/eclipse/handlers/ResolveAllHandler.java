@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.actions;
+package org.apache.ivyde.eclipse.handlers;
 
 import java.util.Iterator;
 
@@ -24,19 +24,27 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
 import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.Action;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
-public class ProjectResolveAction extends Action {
+public class ResolveAllHandler extends AbstractHandler {
 
-    private final IProject[] projects;
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+        IJavaProject[] projects;
+        try {
+            projects = model.getJavaProjects();
+        } catch (JavaModelException e) {
+            // TODO deal with it properly
+            return null;
+        }
 
-    public ProjectResolveAction(IProject[] projects) {
-        this.projects = projects;
-        this.setText("Resolve");
-    }
-
-    public void run() {
         IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         for (int i = 0; i < projects.length; i++) {
             Iterator it = IvyClasspathUtil.getIvyClasspathContainers(projects[i]).iterator();
@@ -46,5 +54,8 @@ public class ProjectResolveAction extends Action {
                 resolveJob.addRequest(request);
             }
         }
+
+        return null;
     }
+
 }

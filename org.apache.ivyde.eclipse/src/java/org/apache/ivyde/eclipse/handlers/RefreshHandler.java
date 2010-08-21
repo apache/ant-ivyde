@@ -15,21 +15,27 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.actions;
+package org.apache.ivyde.eclipse.handlers;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.eclipse.jface.action.IAction;
+import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
+import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
+import org.eclipse.core.resources.IProject;
 
-public class ReloadSettingsAction extends IvyDEContainerAction {
+public class RefreshHandler extends AbstractIvyDEHandler {
 
-    private IvyClasspathContainer cp;
+    public static final String COMMAND_ID = "org.apache.ivyde.commands.refresh";
 
-    protected void selectionChanged(IAction a, IvyClasspathContainer ivycp) {
-        this.cp = ivycp;
+    private IvyResolveJob resolveJob;
+
+    public RefreshHandler() {
+        resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
     }
 
-    public void run(IAction action) {
-        cp.reloadSettings();
+    protected void handleContainer(IProject project, IvyClasspathContainer ivycp) {
+        ResolveRequest request = new ResolveRequest(ivycp, true);
+        resolveJob.addRequest(request);
     }
 
 }
