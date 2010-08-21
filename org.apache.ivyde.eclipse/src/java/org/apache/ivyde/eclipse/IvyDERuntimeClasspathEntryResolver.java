@@ -71,7 +71,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
         }
         IvyClasspathContainer ivycp = (IvyClasspathContainer) container;
         if (ivycp.getConf().isInheritedResolveBeforeLaunch()) {
-            IStatus status = ivycp.launchResolve(false, false, new NullProgressMonitor());
+            IStatus status = ivycp.launchResolve(false, new NullProgressMonitor());
             if (status.getCode() != IStatus.OK) {
                 throw new CoreException(status);
             }

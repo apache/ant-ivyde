@@ -173,7 +173,7 @@ public class IvyPlugin extends AbstractUIPlugin {
             while (itContainers.hasNext()) {
                 IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
                 if (!ivycp.getConf().isSettingsProjectSpecific()) {
-                    ivycp.launchResolve(false, false, null);
+                    ivycp.launchResolve(false, null);
                 }
             }
         }

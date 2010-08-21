@@ -56,6 +56,7 @@ public class IvyResolveJob extends Job {
 
     public IvyResolveJob() {
         super("Ivy resolve job");
+        setUser(false);
         // computing the classpath is somehow building
         setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
     }

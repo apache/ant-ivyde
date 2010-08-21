@@ -64,7 +64,7 @@ public class NewIvyDEContainerWizard extends Wizard {
             entries = (IClasspathEntry[]) newEntries
                     .toArray(new IClasspathEntry[newEntries.size()]);
             project.setRawClasspath(entries, project.getOutputLocation(), null);
-            ivycp.launchResolve(false, true, null);
+            ivycp.launchResolve(false, null);
         } catch (JavaModelException e) {
             IvyPlugin.log(e);
             return false;

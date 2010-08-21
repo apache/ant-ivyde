@@ -29,7 +29,7 @@ public class ResolveAction extends IvyDEContainerAction {
     }
 
     public void run(IAction action) {
-        cp.launchResolve(false, true, null);
+        cp.launchResolve(false, null);
     }
 
 }

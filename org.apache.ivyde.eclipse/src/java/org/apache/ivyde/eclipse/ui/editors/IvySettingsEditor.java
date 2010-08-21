@@ -125,7 +125,7 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
         Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
         while (itContainers.hasNext()) {
             IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
-            ivycp.launchResolve(false, true, null);
+            ivycp.launchResolve(false, null);
         }
     }
 

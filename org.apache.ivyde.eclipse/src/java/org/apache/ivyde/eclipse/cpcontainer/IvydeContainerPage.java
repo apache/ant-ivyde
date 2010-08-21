@@ -238,7 +238,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                     new IClasspathEntry[0], atts);
             JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
                 new IClasspathContainer[] {ivycp}, null);
-            ivycp.launchResolve(false, true, null);
+            ivycp.launchResolve(false, null);
         } catch (JavaModelException e) {
             IvyPlugin.log(e);
         }

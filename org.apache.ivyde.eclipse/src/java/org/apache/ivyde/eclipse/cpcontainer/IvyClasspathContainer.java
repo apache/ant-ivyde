@@ -53,8 +53,7 @@ import org.osgi.framework.Constants;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String CONTAINER_ID =
-        "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     private IClasspathEntry[] classpathEntries;
 
@@ -127,11 +126,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
         return classpathEntries;
     }
 
-    public IStatus launchResolve(boolean usePreviousResolveIfExist, boolean isUser,
-            IProgressMonitor monitor) {
+    public IStatus launchResolve(boolean usePreviousResolveIfExist, IProgressMonitor monitor) {
         ResolveRequest request = new ResolveRequest(this, usePreviousResolveIfExist);
         IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
-        resolveJob.setUser(isUser);
         if (monitor != null) {
             return resolveJob.launchRequest(request, monitor);
         }
@@ -234,7 +231,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
     public void reloadSettings() {
         state.setIvySettingsLastModified(-1);
-        launchResolve(false, true, null);
+        launchResolve(false,  null);
     }
 
 }

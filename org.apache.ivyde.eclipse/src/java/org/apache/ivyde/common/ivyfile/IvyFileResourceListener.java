@@ -73,7 +73,7 @@ public class IvyFileResourceListener implements IResourceChangeListener {
                 IvyClasspathContainer container = (IvyClasspathContainer) containerIter.next();
                 File containerIvyFile = container.getState().getIvyFile();
                 if (containerIvyFile.equals(resourceFile.getLocation().toFile())) {
-                    container.launchResolve(false, false, null);
+                    container.launchResolve(false, null);
                     return;
                 }
             }

@@ -95,7 +95,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 boolean refresh = startupMode == ON_STARTUP_REFRESH;
 
                 // now refresh the container to be synchronized with the ivy.xml
-                ivycp.launchResolve(refresh, false, null);
+                ivycp.launchResolve(refresh, null);
             } catch (Exception ex) {
                 IStatus status = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.OK,
                         "Unable to set container for " + containerPath.toString(), ex);

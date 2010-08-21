@@ -29,7 +29,7 @@ public class RefreshAction extends IvyDEContainerAction {
     }
 
     public void run(IAction action) {
-        cp.launchResolve(true, true, null);
+        cp.launchResolve(true, null);
     }
 
 }
