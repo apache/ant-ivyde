@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -60,8 +59,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
     private IClasspathEntry[] classpathEntries;
 
     private IPath path;
-
-    private IvyResolveJob job;
 
     private IvyClasspathContainerConfiguration conf;
 
@@ -130,37 +127,15 @@ public class IvyClasspathContainer implements IClasspathContainer {
         return classpathEntries;
     }
 
-    private static final ISchedulingRule RESOLVE_EVENT_RULE = new ISchedulingRule() {
-        public boolean contains(ISchedulingRule rule) {
-            return rule == this;
-        }
-
-        public boolean isConflicting(ISchedulingRule rule) {
-            return rule == this;
-        }
-    };
-
-    private IvyResolveJob createResolveJob(final boolean usePreviousResolveIfExist,
-            boolean isUser) {
-        synchronized (this) {
-            if (job != null) {
-                // resolve job already running
-                return job;
-            }
-            job = new IvyResolveJob(this, usePreviousResolveIfExist);
-            job.setUser(isUser);
-            job.setRule(RESOLVE_EVENT_RULE);
-            return job;
-        }
-    }
-
     public IStatus launchResolve(boolean usePreviousResolveIfExist, boolean isUser,
             IProgressMonitor monitor) {
-        IvyResolveJob j = createResolveJob(usePreviousResolveIfExist, isUser);
+        ResolveRequest request = new ResolveRequest(this, usePreviousResolveIfExist);
+        IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
+        resolveJob.setUser(isUser);
         if (monitor != null) {
-            return j.run(monitor);
+            return resolveJob.launchRequest(request, monitor);
         }
-        j.schedule();
+        resolveJob.addRequest(request);
         return Status.OK_STATUS;
     }
 
@@ -255,10 +230,6 @@ public class IvyClasspathContainer implements IClasspathContainer {
             // should never happen
             throw new RuntimeException(e);
         }
-    }
-
-    public void resetJob() {
-        job = null;
     }
 
     public void reloadSettings() {

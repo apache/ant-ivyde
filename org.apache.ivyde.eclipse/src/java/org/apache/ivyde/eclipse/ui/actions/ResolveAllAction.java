@@ -17,13 +17,14 @@
  */
 package org.apache.ivyde.eclipse.ui.actions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.IvyMultiResolveJob;
+import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
+import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -45,14 +46,15 @@ public class ResolveAllAction implements IWorkbenchWindowActionDelegate {
             return;
         }
 
-        List allContainers = new ArrayList();
+        IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         for (int i = 0; i < projects.length; i++) {
-            allContainers.addAll(IvyClasspathUtil.getIvyClasspathContainers(projects[i]));
+            Iterator it = IvyClasspathUtil.getIvyClasspathContainers(projects[i]).iterator();
+            while (it.hasNext()) {
+                IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
+                ResolveRequest request = new ResolveRequest(ivycp, false);
+                resolveJob.addRequest(request);
+            }
         }
-
-        Job resolveAllJob = new IvyMultiResolveJob(allContainers);
-        resolveAllJob.setUser(true);
-        resolveAllJob.schedule();
     }
 
     public void selectionChanged(IAction action, ISelection selection) {

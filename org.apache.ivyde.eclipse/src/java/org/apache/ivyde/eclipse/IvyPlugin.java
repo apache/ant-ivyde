@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
@@ -84,6 +85,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private ColorManager colorManager;
 
+    private IvyResolveJob ivyResolveJob;
+
     /**
      * The constructor.
      */
@@ -99,6 +102,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         super.start(context);
         this.bundleContext = context;
         log(IStatus.INFO, "starting IvyDE plugin", null);
+        ivyResolveJob = new IvyResolveJob();
         javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
         colorManager = new ColorManager();
         colorManager.refreshFromStore(getPreferenceStore());
@@ -155,6 +159,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         plugin = null;
         resourceBundle = null;
         colorManager = null;
+        ivyResolveJob = null;
         // if (console != null)
         // console.shutdown();
     }
@@ -338,5 +343,9 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public ColorManager getColorManager() {
         return colorManager;
+    }
+
+    public IvyResolveJob getIvyResolveJob() {
+        return ivyResolveJob;
     }
 }

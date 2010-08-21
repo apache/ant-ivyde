@@ -19,6 +19,7 @@ package org.apache.ivyde.eclipse;
 
 import org.apache.ivy.util.Message;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
@@ -106,6 +107,20 @@ public class IvyDEException extends Exception {
     public void log(int status, String preMsg) {
         String msg = (preMsg == null ? "" : preMsg) + getMessage();
         IvyPlugin.log(status, msg, getCause());
+    }
+
+    /**
+     * Convert the exception into an Eclipse status
+     * 
+     * @param status
+     *            the status of the exception (error, waring or info)
+     * @param preMsg
+     *            the message to display before the actual error message
+     * @return the eclipse status, never <code>null</code>
+     */
+    public IStatus asStatus(int status, String preMsg) {
+        String msg = (preMsg == null ? "" : preMsg) + getMessage();
+        return new Status(status, IvyPlugin.ID, 0, msg, this);
     }
 
     /**
