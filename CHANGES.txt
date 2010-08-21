@@ -10,6 +10,7 @@
 - IMPROVE: IvyDE now resolve by batch, then preventing too many workspace build (IVYDE-177)
 
 - FIX: Variable based path for ivysettings doesn't work it there are some spaces in the path (IVYDE-253)
+- FIX: Triggers are not called (IVYDE-244)
 
   version 2.1.0
 ==========================

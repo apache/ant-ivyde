@@ -147,9 +147,11 @@ public class IvyClasspathContainerState {
             // no settings specified, so take the default one
             if (ivy == null) {
                 IvySettings ivySettings = createIvySettings();
+                ivy = Ivy.newInstance(ivySettings);
                 try {
-                    ivySettings.loadDefault();
+                    ivy.configureDefault();
                 } catch (ParseException e) {
+                    ivy = null;
                     IvyDEException ex = new IvyDEException(
                             "Parsing error of the default Ivy settings",
                             "The default Ivy settings file could not be parsed: " + e.getMessage(),
@@ -157,6 +159,7 @@ public class IvyClasspathContainerState {
                     setConfStatus(ex);
                     throw ex;
                 } catch (IOException e) {
+                    ivy = null;
                     IvyDEException ex = new IvyDEException(
                             "Read error of the default Ivy settings",
                             "The default Ivy settings file could not be read: "
@@ -164,7 +167,6 @@ public class IvyClasspathContainerState {
                     setConfStatus(ex);
                     throw ex;
                 }
-                ivy = Ivy.newInstance(ivySettings);
             }
             setConfStatus(null);
             return ivy;
@@ -195,23 +197,25 @@ public class IvyClasspathContainerState {
             // an URL but not a file
             if (ivy == null || ivySettingsLastModified == -1) {
                 IvySettings ivySettings = createIvySettings();
+                ivy = Ivy.newInstance(ivySettings);
                 try {
-                    ivySettings.load(url);
+                    ivy.configure(url);
                     ivySettingsLastModified = 0;
                 } catch (ParseException e) {
+                    ivy = null;
                     IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
                             "The ivy settings file '" + settingsPath + "' could not be parsed: "
                                     + e.getMessage(), e);
                     setConfStatus(ex);
                     throw ex;
                 } catch (IOException e) {
+                    ivy = null;
                     IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
                             "The ivy settings file '" + settingsPath + "' could not be read: "
                                     + e.getMessage(), e);
                     setConfStatus(ex);
                     throw ex;
                 }
-                ivy = Ivy.newInstance(ivySettings);
             }
         }
         setConfStatus(null);
@@ -235,22 +239,24 @@ public class IvyClasspathContainerState {
             } else {
                 Message.info("\n\nIVYDE: ivysettings has changed, configuring ivy again\n");
             }
+            ivy = Ivy.newInstance(ivySettings);
             try {
-                ivySettings.load(file);
+                ivy.configure(file);
             } catch (ParseException e) {
+                ivy = null;
                 IvyDEException ex = new IvyDEException("Parsing error of the Ivy settings",
                         "The ivy settings file '" + ivySettingsPath + "' could not be parsed: "
                                 + e.getMessage(), e);
                 setConfStatus(ex);
                 throw ex;
             } catch (IOException e) {
+                ivy = null;
                 IvyDEException ex = new IvyDEException("Read error of the Ivy settings",
                         "The ivy settings file '" + ivySettingsPath + "' could not be read: "
                                 + e.getMessage(), e);
                 setConfStatus(ex);
                 throw ex;
             }
-            ivy = Ivy.newInstance(ivySettings);
             ivySettingsLastModified = file.lastModified();
         }
         return ivy;
