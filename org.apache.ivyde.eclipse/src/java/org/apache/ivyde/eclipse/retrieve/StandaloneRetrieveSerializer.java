@@ -35,6 +35,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.eclipse.core.resources.IProject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -179,7 +180,8 @@ public class StandaloneRetrieveSerializer {
         attributes.setNamedItem(attr);
     }
 
-    public List/* <StandaloneRetrieveSetup> */read(InputStream in) throws IOException {
+    public List/* <StandaloneRetrieveSetup> */read(InputStream in, IProject project)
+            throws IOException {
         try {
             InputSource source = new InputSource(in);
 
@@ -196,6 +198,7 @@ public class StandaloneRetrieveSerializer {
                 Node node = elements.item(i);
 
                 StandaloneRetrieveSetup setup = new StandaloneRetrieveSetup();
+                setup.setProject(project);
 
                 NamedNodeMap attributes = node.getAttributes();
                 setup.setName(getAttribute(attributes, SETUP_NAME));

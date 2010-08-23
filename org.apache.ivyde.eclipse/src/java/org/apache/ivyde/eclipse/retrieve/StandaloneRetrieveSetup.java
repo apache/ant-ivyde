@@ -17,7 +17,12 @@
  */
 package org.apache.ivyde.eclipse.retrieve;
 
+import java.util.Collection;
+
+import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.eclipse.core.resources.IProject;
 
 public class StandaloneRetrieveSetup {
 
@@ -30,6 +35,14 @@ public class StandaloneRetrieveSetup {
     private RetrieveSetup retrieveSetup = new RetrieveSetup();
 
     private boolean isSettingsProjectSpecific;
+
+    private IProject project;
+
+    private StandaloneRetrieveSetupState state = new StandaloneRetrieveSetupState(this);
+
+    public StandaloneRetrieveSetupState getState() {
+        return state;
+    }
 
     public String getName() {
         return name;
@@ -66,12 +79,45 @@ public class StandaloneRetrieveSetup {
     public boolean isSettingProjectSpecific() {
         return isSettingsProjectSpecific;
     }
-    
+
     public void setSettingsProjectSpecific(boolean isSettingsProjectSpecific) {
         this.isSettingsProjectSpecific = isSettingsProjectSpecific;
+    }
+
+    public IProject getProject() {
+        return project;
+    }
+
+    public void setProject(IProject project) {
+        this.project = project;
     }
 
     public String toString() {
         return name != null ? name : retrieveSetup.getRetrievePattern();
     }
+
+    public String getInheritedIvySettingsPath() throws IvyDEException {
+        if (!isSettingsProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
+                    .getResolvedIvySettingsPath();
+        }
+        return ivySettingsSetup.getResolvedIvySettingsPath();
+    }
+
+    public Collection getInheritedPropertyFiles() throws IvyDEException {
+        if (!isSettingsProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
+                    .getResolvedPropertyFiles();
+        }
+        return ivySettingsSetup.getResolvedPropertyFiles();
+    }
+
+    public boolean isInheritedLoadSettingsOnDemand() {
+        if (!isSettingsProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
+                    .isLoadSettingsOnDemand();
+        }
+        return ivySettingsSetup.isLoadSettingsOnDemand();
+    }
+
 }

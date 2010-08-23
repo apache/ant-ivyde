@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.retrieve;
 
 import java.util.Collection;
 
@@ -24,53 +24,40 @@ import org.apache.ivyde.eclipse.IvyDEException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 
-/**
- * This class is a front end to the container configuration. It computes the configuration status,
- * build the Ivy bean on demand and can cache it.
- */
-public class IvyClasspathContainerState extends CachedIvy {
+public class StandaloneRetrieveSetupState extends CachedIvy {
 
-    private IvyClasspathContainerConfiguration conf;
+    private final StandaloneRetrieveSetup setup;
 
-    public IvyClasspathContainerState(IvyClasspathContainerConfiguration conf) {
-        this.conf = conf;
-    }
-
-    public void setConf(IvyClasspathContainerConfiguration conf) {
-        this.conf = conf;
-        reset();
+    public StandaloneRetrieveSetupState(StandaloneRetrieveSetup setup) {
+        this.setup = setup;
     }
 
     protected String getIvySettingsPath() throws IvyDEException {
-        return conf.getInheritedIvySettingsPath();
+        return setup.getInheritedIvySettingsPath();
     }
 
     protected String getIvyXmlPath() {
-        return conf.getIvyXmlPath();
+        return setup.getIvyXmlPath();
     }
 
     protected IJavaProject getJavaProject() {
-        return conf.getJavaProject();
+        return null;
     }
 
     protected IProject getProject() {
-        return conf.getJavaProject().getProject();
+        return setup.getProject();
     }
 
     protected Collection getPropertyFiles() throws IvyDEException {
-        return conf.getInheritedPropertyFiles();
+        return setup.getInheritedPropertyFiles();
     }
 
     protected boolean isLoadSettingsOnDemandPath() {
-        return conf.getInheritedLoadSettingsOnDemandPath();
+        return setup.isInheritedLoadSettingsOnDemand();
     }
 
     protected boolean isResolveInWorkspace() {
-        return conf.isInheritedResolveInWorkspace();
-    }
-
-    public String toString() {
-        return conf.toString();
+        return false;
     }
 
 }

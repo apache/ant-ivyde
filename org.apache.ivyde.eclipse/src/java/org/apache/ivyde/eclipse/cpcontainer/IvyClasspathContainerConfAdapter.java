@@ -212,6 +212,7 @@ public final class IvyClasspathContainerConfAdapter {
         setup.setIvySettingsSetup(settingsSetup);
         setup.setIvyXmlPath(ivyXmlPath);
         setup.setSettingsProjectSpecific(conf.isSettingsProjectSpecific());
+        setup.setProject(conf.getJavaProject().getProject());
 
         IPreferenceStore prefStore = IvyPlugin.getDefault().getPreferenceStore();
 

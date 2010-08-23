@@ -63,7 +63,7 @@ public class RetrieveSetupManager implements ISaveParticipant {
         StandaloneRetrieveSerializer serializer = new StandaloneRetrieveSerializer();
         ByteArrayInputStream in = new ByteArrayInputStream(retrieveSetup.getBytes());
         try {
-            retrieveSetups = serializer.read(in);
+            retrieveSetups = serializer.read(in, project);
         } finally {
             try {
                 in.close();

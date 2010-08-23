@@ -147,7 +147,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
                 while (itSetup.hasNext()) {
                     StandaloneRetrieveSetup retrieveSetup = (StandaloneRetrieveSetup) itSetup
                             .next();
-                    RetrieveAction action = new RetrieveAction(retrieveSetup);
+                    RetrieveAction action = new RetrieveAction(project, retrieveSetup);
                     action.setText("Retrieve '" + retrieveSetup.getName()
                             + (oneProject ? "'" : "' of " + project.getName()));
                     fillMenu(menuManager, items, new ActionContributionItem(action));

@@ -17,8 +17,17 @@
  */
 package org.apache.ivyde.eclipse.ui.menu;
 
+import java.io.IOException;
+
+import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.util.filter.ArtifactTypeFilter;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 
@@ -26,12 +35,40 @@ public class RetrieveAction extends Action {
 
     private final StandaloneRetrieveSetup retrieveSetup;
 
-    public RetrieveAction(StandaloneRetrieveSetup retrieveSetup) {
+    private final IProject project;
+
+    public RetrieveAction(IProject project, StandaloneRetrieveSetup retrieveSetup) {
+        this.project = project;
         this.retrieveSetup = retrieveSetup;
     }
 
     public void run() {
-        // TODO
-        IvyPlugin.log(IStatus.INFO, "retrieve of " + retrieveSetup.getName(), null);
+        String pattern = project.getLocation().toPortableString() + "/"
+                + retrieveSetup.getRetrieveSetup().getRetrievePattern();
+        RetrieveOptions c = new RetrieveOptions();
+        c.setSync(retrieveSetup.getRetrieveSetup().isRetrieveSync());
+        c.setConfs(retrieveSetup.getRetrieveSetup().getRetrieveConfs().split(","));
+        String inheritedRetrieveTypes = retrieveSetup.getRetrieveSetup().getRetrieveTypes();
+        if (inheritedRetrieveTypes != null && !inheritedRetrieveTypes.equals("*")) {
+            c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil
+                    .split(inheritedRetrieveTypes)));
+        }
+        Ivy ivy;
+        ModuleDescriptor md;
+        try {
+            ivy = retrieveSetup.getState().getCachedIvy();
+            md = retrieveSetup.getState().getCachedModuleDescriptor();
+        } catch (IvyDEException e) {
+            e.log(IStatus.ERROR, null);
+            return;
+        }
+        try {
+            ivy.retrieve(md.getModuleRevisionId(), pattern, c);
+        } catch (IOException e) {
+            IvyPlugin.log(IStatus.ERROR, "Error while retrieving '" + retrieveSetup.getName()
+                    + "' in " + retrieveSetup.getProject().getName(), e);
+        }
+        IvyPlugin.log(IStatus.INFO, "Sucessfull retrieve of '" + retrieveSetup.getName() + "' in "
+                + retrieveSetup.getProject().getName(), null);
     }
 }

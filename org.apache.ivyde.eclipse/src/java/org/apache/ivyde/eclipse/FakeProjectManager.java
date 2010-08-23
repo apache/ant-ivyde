@@ -38,8 +38,12 @@ public final class FakeProjectManager {
     }
 
     public static boolean isFake(IJavaProject project) {
+        return isFake(project.getProject());
+    }
+
+    public static boolean isFake(IProject project) {
         // a fake project doesn't have real path
-        return project.getProject().getLocation() == null;
+        return project.getLocation() == null;
     }
 
     public static IJavaProject createPlaceholderProject() {
