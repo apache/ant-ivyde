@@ -20,7 +20,6 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
-import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
@@ -93,24 +92,6 @@ public class IvyDEPreferenceStoreHelper {
                 .getSourceSuffixes()));
         prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil.concat(setup
                 .getJavadocSuffixes()));
-    }
-
-    public RetrieveSetup getRetrieveSetup() {
-        RetrieveSetup setup = new RetrieveSetup();
-        setup.setDoRetrieve(prefStore.getBoolean(PreferenceConstants.DO_RETRIEVE));
-        setup.setRetrieveConfs(prefStore.getString(PreferenceConstants.RETRIEVE_CONFS));
-        setup.setRetrievePattern(prefStore.getString(PreferenceConstants.RETRIEVE_PATTERN));
-        setup.setRetrieveSync(prefStore.getBoolean(PreferenceConstants.RETRIEVE_SYNC));
-        setup.setRetrieveTypes(prefStore.getString(PreferenceConstants.RETRIEVE_TYPES));
-        return setup;
-    }
-
-    public void setRetrieveSetup(RetrieveSetup setup) {
-        prefStore.setValue(PreferenceConstants.DO_RETRIEVE, setup.isDoRetrieve());
-        prefStore.setValue(PreferenceConstants.RETRIEVE_PATTERN, setup.getRetrievePattern());
-        prefStore.setValue(PreferenceConstants.RETRIEVE_SYNC, setup.isRetrieveSync());
-        prefStore.setValue(PreferenceConstants.RETRIEVE_CONFS, setup.getRetrieveConfs());
-        prefStore.setValue(PreferenceConstants.RETRIEVE_TYPES, setup.getRetrieveTypes());
     }
 
     public boolean isAlphOrder() {

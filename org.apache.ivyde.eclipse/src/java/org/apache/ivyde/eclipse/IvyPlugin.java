@@ -80,8 +80,6 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IvyDEPreferenceStoreHelper prefStoreHelper;
 
-    private IJavaModel javaModel;
-
     private BundleContext bundleContext;
 
     private ColorManager colorManager;
@@ -89,6 +87,12 @@ public class IvyPlugin extends AbstractUIPlugin {
     private IvyResolveJob ivyResolveJob;
 
     private RetrieveSetupManager retrieveSetupManager;
+
+    private WorkspaceResourceChangeListener workspaceListener;
+
+    private IvyFileResourceListener ivyFileListener;
+
+    private IPropertyChangeListener propertyListener;
 
     /**
      * The constructor.
@@ -106,17 +110,18 @@ public class IvyPlugin extends AbstractUIPlugin {
         this.bundleContext = context;
         log(IStatus.INFO, "starting IvyDE plugin", null);
         ivyResolveJob = new IvyResolveJob();
-        
+
         retrieveSetupManager = new RetrieveSetupManager();
 
-        javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-        
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        workspace.addSaveParticipant(this, retrieveSetupManager);
+
         colorManager = new ColorManager();
         colorManager.refreshFromStore(getPreferenceStore());
 
         prefStoreHelper = new IvyDEPreferenceStoreHelper(getPreferenceStore());
 
-        getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+        propertyListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 try {
                     if (event.getProperty() == PreferenceConstants.IVYSETTINGS_PATH
@@ -126,7 +131,7 @@ public class IvyPlugin extends AbstractUIPlugin {
                             || event.getProperty() == PreferenceConstants.SOURCES_SUFFIXES
                             || event.getProperty() == PreferenceConstants.JAVADOC_SUFFIXES
                             || event.getProperty() == PreferenceConstants.DO_RETRIEVE_DEPRECATED
-                           || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED
+                            || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED
                             || event.getProperty() == PreferenceConstants.DO_RETRIEVE
                             || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN
                             || event.getProperty() == PreferenceConstants.RETRIEVE_SYNC
@@ -141,7 +146,8 @@ public class IvyPlugin extends AbstractUIPlugin {
                                 .getMessage());
                 }
             }
-        });
+        };
+        getPreferenceStore().addPropertyChangeListener(propertyListener);
 
         try {
             console = new IvyConsole();
@@ -151,11 +157,10 @@ public class IvyPlugin extends AbstractUIPlugin {
         }
 
         // Listen for project open/close events to auto-update inter-project dependencies
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-
-        workspace.addResourceChangeListener(new WorkspaceResourceChangeListener());
-        workspace.addResourceChangeListener(new IvyFileResourceListener(),
-            IResourceChangeEvent.PRE_BUILD);
+        workspaceListener = new WorkspaceResourceChangeListener();
+        workspace.addResourceChangeListener(workspaceListener);
+        ivyFileListener = new IvyFileResourceListener();
+        workspace.addResourceChangeListener(ivyFileListener, IResourceChangeEvent.PRE_BUILD);
 
         log(IStatus.INFO, "IvyDE plugin started", null);
     }
@@ -167,15 +172,28 @@ public class IvyPlugin extends AbstractUIPlugin {
         super.stop(context);
         plugin = null;
         resourceBundle = null;
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        workspace.removeSaveParticipant(this);
         colorManager = null;
         ivyResolveJob = null;
         retrieveSetupManager = null;
-        // if (console != null)
-        // console.shutdown();
+        workspace.removeResourceChangeListener(workspaceListener);
+        workspaceListener = null;
+        workspace.removeResourceChangeListener(ivyFileListener);
+        ivyFileListener = null;
+
+        getPreferenceStore().removePropertyChangeListener(propertyListener);
+        propertyListener = null;
+
+        if (console != null) {
+            console.destroy();
+        }
     }
 
     void prefStoreChanged() throws JavaModelException {
-        IJavaProject[] projects = plugin.javaModel.getJavaProjects();
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IJavaModel javaModel = JavaCore.create(workspace.getRoot());
+        IJavaProject[] projects = javaModel.getJavaProjects();
         for (int i = 0; i < projects.length; i++) {
             List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
                     .getIvyClasspathContainers(projects[i]);
@@ -283,13 +301,13 @@ public class IvyPlugin extends AbstractUIPlugin {
      * @return the adapted object
      */
 
-    public static /*<T> T*/ Object adapt(Object object, Class/*<T>*/ type) {
+    public static/* <T> T */Object adapt(Object object, Class/* <T> */type) {
         if (type.isInstance(object)) {
-            return /*(T)*/ object;
+            return /* (T) */object;
         } else if (object instanceof IAdaptable) {
-            return /*(T)*/ ((IAdaptable) object).getAdapter(type);
+            return /* (T) */((IAdaptable) object).getAdapter(type);
         }
-        return /*(T)*/ Platform.getAdapterManager().getAdapter(object, type);
+        return /* (T) */Platform.getAdapterManager().getAdapter(object, type);
     }
 
     /**

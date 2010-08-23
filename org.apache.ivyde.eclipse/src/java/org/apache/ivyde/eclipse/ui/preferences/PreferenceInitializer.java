@@ -22,7 +22,6 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
-import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.apache.ivyde.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -79,26 +78,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                 .split(DEFAULT_JAVADOC_SUFFIXES));
     }
 
-    public static final boolean DEFAULT_DO_RETRIEVE = false;
-
-    public static final String DEFAULT_RETRIEVE_PATTERN = "lib/[conf]/[artifact].[ext]";
-
-    public static final boolean DEFAULT_RETRIEVE_SYNC = false;
-
-    public static final String DEFAULT_RETRIEVE_CONFS = "*";
-
-    public static final String DEFAULT_RETRIEVE_TYPES = "*";
-
-    public static final RetrieveSetup DEFAULT_RETRIEVE_SETUP = new RetrieveSetup();
-
-    static {
-        DEFAULT_RETRIEVE_SETUP.setDoRetrieve(DEFAULT_DO_RETRIEVE);
-        DEFAULT_RETRIEVE_SETUP.setRetrievePattern(DEFAULT_RETRIEVE_PATTERN);
-        DEFAULT_RETRIEVE_SETUP.setRetrieveSync(DEFAULT_RETRIEVE_SYNC);
-        DEFAULT_RETRIEVE_SETUP.setRetrieveConfs(DEFAULT_RETRIEVE_CONFS);
-        DEFAULT_RETRIEVE_SETUP.setRetrieveTypes(DEFAULT_RETRIEVE_TYPES);
-    }
-
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
@@ -130,27 +109,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.SOURCES_SUFFIXES, DEFAULT_SOURCES_SUFFIXES);
         store.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, DEFAULT_JAVADOC_SUFFIXES);
 
-        store.setDefault(PreferenceConstants.DO_RETRIEVE, DEFAULT_DO_RETRIEVE);
-        boolean b = store.getBoolean(PreferenceConstants.DO_RETRIEVE_DEPRECATED);
-        if (b) {
-            // not the default value, so it has been set
-            // erase the deprecated preference and store the new one
-            store.setValue(PreferenceConstants.DO_RETRIEVE_DEPRECATED, "");
-            store.setValue(PreferenceConstants.DO_RETRIEVE, b);
-        }
-
-        store.setDefault(PreferenceConstants.RETRIEVE_PATTERN, DEFAULT_RETRIEVE_PATTERN);
-        store.setDefault(PreferenceConstants.RETRIEVE_CONFS, DEFAULT_RETRIEVE_CONFS);
-        store.setDefault(PreferenceConstants.RETRIEVE_TYPES, DEFAULT_RETRIEVE_TYPES);
-        String s = store.getString(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED);
-        if (s != null && s.length() != 0) {
-            // not the default value, so it has been set
-            // erase the deprecated preference and store the new one
-            store.setValue(PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED, "");
-            store.setValue(PreferenceConstants.RETRIEVE_PATTERN, s);
-        }
-
-        store.setDefault(PreferenceConstants.RETRIEVE_SYNC, DEFAULT_RETRIEVE_SYNC);
         store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
         store.setDefault(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, DEFAULT_RESOLVE_BEFORE_LAUNCH);

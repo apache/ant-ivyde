@@ -18,6 +18,7 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,10 +30,16 @@ import java.util.List;
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyNature;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
+import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
+import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * This class maps the IvyDE classpath container configuration into Eclipse objects representing
@@ -90,14 +97,18 @@ public final class IvyClasspathContainerConfAdapter {
      */
     private static void loadV1(IvyClasspathContainerConfiguration conf, IPath path) {
         ContainerMappingSetup mappingSetup = conf.getContainerMappingSetup();
-        RetrieveSetup retrieveSetup = conf.getRetrieveSetup();
         IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
 
         String url = path.segment(1).substring(1);
         String[] parameters = url.split("&");
         conf.setAdvancedProjectSpecific(false);
-        conf.setRetrieveProjectSpecific(false);
         conf.setSettingsProjectSpecific(false);
+
+        String ivyXmlPath = "ivy.xml";
+        boolean doStandaloneRetrieve = false;
+        boolean isRetrieveProjectSpecific = false;
+        RetrieveSetup retrieveSetup = new RetrieveSetup();
+
         for (int i = 0; i < parameters.length; i++) {
             String[] parameter = parameters[i].split("=");
             if (parameter == null || parameter.length == 0) {
@@ -112,6 +123,7 @@ public final class IvyClasspathContainerConfAdapter {
                 throw new RuntimeException(UTF8_ERROR, e);
             }
             if (parameter[0].equals("ivyXmlPath")) {
+                ivyXmlPath = value;
                 conf.setIvyXmlPath(value);
             } else if (parameter[0].equals("confs")) {
                 List confs = IvyClasspathUtil.split(value);
@@ -128,23 +140,6 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("propertyFiles")) {
                 settingsSetup.setPropertyFiles(IvyClasspathUtil.split(value));
                 conf.setSettingsProjectSpecific(true);
-            } else if (parameter[0].equals("doRetrieve")) {
-                // if the value is not actually "true" or "false", the Boolean class ensure to
-                // return false, so it is fine
-                retrieveSetup.setDoRetrieve(Boolean.valueOf(value).booleanValue());
-                conf.setRetrieveProjectSpecific(true);
-            } else if (parameter[0].equals("retrievePattern")) {
-                retrieveSetup.setRetrievePattern(value);
-                conf.setRetrieveProjectSpecific(true);
-            } else if (parameter[0].equals("retrieveSync")) {
-                retrieveSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
-                conf.setRetrieveProjectSpecific(true);
-            } else if (parameter[0].equals("retrieveConfs")) {
-                retrieveSetup.setRetrieveConfs(value);
-                conf.setRetrieveProjectSpecific(true);
-            } else if (parameter[0].equals("retrieveTypes")) {
-                retrieveSetup.setRetrieveTypes(value);
-                conf.setRetrieveProjectSpecific(true);
             } else if (parameter[0].equals("acceptedTypes")) {
                 mappingSetup.setAcceptedTypes(IvyClasspathUtil.split(value));
                 conf.setAdvancedProjectSpecific(true);
@@ -171,17 +166,94 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("resolveBeforeLaunch")) {
                 conf.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
                 conf.setAdvancedProjectSpecific(true);
+
+                // the following is the retrieve conf pre -IVYDE-56
+                // from this conf should be build StandaloneRetrieveSetup
+
+            } else if (parameter[0].equals("doRetrieve")) {
+                // if the value is not actually "true" or "false", the Boolean class ensure to
+                // return false, so it is fine
+                doStandaloneRetrieve = Boolean.valueOf(value).booleanValue();
+                isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("retrievePattern")) {
+                retrieveSetup.setRetrievePattern(value);
+                isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("retrieveSync")) {
+                retrieveSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
+                isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("retrieveConfs")) {
+                retrieveSetup.setRetrieveConfs(value);
+                isRetrieveProjectSpecific = true;
+            } else if (parameter[0].equals("retrieveTypes")) {
+                retrieveSetup.setRetrieveTypes(value);
+                isRetrieveProjectSpecific = true;
             }
         }
         if (conf.isAdvancedProjectSpecific()) {
             // in this V1 version, it is just some paranoid check
             checkNonNullConf(conf);
         }
-        if (conf.isRetrieveProjectSpecific()) {
-            if (retrieveSetup.getRetrievePattern() == null) {
-                retrieveSetup.setRetrievePattern(IvyPlugin.getPreferenceStoreHelper()
-                        .getRetrieveSetup().getRetrievePattern());
+
+        // convert pre IVYDE-56 conf
+        convertOldRetrieveConf(conf, isRetrieveProjectSpecific, doStandaloneRetrieve,
+            retrieveSetup, settingsSetup, ivyXmlPath);
+    }
+
+    private static void convertOldRetrieveConf(IvyClasspathContainerConfiguration conf,
+            boolean isRetrieveProjectSpecific, boolean doStandaloneRetrieve,
+            RetrieveSetup retrieveSetup, IvySettingsSetup settingsSetup, String ivyXmlPath) {
+        if (conf.getJavaProject() == null) {
+            // no project means no retrieve possible
+            return;
+        }
+
+        StandaloneRetrieveSetup setup = new StandaloneRetrieveSetup();
+        setup.setName("dependencies");
+        setup.setIvySettingsSetup(settingsSetup);
+        setup.setIvyXmlPath(ivyXmlPath);
+        setup.setSettingsProjectSpecific(conf.isSettingsProjectSpecific());
+
+        IPreferenceStore prefStore = IvyPlugin.getDefault().getPreferenceStore();
+
+        if (isRetrieveProjectSpecific) {
+            if (!doStandaloneRetrieve) {
+                return;
             }
+        } else {
+            if (!prefStore.getBoolean(PreferenceConstants.DO_RETRIEVE)) {
+                return;
+            }
+            retrieveSetup = new RetrieveSetup();
+            retrieveSetup.setRetrieveConfs(prefStore.getString(PreferenceConstants.RETRIEVE_CONFS));
+            retrieveSetup.setRetrievePattern(prefStore
+                    .getString(PreferenceConstants.RETRIEVE_PATTERN));
+            retrieveSetup.setRetrieveSync(prefStore.getBoolean(PreferenceConstants.RETRIEVE_SYNC));
+            retrieveSetup.setRetrieveTypes(prefStore.getString(PreferenceConstants.RETRIEVE_TYPES));
+        }
+
+        if (retrieveSetup.getRetrievePattern() == null) {
+            retrieveSetup.setRetrievePattern(prefStore
+                    .getString(PreferenceConstants.RETRIEVE_PATTERN));
+        }
+
+        setup.setRetrieveSetup(retrieveSetup);
+
+        RetrieveSetupManager manager = IvyPlugin.getDefault().getRetrieveSetupManager();
+        IProject project = conf.getJavaProject().getProject();
+        List retrieveSetups;
+        try {
+            retrieveSetups = manager.getSetup(project);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return;
+        }
+        retrieveSetups.add(setup);
+        try {
+            manager.save(project, retrieveSetups);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -266,14 +338,6 @@ public final class IvyClasspathContainerConfAdapter {
                 append(path, "ivySettingsPath", setup.getRawIvySettingsPath());
                 append(path, "loadSettingsOnDemand", setup.isLoadSettingsOnDemand());
                 append(path, "propertyFiles", setup.getRawPropertyFiles());
-            }
-            if (conf.isRetrieveProjectSpecific()) {
-                RetrieveSetup setup = conf.getRetrieveSetup();
-                append(path, "doRetrieve", setup.isDoRetrieve());
-                append(path, "retrievePattern", setup.getRetrievePattern());
-                append(path, "retrieveSync", setup.isRetrieveSync());
-                append(path, "retrieveConfs", setup.getRetrieveConfs());
-                append(path, "retrieveTypes", setup.getRetrieveTypes());
             }
             if (conf.isAdvancedProjectSpecific()) {
                 ContainerMappingSetup setup = conf.getContainerMappingSetup();

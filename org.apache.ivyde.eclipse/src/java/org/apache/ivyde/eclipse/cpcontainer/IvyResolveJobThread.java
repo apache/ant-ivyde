@@ -42,12 +42,9 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.filter.ArtifactTypeFilter;
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -179,9 +176,6 @@ public class IvyResolveJobThread extends Thread {
     private void computeConfs() {
         Set configurations = new HashSet();
         configurations.addAll(conf.getConfs());
-        if (conf.getInheritedDoRetrieve()) {
-            configurations.addAll(Arrays.asList(conf.getInheritedRetrieveConfs().split(",")));
-        }
 
         if (configurations.contains("*")) {
             confs = md.getConfigurationsNames();
@@ -246,7 +240,6 @@ public class IvyResolveJobThread extends Thread {
             status = Status.CANCEL_STATUS;
             return false;
         }
-        maybeRetrieve();
         return true;
     }
 
@@ -322,34 +315,6 @@ public class IvyResolveJobThread extends Thread {
             }
         }
         ivy.getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
-    }
-
-    private void maybeRetrieve() throws IOException {
-        if (!conf.getInheritedDoRetrieve()) {
-            return;
-        }
-        if (FakeProjectManager.isFake(conf.getJavaProject())) {
-            return;
-        }
-        String pattern = conf.getJavaProject().getProject().getLocation().toPortableString() + "/"
-                + conf.getInheritedRetrievePattern();
-        monitor.setTaskName("retrieving dependencies in " + pattern);
-        RetrieveOptions c = new RetrieveOptions();
-        c.setSync(conf.getInheritedRetrieveSync());
-        c.setConfs(conf.getInheritedRetrieveConfs().split(","));
-        String inheritedRetrieveTypes = conf.getInheritedRetrieveTypes();
-        if (inheritedRetrieveTypes != null && !inheritedRetrieveTypes.equals("*")) {
-            c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil
-                    .split(inheritedRetrieveTypes)));
-        }
-        int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, c);
-        if (numberOfItemsRetrieved > 0) {
-            // Only refresh if we actually retrieved a file.
-            String refreshPath = IvyPatternHelper.getTokenRoot(conf.getInheritedRetrievePattern());
-            IFolder folder = conf.getJavaProject().getProject().getFolder(refreshPath);
-            RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
-            refreshFolderJob.schedule();
-        }
     }
 
     private Map/* <ModuleRevisionId, Artifact[]> */getArtifactsByDependency(ResolveReport r) {

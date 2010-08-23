@@ -35,7 +35,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
-import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

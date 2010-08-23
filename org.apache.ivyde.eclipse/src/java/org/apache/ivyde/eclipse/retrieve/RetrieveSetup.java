@@ -15,15 +15,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.retrieve;
 
 /**
  * This class is just a simple bean defining the properties which configure an IvyDE classpath
  * container.
  */
 public class RetrieveSetup {
-
-    private boolean doRetrieve;
 
     private String retrievePattern = "lib/[artifact]-[revision].[ext]";
 
@@ -41,18 +39,9 @@ public class RetrieveSetup {
     }
 
     public void set(RetrieveSetup setup) {
-        this.doRetrieve = setup.doRetrieve;
         this.retrievePattern = setup.retrievePattern;
         this.retrieveConfs = setup.retrieveConfs;
         this.retrieveTypes = setup.retrieveTypes;
-    }
-
-    public boolean isDoRetrieve() {
-        return doRetrieve;
-    }
-
-    public void setDoRetrieve(boolean doRetrieve) {
-        this.doRetrieve = doRetrieve;
     }
 
     public String getRetrievePattern() {

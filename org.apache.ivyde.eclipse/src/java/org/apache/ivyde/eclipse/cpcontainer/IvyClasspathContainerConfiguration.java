@@ -39,8 +39,6 @@ public class IvyClasspathContainerConfiguration {
 
     private ContainerMappingSetup containerMappingSetup = new ContainerMappingSetup();
 
-    private RetrieveSetup retrieveSetup = new RetrieveSetup();
-
     private String ivyXmlPath;
 
     private List/* <String> */confs = Arrays.asList(new String[] {"*"});
@@ -50,8 +48,6 @@ public class IvyClasspathContainerConfiguration {
     private boolean resolveInWorkspace;
 
     private boolean isAdvancedProjectSpecific;
-
-    private boolean isRetrieveProjectSpecific;
 
     private boolean isSettingsProjectSpecific;
 
@@ -133,14 +129,6 @@ public class IvyClasspathContainerConfiguration {
         this.containerMappingSetup = containerMappingSetup;
     }
 
-    public RetrieveSetup getRetrieveSetup() {
-        return retrieveSetup;
-    }
-
-    public void setRetrieveSetup(RetrieveSetup retrieveSetup) {
-        this.retrieveSetup = retrieveSetup;
-    }
-
     public boolean isAlphaOrder() {
         return alphaOrder;
     }
@@ -163,14 +151,6 @@ public class IvyClasspathContainerConfiguration {
 
     public void setAdvancedProjectSpecific(boolean isAdvancedProjectSpecific) {
         this.isAdvancedProjectSpecific = isAdvancedProjectSpecific;
-    }
-
-    public boolean isRetrieveProjectSpecific() {
-        return isRetrieveProjectSpecific;
-    }
-
-    public void setRetrieveProjectSpecific(boolean isRetrieveProjectSpecific) {
-        this.isRetrieveProjectSpecific = isRetrieveProjectSpecific;
     }
 
     public boolean isSettingsProjectSpecific() {
@@ -228,45 +208,6 @@ public class IvyClasspathContainerConfiguration {
         } else {
             return ivySettingsSetup.getResolvedPropertyFiles();
         }
-    }
-
-    public boolean getInheritedDoRetrieve() {
-        if (javaProject == null) {
-            // no project means no retrieve possible
-            return false;
-        }
-        if (!isRetrieveProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getRetrieveSetup().isDoRetrieve();
-        }
-        return retrieveSetup.isDoRetrieve();
-    }
-
-    public String getInheritedRetrievePattern() {
-        if (!isRetrieveProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getRetrieveSetup().getRetrievePattern();
-        }
-        return retrieveSetup.getRetrievePattern();
-    }
-
-    public String getInheritedRetrieveConfs() {
-        if (!isRetrieveProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getRetrieveSetup().getRetrieveConfs();
-        }
-        return retrieveSetup.getRetrieveConfs();
-    }
-
-    public String getInheritedRetrieveTypes() {
-        if (!isRetrieveProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getRetrieveSetup().getRetrieveTypes();
-        }
-        return retrieveSetup.getRetrieveTypes();
-    }
-
-    public boolean getInheritedRetrieveSync() {
-        if (!isRetrieveProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getRetrieveSetup().isRetrieveSync();
-        }
-        return retrieveSetup.isRetrieveSync();
     }
 
     public Collection getInheritedAcceptedTypes() {

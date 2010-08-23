@@ -21,23 +21,40 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class RetrieveSetupManager {
+public class RetrieveSetupManager implements ISaveParticipant {
 
     private static final String PREF_ID = "org.apache.ivyde.eclipse.standlaoneretrieve";
 
+    private Map/* <IProject, IEclipsePreferences> */projectPrefs = new HashMap();
+
     public List/* <StandaloneRetrieveSetup> */getSetup(IProject project) throws IOException {
-        IScopeContext projectScope = new ProjectScope(project);
-        IEclipsePreferences projectNode = projectScope.getNode(IvyPlugin.ID);
-        String retrieveSetup = projectNode.get(PREF_ID, null);
+
+        IEclipsePreferences pref;
+        synchronized (projectPrefs) {
+            pref = (IEclipsePreferences) projectPrefs.get(project);
+        }
+        if (pref == null) {
+            IScopeContext projectScope = new ProjectScope(project);
+            pref = projectScope.getNode(IvyPlugin.ID);
+        }
+        String retrieveSetup = pref.get(PREF_ID, null);
         if (retrieveSetup == null) {
             return new ArrayList();
         }
@@ -57,8 +74,8 @@ public class RetrieveSetupManager {
         return retrieveSetups;
     }
 
-    public void save(IProject project, List/* <StandaloneRetrieveSetup> */retrieveSetups)
-            throws IOException, BackingStoreException {
+    public void save(final IProject project, List/* <StandaloneRetrieveSetup> */retrieveSetups)
+            throws IOException {
         StandaloneRetrieveSerializer serializer = new StandaloneRetrieveSerializer();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
@@ -71,11 +88,47 @@ public class RetrieveSetupManager {
             }
         }
 
-        String retrieveSetup = new String(out.toByteArray());
+        final String retrieveSetup = new String(out.toByteArray());
 
-        IScopeContext projectScope = new ProjectScope(project);
-        IEclipsePreferences projectNode = projectScope.getNode(IvyPlugin.ID);
-        projectNode.put("StandaloneRetrieveSetup", retrieveSetup);
-        projectNode.flush();
+        synchronized (projectPrefs) {
+            IEclipsePreferences pref = (IEclipsePreferences) projectPrefs.get(project);
+            if (pref == null) {
+                IScopeContext projectScope = new ProjectScope(project);
+                pref = projectScope.getNode(IvyPlugin.ID);
+                projectPrefs.put(project, pref);
+            }
+            pref.put(PREF_ID, retrieveSetup);
+        }
     }
+
+    public void prepareToSave(ISaveContext context) throws CoreException {
+        // nothing to do
+    }
+
+    public void saving(ISaveContext context) throws CoreException {
+        Map toFlush = new HashMap();
+        synchronized (projectPrefs) {
+            toFlush.putAll(projectPrefs);
+            projectPrefs.clear();
+        }
+        Iterator itPrefs = toFlush.entrySet().iterator();
+        while (itPrefs.hasNext()) {
+            Entry entry = (Entry) itPrefs.next();
+            try {
+                ((IEclipsePreferences) entry.getValue()).flush();
+            } catch (BackingStoreException e) {
+                IvyPlugin.log(IStatus.ERROR, "Failed to save the state of the Ivy preferences of "
+                        + ((IProject) entry.getKey()).getName(), e);
+            }
+        }
+    }
+
+    public void rollback(ISaveContext context) {
+        // nothing to do
+    }
+
+    public void doneSaving(ISaveContext context) {
+        // nothing to do
+    }
+
 }

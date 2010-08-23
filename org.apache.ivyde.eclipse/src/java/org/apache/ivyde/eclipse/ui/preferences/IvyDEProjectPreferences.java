@@ -50,7 +50,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.osgi.service.prefs.BackingStoreException;
 
 public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchPropertyPage {
 
@@ -207,12 +206,10 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
 
         try {
             retrieveSetupManager.save(project, retrieveSetups);
-        } catch (IOException e) {
-            IvyPlugin.log(IStatus.ERROR, "Enable to write the retrieve setup", e);
-            return false;
-        } catch (BackingStoreException e) {
-            IvyPlugin.log(IStatus.ERROR, "Failed to store the project preference of "
-                    + project.getName(), e);
+        } catch (Exception e) {
+            IvyPlugin.log(IStatus.ERROR,
+                "Enable to write the retrieve setup into the project preference of "
+                        + project.getName(), e);
             return false;
         }
 
