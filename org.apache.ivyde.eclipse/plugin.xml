@@ -442,6 +442,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
+            adaptable="true"
             class="org.apache.ivyde.eclipse.ui.preferences.IvyDEProjectPreferences"
             id="org.apache.ivyde.eclipse.projectpreferences"
             name="Ivy"

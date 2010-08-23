@@ -48,6 +48,8 @@ public class EditStandaloneRetrieveDialog extends Dialog {
 
     private IvySettingsTab settingsTab;
 
+    private StandaloneRetrieveSetup setup;
+
     protected EditStandaloneRetrieveDialog(Shell parentShell, IProject project,
             StandaloneRetrieveSetup retrieveSetup) {
         super(parentShell);
@@ -100,14 +102,17 @@ public class EditStandaloneRetrieveDialog extends Dialog {
 
         return body;
     }
-
-    public StandaloneRetrieveSetup getStandaloneRetrieveSetup() {
-        StandaloneRetrieveSetup setup = new StandaloneRetrieveSetup();
+    protected void okPressed() {
+        setup = new StandaloneRetrieveSetup();
         setup.setName(nameText.getText());
         setup.setSettingsProjectSpecific(settingsTab.isProjectSpecific());
         setup.setIvySettingsSetup(settingsTab.getSettingsEditor().getIvySettingsSetup());
         setup.setIvyXmlPath(ivyFilePathText.getIvyFilePath());
         setup.setRetrieveSetup(retrieveComposite.getRetrieveSetup());
+        super.okPressed();
+    }
+
+    public StandaloneRetrieveSetup getStandaloneRetrieveSetup() {
         return setup;
     }
 }

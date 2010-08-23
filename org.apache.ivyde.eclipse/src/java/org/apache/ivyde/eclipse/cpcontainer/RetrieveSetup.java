@@ -25,7 +25,7 @@ public class RetrieveSetup {
 
     private boolean doRetrieve;
 
-    private String retrievePattern;
+    private String retrievePattern = "lib/[artifact]-[revision].[ext]";
 
     private boolean retrieveSync = false;
 

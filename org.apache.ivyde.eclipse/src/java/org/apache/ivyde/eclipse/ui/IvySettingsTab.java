@@ -106,6 +106,7 @@ public class IvySettingsTab {
         } else {
             settingsProjectSpecificButton.setSelection(false);
             settingsEditor.init(IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup());
+            settingsEditor.setEnabled(false);
         }
     }
 

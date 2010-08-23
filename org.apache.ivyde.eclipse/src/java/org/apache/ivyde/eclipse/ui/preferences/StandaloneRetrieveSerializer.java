@@ -189,7 +189,7 @@ public class StandaloneRetrieveSerializer {
             DocumentBuilder parser = factory.newDocumentBuilder();
             Document document = parser.parse(source);
 
-            NodeList elements = document.getElementsByTagName(ROOT);
+            NodeList elements = document.getElementsByTagName(SETUP);
 
             List/* <StandaloneRetrieveSetup> */setupList = new ArrayList();
 
@@ -203,15 +203,15 @@ public class StandaloneRetrieveSerializer {
                 setup.setName(getAttribute(attributes, SETUP_NAME));
 
                 NodeList children = node.getChildNodes();
-                for (int j = 0; j != children.getLength(); j++) {
+                for (int j = 0; j < children.getLength(); j++) {
                     Node item = children.item(j);
-                    if (item.getLocalName().equals(IVYSETTINGS)) {
+                    if (item.getNodeName().equals(IVYSETTINGS)) {
                         IvySettingsSetup ivySettingsSetup = readIvySettingsSetup(item);
                         setup.setIvySettingsSetup(ivySettingsSetup);
-                    } else if (item.getLocalName().equals(IVYXML)) {
+                    } else if (item.getNodeName().equals(IVYXML)) {
                         String ivyXmlPath = readIvyXmlPath(item);
                         setup.setIvyXmlPath(ivyXmlPath);
-                    } else if (item.getLocalName().equals(RETRIEVE)) {
+                    } else if (item.getNodeName().equals(RETRIEVE)) {
                         RetrieveSetup retrieveSetup = readRetrieveSetup(item);
                         setup.setRetrieveSetup(retrieveSetup);
                     }
@@ -227,9 +227,9 @@ public class StandaloneRetrieveSerializer {
             if (t instanceof IOException) {
                 throw (IOException) t;
             } else if (t != null) {
-                throw new IOException(t.getMessage());
+                throw new IOException(t.getMessage(), t);
             } else {
-                throw new IOException(e.getMessage());
+                throw new IOException(e.getMessage(), e);
             }
         }
 
@@ -259,7 +259,7 @@ public class StandaloneRetrieveSerializer {
         NodeList children = node.getChildNodes();
         for (int j = 0; j != children.getLength(); j++) {
             Node item = children.item(j);
-            if (item.getLocalName().equals(PROPERTYFILE)) {
+            if (item.getNodeName().equals(PROPERTYFILE)) {
                 attributes = node.getAttributes();
 
                 path = getAttribute(attributes, PROPERTYFILE_PATH);
