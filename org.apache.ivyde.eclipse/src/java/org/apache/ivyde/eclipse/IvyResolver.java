@@ -72,7 +72,7 @@ public class IvyResolver {
 
     protected String[] confs;
 
-    private Map artifactsByDependency = new HashMap();
+    protected Map artifactsByDependency = new HashMap();
 
     private final String ivyXmlPath;
 

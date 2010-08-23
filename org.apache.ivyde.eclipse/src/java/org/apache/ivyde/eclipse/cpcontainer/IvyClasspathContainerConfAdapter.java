@@ -179,6 +179,12 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("retrievedClasspathTypes")) {
                 retrievedClasspathSetup.setRetrieveTypes(value);
                 conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("mapIfOnlyOneSource")) {
+                mappingSetup.setMapIfOnlyOneSource(Boolean.valueOf(value).booleanValue());
+                conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("mapIfOnlyOneJavadoc")) {
+                mappingSetup.setMapIfOnlyOneJavadoc(Boolean.valueOf(value).booleanValue());
+                conf.setAdvancedProjectSpecific(true);
 
                 // the following is the retrieve conf pre -IVYDE-56
                 // from this conf should be build StandaloneRetrieveSetup
@@ -370,6 +376,8 @@ public final class IvyClasspathContainerConfAdapter {
                     append(path, "retrievedClasspathSync", retrieveSetup.isRetrieveSync());
                     append(path, "retrievedClasspathTypes", retrieveSetup.getRetrieveTypes());
                 }
+                append(path, "mapIfOnlyOneSource", setup.isMapIfOnlyOneSource());
+                append(path, "mapIfOnlyOneJavadoc", setup.isMapIfOnlyOneJavadoc());
             }
         } catch (UnsupportedEncodingException e) {
             IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);

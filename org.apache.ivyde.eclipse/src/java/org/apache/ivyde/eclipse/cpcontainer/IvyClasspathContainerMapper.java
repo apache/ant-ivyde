@@ -86,12 +86,14 @@ public class IvyClasspathContainerMapper {
                 paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
                 Path classpathArtifact = getArtifactPath(artifact);
-                Path sourcesArtifact = getSourcesArtifactPath(artifact);
-                Path javadocArtifact = getJavadocArtifactPath(artifact);
-                paths.add(JavaCore.newLibraryEntry(classpathArtifact, getSourceAttachment(
-                    classpathArtifact, sourcesArtifact), getSourceAttachmentRoot(classpathArtifact,
-                    sourcesArtifact), null, getExtraAttribute(classpathArtifact, javadocArtifact),
-                    false));
+                Path sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
+                    conf.isInheritedMapIfOnlyOneSource());
+                Path javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
+                    conf.isInheritedMapIfOnlyOneJavadoc());
+                paths.add(JavaCore.newLibraryEntry(classpathArtifact,
+                    getSourceAttachment(classpathArtifact, sourcesArtifact),
+                    getSourceAttachmentRoot(classpathArtifact, sourcesArtifact), null,
+                    getExtraAttribute(classpathArtifact, javadocArtifact), false));
             }
 
         }
@@ -110,16 +112,25 @@ public class IvyClasspathContainerMapper {
         return new Path(artifact.getLocalFile().getAbsolutePath());
     }
 
-    private Path getSourcesArtifactPath(ArtifactDownloadReport adr) {
+    interface ArtifactMatcher {
+        boolean matchName(String binaryName, String artifactName);
+
+        boolean match(Artifact a);
+
+        String getName();
+    }
+
+    private Path getArtifactPath(ArtifactDownloadReport adr, ArtifactMatcher matcher,
+            boolean mapIfOnlyOne) {
         Artifact artifact = adr.getArtifact();
-        monitor.subTask("searching sources for " + artifact);
+        monitor.subTask("searching " + matcher.getName() + " for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
             Artifact a = otherAdr.getArtifact();
             if (otherAdr.getLocalFile() != null
-                    && isSourceArtifactName(artifact.getName(), a.getName())
+                    && matcher.matchName(artifact.getName(), a.getName())
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
-                    && isSources(a)) {
+                    && matcher.match(a)) {
                 return getArtifactPath(otherAdr);
             }
         }
@@ -128,54 +139,81 @@ public class IvyClasspathContainerMapper {
         ModuleRevisionId mrid = artifact.getId().getModuleRevisionId();
         Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(mrid);
         if (artifacts != null) {
+            Artifact foundArtifact = null;
+            int nbFound = 0;
             for (int i = 0; i < artifacts.length; i++) {
                 Artifact metaArtifact = artifacts[i];
-                if (isSourceArtifactName(artifact.getName(), metaArtifact.getName())
-                        && isSources(metaArtifact)) {
-                    // we've found the source artifact, let's provision it
-                    ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
+                if (matcher.match(metaArtifact)) {
+                    if (matcher.matchName(artifact.getName(), metaArtifact.getName())) {
+                        // we've found a matching artifact, let's provision it
+                        ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(
+                            metaArtifact, new DownloadOptions());
+                        if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
+                            return getArtifactPath(metaAdr);
+                        }
+                    }
+                    // keep a reference to the artifact so we could fall back
+                    // to map-if-only-one
+                    nbFound++;
+                    foundArtifact = metaArtifact;
+                }
+            }
+            if (mapIfOnlyOne) {
+                // we haven't found artifact in the module declaring the artifact and having
+                // a matching name.
+                if (nbFound == 1) {
+                    // If there is only 1 found artifact, it is the winner ;-)
+                    ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(foundArtifact,
                         new DownloadOptions());
                     if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-                        return getArtifactPath(metaAdr);
+                        return new Path(metaAdr.getLocalFile().getAbsolutePath());
                     }
                 }
             }
         }
+
         return null;
     }
 
-    private Path getJavadocArtifactPath(ArtifactDownloadReport adr) {
-        Artifact artifact = adr.getArtifact();
-        monitor.subTask("searching javadoc for " + artifact);
-        for (Iterator iter = all.iterator(); iter.hasNext();) {
-            ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
-            Artifact a = otherAdr.getArtifact();
-            if (otherAdr.getLocalFile() != null
-                    && isJavadocArtifactName(artifact.getName(), a.getName())
-                    && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
-                    && isJavadoc(a)) {
-                return getArtifactPath(otherAdr);
+    private ArtifactMatcher sourceArtifactMatcher = new ArtifactMatcher() {
+        public boolean matchName(String jar, String source) {
+            return isArtifactName(jar, source, conf.getInheritedSourceSuffixes());
+        }
+
+        public boolean match(Artifact a) {
+            return conf.getInheritedSourceTypes().contains(a.getType());
+        }
+
+        public String getName() {
+            return "sources";
+        }
+    };
+
+    private ArtifactMatcher javadocArtifactMatcher = new ArtifactMatcher() {
+        public boolean matchName(String jar, String javadoc) {
+            return isArtifactName(jar, javadoc, conf.getInheritedJavadocSuffixes());
+        }
+
+        public boolean match(Artifact a) {
+            return conf.getInheritedJavadocTypes().contains(a.getType());
+        }
+
+        public String getName() {
+            return "javadoc";
+        }
+    };
+
+    private boolean isArtifactName(String jar, String name, Collection/* <String> */suffixes) {
+        if (name.equals(jar)) {
+            return true;
+        }
+        Iterator it = suffixes.iterator();
+        while (it.hasNext()) {
+            if (name.equals(jar + it.next())) {
+                return true;
             }
         }
-        // we haven't found javadoc artifact in resolved artifacts,
-        // let's look in the module declaring the artifact
-        ModuleRevisionId mrid = artifact.getId().getModuleRevisionId();
-        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(mrid);
-        if (artifacts != null) {
-            for (int i = 0; i < artifacts.length; i++) {
-                Artifact metaArtifact = artifacts[i];
-                if (isJavadocArtifactName(artifact.getName(), metaArtifact.getName())
-                        && isJavadoc(metaArtifact)) {
-                    // we've found the javadoc artifact, let's provision it
-                    ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
-                        new DownloadOptions());
-                    if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-                        return getArtifactPath(metaAdr);
-                    }
-                }
-            }
-        }
-        return null;
+        return false;
     }
 
     private IPath getSourceAttachment(Path classpathArtifact, Path sourcesArtifact) {
@@ -198,8 +236,8 @@ public class IvyClasspathContainerMapper {
 
     private IClasspathAttribute[] getExtraAttribute(Path classpathArtifact, Path javadocArtifact) {
         List result = new ArrayList();
-        URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo().getDocAttachment(
-            classpathArtifact);
+        URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
+                .getDocAttachment(classpathArtifact);
 
         if (url == null) {
             Path path = javadocArtifact;
@@ -228,27 +266,6 @@ public class IvyClasspathContainerMapper {
         return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
     }
 
-    public boolean isJavadocArtifactName(String jar, String javadoc) {
-        return isArtifactName(jar, javadoc, conf.getInheritedJavadocSuffixes());
-    }
-
-    public boolean isSourceArtifactName(String jar, String source) {
-        return isArtifactName(jar, source, conf.getInheritedSourceSuffixes());
-    }
-
-    private boolean isArtifactName(String jar, String name, Collection/* <String> */suffixes) {
-        if (name.equals(jar)) {
-            return true;
-        }
-        Iterator it = suffixes.iterator();
-        while (it.hasNext()) {
-            if (name.equals(jar + it.next())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Check if the artifact is an artifact which can be added to the classpath container
      * 
@@ -260,14 +277,6 @@ public class IvyClasspathContainerMapper {
         return conf.getInheritedAcceptedTypes().contains(artifact.getType())
                 && !conf.getInheritedSourceTypes().contains(artifact.getType())
                 && !conf.getInheritedJavadocTypes().contains(artifact.getType());
-    }
-
-    public boolean isSources(Artifact artifact) {
-        return conf.getInheritedSourceTypes().contains(artifact.getType());
-    }
-
-    public boolean isJavadoc(Artifact artifact) {
-        return conf.getInheritedJavadocTypes().contains(artifact.getType());
     }
 
 }

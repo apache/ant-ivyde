@@ -31,6 +31,10 @@ public class ContainerMappingSetup {
 
     private List/* <String> */javadocSuffixes;
 
+    private boolean mapIfOnlyOneSource = false;
+
+    private boolean mapIfOnlyOneJavadoc = false;
+
     /**
      * Default constructor
      */
@@ -44,6 +48,8 @@ public class ContainerMappingSetup {
         this.javadocTypes = setup.javadocTypes;
         this.sourceSuffixes = setup.sourceSuffixes;
         this.javadocSuffixes = setup.javadocSuffixes;
+        this.mapIfOnlyOneSource = setup.mapIfOnlyOneSource;
+        this.mapIfOnlyOneJavadoc = setup.mapIfOnlyOneJavadoc;
     }
 
     public List getAcceptedTypes() {
@@ -84,6 +90,22 @@ public class ContainerMappingSetup {
 
     public void setJavadocSuffixes(List javadocSuffixes) {
         this.javadocSuffixes = javadocSuffixes;
+    }
+
+    public boolean isMapIfOnlyOneSource() {
+        return mapIfOnlyOneSource;
+    }
+
+    public void setMapIfOnlyOneSource(boolean autoMap) {
+        mapIfOnlyOneSource = autoMap;
+    }
+
+    public boolean isMapIfOnlyOneJavadoc() {
+        return mapIfOnlyOneJavadoc;
+    }
+
+    public void setMapIfOnlyOneJavadoc(boolean autoMap) {
+        mapIfOnlyOneJavadoc = autoMap;
     }
 
 }

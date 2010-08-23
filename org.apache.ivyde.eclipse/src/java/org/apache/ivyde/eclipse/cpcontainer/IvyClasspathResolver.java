@@ -19,7 +19,6 @@ package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -53,8 +52,6 @@ public class IvyClasspathResolver extends IvyResolver {
     private final IvyClasspathContainerConfiguration conf;
 
     private IClasspathEntry[] classpathEntries = null;
-
-    private Map artifactsByDependency = new HashMap();
 
     /**
      * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no

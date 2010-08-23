@@ -61,6 +61,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
 
+    public static final boolean DEFAULT_MAP_IF_ONLY_ONE_SOURCE = false;
+
+    public static final boolean DEFAULT_MAP_IF_ONLY_ONE_JAVADOC = false;
+    
     public static final int DEFAULT_IVY_CONSOLE_LOG_MESSAGE = Message.MSG_INFO;
 
     public static final ContainerMappingSetup DEFAULT_CONTAINER_MAPPING_SETUP =
@@ -77,6 +81,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                 .split(DEFAULT_SOURCES_SUFFIXES));
         DEFAULT_CONTAINER_MAPPING_SETUP.setJavadocSuffixes(IvyClasspathUtil
                 .split(DEFAULT_JAVADOC_SUFFIXES));
+        DEFAULT_CONTAINER_MAPPING_SETUP.setMapIfOnlyOneSource(DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
+        DEFAULT_CONTAINER_MAPPING_SETUP.setMapIfOnlyOneJavadoc(DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
     }
 
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
@@ -126,6 +132,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.JAVADOC_TYPES, DEFAULT_JAVADOC_TYPES);
         store.setDefault(PreferenceConstants.SOURCES_SUFFIXES, DEFAULT_SOURCES_SUFFIXES);
         store.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, DEFAULT_JAVADOC_SUFFIXES);
+        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE, DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
+        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC, DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
 
         store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);

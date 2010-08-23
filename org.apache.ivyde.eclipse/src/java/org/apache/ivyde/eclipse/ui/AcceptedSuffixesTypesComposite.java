@@ -22,6 +22,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -42,6 +43,14 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     public static final String TOOLTIP_JAVADOC_SUFFIXES = "Comma separated list of suffixes to"
             + " match javadocs to artifacts.\nExample: -javadoc, -doc";
+    
+    public static final String TOOLTIP_MAP_IF_ONLY_ONE_SOURCE = "Will map the source artifact"
+            + " to all jar artifact in modules with multiple jar artifacts and only one"
+            + " source artifact";    
+
+    public static final String TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC= "Will map the javadoc artifact"
+        + " to all jar artifact in modules with multiple jar artifacts and only one"
+        + " javadoc artifact";    
 
     private Text acceptedTypesText;
 
@@ -52,6 +61,10 @@ public class AcceptedSuffixesTypesComposite extends Composite {
     private Text javadocTypesText;
 
     private Text javadocSuffixesText;
+
+    private Button mapIfOnlyOneSourceCheck;
+
+    private Button mapIfOnlyOneJavadocCheck;
 
     public AcceptedSuffixesTypesComposite(Composite parent, int style) {
         super(parent, style);
@@ -95,6 +108,19 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         javadocSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         javadocSuffixesText.setToolTipText(TOOLTIP_JAVADOC_SUFFIXES);
+        
+        mapIfOnlyOneSourceCheck= new Button(this, SWT.CHECK);
+        mapIfOnlyOneSourceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 2, 1));
+        mapIfOnlyOneSourceCheck.setText("Auto map jar artifacts with unique source artifact");
+        mapIfOnlyOneSourceCheck.setToolTipText(TOOLTIP_MAP_IF_ONLY_ONE_SOURCE);
+
+        mapIfOnlyOneJavadocCheck = new Button(this, SWT.CHECK);
+        mapIfOnlyOneJavadocCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 2, 1));
+        mapIfOnlyOneJavadocCheck.setText("Auto map jar artifacts with unique javadoc artifact");
+        mapIfOnlyOneJavadocCheck.setToolTipText(TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC);
+        
     }
 
     public void init(ContainerMappingSetup setup) {
@@ -103,6 +129,8 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         sourceSuffixesText.setText(IvyClasspathUtil.concat(setup.getSourceSuffixes()));
         javadocTypesText.setText(IvyClasspathUtil.concat(setup.getJavadocTypes()));
         javadocSuffixesText.setText(IvyClasspathUtil.concat(setup.getJavadocSuffixes()));
+        mapIfOnlyOneSourceCheck.setSelection(setup.isMapIfOnlyOneSource());
+        mapIfOnlyOneJavadocCheck.setSelection(setup.isMapIfOnlyOneJavadoc());
     }
 
     public void setEnabled(boolean enabled) {
@@ -112,6 +140,8 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         sourceSuffixesText.setEnabled(enabled);
         javadocTypesText.setEnabled(enabled);
         javadocSuffixesText.setEnabled(enabled);
+        mapIfOnlyOneSourceCheck.setEnabled(enabled);
+        mapIfOnlyOneJavadocCheck.setEnabled(enabled);
     }
 
     public ContainerMappingSetup getContainerMappingSetup() {
@@ -121,6 +151,8 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         setup.setJavadocTypes(IvyClasspathUtil.split(javadocTypesText.getText()));
         setup.setSourceSuffixes(IvyClasspathUtil.split(sourceSuffixesText.getText()));
         setup.setJavadocSuffixes(IvyClasspathUtil.split(javadocSuffixesText.getText()));
+        setup.setMapIfOnlyOneSource(mapIfOnlyOneSourceCheck.getSelection());
+        setup.setMapIfOnlyOneJavadoc(mapIfOnlyOneJavadocCheck.getSelection());
         return setup;
     }
 }

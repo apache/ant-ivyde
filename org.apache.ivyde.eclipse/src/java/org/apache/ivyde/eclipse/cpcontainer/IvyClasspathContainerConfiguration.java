@@ -305,6 +305,22 @@ public class IvyClasspathContainerConfiguration {
         return retrievedClasspathSetup;
     }
 
+    public boolean isInheritedMapIfOnlyOneSource() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
+                    .isMapIfOnlyOneSource();
+        }
+        return containerMappingSetup.isMapIfOnlyOneSource();
+    }
+
+    public boolean isInheritedMapIfOnlyOneJavadoc() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
+                    .isMapIfOnlyOneJavadoc();
+        }
+        return containerMappingSetup.isMapIfOnlyOneJavadoc();
+    }
+
     public String toString() {
         return ivyXmlPath + confs
                 + (javaProject == null ? "" : " in '" + javaProject.getProject().getName() + "'");
