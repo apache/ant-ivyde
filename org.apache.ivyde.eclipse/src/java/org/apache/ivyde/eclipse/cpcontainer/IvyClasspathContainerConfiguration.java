@@ -298,7 +298,7 @@ public class IvyClasspathContainerConfiguration {
         return retrievedClasspath;
     }
 
-    public RetrieveSetup getInheritedRetrievedClasspathSet() {
+    public RetrieveSetup getInheritedRetrievedClasspathSetup() {
         if (!isAdvancedProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getRetrievedClasspathSetup();
         }

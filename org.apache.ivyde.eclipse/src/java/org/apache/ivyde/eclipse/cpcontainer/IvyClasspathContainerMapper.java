@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -54,16 +55,26 @@ public class IvyClasspathContainerMapper {
 
     private final IvyClasspathContainerConfiguration conf;
 
+    private final Collection/* <ArtifactDownloadReport> */all;
+
+    private final Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency;
+
+    private final Map/*
+                      * <ArtifactDownloadReport , Set<String>>
+                      */retrievedArtifacts;
+
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,
-            IvyClasspathContainerConfiguration conf) {
+            IvyClasspathContainerConfiguration conf, Collection all, Map artifactsByDependency,
+            Map retrievedArtifacts) {
         this.monitor = monitor;
         this.ivy = ivy;
         this.conf = conf;
+        this.all = all;
+        this.artifactsByDependency = artifactsByDependency;
+        this.retrievedArtifacts = retrievedArtifacts;
     }
 
-    public IClasspathEntry[] map(Collection all, Map/*
-                                                     * <ModuleRevisionId, Artifact[]>
-                                                     */artifactsByDependency) {
+    public IClasspathEntry[] map() {
         IClasspathEntry[] classpathEntries;
         Collection paths = new LinkedHashSet();
 
@@ -74,9 +85,9 @@ public class IvyClasspathContainerMapper {
                 // This is a java project in the workspace, add project path
                 paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
-                Path classpathArtifact = new Path(artifact.getLocalFile().getAbsolutePath());
-                Path sourcesArtifact = getSourcesArtifactPath(artifact, all, artifactsByDependency);
-                Path javadocArtifact = getJavadocArtifactPath(artifact, all, artifactsByDependency);
+                Path classpathArtifact = getArtifactPath(artifact);
+                Path sourcesArtifact = getSourcesArtifactPath(artifact);
+                Path javadocArtifact = getJavadocArtifactPath(artifact);
                 paths.add(JavaCore.newLibraryEntry(classpathArtifact, getSourceAttachment(
                     classpathArtifact, sourcesArtifact), getSourceAttachmentRoot(classpathArtifact,
                     sourcesArtifact), null, getExtraAttribute(classpathArtifact, javadocArtifact),
@@ -89,8 +100,17 @@ public class IvyClasspathContainerMapper {
         return classpathEntries;
     }
 
-    private Path getSourcesArtifactPath(ArtifactDownloadReport adr, Collection all,
-            Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency) {
+    private Path getArtifactPath(ArtifactDownloadReport artifact) {
+        if (retrievedArtifacts != null) {
+            Set pathSet = (Set) retrievedArtifacts.get(artifact);
+            if (pathSet != null && !pathSet.isEmpty()) {
+                return new Path((String) pathSet.iterator().next());
+            }
+        }
+        return new Path(artifact.getLocalFile().getAbsolutePath());
+    }
+
+    private Path getSourcesArtifactPath(ArtifactDownloadReport adr) {
         Artifact artifact = adr.getArtifact();
         monitor.subTask("searching sources for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
@@ -100,7 +120,7 @@ public class IvyClasspathContainerMapper {
                     && isSourceArtifactName(artifact.getName(), a.getName())
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                     && isSources(a)) {
-                return new Path(otherAdr.getLocalFile().getAbsolutePath());
+                return getArtifactPath(otherAdr);
             }
         }
         // we haven't found source artifact in resolved artifacts,
@@ -116,7 +136,7 @@ public class IvyClasspathContainerMapper {
                     ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
                         new DownloadOptions());
                     if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-                        return new Path(metaAdr.getLocalFile().getAbsolutePath());
+                        return getArtifactPath(metaAdr);
                     }
                 }
             }
@@ -124,8 +144,7 @@ public class IvyClasspathContainerMapper {
         return null;
     }
 
-    private Path getJavadocArtifactPath(ArtifactDownloadReport adr, Collection all,
-            Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency) {
+    private Path getJavadocArtifactPath(ArtifactDownloadReport adr) {
         Artifact artifact = adr.getArtifact();
         monitor.subTask("searching javadoc for " + artifact);
         for (Iterator iter = all.iterator(); iter.hasNext();) {
@@ -135,7 +154,7 @@ public class IvyClasspathContainerMapper {
                     && isJavadocArtifactName(artifact.getName(), a.getName())
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                     && isJavadoc(a)) {
-                return new Path(otherAdr.getLocalFile().getAbsolutePath());
+                return getArtifactPath(otherAdr);
             }
         }
         // we haven't found javadoc artifact in resolved artifacts,
@@ -151,7 +170,7 @@ public class IvyClasspathContainerMapper {
                     ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(metaArtifact,
                         new DownloadOptions());
                     if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-                        return new Path(metaAdr.getLocalFile().getAbsolutePath());
+                        return getArtifactPath(metaAdr);
                     }
                 }
             }
