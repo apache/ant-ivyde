@@ -24,10 +24,10 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -60,7 +60,7 @@ public class IvyFilePathText extends Composite {
 
     private IvyDEException ivyXmlError;
 
-    private final IJavaProject project;
+    private final IProject project;
 
     private final List listeners = new ArrayList();
 
@@ -68,7 +68,7 @@ public class IvyFilePathText extends Composite {
 
     private FieldDecoration errorDecoration;
 
-    public IvyFilePathText(Composite parent, int style, IJavaProject project) {
+    public IvyFilePathText(Composite parent, int style, IProject project) {
         super(parent, style);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;

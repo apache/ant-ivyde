@@ -77,7 +77,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
             }
         }
         IClasspathEntry[] cpes = container.getClasspathEntries();
-        int property = -1;
+        int property;
         switch (container.getKind()) {
             case IClasspathContainer.K_APPLICATION:
                 property = IRuntimeClasspathEntry.USER_CLASSES;
@@ -88,6 +88,8 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
             case IClasspathContainer.K_SYSTEM:
                 property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
                 break;
+            default:
+                property = -1;
         }
         List resolved = new ArrayList(cpes.length);
         List projects = new ArrayList();

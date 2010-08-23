@@ -439,6 +439,19 @@
          </run>
       </runtime>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.apache.ivyde.eclipse.ui.preferences.IvyDEProjectPreferences"
+            id="org.apache.ivyde.eclipse.projectpreferences"
+            name="Ivy"
+            objectClass="org.eclipse.core.resources.IProject">
+         <filter
+               name="nature"
+               value="org.apache.ivyde.eclipse.ivyNature">
+         </filter>
+      </page>
+   </extension>
 
 
    <!--
