@@ -196,31 +196,37 @@ public class IvyResolveJob extends Job {
             return new Status(IStatus.ERROR, IvyPlugin.ID, "Unexpected error");
         }
         boolean usePreviousResolveIfExist = request.isUsePreviousResolveIfExist();
-        IvyResolveJobThread resolver = new IvyResolveJobThread(conf, ivy, md,
+        final IvyClasspathResolver resolver = new IvyClasspathResolver(conf, ivy, md,
                 usePreviousResolveIfExist, monitor);
-        resolver.setName("IvyDE resolver thread");
+        final IStatus[] status = new IStatus[1];
+        Thread resolverThread = new Thread(new Runnable() {
+            public void run() {
+                status[0] = resolver.resolve();
+            }
+        });
+        resolverThread.setName("IvyDE resolver thread");
 
-        resolver.start();
+        resolverThread.start();
         while (true) {
             try {
-                resolver.join(WAIT_FOR_JOIN);
+                resolverThread.join(WAIT_FOR_JOIN);
             } catch (InterruptedException e) {
-                ivy.interrupt(resolver);
+                ivy.interrupt(resolverThread);
                 return Status.CANCEL_STATUS;
             }
-            if (resolver.getStatus() != null || !resolver.isAlive()) {
+            if (status[0] != null || !resolverThread.isAlive()) {
                 break;
             }
             if (monitor.isCanceled()) {
-                ivy.interrupt(resolver);
+                ivy.interrupt(resolverThread);
                 return Status.CANCEL_STATUS;
             }
         }
-        if (resolver.getStatus() == Status.OK_STATUS) {
+        if (status[0] == Status.OK_STATUS) {
             request.getContainer().updateClasspathEntries(resolver.getClasspathEntries());
         }
-        setResolveStatus(conf, resolver.getStatus());
-        return resolver.getStatus();
+        setResolveStatus(conf, status[0]);
+        return status[0];
 
     }
 
@@ -250,8 +256,8 @@ public class IvyResolveJob extends Job {
                     marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
                     break;
                 default:
-                    IvyPlugin.log(IStatus.WARNING, "Unsupported resolve status: "
-                            + status.getSeverity(), null);
+                    IvyPlugin.log(IStatus.WARNING,
+                        "Unsupported resolve status: " + status.getSeverity(), null);
             }
         } catch (CoreException e) {
             IvyPlugin.log(e);

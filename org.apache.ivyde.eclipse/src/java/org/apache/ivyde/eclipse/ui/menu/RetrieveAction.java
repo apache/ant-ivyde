@@ -17,45 +17,25 @@
  */
 package org.apache.ivyde.eclipse.ui.menu;
 
-import java.io.IOException;
-
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.retrieve.RetrieveOptions;
-import org.apache.ivy.util.filter.ArtifactTypeFilter;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.RefreshFolderJob;
+import org.apache.ivyde.eclipse.retrieve.IvyRetriever;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 
 public class RetrieveAction extends Action {
 
     private final StandaloneRetrieveSetup retrieveSetup;
 
-    private final IProject project;
-
-    public RetrieveAction(IProject project, StandaloneRetrieveSetup retrieveSetup) {
-        this.project = project;
+    public RetrieveAction(StandaloneRetrieveSetup retrieveSetup) {
         this.retrieveSetup = retrieveSetup;
     }
 
     public void run() {
-        String pattern = project.getLocation().toPortableString() + "/"
-                + retrieveSetup.getRetrieveSetup().getRetrievePattern();
-        RetrieveOptions c = new RetrieveOptions();
-        c.setSync(retrieveSetup.getRetrieveSetup().isRetrieveSync());
-        c.setConfs(retrieveSetup.getRetrieveSetup().getRetrieveConfs().split(","));
-        String inheritedRetrieveTypes = retrieveSetup.getRetrieveSetup().getRetrieveTypes();
-        if (inheritedRetrieveTypes != null && !inheritedRetrieveTypes.equals("*")) {
-            c.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil
-                    .split(inheritedRetrieveTypes)));
-        }
         Ivy ivy;
         ModuleDescriptor md;
         try {
@@ -65,21 +45,14 @@ public class RetrieveAction extends Action {
             e.log(IStatus.ERROR, null);
             return;
         }
-        try {
-            int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, c);
-            if (numberOfItemsRetrieved > 0) {
-                // Only refresh if we actually retrieved a file.
-                String refreshPath = IvyPatternHelper.getTokenRoot(retrieveSetup.getRetrieveSetup()
-                        .getRetrievePattern());
-                IFolder folder = project.getFolder(refreshPath);
-                RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
-                refreshFolderJob.schedule();
-            }
-        } catch (IOException e) {
-            IvyPlugin.log(IStatus.ERROR, "Error while retrieving '" + retrieveSetup.getName()
-                    + "' in " + retrieveSetup.getProject().getName(), e);
+        IvyRetriever retriever = new IvyRetriever(ivy, md, false, new NullProgressMonitor(),
+                retrieveSetup);
+        IStatus status = retriever.resolve();
+        if (status.isOK() || status.getCode() == IStatus.CANCEL) {
+            IvyPlugin.log(IStatus.INFO, "Successful retrieve of '" + retrieveSetup.getName()
+                    + "' in " + retrieveSetup.getProject().getName(), null);
+            return;
         }
-        IvyPlugin.log(IStatus.INFO, "Sucessfull retrieve of '" + retrieveSetup.getName() + "' in "
-                + retrieveSetup.getProject().getName(), null);
+        IvyPlugin.log(status);
     }
 }
