@@ -78,9 +78,12 @@ public class IvyResolver {
 
     protected final IProject project;
 
+    private final List confInput;
+
     public IvyResolver(String ivyXmlPath, Ivy ivy, ModuleDescriptor md,
             boolean usePreviousResolveIfExist, IProgressMonitor monitor, List confInput,
             IProject project) {
+        this.confInput = confInput;
         this.project = project;
         this.ivyXmlPath = ivyXmlPath;
         this.ivy = ivy;
@@ -268,6 +271,6 @@ public class IvyResolver {
     }
 
     public String toString() {
-        return ivyXmlPath + confs + " in " + project.getName();
+        return ivyXmlPath + confInput + " in " + project.getName();
     }
 }
