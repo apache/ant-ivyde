@@ -5,6 +5,8 @@
 ==========================
 
 - NEW: Custom color in XML editors (IVYDE-73)
+- NEW: support for retrieve configuration in non Java project
+- NEW: an IvyDE classpath can now be retrieved (IVYDE-56)
 
 - IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)
 - IMPROVE: IvyDE now resolve by batch, then preventing too many workspace build (IVYDE-177)
