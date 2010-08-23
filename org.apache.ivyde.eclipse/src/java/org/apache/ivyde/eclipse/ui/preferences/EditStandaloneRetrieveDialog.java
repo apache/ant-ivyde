@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import org.apache.ivyde.eclipse.cpcontainer.StandaloneRetrieveSetup;
+import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
 import org.apache.ivyde.eclipse.ui.IvySettingsTab;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;

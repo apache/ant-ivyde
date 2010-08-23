@@ -30,6 +30,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 import org.apache.ivyde.eclipse.ui.editors.xml.ColorManager;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
@@ -87,6 +88,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IvyResolveJob ivyResolveJob;
 
+    private RetrieveSetupManager retrieveSetupManager;
+
     /**
      * The constructor.
      */
@@ -103,10 +106,16 @@ public class IvyPlugin extends AbstractUIPlugin {
         this.bundleContext = context;
         log(IStatus.INFO, "starting IvyDE plugin", null);
         ivyResolveJob = new IvyResolveJob();
+        
+        retrieveSetupManager = new RetrieveSetupManager();
+
         javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+        
         colorManager = new ColorManager();
         colorManager.refreshFromStore(getPreferenceStore());
+
         prefStoreHelper = new IvyDEPreferenceStoreHelper(getPreferenceStore());
+
         getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 try {
@@ -160,6 +169,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         resourceBundle = null;
         colorManager = null;
         ivyResolveJob = null;
+        retrieveSetupManager = null;
         // if (console != null)
         // console.shutdown();
     }
@@ -347,5 +357,9 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public IvyResolveJob getIvyResolveJob() {
         return ivyResolveJob;
+    }
+
+    public RetrieveSetupManager getRetrieveSetupManager() {
+        return retrieveSetupManager;
     }
 }

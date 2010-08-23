@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.ui.preferences;
+package org.apache.ivyde.eclipse.retrieve;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
 import org.apache.ivyde.eclipse.cpcontainer.RetrieveSetup;
-import org.apache.ivyde.eclipse.cpcontainer.StandaloneRetrieveSetup;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
