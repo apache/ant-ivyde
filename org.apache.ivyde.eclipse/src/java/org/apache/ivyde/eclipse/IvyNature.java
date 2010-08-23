@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.swt.widgets.Display;
 
 public class IvyNature implements IProjectNature {
 
@@ -73,33 +74,44 @@ public class IvyNature implements IProjectNature {
         try {
             return project.hasNature(IVY_NATURE);
         } catch (CoreException e) {
-            IvyPlugin.log(IStatus.ERROR, "Unable to get the Ivy nature of the project "
-                    + project.getName(), e);
+            IvyPlugin.log(IStatus.ERROR,
+                "Unable to get the Ivy nature of the project " + project.getName(), e);
             return false;
         }
     }
 
     public static void addNature(final IProject project) {
-        try {
-            if (hasNature(project)) {
-                return;
-            }
-
-            final IProjectDescription description = project.getDescription();
-            final String[] ids = description.getNatureIds();
-
-            final String[] newIds = new String[ids == null ? 1 : ids.length + 1];
-            if (ids != null) {
-                System.arraycopy(ids, 0, newIds, 0, ids.length);
-            }
-            newIds[ids == null ? 0 : ids.length] = IVY_NATURE;
-
-            description.setNatureIds(newIds);
-            project.setDescription(description, null);
-        } catch (Exception e) {
-            IvyPlugin.log(IStatus.ERROR, "Failed to add Ivy dependency management on "
-                    + project.getName(), e);
+        if (hasNature(project)) {
+            return;
         }
+
+        final IProjectDescription description;
+        try {
+            description = project.getDescription();
+        } catch (CoreException e) {
+            IvyPlugin.log(IStatus.ERROR,
+                "Failed to add Ivy dependency management on " + project.getName(), e);
+            return;
+        }
+        final String[] ids = description.getNatureIds();
+
+        final String[] newIds = new String[ids == null ? 1 : ids.length + 1];
+        if (ids != null) {
+            System.arraycopy(ids, 0, newIds, 0, ids.length);
+        }
+        newIds[ids == null ? 0 : ids.length] = IVY_NATURE;
+
+        description.setNatureIds(newIds);
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                try {
+                    project.setDescription(description, null);
+                } catch (CoreException e) {
+                    IvyPlugin.log(IStatus.ERROR, "Failed to add Ivy dependency management on "
+                            + project.getName(), e);
+                }
+            }
+        });
     }
 
     public static void removeNature(final IProject project) {
@@ -137,8 +149,8 @@ public class IvyNature implements IProjectNature {
             description.setNatureIds(newIds);
             project.setDescription(description, null);
         } catch (Exception e) {
-            IvyPlugin.log(IStatus.ERROR, "Failed to remove Ivy dependency management on "
-                    + project.getName(), e);
+            IvyPlugin.log(IStatus.ERROR,
+                "Failed to remove Ivy dependency management on " + project.getName(), e);
         }
     }
 
