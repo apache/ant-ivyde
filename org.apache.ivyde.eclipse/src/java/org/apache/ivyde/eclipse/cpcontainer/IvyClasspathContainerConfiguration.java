@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IJavaProject;
@@ -57,6 +58,10 @@ public class IvyClasspathContainerConfiguration {
      * attributes attached to the container but not IvyDE related (Webtools or AspectJfor instance)
      */
     private IClasspathAttribute[] attributes = new IClasspathAttribute[0];
+
+    private boolean retrievedClasspath;
+
+    private RetrieveSetup retrievedClasspathSetup = new RetrieveSetup();
 
     /**
      * Constructor
@@ -181,6 +186,22 @@ public class IvyClasspathContainerConfiguration {
         return attributes;
     }
 
+    public boolean isRetrievedClasspath() {
+        return retrievedClasspath;
+    }
+
+    public void setRetrievedClasspath(boolean retrievedClasspath) {
+        this.retrievedClasspath = retrievedClasspath;
+    }
+
+    public RetrieveSetup getRetrievedClasspathSetup() {
+        return retrievedClasspathSetup;
+    }
+
+    public void setRetrievedClasspathSetup(RetrieveSetup retrievedClasspathSetup) {
+        this.retrievedClasspathSetup = retrievedClasspathSetup;
+    }
+
     // ///////////////////////////
     // Getters that take into account the global preferences
     // ///////////////////////////
@@ -268,6 +289,20 @@ public class IvyClasspathContainerConfiguration {
             return IvyPlugin.getPreferenceStoreHelper().isResolveBeforeLaunch();
         }
         return resolveBeforeLaunch;
+    }
+
+    public boolean isInheritedRetrievedClasspath() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().isRetrievedClasspath();
+        }
+        return retrievedClasspath;
+    }
+
+    public RetrieveSetup getInheritedRetrievedClasspathSet() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getRetrievedClasspathSetup();
+        }
+        return retrievedClasspathSetup;
     }
 
     public String toString() {

@@ -95,4 +95,12 @@ public final class PreferenceConstants {
 
     public static final String EDITOR_COLOR_TAG = "editor.color.tag";
 
+    public static final String RETRIEVED_CLASSPATH = "retrievedClasspath";
+
+    public static final String RETRIEVED_CLASSPATH_PATTERN = "retrievedClasspath.pattern";
+
+    public static final String RETRIEVED_CLASSPATH_SYNC = "retrievedClasspath.sync";
+
+    public static final String RETRIEVED_CLASSPATH_TYPES = "retrievedClasspath.types";
+
 }

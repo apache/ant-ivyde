@@ -22,6 +22,7 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.apache.ivyde.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -93,7 +94,24 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_CHANGE = true;
     
     public static final boolean DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS = false;
-    
+
+    public static final boolean DEFAULT_RETRIEVED_CLASSPATH = false;
+
+    private static final String DEFAULT_RETRIEVED_CLASSPATH_PATTERN =
+        "lib/[artifact]-[revision].[ext]";
+
+    private static final boolean DEFAULT_RETRIEVED_CLASSPATH_SYNC = false;
+
+    private static final String DEFAULT_RETRIEVED_CLASSPATH_TYPES = "jar";
+
+    public static final RetrieveSetup DEFAULT_RETRIEVED_CLASSPATH_SETUP = new RetrieveSetup();
+
+    static {
+        DEFAULT_RETRIEVED_CLASSPATH_SETUP.setRetrievePattern(DEFAULT_RETRIEVED_CLASSPATH_PATTERN);
+        DEFAULT_RETRIEVED_CLASSPATH_SETUP.setRetrieveSync(DEFAULT_RETRIEVED_CLASSPATH_SYNC);
+        DEFAULT_RETRIEVED_CLASSPATH_SETUP.setRetrieveTypes(DEFAULT_RETRIEVED_CLASSPATH_TYPES);
+    }
+
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
@@ -138,6 +156,14 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             IXMLColorConstants.DEFAULT);
         PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_TAG,
             IXMLColorConstants.TAG);
+
+        store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH, DEFAULT_RETRIEVED_CLASSPATH);
+        store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN,
+            DEFAULT_RETRIEVED_CLASSPATH_PATTERN);
+        store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC,
+            DEFAULT_RETRIEVED_CLASSPATH_SYNC);
+        store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES,
+            DEFAULT_RETRIEVED_CLASSPATH_TYPES);
     }
 
 }

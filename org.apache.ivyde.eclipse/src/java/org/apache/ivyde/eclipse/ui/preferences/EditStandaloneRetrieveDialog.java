@@ -97,7 +97,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         ivyFilePathText = new IvyFilePathText(parent, SWT.NONE, project);
         ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        retrieveComposite = new RetrieveComposite(body, SWT.NONE);
+        retrieveComposite = new RetrieveComposite(body, SWT.NONE, true);
         retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
         return body;

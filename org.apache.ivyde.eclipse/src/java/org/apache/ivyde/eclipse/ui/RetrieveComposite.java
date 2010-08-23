@@ -46,7 +46,7 @@ public class RetrieveComposite extends Composite {
 
     private Text typesText;
 
-    public RetrieveComposite(Composite parent, int style) {
+    public RetrieveComposite(Composite parent, int style, boolean withConf) {
         super(parent, style);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;
@@ -65,12 +65,14 @@ public class RetrieveComposite extends Composite {
         retrieveSyncButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false,
                 2, 1));
 
-        label = new Label(this, SWT.NONE);
-        label.setText("Configurations:");
+        if (withConf) {
+            label = new Label(this, SWT.NONE);
+            label.setText("Configurations:");
 
-        confsText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        confsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        confsText.setToolTipText(TOOLTIP_RETRIEVE_CONFS);
+            confsText = new Text(this, SWT.SINGLE | SWT.BORDER);
+            confsText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+            confsText.setToolTipText(TOOLTIP_RETRIEVE_CONFS);
+        }
 
         label = new Label(this, SWT.NONE);
         label.setText("Types:");
@@ -85,7 +87,9 @@ public class RetrieveComposite extends Composite {
         RetrieveSetup setup = new RetrieveSetup();
         setup.setRetrieveSync(retrieveSyncButton.getSelection());
         setup.setRetrievePattern(retrievePatternText.getText());
-        setup.setRetrieveConfs(confsText.getText());
+        if (confsText != null) {
+            setup.setRetrieveConfs(confsText.getText());
+        }
         setup.setRetrieveTypes(typesText.getText());
         return setup;
     }
@@ -93,7 +97,9 @@ public class RetrieveComposite extends Composite {
     public void init(RetrieveSetup setup) {
         retrievePatternText.setText(setup.getRetrievePattern());
         retrieveSyncButton.setSelection(setup.isRetrieveSync());
-        confsText.setText(setup.getRetrieveConfs());
+        if (confsText != null) {
+            confsText.setText(setup.getRetrieveConfs());
+        }
         typesText.setText(setup.getRetrieveTypes());
         setEnabled(true);
     }
@@ -102,7 +108,9 @@ public class RetrieveComposite extends Composite {
         super.setEnabled(enabled);
         retrievePatternText.setEnabled(enabled);
         retrieveSyncButton.setEnabled(enabled);
-        confsText.setEnabled(enabled);
+        if (confsText != null) {
+            confsText.setEnabled(enabled);
+        }
         typesText.setEnabled(enabled);
     }
 }

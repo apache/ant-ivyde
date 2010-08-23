@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
@@ -184,11 +185,13 @@ public class IvyDEPreferenceStoreHelper {
     }
 
     public RGB getEditorColorXmlComment() {
-        return PreferenceConverter.getColor(prefStore, PreferenceConstants.EDITOR_COLOR_XML_COMMENT);
+        return PreferenceConverter
+                .getColor(prefStore, PreferenceConstants.EDITOR_COLOR_XML_COMMENT);
     }
 
     public void setEditorColorXmlComment(RGB color) {
-        PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_XML_COMMENT, color);
+        PreferenceConverter
+                .setValue(prefStore, PreferenceConstants.EDITOR_COLOR_XML_COMMENT, color);
     }
 
     public RGB getEditorColorProcInst() {
@@ -221,5 +224,33 @@ public class IvyDEPreferenceStoreHelper {
 
     public void setEditorColorTag(RGB color) {
         PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_TAG, color);
+    }
+
+    public boolean isRetrievedClasspath() {
+        return prefStore.getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH);
+    }
+
+    public void setRetrievedClasspath(boolean retrievedClasspath) {
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH, retrievedClasspath);
+    }
+
+    public RetrieveSetup getRetrievedClasspathSetup() {
+        RetrieveSetup retrieveSetup = new RetrieveSetup();
+        retrieveSetup.setRetrievePattern(prefStore
+                .getString(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN));
+        retrieveSetup.setRetrieveSync(prefStore
+                .getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC));
+        retrieveSetup.setRetrieveTypes(prefStore
+                .getString(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES));
+        return retrieveSetup;
+    }
+
+    public void setRetrievedClasspathSetup(RetrieveSetup retrieveSetup) {
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN, retrieveSetup
+                .getRetrievePattern());
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC, retrieveSetup
+                .isRetrieveSync());
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES, retrieveSetup
+                .getRetrieveTypes());
     }
 }

@@ -27,6 +27,7 @@ import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
+import org.apache.ivyde.eclipse.ui.ClasspathTypeComposite;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
 import org.apache.ivyde.eclipse.ui.IvySettingsTab;
@@ -101,6 +102,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private IvyClasspathContainerState state;
 
     private IvySettingsTab settingsTab;
+
+    private ClasspathTypeComposite classpathTypeComposite;
 
     /**
      * Constructor
@@ -205,6 +208,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
             conf.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
             conf.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
+            conf.setRetrievedClasspath(classpathTypeComposite.isRetrievedClasspath());
+            if (classpathTypeComposite.isRetrievedClasspath()) {
+                conf.setRetrievedClasspathSetup(classpathTypeComposite.getRetrieveSetup());
+            }
         } else {
             conf.setAdvancedProjectSpecific(false);
         }
@@ -429,6 +436,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
                 true, false, 3, 1));
 
+        classpathTypeComposite = new ClasspathTypeComposite(composite, SWT.NONE);
+        classpathTypeComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+
         return composite;
     }
 
@@ -446,12 +457,16 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             alphaOrderCheck.select(conf.isAlphaOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(conf.isResolveInWorkspace());
             resolveBeforeLaunchCheck.setSelection(conf.isResolveBeforeLaunch());
+            classpathTypeComposite.init(conf.isRetrievedClasspath(), conf
+                .getRetrievedClasspathSetup());
         } else {
             advancedProjectSpecificButton.setSelection(false);
             acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
             resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
+            classpathTypeComposite.init(helper.isRetrievedClasspath(), helper
+                .getRetrievedClasspathSetup());
         }
 
         settingsTab.updateFieldsStatusSettings();
@@ -466,6 +481,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
         resolveBeforeLaunchCheck.setEnabled(projectSpecific);
+        classpathTypeComposite.setEnabled(projectSpecific);
     }
 
     public void initialize(IJavaProject p, IClasspathEntry[] currentEntries) {

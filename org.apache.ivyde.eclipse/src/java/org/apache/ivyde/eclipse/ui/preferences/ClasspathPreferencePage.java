@@ -19,6 +19,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
+import org.apache.ivyde.eclipse.ui.ClasspathTypeComposite;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -34,8 +35,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class ClasspathPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID =
-        "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
+    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
 
     private Button resolveInWorkspaceCheck;
 
@@ -44,6 +44,8 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
     private Combo alphaOrderCheck;
 
     private AcceptedSuffixesTypesComposite acceptedSuffixesTypesComposite;
+
+    private ClasspathTypeComposite classpathTypeComposite;
 
     public ClasspathPreferencePage() {
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
@@ -87,6 +89,10 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
                 true, false, 3, 1));
 
+        classpathTypeComposite = new ClasspathTypeComposite(composite, SWT.NONE);
+        classpathTypeComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+
         // CheckStyle:MagicNumber| ON
 
         initPreferences();
@@ -100,6 +106,8 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
         alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
         acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
+        classpathTypeComposite.init(helper.isRetrievedClasspath(), helper
+                .getRetrievedClasspathSetup());
     }
 
     public boolean performOk() {
@@ -108,6 +116,8 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         helper.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
         helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
         helper.setContainerMappingSetup(acceptedSuffixesTypesComposite.getContainerMappingSetup());
+        helper.setRetrievedClasspath(classpathTypeComposite.isRetrievedClasspath());
+        helper.setRetrievedClasspathSetup(classpathTypeComposite.getRetrieveSetup());
         return true;
     }
 
@@ -116,5 +126,7 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         resolveBeforeLaunchCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_BEFORE_LAUNCH);
         alphaOrderCheck.select(PreferenceInitializer.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
         acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_CONTAINER_MAPPING_SETUP);
+        classpathTypeComposite.init(PreferenceInitializer.DEFAULT_RETRIEVED_CLASSPATH,
+            PreferenceInitializer.DEFAULT_RETRIEVED_CLASSPATH_SETUP);
     }
 }

@@ -98,6 +98,7 @@ public final class IvyClasspathContainerConfAdapter {
     private static void loadV1(IvyClasspathContainerConfiguration conf, IPath path) {
         ContainerMappingSetup mappingSetup = conf.getContainerMappingSetup();
         IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
+        RetrieveSetup retrievedClasspathSetup = conf.getRetrievedClasspathSetup();
 
         String url = path.segment(1).substring(1);
         String[] parameters = url.split("&");
@@ -107,7 +108,7 @@ public final class IvyClasspathContainerConfAdapter {
         String ivyXmlPath = "ivy.xml";
         boolean doStandaloneRetrieve = false;
         boolean isRetrieveProjectSpecific = false;
-        RetrieveSetup retrieveSetup = new RetrieveSetup();
+        RetrieveSetup standaloneRetrieveSetup = new RetrieveSetup();
 
         for (int i = 0; i < parameters.length; i++) {
             String[] parameter = parameters[i].split("=");
@@ -166,6 +167,18 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("resolveBeforeLaunch")) {
                 conf.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
                 conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("retrievedClasspath")) {
+                conf.setRetrievedClasspath(Boolean.valueOf(value).booleanValue());
+                conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("retrievedClasspathPattern")) {
+                retrievedClasspathSetup.setRetrievePattern(value);
+                conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("retrievedClasspathSync")) {
+                retrievedClasspathSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
+                conf.setAdvancedProjectSpecific(true);
+            } else if (parameter[0].equals("retrievedClasspathTypes")) {
+                retrievedClasspathSetup.setRetrieveTypes(value);
+                conf.setAdvancedProjectSpecific(true);
 
                 // the following is the retrieve conf pre -IVYDE-56
                 // from this conf should be build StandaloneRetrieveSetup
@@ -176,16 +189,16 @@ public final class IvyClasspathContainerConfAdapter {
                 doStandaloneRetrieve = Boolean.valueOf(value).booleanValue();
                 isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("retrievePattern")) {
-                retrieveSetup.setRetrievePattern(value);
+                standaloneRetrieveSetup.setRetrievePattern(value);
                 isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("retrieveSync")) {
-                retrieveSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
+                standaloneRetrieveSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
                 isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("retrieveConfs")) {
-                retrieveSetup.setRetrieveConfs(value);
+                standaloneRetrieveSetup.setRetrieveConfs(value);
                 isRetrieveProjectSpecific = true;
             } else if (parameter[0].equals("retrieveTypes")) {
-                retrieveSetup.setRetrieveTypes(value);
+                standaloneRetrieveSetup.setRetrieveTypes(value);
                 isRetrieveProjectSpecific = true;
             }
         }
@@ -196,7 +209,7 @@ public final class IvyClasspathContainerConfAdapter {
 
         // convert pre IVYDE-56 conf
         convertOldRetrieveConf(conf, isRetrieveProjectSpecific, doStandaloneRetrieve,
-            retrieveSetup, settingsSetup, ivyXmlPath);
+            standaloneRetrieveSetup, settingsSetup, ivyXmlPath);
     }
 
     private static void convertOldRetrieveConf(IvyClasspathContainerConfiguration conf,
@@ -350,6 +363,13 @@ public final class IvyClasspathContainerConfAdapter {
                 append(path, "alphaOrder", conf.isAlphaOrder());
                 append(path, "resolveInWorkspace", conf.isResolveInWorkspace());
                 append(path, "resolveBeforeLaunch", conf.isResolveBeforeLaunch());
+                append(path, "retrievedClasspath", conf.isRetrievedClasspath());
+                if (conf.isRetrievedClasspath()) {
+                    RetrieveSetup retrieveSetup = conf.getRetrievedClasspathSetup();
+                    append(path, "retrievedClasspathPattern", retrieveSetup.getRetrievePattern());
+                    append(path, "retrievedClasspathSync", retrieveSetup.isRetrieveSync());
+                    append(path, "retrievedClasspathTypes", retrieveSetup.getRetrieveTypes());
+                }
             }
         } catch (UnsupportedEncodingException e) {
             IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
