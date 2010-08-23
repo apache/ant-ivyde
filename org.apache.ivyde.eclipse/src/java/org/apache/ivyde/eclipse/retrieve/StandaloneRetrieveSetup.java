@@ -21,7 +21,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
 
 public class StandaloneRetrieveSetup {
 
-    private String name = "";
+    private String name = "dependencies";
 
     private IvySettingsSetup ivySettingsSetup = new IvySettingsSetup();
 
