@@ -44,7 +44,7 @@ public class ClasspathTypeComposite extends Composite {
         setLayout(new GridLayout(1, false));
 
         Label label = new Label(this, SWT.NONE);
-        label.setText("Compose the classpath with:");
+        label.setText("Build the classpath with:");
 
         Composite buttons = new Composite(this, SWT.NONE);
         buttons.setLayout(new GridLayout(1, false));
