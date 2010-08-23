@@ -66,7 +66,7 @@ public class IvyResolver {
 
     private final boolean usePreviousResolveIfExist;
 
-    private LinkedHashSet/* <ArtifactDownloadReport> */all;
+    protected LinkedHashSet/* <ArtifactDownloadReport> */all;
 
     private List problemMessages;
 

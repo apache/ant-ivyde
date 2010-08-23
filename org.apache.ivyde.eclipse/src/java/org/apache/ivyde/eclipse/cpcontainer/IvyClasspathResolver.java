@@ -54,8 +54,6 @@ public class IvyClasspathResolver extends IvyResolver {
 
     private IClasspathEntry[] classpathEntries = null;
 
-    private LinkedHashSet/* <ArtifactDownloadReport> */all;
-
     private Map artifactsByDependency = new HashMap();
 
     /**
