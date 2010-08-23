@@ -20,13 +20,16 @@ package org.apache.ivyde.eclipse.ui.menu;
 import java.io.IOException;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.RefreshFolderJob;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
@@ -63,7 +66,15 @@ public class RetrieveAction extends Action {
             return;
         }
         try {
-            ivy.retrieve(md.getModuleRevisionId(), pattern, c);
+            int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, c);
+            if (numberOfItemsRetrieved > 0) {
+                // Only refresh if we actually retrieved a file.
+                String refreshPath = IvyPatternHelper.getTokenRoot(retrieveSetup.getRetrieveSetup()
+                        .getRetrievePattern());
+                IFolder folder = project.getFolder(refreshPath);
+                RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
+                refreshFolderJob.schedule();
+            }
         } catch (IOException e) {
             IvyPlugin.log(IStatus.ERROR, "Error while retrieving '" + retrieveSetup.getName()
                     + "' in " + retrieveSetup.getProject().getName(), e);
