@@ -33,7 +33,7 @@ public class ViewReverseDependenciesHandler extends AbstractIvyDEHandler {
     protected void handleProjects(Map projects) {
         try {
             ReverseDependencyExplorerView.setSelectedProjects((IProject[]) projects.keySet()
-                    .toArray());
+                    .toArray(new IProject[0]));
             IWorkbenchPage page = IvyPlugin.getActivePage();
             page.showView("org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorer");
             ReverseDependencyExplorerView.refresh(true);
