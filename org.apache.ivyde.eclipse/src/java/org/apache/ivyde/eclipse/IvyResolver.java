@@ -68,7 +68,7 @@ public class IvyResolver {
 
     protected LinkedHashSet/* <ArtifactDownloadReport> */all;
 
-    private List problemMessages;
+    private Set problemMessages;
 
     protected String[] confs;
 
@@ -172,7 +172,7 @@ public class IvyResolver {
 
     private IStatus resolveWithPrevious() throws ParseException, IOException {
         all = new LinkedHashSet();
-        problemMessages = new ArrayList();
+        problemMessages = new HashSet();
         // we check if all required configurations have been
         // resolved
         boolean parsingOk = true;
@@ -206,7 +206,7 @@ public class IvyResolver {
         ResolveOptions resolveOption = new ResolveOptions().setConfs(confs);
         resolveOption.setValidate(ivy.getSettings().doValidate());
         ResolveReport report = ivy.resolve(md, resolveOption);
-        problemMessages = report.getAllProblemMessages();
+        problemMessages = new HashSet(report.getAllProblemMessages());
 
         all = new LinkedHashSet();
         for (int i = 0; i < confs.length; i++) {

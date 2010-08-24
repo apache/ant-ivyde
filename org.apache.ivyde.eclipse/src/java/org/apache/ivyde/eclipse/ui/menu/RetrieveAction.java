@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui.menu;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.IvyRetriever;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
@@ -48,6 +49,9 @@ public class RetrieveAction extends Action {
         IvyRetriever retriever = new IvyRetriever(ivy, md, false, new NullProgressMonitor(),
                 retrieveSetup);
         IStatus status = retriever.resolve();
+        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
+        ivyMarkerManager.setResolveStatus(status, retrieveSetup.getProject(),
+            retrieveSetup.getIvyXmlPath());
         if (status.isOK() || status.getCode() == IStatus.CANCEL) {
             IvyPlugin.log(IStatus.INFO, "Successful retrieve of '" + retrieveSetup.getName()
                     + "' in " + retrieveSetup.getProject().getName(), null);

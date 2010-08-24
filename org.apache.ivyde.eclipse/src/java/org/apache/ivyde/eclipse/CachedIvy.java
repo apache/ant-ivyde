@@ -39,10 +39,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceIvySettings;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -62,7 +59,6 @@ public abstract class CachedIvy {
 
     private ModuleDescriptor md;
 
-
     public void reset() {
         md = null;
         ivy = null;
@@ -74,12 +70,15 @@ public abstract class CachedIvy {
     }
 
     private void setConfStatus(IvyDEException ex) {
+        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
+        IStatus status;
         if (ex != null) {
-            setResolveStatus(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                    ex.getMessage(), ex.getCause()));
+            status = new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, ex.getMessage(),
+                    ex.getCause());
         } else {
-            setResolveStatus(Status.OK_STATUS);
+            status = Status.OK_STATUS;
         }
+        ivyMarkerManager.setResolveStatus(status, getProject(), getIvyXmlPath());
     }
 
     protected abstract IProject getProject();
@@ -95,41 +94,6 @@ public abstract class CachedIvy {
     protected abstract IJavaProject getJavaProject();
 
     protected abstract boolean isResolveInWorkspace();
-
-    public void setResolveStatus(IStatus status) {
-        if (FakeProjectManager.isFake(getProject())) {
-            return;
-        }
-        IProject p = getProject().getProject();
-        try {
-            p.deleteMarkers(IvyPlugin.MARKER_ID, true, IResource.DEPTH_INFINITE);
-            if (status == Status.OK_STATUS) {
-                return;
-            }
-            IResource r = getProject().getFile(getIvyXmlPath());
-            if (!r.exists()) {
-                r = p;
-            }
-            IMarker marker = r.createMarker(IvyPlugin.MARKER_ID);
-            marker.setAttribute(IMarker.MESSAGE, status.getMessage());
-            switch (status.getSeverity()) {
-                case IStatus.ERROR:
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-                    break;
-                case IStatus.WARNING:
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                    break;
-                case IStatus.INFO:
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-                    break;
-                default:
-                    IvyPlugin.log(IStatus.WARNING, "Unsupported resolve status: "
-                            + status.getSeverity(), null);
-            }
-        } catch (CoreException e) {
-            IvyPlugin.log(e);
-        }
-    }
 
     public Ivy getCachedIvy() throws IvyDEException {
         if (ivy != null) {
@@ -168,8 +132,7 @@ public abstract class CachedIvy {
                     ivy = null;
                     IvyDEException ex = new IvyDEException(
                             "Read error of the default Ivy settings",
-                            "The default Ivy settings file could not be read: "
-                            + e.getMessage(), e);
+                            "The default Ivy settings file could not be read: " + e.getMessage(), e);
                     setConfStatus(ex);
                     throw ex;
                 }
@@ -237,8 +200,7 @@ public abstract class CachedIvy {
             throw ex;
         }
 
-        if (file.lastModified() != ivySettingsLastModified
-                || !isLoadSettingsOnDemandPath()) {
+        if (file.lastModified() != ivySettingsLastModified || !isLoadSettingsOnDemandPath()) {
             IvySettings ivySettings = createIvySettings();
             if (ivySettingsLastModified == -1) {
                 Message.info("\n\n");
@@ -295,8 +257,7 @@ public abstract class CachedIvy {
                 Path p = new Path(file);
                 if (getProject() != null && !p.isAbsolute()) {
                     try {
-                        is = new FileInputStream(getProject().getLocation()
-                                .append(file).toFile());
+                        is = new FileInputStream(getProject().getLocation().append(file).toFile());
                     } catch (FileNotFoundException e) {
                         IvyDEException ex = new IvyDEException("Property file not found",
                                 "The property file '" + file + "' could not be found", e);
@@ -380,8 +341,7 @@ public abstract class CachedIvy {
             return md;
         } catch (MalformedURLException e) {
             IvyDEException ex = new IvyDEException("Incorrect URL of the Ivy file",
-                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath()
-                    + "'", e);
+                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "'", e);
             setConfStatus(ex);
             throw ex;
         } catch (ParseException e) {

@@ -94,6 +94,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IPropertyChangeListener propertyListener;
 
+    private IvyMarkerManager ivyMarkerManager;
+
     /**
      * The constructor.
      */
@@ -162,6 +164,8 @@ public class IvyPlugin extends AbstractUIPlugin {
         ivyFileListener = new IvyFileResourceListener();
         workspace.addResourceChangeListener(ivyFileListener, IResourceChangeEvent.PRE_BUILD);
 
+        ivyMarkerManager = new IvyMarkerManager();
+
         log(IStatus.INFO, "IvyDE plugin started", null);
     }
 
@@ -175,6 +179,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         workspace.removeSaveParticipant(this);
         colorManager = null;
+        ivyMarkerManager = null;
         ivyResolveJob = null;
         retrieveSetupManager = null;
         workspace.removeResourceChangeListener(workspaceListener);
@@ -371,6 +376,10 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public ColorManager getColorManager() {
         return colorManager;
+    }
+
+    public IvyMarkerManager getIvyMarkerManager() {
+        return ivyMarkerManager;
     }
 
     public IvyResolveJob getIvyResolveJob() {

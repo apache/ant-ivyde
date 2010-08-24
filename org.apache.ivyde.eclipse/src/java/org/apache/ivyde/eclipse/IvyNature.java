@@ -46,7 +46,7 @@ public class IvyNature implements IProjectNature {
     }
 
     public void configure() throws CoreException {
-        // nothin to do
+        // nothing to do
     }
 
     public void deconfigure() throws CoreException {
@@ -68,6 +68,9 @@ public class IvyNature implements IProjectNature {
                     .toArray(new IClasspathEntry[newEntries.size()]);
             javaProject.setRawClasspath(newClasspathEntries, null);
         }
+
+        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
+        ivyMarkerManager.removeMarkers(project);
     }
 
     public static boolean hasNature(IProject project) {

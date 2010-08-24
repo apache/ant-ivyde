@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyNature;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.commands.AbstractHandler;

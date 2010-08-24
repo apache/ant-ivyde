@@ -31,14 +31,10 @@ import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.LatestVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -225,43 +221,11 @@ public class IvyResolveJob extends Job {
         if (status[0] == Status.OK_STATUS) {
             request.getContainer().updateClasspathEntries(resolver.getClasspathEntries());
         }
-        setResolveStatus(conf, status[0]);
+        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
+        ivyMarkerManager.setResolveStatus(status[0], conf.getJavaProject().getProject(),
+            conf.getIvyXmlPath());
         return status[0];
 
-    }
-
-    private void setResolveStatus(IvyClasspathContainerConfiguration conf, IStatus status) {
-        if (FakeProjectManager.isFake(conf.getJavaProject())) {
-            return;
-        }
-        IFile ivyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
-        if (!ivyFile.exists()) {
-            return;
-        }
-        try {
-            ivyFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-            if (status == Status.OK_STATUS) {
-                return;
-            }
-            IMarker marker = ivyFile.createMarker(IMarker.PROBLEM);
-            marker.setAttribute(IMarker.MESSAGE, status.getMessage());
-            switch (status.getSeverity()) {
-                case IStatus.ERROR:
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-                    break;
-                case IStatus.WARNING:
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                    break;
-                case IStatus.INFO:
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-                    break;
-                default:
-                    IvyPlugin.log(IStatus.WARNING,
-                        "Unsupported resolve status: " + status.getSeverity(), null);
-            }
-        } catch (CoreException e) {
-            IvyPlugin.log(e);
-        }
     }
 
 }

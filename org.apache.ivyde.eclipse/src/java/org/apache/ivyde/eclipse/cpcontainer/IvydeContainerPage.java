@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
 import org.apache.ivyde.eclipse.ui.ClasspathTypeComposite;
@@ -229,6 +230,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             ivycp.launchResolve(false, null);
         } catch (JavaModelException e) {
             IvyPlugin.log(e);
+        }
+
+        if (oldIvyFile != null && !oldIvyFile.equals(conf.getIvyXmlPath())) {
+            // changing the ivy.xml, remove old marker on the old file, if any
+            IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
+            ivyMarkerManager.removeMarkers(conf.getJavaProject().getProject(), oldIvyFile);
         }
 
         return true;
