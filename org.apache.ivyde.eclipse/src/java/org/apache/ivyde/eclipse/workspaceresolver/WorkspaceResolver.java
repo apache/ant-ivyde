@@ -157,10 +157,6 @@ public class WorkspaceResolver extends AbstractResolver {
         // container for this dependency
         for (int i = 0; i < projects.length; i++) {
             IJavaProject javaProject = projects[i];
-            if (resolvingJavaProject.equals(javaProject)) {
-                // we don't want to introduce self dependency
-                continue;
-            }
             if (!javaProject.exists()) {
                 continue;
             }

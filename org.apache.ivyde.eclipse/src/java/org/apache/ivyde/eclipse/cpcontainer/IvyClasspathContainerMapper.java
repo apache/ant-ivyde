@@ -83,7 +83,10 @@ public class IvyClasspathContainerMapper {
 
             if (artifact.getType().equals(WorkspaceResolver.ECLIPSE_PROJECT_TYPE)) {
                 // This is a java project in the workspace, add project path
-                paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
+                // but only add it if it is not a self dependency
+                if (!artifact.getName().equals(conf.getJavaProject().getPath().toString())) {
+                    paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
+                }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
                 Path classpathArtifact = getArtifactPath(artifact);
                 Path sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
