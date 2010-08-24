@@ -15,6 +15,7 @@
 
 - FIX: Variable based path for ivysettings doesn't work it there are some spaces in the path (IVYDE-253)
 - FIX: Triggers are not called (IVYDE-244)
+- FIX: Missing ivysettings.xml can make the classpath container config to change (IVYDE-248)
 
   version 2.1.0
 ==========================

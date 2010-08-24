@@ -298,26 +298,15 @@ public final class IvyClasspathContainerConfAdapter {
             }
             return "${workspace_loc:" + path + "}";
         }
-        URL url;
-        try {
-            url = new URL(value);
-        } catch (MalformedURLException e) {
-            return value;
+        if (value.startsWith("file://./") || value.startsWith("file:./")) {
+            if (value.charAt(5) == '/') {
+                value = value.substring(8);
+            } else {
+                value = value.substring(6);
+            }
+            return "${workspace_loc:" + conf.getJavaProject().getProject().getName() + value + "}";
         }
-        if (url.getProtocol() != null && !url.getProtocol().equals("file")) {
-            return value;
-        }
-        File file = new File(url.getPath());
-        if (file.exists()) {
-            return value;
-        }
-        // the file doesn't exist, it is a relative path to the project.
-        String urlpath = url.getPath();
-        if (urlpath != null && urlpath.startsWith("./")) {
-            urlpath = urlpath.substring(1);
-        }
-        conf.getJavaProject().getProject().getName();
-        return "${workspace_loc:" + conf.getJavaProject().getProject().getName() + urlpath + "}";
+        return value;
     }
 
     private static void checkNonNullConf(IvyClasspathContainerConfiguration conf) {
