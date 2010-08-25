@@ -98,7 +98,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_OPEN = false;
 
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_CHANGE = true;
-    
+
+    public static final boolean DEFAULT_IGNORE_BRANCH_ON_WORKSPACE_PROJECTS = false;
+
     public static final boolean DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS = false;
 
     public static final boolean DEFAULT_RETRIEVED_CLASSPATH = false;
@@ -150,6 +152,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL,
             DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
+
+        store.setDefault(PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS,
+            DEFAULT_IGNORE_BRANCH_ON_WORKSPACE_PROJECTS);
 
         store.setDefault(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
             DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS);

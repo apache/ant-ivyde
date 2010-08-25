@@ -34,6 +34,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
@@ -106,6 +107,8 @@ public class WorkspaceResolver extends AbstractResolver {
 
     private IJavaProject[] projects;
 
+    private boolean ignoreBranchOnWorkspaceProjects;
+
     private boolean ignoreVersionOnWorkspaceProjects;
 
     public WorkspaceResolver(IJavaProject javaProject, IvySettings ivySettings) {
@@ -120,6 +123,9 @@ public class WorkspaceResolver extends AbstractResolver {
             IvyPlugin.log(IStatus.ERROR, "JDT Error while resolving in workspace for "
                     + resolvingJavaProject.getElementName(), e);
         }
+
+        ignoreBranchOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper()
+                .getIgnoreBranchOnWorkspaceProjects();
 
         ignoreVersionOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper()
                 .getIgnoreVersionOnWorkspaceProjects();
@@ -175,9 +181,35 @@ public class WorkspaceResolver extends AbstractResolver {
                     continue;
                 }
 
-                if (!md.getModuleRevisionId().getModuleId().equals(dependencyMrid.getModuleId())) {
+                ModuleRevisionId candidateMrid = md.getModuleRevisionId();
+
+                if (!candidateMrid.getModuleId().equals(dependencyMrid.getModuleId())) {
                     // it doesn't match org#module
                     continue;
+                }
+                
+                if (!ignoreBranchOnWorkspaceProjects) {
+                    ModuleId mid = dependencyMrid.getModuleId();
+                    String defaultBranch = getSettings().getDefaultBranch(mid);
+                    String dependencyBranch = dependencyMrid.getBranch();
+                    String candidateBranch = candidateMrid.getBranch();
+                    if (dependencyBranch == null) {
+                        dependencyBranch = defaultBranch;
+                    }
+                    if (candidateBranch == null) {
+                        candidateBranch = defaultBranch;
+                    }
+                    if (dependencyBranch != candidateBranch) {
+                        // Both cannot be null
+                        if (dependencyBranch == null || candidateBranch == null) {
+                            // One set, the other isn't, so no match
+                            continue;
+                        }
+                        if (!dependencyBranch.equals(candidateBranch)) {
+                            // Both set but to different branches, so no match
+                            continue;
+                        }
+                    }
                 }
 
                 // Found one; check if it is for the module we need

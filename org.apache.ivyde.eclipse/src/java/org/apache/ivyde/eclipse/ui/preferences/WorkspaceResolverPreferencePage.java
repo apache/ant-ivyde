@@ -69,6 +69,19 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
             }
         };
         addField(autoResolveOnOpen);
+        
+        BooleanFieldEditor ignoreBranchOnWorkspaceProjects = new BooleanFieldEditor(
+                PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS,
+                "Ignore branch when resolving workspace projects", fieldParent) {
+            protected Label getLabelControl() {
+                Label label = super.getLabelControl();
+                label.setToolTipText("Will ignore the artifact branch when resolving "
+                        + "against workspace projects");
+                return label;
+            }
+        };
+
+        addField(ignoreBranchOnWorkspaceProjects);
 
         BooleanFieldEditor ignoreVersionOnWorkspaceProjects = new BooleanFieldEditor(
                 PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
@@ -84,9 +97,10 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
         addField(ignoreVersionOnWorkspaceProjects);
 
         Label warning = new Label(fieldParent, SWT.NONE);
-        warning.setText("WARNING: you should use this only if you are sure the projets opened\n"
-                + "in your workspace can actually work with each other, be carefull with\n"
-                + "branch management for instance)");
+        warning.setText("WARNING: you should ignore branch and/or revision only\n" +
+        		        "if you are sure that all the project revisions that are\n" +
+        		        "open in your workspace can actually work together\n" +
+                        "(be careful with branch management for instance)");
         GridData gridData = new GridData();
         gridData.horizontalIndent = HORIZ_INDENT;
         warning.setLayoutData(gridData);

@@ -82,6 +82,9 @@ public final class PreferenceConstants {
 
     public static final String IVY_CONSOLE_LOG_LEVEL = "ivyConsole.logLevel";
 
+    public static final String IGNORE_BRANCH_ON_WORKSPACE_PROJECTS
+        = "workspaceResolver.ignoreBranch";
+
     public static final String IGNORE_VERSION_ON_WORKSPACE_PROJECTS
         = "workspaceResolver.ignoreVersion";
 

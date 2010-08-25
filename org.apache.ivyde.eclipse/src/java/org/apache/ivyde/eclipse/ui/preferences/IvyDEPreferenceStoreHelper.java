@@ -179,6 +179,15 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, logLevel);
     }
 
+    public boolean getIgnoreBranchOnWorkspaceProjects() {
+        return prefStore.getBoolean(PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS);
+    }
+
+    public void setIgnoreBranchOnWorkspaceProjects(boolean ignoreBranchOnWorkspaceProjects) {
+        prefStore.setValue(PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS,
+            ignoreBranchOnWorkspaceProjects);
+    }
+
     public boolean getIgnoreVersionOnWorkspaceProjects() {
         return prefStore.getBoolean(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
     }

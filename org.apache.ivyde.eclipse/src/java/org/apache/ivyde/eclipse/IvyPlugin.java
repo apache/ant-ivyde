@@ -138,7 +138,9 @@ public class IvyPlugin extends AbstractUIPlugin {
                             || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN
                             || event.getProperty() == PreferenceConstants.RETRIEVE_SYNC
                             || event.getProperty() == PreferenceConstants.ALPHABETICAL_ORDER
-                            || event.getProperty() == PreferenceConstants.RESOLVE_IN_WORKSPACE) {
+                            || event.getProperty() == PreferenceConstants.RESOLVE_IN_WORKSPACE
+                            || event.getProperty() == PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS
+                            || event.getProperty() == PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS) {
                         prefStoreChanged();
                     }
                 } catch (JavaModelException e) {
