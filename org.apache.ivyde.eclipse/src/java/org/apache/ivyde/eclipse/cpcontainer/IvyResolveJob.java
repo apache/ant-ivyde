@@ -121,8 +121,12 @@ public class IvyResolveJob extends Job {
         if (!inworkspaceModules.isEmpty()) {
             // for the modules which are using the workspace resolver, make sure
             // we resolve them in the correct order
-            // TODO which version matcher we should actually used here ?
-            VersionMatcher versionMatcher = new LatestVersionMatcher();
+
+            // The version matcher used will be the one configured for the first project
+            ResolveRequest request = (ResolveRequest) inworkspaceModules.values().iterator().next();
+            Ivy ivy = request.getContainer().getState().getCachedIvy();
+            VersionMatcher versionMatcher = ivy.getSettings().getVersionMatcher();
+
             WarningNonMatchingVersionReporter nonMatchingVersionReporter = new WarningNonMatchingVersionReporter();
             CircularDependencyStrategy circularDependencyStrategy = WarnCircularDependencyStrategy
                     .getInstance();
@@ -132,7 +136,7 @@ public class IvyResolveJob extends Job {
 
             Iterator it = sortedModuleDescriptors.iterator();
             while (it.hasNext()) {
-                ResolveRequest request = (ResolveRequest) inworkspaceModules.get(it.next());
+                request = (ResolveRequest) inworkspaceModules.get(it.next());
                 boolean canceled = launchResolveThread(request, monitor, errorsStatus);
                 if (canceled) {
                     return Status.CANCEL_STATUS;
