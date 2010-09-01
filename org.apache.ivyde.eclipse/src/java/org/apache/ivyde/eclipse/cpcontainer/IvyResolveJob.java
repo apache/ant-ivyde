@@ -124,7 +124,13 @@ public class IvyResolveJob extends Job {
 
             // The version matcher used will be the one configured for the first project
             ResolveRequest request = (ResolveRequest) inworkspaceModules.values().iterator().next();
-            Ivy ivy = request.getContainer().getState().getCachedIvy();
+            Ivy ivy;
+            try {
+                // here we expect to find the ivy and the md we have just computed
+                ivy = request.getContainer().getState().getCachedIvy();
+            } catch (IvyDEException e) {
+                return new Status(IStatus.ERROR, IvyPlugin.ID, "Unexpected error");
+            }
             VersionMatcher versionMatcher = ivy.getSettings().getVersionMatcher();
 
             WarningNonMatchingVersionReporter nonMatchingVersionReporter = new WarningNonMatchingVersionReporter();
