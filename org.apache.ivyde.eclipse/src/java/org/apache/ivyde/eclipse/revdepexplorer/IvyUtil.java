@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
@@ -64,7 +65,7 @@ public final class IvyUtil {
     public static MultiRevisionDependencyDescriptor[] getDependencyDescriptorsByProjects(
             IProject[] projects) {
         // a temporary cache of multi-revision dependency descriptors
-        Map/* <ModuleId, MultiRevisionDependencyDescriptor> */moduleDescriptorMap = new HashMap();
+        Map/* <ModuleId, MultiRevisionDependencyDescriptor> */mdMap = new HashMap();
 
         for (int i = 0; i < projects.length; i++) {
             List containers = IvyClasspathUtil.getIvyClasspathContainers(projects[i]);
@@ -72,35 +73,29 @@ public final class IvyUtil {
 
             while (containerIter.hasNext()) {
                 IvyClasspathContainer container = (IvyClasspathContainer) containerIter.next();
-                try {
-                    DependencyDescriptor[] descriptors = container.getState().getModuleDescriptor()
-                            .getDependencies();
-                    for (int j = 0; j < descriptors.length; j++) {
-                        DependencyDescriptor descriptor = descriptors[j];
-                        MultiRevisionDependencyDescriptor syncableDependencyDescriptor
-                                = (MultiRevisionDependencyDescriptor) moduleDescriptorMap
-                                        .get(descriptor.getDependencyId());
-
-                        if (syncableDependencyDescriptor == null) {
-                            syncableDependencyDescriptor = new MultiRevisionDependencyDescriptor(
-                                    descriptor.getDependencyId());
-
-                            moduleDescriptorMap.put(descriptor.getDependencyId(),
-                                syncableDependencyDescriptor);
-                        }
-
-                        syncableDependencyDescriptor.addDependencyDescriptor(container, descriptor);
-                    }
-                } catch (IvyDEException e) {
-                    e.show(IStatus.ERROR, "Inconsistent Ivy Classpath Container",
-                        "Unable to find a module descriptor associated with"
-                                + container.getState().getIvyFile().getPath());
+                ModuleDescriptor md = container.getState().getCachedModuleDescriptor();
+                if (md == null) {
                     continue;
+                }
+                DependencyDescriptor[] descriptors = md.getDependencies();
+                for (int j = 0; j < descriptors.length; j++) {
+                    DependencyDescriptor descriptor = descriptors[j];
+                    MultiRevisionDependencyDescriptor syncabledd = (MultiRevisionDependencyDescriptor) mdMap
+                            .get(descriptor.getDependencyId());
+
+                    if (syncabledd == null) {
+                        syncabledd = new MultiRevisionDependencyDescriptor(
+                                descriptor.getDependencyId());
+
+                        mdMap.put(descriptor.getDependencyId(), syncabledd);
+                    }
+
+                    syncabledd.addDependencyDescriptor(container, descriptor);
                 }
             }
         }
 
-        List/* <MultiRevisionDependencyDescriptor> */sorted = new ArrayList(moduleDescriptorMap
+        List/* <MultiRevisionDependencyDescriptor> */sorted = new ArrayList(mdMap
                 .values());
 
         Collections.sort(sorted, new Comparator/* <MultiRevisionDependencyDescriptor> */() {

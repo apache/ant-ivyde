@@ -19,11 +19,11 @@ package org.apache.ivyde.eclipse.ui.menu;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.IvyRetriever;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
+import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetupState;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -37,13 +37,13 @@ public class RetrieveAction extends Action {
     }
 
     public void run() {
-        Ivy ivy;
-        ModuleDescriptor md;
-        try {
-            ivy = retrieveSetup.getState().getCachedIvy();
-            md = retrieveSetup.getState().getCachedModuleDescriptor();
-        } catch (IvyDEException e) {
-            e.log(IStatus.ERROR, null);
+        StandaloneRetrieveSetupState state = retrieveSetup.getState();
+        Ivy ivy = state.getSafelyIvy();
+        if (ivy == null) {
+            return;
+        }
+        ModuleDescriptor md = state.getSafelyModuleDescriptor(ivy);
+        if (md == null) {
             return;
         }
         IvyRetriever retriever = new IvyRetriever(ivy, md, false, new NullProgressMonitor(),

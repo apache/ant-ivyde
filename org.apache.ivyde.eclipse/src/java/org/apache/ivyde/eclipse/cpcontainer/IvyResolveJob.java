@@ -18,6 +18,7 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +30,6 @@ import org.apache.ivy.core.sort.ModuleDescriptorSorter;
 import org.apache.ivy.core.sort.WarningNonMatchingVersionReporter;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
-import org.apache.ivy.plugins.version.LatestVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
@@ -80,6 +80,11 @@ public class IvyResolveJob extends Job {
 
         Map/* <ModuleDescriptor, ResolveRequest> */inworkspaceModules = new LinkedHashMap();
         List/* <ResolveRequest> */otherModules = new ArrayList();
+        Map/* <ResolveRequest, Ivy> */ivys = new HashMap();
+        Map/* <ResolveRequest, ModuleDescriptor> */mds = new HashMap();
+
+        MultiStatus errorsStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
+                "Some projects fail to be resolved", null);
 
         // Ivy use the SaxParserFactory, and we want it to instanciate the xerces parser which is in
         // the dependencies of IvyDE, so accessible via the current classloader
@@ -90,33 +95,42 @@ public class IvyResolveJob extends Job {
             while (itRequests.hasNext()) {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
                 IvyClasspathContainerState state = request.getContainer().getState();
-                Ivy ivy = state.getIvy();
+                Ivy ivy;
+                try {
+                    ivy = state.getIvy();
+                } catch (IvyDEException e) {
+                    state.setErrorMarker(e);
+                    errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to configure Ivy for "
+                            + request));
+                    continue;
+                }
+                state.setErrorMarker(null);
+                ivys.put(request, ivy);
                 // IVYDE-168 : Ivy needs the IvyContext in the threadlocal in order to found the
                 // default branch
                 ivy.pushContext();
                 ModuleDescriptor md;
                 try {
                     md = state.getModuleDescriptor(ivy);
+                } catch (IvyDEException e) {
+                    state.setErrorMarker(e);
+                    errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to load the descriptor for "
+                            + request));
+                    continue;
                 } finally {
                     ivy.popContext();
                 }
+                state.setErrorMarker(null);
+                mds.put(request, md);
                 if (request.getContainer().getConf().isInheritedResolveInWorkspace()) {
                     inworkspaceModules.put(md, request);
                 } else {
                     otherModules.add(request);
                 }
             }
-        } catch (IvyDEException e) {
-            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, e.getMessage(), e);
-        } catch (Throwable e) {
-            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, "Unexpected error ["
-                    + e.getClass().getName() + "]: " + e.getMessage(), e);
         } finally {
             Thread.currentThread().setContextClassLoader(old);
         }
-
-        MultiStatus errorsStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
-                "Some projects fail to be resolved", null);
 
         if (!inworkspaceModules.isEmpty()) {
             // for the modules which are using the workspace resolver, make sure
@@ -124,14 +138,8 @@ public class IvyResolveJob extends Job {
 
             // The version matcher used will be the one configured for the first project
             ResolveRequest request = (ResolveRequest) inworkspaceModules.values().iterator().next();
-            Ivy ivy;
-            try {
-                // here we expect to find the ivy and the md we have just computed
-                ivy = request.getContainer().getState().getCachedIvy();
-            } catch (IvyDEException e) {
-                return new Status(IStatus.ERROR, IvyPlugin.ID, "Unexpected error");
-            }
-            VersionMatcher versionMatcher = ivy.getSettings().getVersionMatcher();
+            VersionMatcher versionMatcher = ((Ivy) ivys.get(request)).getSettings()
+                    .getVersionMatcher();
 
             WarningNonMatchingVersionReporter nonMatchingVersionReporter = new WarningNonMatchingVersionReporter();
             CircularDependencyStrategy circularDependencyStrategy = WarnCircularDependencyStrategy
@@ -143,7 +151,9 @@ public class IvyResolveJob extends Job {
             Iterator it = sortedModuleDescriptors.iterator();
             while (it.hasNext()) {
                 request = (ResolveRequest) inworkspaceModules.get(it.next());
-                boolean canceled = launchResolveThread(request, monitor, errorsStatus);
+                Ivy ivy = (Ivy) ivys.get(request);
+                ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
+                boolean canceled = launchResolveThread(request, monitor, errorsStatus, ivy, md);
                 if (canceled) {
                     return Status.CANCEL_STATUS;
                 }
@@ -154,7 +164,9 @@ public class IvyResolveJob extends Job {
             Iterator it = otherModules.iterator();
             while (it.hasNext()) {
                 ResolveRequest request = (ResolveRequest) it.next();
-                boolean canceled = launchResolveThread(request, monitor, errorsStatus);
+                Ivy ivy = (Ivy) ivys.get(request);
+                ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
+                boolean canceled = launchResolveThread(request, monitor, errorsStatus, ivy, md);
                 if (canceled) {
                     return Status.CANCEL_STATUS;
                 }
@@ -169,8 +181,8 @@ public class IvyResolveJob extends Job {
     }
 
     private boolean launchResolveThread(ResolveRequest request, IProgressMonitor monitor,
-            MultiStatus errorsStatus) {
-        IStatus jobStatus = launchResolveThread(request, monitor);
+            MultiStatus errorsStatus, Ivy ivy, ModuleDescriptor md) {
+        IStatus jobStatus = launchResolveThread(request, monitor, ivy, md);
         switch (jobStatus.getCode()) {
             case IStatus.CANCEL:
                 return true;
@@ -186,22 +198,14 @@ public class IvyResolveJob extends Job {
         return false;
     }
 
-    private IStatus launchResolveThread(ResolveRequest request, IProgressMonitor monitor) {
+    private IStatus launchResolveThread(ResolveRequest request, IProgressMonitor monitor, Ivy ivy,
+            ModuleDescriptor md) {
         if (monitor.isCanceled()) {
             return Status.CANCEL_STATUS;
         }
 
-        IvyClasspathContainerConfiguration conf = request.getContainer().getConf();
-        Ivy ivy;
-        ModuleDescriptor md;
-        try {
-            // here we expect to find the ivy and the md we have just computed
-            ivy = request.getContainer().getState().getCachedIvy();
-            md = request.getContainer().getState().getCachedModuleDescriptor();
-        } catch (IvyDEException e) {
-            return new Status(IStatus.ERROR, IvyPlugin.ID, "Unexpected error");
-        }
         boolean usePreviousResolveIfExist = request.isUsePreviousResolveIfExist();
+        IvyClasspathContainerConfiguration conf = request.getContainer().getConf();
         final IvyClasspathResolver resolver = new IvyClasspathResolver(conf, ivy, md,
                 usePreviousResolveIfExist, monitor);
         final IStatus[] status = new IStatus[1];

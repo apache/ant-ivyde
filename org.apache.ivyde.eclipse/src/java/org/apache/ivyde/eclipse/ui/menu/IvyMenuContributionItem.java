@@ -26,13 +26,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyNature;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -169,7 +168,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
                 // only one container
                 IvyClasspathContainer ivycp = (IvyClasspathContainer) ((Set) containers.values()
                         .iterator().next()).iterator().next();
-                Ivy ivy = getSafelyIvy(ivycp);
+                Ivy ivy = ivycp.getState().getCachedIvy();
                 if (ivy != null) {
                     addCleanableForSingleContainer(menuManager, items, ivy);
                 }
@@ -258,16 +257,6 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         cplist.add(ivycp);
     }
 
-    private Ivy getSafelyIvy(IvyClasspathContainer ivycp) {
-        try {
-            return ivycp.getState().getCachedIvy();
-        } catch (IvyDEException e) {
-            e.log(IStatus.WARNING, "Cache deletion actions could not be populated for "
-                    + ivycp.getConf().toString());
-            return null;
-        }
-    }
-
     private void addCleanableForSingleContainer(MenuManager menuManager,
             List/* <IContributionItem> */items, Ivy ivy) {
         List/* <Cleanable> */allCleanables = new ArrayList();
@@ -305,7 +294,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             Iterator itContainer = set.iterator();
             while (itContainer.hasNext()) {
                 IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
-                Ivy ivy = getSafelyIvy(ivycp);
+                Ivy ivy = ivycp.getState().getCachedIvy();
                 if (ivy != null) {
                     addResolutionCleanable(allCleanables, ivy);
                     addResolutionCleanable(resolutionCleanables, ivy);

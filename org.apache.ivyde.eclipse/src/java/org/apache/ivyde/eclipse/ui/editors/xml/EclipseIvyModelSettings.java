@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.common.model.IvyModelSettings;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
@@ -64,12 +63,7 @@ public class EclipseIvyModelSettings implements IvyModelSettings {
         if (ivycp == null) {
             return null;
         }
-        try {
-            return ivycp.getState().getIvy();
-        } catch (IvyDEException e) {
-            e.log(IStatus.WARNING, null);
-            return null;
-        }
+        return ivycp.getState().getCachedIvy();
     }
 
     public void logError(String message, Exception e) {

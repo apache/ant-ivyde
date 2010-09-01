@@ -37,7 +37,6 @@ import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
@@ -110,20 +109,14 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         for (int i = 0; i < containers.length; i++) {
             IvyClasspathContainer container = containers[i];
 
-            ModuleDescriptor moduleDescriptor;
-            try {
-                moduleDescriptor = container.getState().getModuleDescriptor();
-            } catch (IvyDEException e) {
-                errorStatuses
-                        .add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                                "Failed to get module descriptor at "
-                                        + container.getConf().getIvyXmlPath(), e));
+            ModuleDescriptor md = container.getState().getCachedModuleDescriptor();
+            if (md == null) {
                 continue;
             }
 
             Map/* <ModuleRevisionId, String> */newRevisions = new HashMap();
 
-            DependencyDescriptor[] dependencies = moduleDescriptor.getDependencies();
+            DependencyDescriptor[] dependencies = md.getDependencies();
             for (int j = 0; j < dependencies.length; j++) {
                 for (int k = 0; k < multiRevisionDependencies.length; k++) {
                     MultiRevisionDependencyDescriptor multiRevision = multiRevisionDependencies[k];

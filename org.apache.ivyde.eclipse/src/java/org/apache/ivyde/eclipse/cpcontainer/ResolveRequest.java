@@ -35,4 +35,8 @@ public class ResolveRequest {
     public boolean isUsePreviousResolveIfExist() {
         return usePreviousResolveIfExist;
     }
+    
+    public String toString() {
+        return ivycp.toString();
+    }
 }

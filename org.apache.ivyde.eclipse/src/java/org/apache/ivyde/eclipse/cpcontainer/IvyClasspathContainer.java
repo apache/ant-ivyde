@@ -216,9 +216,15 @@ public class IvyClasspathContainer implements IClasspathContainer {
         return jdtVersion;
     }
 
-    public URL getReportUrl() throws IvyDEException {
-        Ivy ivy = state.getIvy();
-        ModuleDescriptor md = state.getModuleDescriptor();
+    public URL getReportUrl() {
+        Ivy ivy = state.getCachedIvy();
+        if (ivy == null) {
+            return null;
+        }
+        ModuleDescriptor md = state.getCachedModuleDescriptor(ivy);
+        if (md == null) {
+            return null;
+        }
         String resolveId = ResolveOptions.getDefaultResolveId(md);
         try {
             return ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(resolveId,
@@ -234,4 +240,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         launchResolve(false,  null);
     }
 
+    public String toString() {
+        return conf.toString();
+    }
 }
