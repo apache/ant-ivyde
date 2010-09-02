@@ -21,14 +21,14 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.resources.IProject;
 
 public class WorkspaceIvySettings extends IvySettings {
 
-    private final IJavaProject javaProject;
+    private final IProject project;
 
-    public WorkspaceIvySettings(IJavaProject javaProject) {
-        this.javaProject = javaProject;
+    public WorkspaceIvySettings(IProject project) {
+        this.project = project;
         setDefaultLatestStrategy(new IvyDEStrategy());
     }
 
@@ -44,11 +44,12 @@ public class WorkspaceIvySettings extends IvySettings {
         if (resolver == null) {
             return resolver;
         }
+        String projectName = project == null ? "<null>" : project.getName();
         ChainResolver chain = new ChainResolver();
-        chain.setName(javaProject.getElementName() + "-ivyde-workspace-chain-resolver");
+        chain.setName(projectName + "-ivyde-workspace-chain-resolver");
         chain.setSettings(this);
         chain.setReturnFirst(true);
-        chain.add(new WorkspaceResolver(javaProject, this));
+        chain.add(new WorkspaceResolver(project, this));
         chain.add(resolver);
         return chain;
         

@@ -48,10 +48,10 @@ import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
@@ -103,25 +103,23 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public static final String CACHE_NAME = "__ivyde-workspace-resolver-cache";
 
-    private final IJavaProject resolvingJavaProject;
-
     private IJavaProject[] projects;
 
     private boolean ignoreBranchOnWorkspaceProjects;
 
     private boolean ignoreVersionOnWorkspaceProjects;
 
-    public WorkspaceResolver(IJavaProject javaProject, IvySettings ivySettings) {
-        this.resolvingJavaProject = javaProject;
-        setName(javaProject.getElementName() + "-ivyde-workspace-resolver");
+    public WorkspaceResolver(IProject project, IvySettings ivySettings) {
+        String projectName = project == null ? "<null>" : project.getName();
+        setName(projectName + "-ivyde-workspace-resolver");
         setSettings(ivySettings);
         setCache(CACHE_NAME);
 
         try {
             projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
         } catch (JavaModelException e) {
-            IvyPlugin.log(IStatus.ERROR, "JDT Error while resolving in workspace for "
-                    + resolvingJavaProject.getElementName(), e);
+            IvyPlugin.log(IStatus.ERROR, "JDT Error while resolving in workspace for the project "
+                    + projectName, e);
         }
 
         ignoreBranchOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper()

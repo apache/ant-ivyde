@@ -22,7 +22,6 @@ import java.util.Collection;
 import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * This class is a front end to the container configuration. It computes the configuration status,
@@ -47,10 +46,6 @@ public class IvyClasspathContainerState extends CachedIvy {
 
     protected String getIvyXmlPath() {
         return conf.getIvyXmlPath();
-    }
-
-    protected IJavaProject getJavaProject() {
-        return conf.getJavaProject();
     }
 
     protected IProject getProject() {

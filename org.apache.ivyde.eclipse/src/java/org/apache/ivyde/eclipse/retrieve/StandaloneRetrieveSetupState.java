@@ -22,7 +22,6 @@ import java.util.Collection;
 import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaProject;
 
 public class StandaloneRetrieveSetupState extends CachedIvy {
 
@@ -38,10 +37,6 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
 
     protected String getIvyXmlPath() {
         return setup.getIvyXmlPath();
-    }
-
-    protected IJavaProject getJavaProject() {
-        return null;
     }
 
     protected IProject getProject() {

@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IJavaProject;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -90,8 +89,6 @@ public abstract class CachedIvy {
     protected abstract boolean isLoadSettingsOnDemandPath();
 
     protected abstract Collection getPropertyFiles() throws IvyDEException;
-
-    protected abstract IJavaProject getJavaProject();
 
     protected abstract boolean isResolveInWorkspace();
 
@@ -232,7 +229,7 @@ public abstract class CachedIvy {
     private IvySettings createIvySettings() throws IvyDEException {
         IvySettings ivySettings;
         if (isResolveInWorkspace()) {
-            ivySettings = new WorkspaceIvySettings(getJavaProject());
+            ivySettings = new WorkspaceIvySettings(getProject());
             DefaultRepositoryCacheManager cacheManager = new DefaultRepositoryCacheManager();
             BundleContext bundleContext = IvyPlugin.getDefault().getBundleContext();
             cacheManager.setBasedir(bundleContext.getDataFile("ivyde-workspace-resolver-cache"));
