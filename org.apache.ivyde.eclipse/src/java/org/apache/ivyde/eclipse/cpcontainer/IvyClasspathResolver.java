@@ -29,6 +29,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.resolve.IvyResolver;
 import org.apache.ivyde.eclipse.resolve.ResolveResult;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 
@@ -47,10 +48,11 @@ public class IvyClasspathResolver extends IvyResolver {
         this.ivycp = ivycp;
         this.conf = ivycp.getConf();
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
-        if (conf.isRetrievedClasspath()) {
-            setRetrievePattern(conf.getRetrievedClasspathSetup().getRetrievePattern());
-            setRetrieveSync(conf.getRetrievedClasspathSetup().isRetrieveSync());
-            setRetrieveTypes(conf.getRetrievedClasspathSetup().getRetrieveTypes());
+        if (conf.isInheritedRetrievedClasspath()) {
+            RetrieveSetup setup = conf.getInheritedRetrievedClasspathSetup();
+            setRetrievePattern(setup.getRetrievePattern());
+            setRetrieveSync(setup.isRetrieveSync());
+            setRetrieveTypes(setup.getRetrieveTypes());
         }
     }
 
