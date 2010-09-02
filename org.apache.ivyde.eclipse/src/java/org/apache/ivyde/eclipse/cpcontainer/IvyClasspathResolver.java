@@ -47,9 +47,11 @@ public class IvyClasspathResolver extends IvyResolver {
         this.ivycp = ivycp;
         this.conf = ivycp.getConf();
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
-        setRetrievePattern(conf.getRetrievedClasspathSetup().getRetrievePattern());
-        setRetrieveSync(conf.getRetrievedClasspathSetup().isRetrieveSync());
-        setRetrieveTypes(conf.getRetrievedClasspathSetup().getRetrieveTypes());
+        if (conf.isRetrievedClasspath()) {
+            setRetrievePattern(conf.getRetrievedClasspathSetup().getRetrievePattern());
+            setRetrieveSync(conf.getRetrievedClasspathSetup().isRetrieveSync());
+            setRetrieveTypes(conf.getRetrievedClasspathSetup().getRetrieveTypes());
+        }
     }
 
     protected void postResolveOrRefresh(Ivy ivy, ModuleDescriptor md, ResolveResult resolveResult,
