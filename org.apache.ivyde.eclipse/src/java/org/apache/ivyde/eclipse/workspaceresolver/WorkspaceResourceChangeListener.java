@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.IvyNature;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
@@ -75,8 +76,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                         return;
                 }
                 try {
-                    if (project.hasNature(JavaCore.NATURE_ID)) {
-                        projectClosed(JavaCore.create(project));
+                    if (project.hasNature(IvyNature.IVY_NATURE)) {
+                        projectClosed(project);
                     }
                 } catch (CoreException e) {
                     // project doesn't exist or is not open: ignore
@@ -94,9 +95,9 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         }
     }
 
-    private void projectClosed(final IJavaProject javaProject) throws JavaModelException {
+    private void projectClosed(final IProject project) throws JavaModelException {
         // Check if one of Ivy projects is being removed
-        List containers = IvyClasspathUtil.getIvyClasspathContainers(javaProject);
+        List containers = IvyClasspathUtil.getIvyClasspathContainers(project);
         if (containers.isEmpty()) {
             return;
         }
@@ -104,7 +105,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         // Found an Ivy container in this project -- notify dependent projects
         // to perform fresh resolve
 
-        List affectedContainers = getAffectedContainers(javaProject.getPath());
+        List affectedContainers = getAffectedContainers(project.getFullPath());
 
         Iterator it = affectedContainers.iterator();
         while (it.hasNext()) {
@@ -132,16 +133,12 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
             if (!(resource instanceof IProject)) {
                 continue;
             }
-            IJavaProject javaProject = JavaCore.create((IProject) resource);
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(javaProject);
-            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
-            while (itContainer.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
-                if (!ivycp.getConf().isInheritedResolveInWorkspace()) {
-                    continue;
+            try {
+                if (((IProject) resource).hasNature(IvyNature.IVY_NATURE)) {
+                    projects.add(resource);
                 }
-                projects.add(resource);
+            } catch (CoreException e) {
+                IvyPlugin.log(e);
             }
         }
 
@@ -200,7 +197,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         return allContainers;
     }
 
-    private List getAllContainersExcludingProjects(Collection sourceProjects) {
+    private List getAllContainersExcludingProjects(Collection openedProjects) {
         List/* <IvyClasspathContainer> */allContainers = new ArrayList();
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -214,7 +211,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         }
 
         for (int i = 0; i < projects.length; i++) {
-            if (!sourceProjects.contains(projects[i])) {
+            if (!openedProjects.contains(projects[i].getProject())) {
                 allContainers.addAll(IvyClasspathUtil.getIvyClasspathContainers(projects[i]));
             }
         }
