@@ -107,12 +107,6 @@
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage"
-            id="org.apache.ivyde.eclipse.ui.preferences.RetrievePreferencePage"
-            name="Retrieve">
-      </page>
-      <page
-            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
             class="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
             name="Settings">
@@ -454,45 +448,4 @@
       </page>
    </extension>
 
-
-   <!--
-   <extension point="org.eclipse.ui.commands">
-      <command
-            name="Resolve Dependencies"
-            description="Resolve Project Dependencies with Ivy"
-            categoryId="org.eclipse.ui.category.project"
-            id="org.apache.ivyde.eclipse.cpcontainer.command.resolve">
-      </command>
-   </extension>
-   
-   <extension point="org.eclipse.ui.bindings">
-      <key
-            sequence="M2+F5"
-            commandId="org.apache.ivyde.eclipse.cpcontainer.command.resolve"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-   </extension>
-   -->
-	
-      <!--
-   <extension 
-   		 point="org.eclipse.core.runtime.contentTypes">
-      <content-type 
-      		id="ivyfile" 
-      		name="ivyfile" 
-    		base-type="org.eclipse.core.runtime.xml"
-   			priority="high"				
-    		file-names="ivy*.xml"/>
-    </extension>
-
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.core.resources.IFile"
-            name="Ivy Page"
-            nameFilter="ivy.xml"
-            class="org.apache.ivyde.eclipse.ui.properties.IvyPropertyPage"
-            id="org.apache.ivyde.eclipse.ui.properties.samplePropertyPage">
-      </page>
-   </extension>
-   -->
 </plugin>
