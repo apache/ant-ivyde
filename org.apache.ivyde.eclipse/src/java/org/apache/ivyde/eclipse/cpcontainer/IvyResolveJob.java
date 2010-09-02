@@ -46,8 +46,6 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class IvyResolveJob extends Job {
 
-    private static final int WAIT_FOR_JOIN = 100;
-
     private final List resolveQueue = new ArrayList();
 
     public IvyResolveJob() {
@@ -217,21 +215,12 @@ public class IvyResolveJob extends Job {
         resolverThread.setName("IvyDE resolver thread");
 
         resolverThread.start();
-        while (true) {
-            try {
-                resolverThread.join(WAIT_FOR_JOIN);
-            } catch (InterruptedException e) {
-                ivy.interrupt(resolverThread);
-                return Status.CANCEL_STATUS;
-            }
-            if (status[0] != null || !resolverThread.isAlive()) {
-                break;
-            }
-            if (monitor.isCanceled()) {
-                ivy.interrupt(resolverThread);
-                return Status.CANCEL_STATUS;
-            }
+
+        IvyProgressMonitor ivyProgressMonitor = new IvyProgressMonitor();
+        if (ivyProgressMonitor.wait(ivy, monitor, resolverThread)) {
+            return Status.CANCEL_STATUS;
         }
+
         if (status[0] == Status.OK_STATUS) {
             request.getContainer().updateClasspathEntries(resolver.getClasspathEntries());
         }
