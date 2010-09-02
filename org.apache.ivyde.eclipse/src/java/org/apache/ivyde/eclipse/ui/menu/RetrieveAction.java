@@ -17,11 +17,15 @@
  */
 package org.apache.ivyde.eclipse.ui.menu;
 
+import java.util.List;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.retrieve.IvyRetriever;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.resolve.IvyResolver;
+import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetupState;
 import org.eclipse.core.runtime.IStatus;
@@ -30,14 +34,14 @@ import org.eclipse.jface.action.Action;
 
 public class RetrieveAction extends Action {
 
-    private final StandaloneRetrieveSetup retrieveSetup;
+    private final StandaloneRetrieveSetup setup;
 
     public RetrieveAction(StandaloneRetrieveSetup retrieveSetup) {
-        this.retrieveSetup = retrieveSetup;
+        this.setup = retrieveSetup;
     }
 
     public void run() {
-        StandaloneRetrieveSetupState state = retrieveSetup.getState();
+        StandaloneRetrieveSetupState state = setup.getState();
         Ivy ivy = state.getSafelyIvy();
         if (ivy == null) {
             return;
@@ -46,15 +50,16 @@ public class RetrieveAction extends Action {
         if (md == null) {
             return;
         }
-        IvyRetriever retriever = new IvyRetriever(ivy, md, false, new NullProgressMonitor(),
-                retrieveSetup);
-        IStatus status = retriever.resolve();
+        RetrieveSetup retrieveSetup = setup.getRetrieveSetup();
+        List confs = IvyClasspathUtil.split(retrieveSetup.getRetrieveConfs());
+        IvyResolver resolver = new IvyResolver(ivy, setup.getIvyXmlPath(), md,
+                new NullProgressMonitor(), confs, setup.getProject());
+        IStatus status = resolver.resolve();
         IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
-        ivyMarkerManager.setResolveStatus(status, retrieveSetup.getProject(),
-            retrieveSetup.getIvyXmlPath());
+        ivyMarkerManager.setResolveStatus(status, setup.getProject(), setup.getIvyXmlPath());
         if (status.isOK() || status.getCode() == IStatus.CANCEL) {
-            IvyPlugin.log(IStatus.INFO, "Successful retrieve of '" + retrieveSetup.getName()
-                    + "' in " + retrieveSetup.getProject().getName(), null);
+            IvyPlugin.log(IStatus.INFO, "Successful retrieve of '" + setup.getName() + "' in "
+                    + setup.getProject().getName(), null);
             return;
         }
         IvyPlugin.log(status);

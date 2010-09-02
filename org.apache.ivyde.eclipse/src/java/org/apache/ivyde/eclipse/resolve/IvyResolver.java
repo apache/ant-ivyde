@@ -15,36 +15,39 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.resolve;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.filter.ArtifactTypeFilter;
+import org.apache.ivyde.eclipse.FakeProjectManager;
+import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJobListener;
+import org.apache.ivyde.eclipse.cpcontainer.RefreshFolderJob;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -58,39 +61,73 @@ public class IvyResolver {
 
     private static final int MONITOR_LENGTH = 1000;
 
-    protected final Ivy ivy;
+    private final Ivy ivy;
 
-    protected final IProgressMonitor monitor;
+    private final IProgressMonitor monitor;
 
-    protected final ModuleDescriptor md;
+    private final ModuleDescriptor md;
 
-    private final boolean usePreviousResolveIfExist;
+    private boolean usePreviousResolveIfExist = false;
 
-    protected LinkedHashSet/* <ArtifactDownloadReport> */all;
+    private String[] confs;
 
-    private Set problemMessages;
-
-    protected String[] confs;
-
-    protected Map artifactsByDependency = new HashMap();
-
-    private final String ivyXmlPath;
-
-    protected final IProject project;
+    private final IProject project;
 
     private final List confInput;
 
-    public IvyResolver(String ivyXmlPath, Ivy ivy, ModuleDescriptor md,
-            boolean usePreviousResolveIfExist, IProgressMonitor monitor, List confInput,
+    private String retrievePattern = null;
+
+    private boolean retrieveSync = true;
+
+    private String retrieveTypes = null;
+
+    private final String ivyXmlPath;
+
+    public IvyResolver(Ivy ivy, String ivyXmlPath, ModuleDescriptor md, IProgressMonitor monitor, List confInput,
             IProject project) {
+        this.ivyXmlPath = ivyXmlPath;
         this.confInput = confInput;
         this.project = project;
-        this.ivyXmlPath = ivyXmlPath;
         this.ivy = ivy;
         this.md = md;
-        this.usePreviousResolveIfExist = usePreviousResolveIfExist;
         this.monitor = monitor;
         computeConfs(confInput);
+    }
+
+    public void setUsePreviousResolveIfExist(boolean usePreviousResolveIfExist) {
+        this.usePreviousResolveIfExist = usePreviousResolveIfExist;
+    }
+
+    public void setRetrievePattern(String retrievePattern) {
+        this.retrievePattern = retrievePattern;
+    }
+
+    public void setRetrieveSync(boolean retrieveSync) {
+        this.retrieveSync = retrieveSync;
+    }
+
+    public void setRetrieveTypes(String retrieveTypes) {
+        this.retrieveTypes = retrieveTypes;
+    }
+
+    public Ivy getIvy() {
+        return ivy;
+    }
+
+    public IProgressMonitor getMonitor() {
+        return monitor;
+    }
+
+    public ModuleDescriptor getMd() {
+        return md;
+    }
+
+    public String[] getConfs() {
+        return confs;
+    }
+
+    public IProject getProject() {
+        return project;
     }
 
     public IStatus resolve() {
@@ -102,34 +139,30 @@ public class IvyResolver {
             monitor.beginTask("Resolve of " + toString(), MONITOR_LENGTH);
             monitor.setTaskName("Resolve of " + toString());
 
+            ResolveResult result = new ResolveResult();
+
             // context Classloader hook for commons logging used by httpclient
             // It will also be used by the SaxParserFactory in Ivy
             ClassLoader old = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(IvyResolver.class.getClassLoader());
             try {
-
                 if (usePreviousResolveIfExist) {
-                    IStatus status = resolveWithPrevious();
-                    if (!status.isOK()) {
-                        return status;
-                    }
+                    result = resolveWithPrevious();
                 } else {
-                    Message.info("\n\nIVYDE: calling resolve on " + ivyXmlPath + "\n");
-                    IStatus status = doResolve();
-                    if (!status.isOK()) {
-                        return status;
-                    }
+                    result = doResolve();
                 }
 
-                postResolveOrRefresh();
+                maybeRetrieve(result);
+
+                postResolveOrRefresh(result);
             } catch (ParseException e) {
-                String errorMsg = "Error while parsing the ivy file " + ivyXmlPath + "\n"
+                String errorMsg = "Error while parsing the ivy file from " + this.toString() + "\n"
                         + e.getMessage();
                 Message.error(errorMsg);
                 return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
             } catch (Exception e) {
-                String errorMsg = "Error while resolving dependencies for " + ivyXmlPath + "\n"
-                        + e.getMessage();
+                String errorMsg = "Error while resolving dependencies for " + this.toString()
+                        + "\n" + e.getMessage();
                 Message.error(errorMsg);
                 return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
             } finally {
@@ -138,10 +171,10 @@ public class IvyResolver {
                 ivy.getEventManager().removeIvyListener(ivyResolveJobListener);
             }
 
-            if (!problemMessages.isEmpty()) {
+            if (!result.getProblemMessages().isEmpty()) {
                 MultiStatus multiStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                         "Impossible to resolve dependencies of " + md.getModuleRevisionId(), null);
-                for (Iterator iter = problemMessages.iterator(); iter.hasNext();) {
+                for (Iterator iter = result.getProblemMessages().iterator(); iter.hasNext();) {
                     multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
                             (String) iter.next(), null));
                 }
@@ -155,7 +188,7 @@ public class IvyResolver {
         }
     }
 
-    protected void postResolveOrRefresh() throws IOException {
+    protected void postResolveOrRefresh(ResolveResult resolveResult) throws IOException {
         // nothing to do by default
     }
 
@@ -170,68 +203,53 @@ public class IvyResolver {
         }
     }
 
-    private IStatus resolveWithPrevious() throws ParseException, IOException {
-        all = new LinkedHashSet();
-        problemMessages = new HashSet();
-        // we check if all required configurations have been
-        // resolved
-        boolean parsingOk = true;
-        for (int i = 0; i < confs.length && parsingOk; i++) {
+    private ResolveResult resolveWithPrevious() throws ParseException, IOException {
+        ResolveResult result = new ResolveResult();
+
+        // we check if all required configurations have been resolved
+        for (int i = 0; i < confs.length; i++) {
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
                 ResolveOptions.getDefaultResolveId(md), confs[i]);
-            parsingOk = false;
             if (report.exists()) {
                 // found a report, try to parse it.
                 try {
                     XmlReportParser parser = new XmlReportParser();
                     parser.parse(report);
-                    all.addAll(Arrays.asList(parser.getArtifactReports()));
-                    parsingOk = true;
-                    findAllArtifactOnRefresh(parser);
+                    result.addArtifactReports(parser.getArtifactReports());
+                    findAllArtifactOnRefresh(parser, result);
                 } catch (ParseException e) {
                     Message.info("\n\nIVYDE: Error while parsing the report " + report
                             + ". Falling back by doing a resolve again.");
-                    // it fails, so let's try resolving
+                    // it fails, so let's try resolving for all configuration
+                    return doResolve();
                 }
             }
         }
-        if (!parsingOk) {
-            // no resolve previously done for at least one conf... we do it now
-            return doResolve();
-        }
-        return Status.OK_STATUS;
+
+        return result;
     }
 
-    private IStatus doResolve() throws ParseException, IOException {
+    private ResolveResult doResolve() throws ParseException, IOException {
         ResolveOptions resolveOption = new ResolveOptions().setConfs(confs);
         resolveOption.setValidate(ivy.getSettings().doValidate());
         ResolveReport report = ivy.resolve(md, resolveOption);
-        problemMessages = new HashSet(report.getAllProblemMessages());
 
-        all = new LinkedHashSet();
+        ResolveResult result = new ResolveResult(report);
+
         for (int i = 0; i < confs.length; i++) {
             ConfigurationResolveReport configurationReport = report
                     .getConfigurationReport(confs[i]);
             Set revisions = configurationReport.getModuleRevisionIds();
             for (Iterator it = revisions.iterator(); it.hasNext();) {
                 ModuleRevisionId revId = (ModuleRevisionId) it.next();
-                ArtifactDownloadReport[] aReports = configurationReport.getDownloadReports(revId);
-                all.addAll(Arrays.asList(aReports));
+                result.addArtifactReports(configurationReport.getDownloadReports(revId));
             }
         }
 
         confs = report.getConfigurations();
-        artifactsByDependency.putAll(getArtifactsByDependency(report));
-        if (monitor.isCanceled()) {
-            return Status.CANCEL_STATUS;
-        }
+        collectArtifactsByDependency(report, result);
 
-        postDoResolve(report);
-        return Status.OK_STATUS;
-    }
-
-    protected void postDoResolve(ResolveReport report) throws IOException {
-        // nothing to do by default
+        return result;
     }
 
     /**
@@ -241,7 +259,8 @@ public class IvyResolver {
      * @param parser
      * @throws ParseException
      */
-    private void findAllArtifactOnRefresh(XmlReportParser parser) throws ParseException {
+    private void findAllArtifactOnRefresh(XmlReportParser parser, ResolveResult result)
+            throws ParseException {
         ModuleRevisionId[] dependencyMrdis = parser.getDependencyRevisionIds();
         for (int iDep = 0; iDep < dependencyMrdis.length; iDep++) {
             DependencyResolver depResolver = ivy.getSettings().getResolver(dependencyMrdis[iDep]);
@@ -253,21 +272,64 @@ public class IvyResolver {
             ResolvedModuleRevision dependency = depResolver.getDependency(depDescriptor,
                 new ResolveData(ivy.getResolveEngine(), options));
             if (dependency != null) {
-                artifactsByDependency.put(dependencyMrdis[iDep], dependency.getDescriptor()
+                result.putArtifactsForDep(dependencyMrdis[iDep], dependency.getDescriptor()
                         .getAllArtifacts());
             }
         }
     }
 
-    private Map/* <ModuleRevisionId, Artifact[]> */getArtifactsByDependency(ResolveReport r) {
-        Map result = new HashMap();
+    private void collectArtifactsByDependency(ResolveReport r, ResolveResult result) {
         for (Iterator it = r.getDependencies().iterator(); it.hasNext();) {
             IvyNode node = (IvyNode) it.next();
             if (node.getDescriptor() != null) {
-                result.put(node.getResolvedId(), node.getDescriptor().getAllArtifacts());
+                result.putArtifactsForDep(node.getResolvedId(), node.getDescriptor()
+                        .getAllArtifacts());
             }
         }
-        return result;
+    }
+
+    private void maybeRetrieve(ResolveResult result) throws IOException {
+        if (result.isPreviousUsed() || retrievePattern == null
+                || FakeProjectManager.isFake(project)) {
+            return;
+        }
+
+        String pattern = project.getLocation().toPortableString() + "/" + retrievePattern;
+        getMonitor().setTaskName("retrieving dependencies in " + pattern);
+        RetrieveOptions options = new RetrieveOptions();
+        options.setSync(retrieveSync);
+        options.setResolveId(result.getReport().getResolveId());
+        options.setConfs(getConfs());
+        if (retrieveTypes != null && !retrieveTypes.equals("*")) {
+            options.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil.split(retrieveTypes)));
+        }
+
+        // Actually do the retrieve
+        // FIXME here we will parse a report we already have
+        // with a better Java API, we could do probably better
+        int numberOfItemsRetrieved = getIvy().retrieve(getMd().getModuleRevisionId(), pattern,
+            options);
+        if (numberOfItemsRetrieved > 0) {
+            // Only refresh if we actually retrieved a file.
+            String refreshPath = IvyPatternHelper.getTokenRoot(retrievePattern);
+            IFolder folder = project.getFolder(refreshPath);
+            RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
+            refreshFolderJob.schedule();
+        }
+
+        // recompute the files which has been copied to build a classpath
+        String resolvedPattern = IvyPatternHelper.substituteVariables(pattern, getIvy()
+                .getSettings().getVariables());
+        try {
+            // FIXME same as above
+            Map retrievedArtifacts = getIvy().getRetrieveEngine().determineArtifactsToCopy(
+                getMd().getModuleRevisionId(), resolvedPattern, options);
+            result.setRetrievedArtifacts(retrievedArtifacts);
+        } catch (ParseException e) {
+            // ooops, failed to parse a report we already have...
+            IvyPlugin.log(IStatus.ERROR,
+                "failed to parse a resolve report in order to do the retrieve", e);
+        }
     }
 
     public String toString() {

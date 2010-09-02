@@ -18,30 +18,18 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
-import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.filter.ArtifactTypeFilter;
-import org.apache.ivyde.eclipse.FakeProjectManager;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.IvyResolver;
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
+import org.apache.ivyde.eclipse.resolve.IvyResolver;
+import org.apache.ivyde.eclipse.resolve.ResolveResult;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 
 /**
@@ -53,19 +41,14 @@ public class IvyClasspathResolver extends IvyResolver {
 
     private IClasspathEntry[] classpathEntries = null;
 
-    /**
-     * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no
-     * retrieve
-     * <p>
-     * The paths may be relative It shouldn't be an issue has every relative path should be relative
-     * to the eclipse project FIXME: not sure why the Ivy API is returning a set of paths...
-     */
-    private Map/* <ArtifactDownloadReport, Set<String>> */retrievedArtifacts = null;
-
     public IvyClasspathResolver(IvyClasspathContainerConfiguration conf, Ivy ivy,
             ModuleDescriptor md, boolean usePreviousResolveIfExist, IProgressMonitor monitor) {
-        super(conf.getIvyXmlPath(), ivy, md, usePreviousResolveIfExist, monitor, conf.getConfs(),
-                conf.getJavaProject().getProject());
+        super(ivy, conf.getIvyXmlPath(), md, monitor, conf.getConfs(), conf.getJavaProject()
+                .getProject());
+        setUsePreviousResolveIfExist(usePreviousResolveIfExist);
+        setRetrievePattern(conf.getRetrievedClasspathSetup().getRetrievePattern());
+        setRetrieveSync(conf.getRetrievedClasspathSetup().isRetrieveSync());
+        setRetrieveTypes(conf.getRetrievedClasspathSetup().getRetrieveTypes());
         this.conf = conf;
     }
 
@@ -73,17 +56,13 @@ public class IvyClasspathResolver extends IvyResolver {
         return classpathEntries;
     }
 
-    protected void postResolveOrRefresh() {
-        IvyClasspathContainerMapper mapper = new IvyClasspathContainerMapper(monitor, ivy, conf,
-                all, artifactsByDependency, retrievedArtifacts);
+    protected void postResolveOrRefresh(ResolveResult resolveResult) throws IOException {
+        IvyClasspathContainerMapper mapper = new IvyClasspathContainerMapper(getMonitor(),
+                getIvy(), conf, resolveResult);
 
-        warnIfDuplicates(mapper);
+        warnIfDuplicates(mapper, resolveResult.getArtifactReports());
 
         classpathEntries = mapper.map();
-    }
-
-    protected void postDoResolve(ResolveReport report) throws IOException {
-        maybeRetrieve(report);
     }
 
     /**
@@ -92,9 +71,9 @@ public class IvyClasspathResolver extends IvyResolver {
      * TODO: the algorithm can be more clever and find which configuration are conflicting.
      * 
      */
-    private void warnIfDuplicates(IvyClasspathContainerMapper mapper) {
-        ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) all
-                .toArray(new ArtifactDownloadReport[all.size()]);
+    private void warnIfDuplicates(IvyClasspathContainerMapper mapper, Set artifactReports) {
+        ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) artifactReports
+                .toArray(new ArtifactDownloadReport[0]);
 
         Set duplicates = new HashSet();
 
@@ -132,57 +111,7 @@ public class IvyClasspathResolver extends IvyResolver {
                 buffer.append("\n  - ");
             }
         }
-        ivy.getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
-    }
-
-    private void maybeRetrieve(ResolveReport report) throws IOException {
-        if (!conf.isInheritedRetrievedClasspath()) {
-            return;
-        }
-        if (FakeProjectManager.isFake(conf.getJavaProject())) {
-            return;
-        }
-        RetrieveSetup setup = conf.getInheritedRetrievedClasspathSetup();
-        IProject project = conf.getJavaProject().getProject();
-        String pattern = project.getLocation().toPortableString() + "/"
-                + setup.getRetrievePattern();
-        monitor.setTaskName("retrieving dependencies in " + pattern);
-        RetrieveOptions options = new RetrieveOptions();
-        options.setSync(setup.isRetrieveSync());
-        options.setResolveId(report.getResolveId());
-        options.setConfs(confs);
-        String inheritedRetrieveTypes = setup.getRetrieveTypes();
-        if (inheritedRetrieveTypes != null && !inheritedRetrieveTypes.equals("*")) {
-            options.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil
-                    .split(inheritedRetrieveTypes)));
-        }
-
-        // Actually do the retrieve
-        // FIXME here we will parse a report we already have
-        // with a better Java API, we could do probably better
-        int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, options);
-        if (numberOfItemsRetrieved > 0) {
-            // Only refresh if we actually retrieved a file.
-            String refreshPath = IvyPatternHelper.getTokenRoot(setup.getRetrievePattern());
-            IFolder folder = project.getFolder(refreshPath);
-            RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
-            refreshFolderJob.schedule();
-        }
-
-        // recompute the files which has been copied to build a classpath
-        String resolvedPattern = IvyPatternHelper.substituteVariables(pattern, ivy.getSettings()
-                .getVariables());
-        try {
-            // FIXME same as above
-            retrievedArtifacts = ivy.getRetrieveEngine().determineArtifactsToCopy(
-                md.getModuleRevisionId(), resolvedPattern, options);
-        } catch (ParseException e) {
-            // ooops, failed to parse a report we already have...
-            IvyPlugin.log(IStatus.ERROR,
-                "failed to parse a resolve report in order to do the retrieve", e);
-            return;
-        }
-        all = new LinkedHashSet(retrievedArtifacts.keySet());
+        getIvy().getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
     }
 
 }

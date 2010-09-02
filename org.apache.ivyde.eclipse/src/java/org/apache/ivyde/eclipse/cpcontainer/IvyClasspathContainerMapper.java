@@ -33,6 +33,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.resolve.ResolveResult;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,14 +65,13 @@ public class IvyClasspathContainerMapper {
                       */retrievedArtifacts;
 
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,
-            IvyClasspathContainerConfiguration conf, Collection all, Map artifactsByDependency,
-            Map retrievedArtifacts) {
+            IvyClasspathContainerConfiguration conf, ResolveResult resolveResult) {
         this.monitor = monitor;
         this.ivy = ivy;
         this.conf = conf;
-        this.all = all;
-        this.artifactsByDependency = artifactsByDependency;
-        this.retrievedArtifacts = retrievedArtifacts;
+        this.all = resolveResult.getArtifactReports();
+        this.artifactsByDependency = resolveResult.getArtifactsByDependency();
+        this.retrievedArtifacts = resolveResult.getRetrievedArtifacts();
     }
 
     public IClasspathEntry[] map() {
