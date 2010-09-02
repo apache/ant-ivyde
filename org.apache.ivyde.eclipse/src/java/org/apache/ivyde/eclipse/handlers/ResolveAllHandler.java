@@ -19,11 +19,8 @@ package org.apache.ivyde.eclipse.handlers;
 
 import java.util.Iterator;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
-import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -45,13 +42,11 @@ public class ResolveAllHandler extends AbstractHandler {
             return null;
         }
 
-        IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         for (int i = 0; i < projects.length; i++) {
             Iterator it = IvyClasspathUtil.getIvyClasspathContainers(projects[i]).iterator();
             while (it.hasNext()) {
                 IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
-                ResolveRequest request = new ResolveRequest(ivycp, false);
-                resolveJob.addRequest(request);
+                ivycp.launchResolve(false, null);
             }
         }
 

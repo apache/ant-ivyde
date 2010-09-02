@@ -17,26 +17,36 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import org.apache.ivyde.eclipse.CachedIvy;
+import org.apache.ivyde.eclipse.resolve.IvyResolver;
+
 public class ResolveRequest {
 
-    private final IvyClasspathContainer ivycp;
+    private final IvyResolver resolver;
 
-    private final boolean usePreviousResolveIfExist;
+    private final CachedIvy cachedIvy;
 
-    public ResolveRequest(IvyClasspathContainer ivycp, boolean usePreviousResolveIfExist) {
-        this.ivycp = ivycp;
-        this.usePreviousResolveIfExist = usePreviousResolveIfExist;
+    private boolean inWorkspace = false;
+
+    public ResolveRequest(IvyResolver resolver, CachedIvy cachedIvy) {
+        this.resolver = resolver;
+        this.cachedIvy = cachedIvy;
     }
 
-    public IvyClasspathContainer getContainer() {
-        return ivycp;
+    public IvyResolver getResolver() {
+        return resolver;
     }
 
-    public boolean isUsePreviousResolveIfExist() {
-        return usePreviousResolveIfExist;
+    public CachedIvy getCachedIvy() {
+        return cachedIvy;
     }
-    
-    public String toString() {
-        return ivycp.toString();
+
+    public void setInWorkspace(boolean inWorkspace) {
+        this.inWorkspace  = inWorkspace;
     }
+
+    public boolean isInWorkspace() {
+        return inWorkspace;
+    }
+
 }

@@ -26,8 +26,6 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
-import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -108,12 +106,10 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         List affectedContainers = getAffectedContainers(javaProject.getPath());
 
-        IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         Iterator it = affectedContainers.iterator();
         while (it.hasNext()) {
             IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
-            ResolveRequest request = new ResolveRequest(ivycp, false);
-            resolveJob.addRequest(request);
+            ivycp.launchResolve(false, null);
         }
     }
 
@@ -157,12 +153,10 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         // dependent projects after the open operation has finished.
         List allContainers = getAllContainersExcludingProjects(projects);
 
-        IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         Iterator it = allContainers.iterator();
         while (it.hasNext()) {
             IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
-            ResolveRequest request = new ResolveRequest(ivycp, false);
-            resolveJob.addRequest(request);
+            ivycp.launchResolve(false, null);
         }
     }
 

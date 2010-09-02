@@ -25,7 +25,6 @@ import java.util.Comparator;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -127,7 +126,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     public IStatus launchResolve(boolean usePreviousResolveIfExist, IProgressMonitor monitor) {
-        ResolveRequest request = new ResolveRequest(this, usePreviousResolveIfExist);
+        ResolveRequest request = new ResolveRequest(new IvyClasspathResolver(this,
+                usePreviousResolveIfExist), getState());
+        request.setInWorkspace(getConf().isInheritedResolveInWorkspace());
         IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         if (monitor != null) {
             return resolveJob.launchRequest(request, monitor);
@@ -152,8 +153,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
                 if (conf.isInheritedAlphaOrder()) {
                     Arrays.sort(entries, new Comparator() {
                         public int compare(Object o1, Object o2) {
-                            return ((IClasspathEntry) o1).getPath().lastSegment().compareTo(
-                                ((IClasspathEntry) o2).getPath().lastSegment());
+                            return ((IClasspathEntry) o1).getPath().lastSegment()
+                                    .compareTo(((IClasspathEntry) o2).getPath().lastSegment());
                         }
                     });
                 }
@@ -227,8 +228,10 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
         String resolveId = ResolveOptions.getDefaultResolveId(md);
         try {
-            return ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(resolveId,
-                md.getConfigurationsNames()[0]).toURL();
+            return ivy
+                    .getResolutionCacheManager()
+                    .getConfigurationResolveReportInCache(resolveId, md.getConfigurationsNames()[0])
+                    .toURL();
         } catch (MalformedURLException e) {
             // should never happen
             throw new RuntimeException(e);
@@ -237,7 +240,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
     public void reloadSettings() {
         state.setIvySettingsLastModified(-1);
-        launchResolve(false,  null);
+        launchResolve(false, null);
     }
 
     public String toString() {

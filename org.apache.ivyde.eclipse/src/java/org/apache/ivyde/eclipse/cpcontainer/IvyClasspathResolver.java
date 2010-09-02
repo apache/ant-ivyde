@@ -39,30 +39,29 @@ public class IvyClasspathResolver extends IvyResolver {
 
     private final IvyClasspathContainerConfiguration conf;
 
-    private IClasspathEntry[] classpathEntries = null;
+    private final IvyClasspathContainer ivycp;
 
-    public IvyClasspathResolver(IvyClasspathContainerConfiguration conf, Ivy ivy,
-            ModuleDescriptor md, boolean usePreviousResolveIfExist, IProgressMonitor monitor) {
-        super(ivy, conf.getIvyXmlPath(), md, monitor, conf.getConfs(), conf.getJavaProject()
-                .getProject());
+    public IvyClasspathResolver(IvyClasspathContainer ivycp, boolean usePreviousResolveIfExist) {
+        super(ivycp.getConf().getIvyXmlPath(), ivycp.getConf().getConfs(), ivycp.getConf()
+                .getJavaProject().getProject());
+        this.ivycp = ivycp;
+        this.conf = ivycp.getConf();
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
         setRetrievePattern(conf.getRetrievedClasspathSetup().getRetrievePattern());
         setRetrieveSync(conf.getRetrievedClasspathSetup().isRetrieveSync());
         setRetrieveTypes(conf.getRetrievedClasspathSetup().getRetrieveTypes());
-        this.conf = conf;
     }
 
-    public IClasspathEntry[] getClasspathEntries() {
-        return classpathEntries;
-    }
+    protected void postResolveOrRefresh(Ivy ivy, ModuleDescriptor md, ResolveResult resolveResult,
+            IProgressMonitor monitor) throws IOException {
+        IvyClasspathContainerMapper mapper = new IvyClasspathContainerMapper(monitor, ivy, conf,
+                resolveResult);
 
-    protected void postResolveOrRefresh(ResolveResult resolveResult) throws IOException {
-        IvyClasspathContainerMapper mapper = new IvyClasspathContainerMapper(getMonitor(),
-                getIvy(), conf, resolveResult);
+        warnIfDuplicates(ivy, mapper, resolveResult.getArtifactReports());
 
-        warnIfDuplicates(mapper, resolveResult.getArtifactReports());
+        IClasspathEntry[] classpathEntries = mapper.map();
 
-        classpathEntries = mapper.map();
+        ivycp.updateClasspathEntries(classpathEntries);
     }
 
     /**
@@ -71,7 +70,7 @@ public class IvyClasspathResolver extends IvyResolver {
      * TODO: the algorithm can be more clever and find which configuration are conflicting.
      * 
      */
-    private void warnIfDuplicates(IvyClasspathContainerMapper mapper, Set artifactReports) {
+    private void warnIfDuplicates(Ivy ivy, IvyClasspathContainerMapper mapper, Set artifactReports) {
         ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) artifactReports
                 .toArray(new ArtifactDownloadReport[0]);
 
@@ -111,7 +110,7 @@ public class IvyClasspathResolver extends IvyResolver {
                 buffer.append("\n  - ");
             }
         }
-        getIvy().getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
+        ivy.getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
     }
 
 }

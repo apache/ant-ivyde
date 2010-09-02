@@ -61,12 +61,6 @@ public class IvyResolver {
 
     private static final int MONITOR_LENGTH = 1000;
 
-    private final Ivy ivy;
-
-    private final IProgressMonitor monitor;
-
-    private final ModuleDescriptor md;
-
     private boolean usePreviousResolveIfExist = false;
 
     private String[] confs;
@@ -83,15 +77,10 @@ public class IvyResolver {
 
     private final String ivyXmlPath;
 
-    public IvyResolver(Ivy ivy, String ivyXmlPath, ModuleDescriptor md, IProgressMonitor monitor, List confInput,
-            IProject project) {
+    public IvyResolver(String ivyXmlPath, List confInput, IProject project) {
         this.ivyXmlPath = ivyXmlPath;
         this.confInput = confInput;
         this.project = project;
-        this.ivy = ivy;
-        this.md = md;
-        this.monitor = monitor;
-        computeConfs(confInput);
     }
 
     public void setUsePreviousResolveIfExist(boolean usePreviousResolveIfExist) {
@@ -110,27 +99,16 @@ public class IvyResolver {
         this.retrieveTypes = retrieveTypes;
     }
 
-    public Ivy getIvy() {
-        return ivy;
-    }
-
-    public IProgressMonitor getMonitor() {
-        return monitor;
-    }
-
-    public ModuleDescriptor getMd() {
-        return md;
-    }
-
-    public String[] getConfs() {
-        return confs;
+    public String getIvyXmlPath() {
+        return ivyXmlPath;
     }
 
     public IProject getProject() {
         return project;
     }
 
-    public IStatus resolve() {
+    public IStatus resolve(Ivy ivy, ModuleDescriptor md, IProgressMonitor monitor) {
+        computeConfs(confInput, md);
         try {
             ivy.pushContext();
             IvyResolveJobListener ivyResolveJobListener = new IvyResolveJobListener(monitor);
@@ -147,14 +125,14 @@ public class IvyResolver {
             Thread.currentThread().setContextClassLoader(IvyResolver.class.getClassLoader());
             try {
                 if (usePreviousResolveIfExist) {
-                    result = resolveWithPrevious();
+                    result = resolveWithPrevious(ivy, md);
                 } else {
-                    result = doResolve();
+                    result = doResolve(ivy, md);
                 }
 
-                maybeRetrieve(result);
+                maybeRetrieve(ivy, md, result, monitor);
 
-                postResolveOrRefresh(result);
+                postResolveOrRefresh(ivy, md, result, monitor);
             } catch (ParseException e) {
                 String errorMsg = "Error while parsing the ivy file from " + this.toString() + "\n"
                         + e.getMessage();
@@ -188,11 +166,12 @@ public class IvyResolver {
         }
     }
 
-    protected void postResolveOrRefresh(ResolveResult resolveResult) throws IOException {
+    protected void postResolveOrRefresh(Ivy ivy, ModuleDescriptor md, ResolveResult resolveResult,
+            IProgressMonitor monitor) throws IOException {
         // nothing to do by default
     }
 
-    private void computeConfs(List/* <String> */confInput) {
+    private void computeConfs(List/* <String> */confInput, ModuleDescriptor md) {
         Set configurations = new HashSet();
         configurations.addAll(confInput);
 
@@ -203,7 +182,8 @@ public class IvyResolver {
         }
     }
 
-    private ResolveResult resolveWithPrevious() throws ParseException, IOException {
+    private ResolveResult resolveWithPrevious(Ivy ivy, ModuleDescriptor md) throws ParseException,
+            IOException {
         ResolveResult result = new ResolveResult();
 
         // we check if all required configurations have been resolved
@@ -216,12 +196,12 @@ public class IvyResolver {
                     XmlReportParser parser = new XmlReportParser();
                     parser.parse(report);
                     result.addArtifactReports(parser.getArtifactReports());
-                    findAllArtifactOnRefresh(parser, result);
+                    findAllArtifactOnRefresh(ivy, parser, result);
                 } catch (ParseException e) {
                     Message.info("\n\nIVYDE: Error while parsing the report " + report
                             + ". Falling back by doing a resolve again.");
                     // it fails, so let's try resolving for all configuration
-                    return doResolve();
+                    return doResolve(ivy, md);
                 }
             }
         }
@@ -229,7 +209,8 @@ public class IvyResolver {
         return result;
     }
 
-    private ResolveResult doResolve() throws ParseException, IOException {
+    private ResolveResult doResolve(Ivy ivy, ModuleDescriptor md) throws ParseException,
+            IOException {
         ResolveOptions resolveOption = new ResolveOptions().setConfs(confs);
         resolveOption.setValidate(ivy.getSettings().doValidate());
         ResolveReport report = ivy.resolve(md, resolveOption);
@@ -259,7 +240,7 @@ public class IvyResolver {
      * @param parser
      * @throws ParseException
      */
-    private void findAllArtifactOnRefresh(XmlReportParser parser, ResolveResult result)
+    private void findAllArtifactOnRefresh(Ivy ivy, XmlReportParser parser, ResolveResult result)
             throws ParseException {
         ModuleRevisionId[] dependencyMrdis = parser.getDependencyRevisionIds();
         for (int iDep = 0; iDep < dependencyMrdis.length; iDep++) {
@@ -288,18 +269,19 @@ public class IvyResolver {
         }
     }
 
-    private void maybeRetrieve(ResolveResult result) throws IOException {
+    private void maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
+            IProgressMonitor monitor) throws IOException {
         if (result.isPreviousUsed() || retrievePattern == null
                 || FakeProjectManager.isFake(project)) {
             return;
         }
 
         String pattern = project.getLocation().toPortableString() + "/" + retrievePattern;
-        getMonitor().setTaskName("retrieving dependencies in " + pattern);
+        monitor.setTaskName("retrieving dependencies in " + pattern);
         RetrieveOptions options = new RetrieveOptions();
         options.setSync(retrieveSync);
         options.setResolveId(result.getReport().getResolveId());
-        options.setConfs(getConfs());
+        options.setConfs(confs);
         if (retrieveTypes != null && !retrieveTypes.equals("*")) {
             options.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil.split(retrieveTypes)));
         }
@@ -307,8 +289,7 @@ public class IvyResolver {
         // Actually do the retrieve
         // FIXME here we will parse a report we already have
         // with a better Java API, we could do probably better
-        int numberOfItemsRetrieved = getIvy().retrieve(getMd().getModuleRevisionId(), pattern,
-            options);
+        int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, options);
         if (numberOfItemsRetrieved > 0) {
             // Only refresh if we actually retrieved a file.
             String refreshPath = IvyPatternHelper.getTokenRoot(retrievePattern);
@@ -318,12 +299,12 @@ public class IvyResolver {
         }
 
         // recompute the files which has been copied to build a classpath
-        String resolvedPattern = IvyPatternHelper.substituteVariables(pattern, getIvy()
-                .getSettings().getVariables());
+        String resolvedPattern = IvyPatternHelper.substituteVariables(pattern, ivy.getSettings()
+                .getVariables());
         try {
             // FIXME same as above
-            Map retrievedArtifacts = getIvy().getRetrieveEngine().determineArtifactsToCopy(
-                getMd().getModuleRevisionId(), resolvedPattern, options);
+            Map retrievedArtifacts = ivy.getRetrieveEngine().determineArtifactsToCopy(
+                md.getModuleRevisionId(), resolvedPattern, options);
             result.setRetrievedArtifacts(retrievedArtifacts);
         } catch (ParseException e) {
             // ooops, failed to parse a report we already have...

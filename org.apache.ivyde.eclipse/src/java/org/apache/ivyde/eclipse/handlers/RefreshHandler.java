@@ -17,25 +17,15 @@
  */
 package org.apache.ivyde.eclipse.handlers;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
-import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
 import org.eclipse.core.resources.IProject;
 
 public class RefreshHandler extends AbstractIvyDEHandler {
 
     public static final String COMMAND_ID = "org.apache.ivyde.commands.refresh";
 
-    private IvyResolveJob resolveJob;
-
-    public RefreshHandler() {
-        resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
-    }
-
     protected void handleContainer(IProject project, IvyClasspathContainer ivycp) {
-        ResolveRequest request = new ResolveRequest(ivycp, true);
-        resolveJob.addRequest(request);
+        ivycp.launchResolve(true, null);
     }
 
 }

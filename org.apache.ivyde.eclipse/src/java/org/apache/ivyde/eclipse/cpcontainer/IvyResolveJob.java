@@ -31,9 +31,11 @@ import org.apache.ivy.core.sort.WarningNonMatchingVersionReporter;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
+import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.resolve.IvyResolver;
 import org.apache.ivyde.eclipse.resolve.IvyRunner;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -93,35 +95,35 @@ public class IvyResolveJob extends Job {
             Iterator itRequests = toResolve.iterator();
             while (itRequests.hasNext()) {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
-                IvyClasspathContainerState state = request.getContainer().getState();
+                CachedIvy cachedIvy = request.getCachedIvy();
                 Ivy ivy;
                 try {
-                    ivy = state.getIvy();
+                    ivy = cachedIvy.getIvy();
                 } catch (IvyDEException e) {
-                    state.setErrorMarker(e);
+                    cachedIvy.setErrorMarker(e);
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to configure Ivy for "
                             + request));
                     continue;
                 }
-                state.setErrorMarker(null);
+                cachedIvy.setErrorMarker(null);
                 ivys.put(request, ivy);
                 // IVYDE-168 : Ivy needs the IvyContext in the threadlocal in order to found the
                 // default branch
                 ivy.pushContext();
                 ModuleDescriptor md;
                 try {
-                    md = state.getModuleDescriptor(ivy);
+                    md = cachedIvy.getModuleDescriptor(ivy);
                 } catch (IvyDEException e) {
-                    state.setErrorMarker(e);
+                    cachedIvy.setErrorMarker(e);
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to load the descriptor for "
                             + request));
                     continue;
                 } finally {
                     ivy.popContext();
                 }
-                state.setErrorMarker(null);
+                cachedIvy.setErrorMarker(null);
                 mds.put(request, md);
-                if (request.getContainer().getConf().isInheritedResolveInWorkspace()) {
+                if (request.isInWorkspace()) {
                     inworkspaceModules.put(md, request);
                 } else {
                     otherModules.add(request);
@@ -179,18 +181,15 @@ public class IvyResolveJob extends Job {
         return Status.OK_STATUS;
     }
 
-    private boolean launchResolveThread(ResolveRequest request, IProgressMonitor monitor,
-            MultiStatus errorsStatus, Ivy ivy, ModuleDescriptor md) {
-
-        IvyClasspathContainerConfiguration conf = request.getContainer().getConf();
-        final IvyClasspathResolver resolver = new IvyClasspathResolver(conf, ivy, md,
-                request.isUsePreviousResolveIfExist(), monitor);
+    private boolean launchResolveThread(ResolveRequest request, final IProgressMonitor monitor,
+            MultiStatus errorsStatus, final Ivy ivy, final ModuleDescriptor md) {
 
         final IStatus[] status = new IStatus[1];
 
+        final IvyResolver resolver = request.getResolver();
         Runnable resolveRunner = new Runnable() {
             public void run() {
-                status[0] = resolver.resolve();
+                status[0] = resolver.resolve(ivy, md, monitor);
             }
         };
 
@@ -199,13 +198,9 @@ public class IvyResolveJob extends Job {
             return true;
         }
 
-        if (status[0] == Status.OK_STATUS) {
-            request.getContainer().updateClasspathEntries(resolver.getClasspathEntries());
-        }
-
         IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
-        ivyMarkerManager.setResolveStatus(status[0], conf.getJavaProject().getProject(),
-            conf.getIvyXmlPath());
+        ivyMarkerManager.setResolveStatus(status[0], resolver.getProject(),
+            resolver.getIvyXmlPath());
 
         switch (status[0].getCode()) {
             case IStatus.CANCEL:
