@@ -180,55 +180,46 @@ public class IvyResolveJob extends Job {
 
     private boolean launchResolveThread(ResolveRequest request, IProgressMonitor monitor,
             MultiStatus errorsStatus, Ivy ivy, ModuleDescriptor md) {
-        IStatus jobStatus = launchResolveThread(request, monitor, ivy, md);
-        switch (jobStatus.getCode()) {
+
+        IvyClasspathContainerConfiguration conf = request.getContainer().getConf();
+        final IvyClasspathResolver resolver = new IvyClasspathResolver(conf, ivy, md,
+                request.isUsePreviousResolveIfExist(), monitor);
+
+        final IStatus[] status = new IStatus[1];
+
+        Runnable resolveRunner = new Runnable() {
+            public void run() {
+                status[0] = resolver.resolve();
+            }
+        };
+
+        IvyRunner ivyRunner = new IvyRunner();
+        if (ivyRunner.launchIvyThread(resolveRunner, ivy, monitor)) {
+            return true;
+        }
+
+        if (status[0] == Status.OK_STATUS) {
+            request.getContainer().updateClasspathEntries(resolver.getClasspathEntries());
+        }
+
+        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
+        ivyMarkerManager.setResolveStatus(status[0], conf.getJavaProject().getProject(),
+            conf.getIvyXmlPath());
+
+        switch (status[0].getCode()) {
             case IStatus.CANCEL:
                 return true;
             case IStatus.OK:
             case IStatus.INFO:
                 break;
             case IStatus.ERROR:
-                errorsStatus.add(jobStatus);
+                errorsStatus.add(status[0]);
                 break;
             default:
-                IvyPlugin.log(IStatus.WARNING, "Unknown IStatus: " + jobStatus.getCode(), null);
+                IvyPlugin.log(IStatus.WARNING, "Unknown IStatus: " + status[0].getCode(), null);
         }
+
         return false;
-    }
-
-    private IStatus launchResolveThread(ResolveRequest request, IProgressMonitor monitor, Ivy ivy,
-            ModuleDescriptor md) {
-        if (monitor.isCanceled()) {
-            return Status.CANCEL_STATUS;
-        }
-
-        boolean usePreviousResolveIfExist = request.isUsePreviousResolveIfExist();
-        IvyClasspathContainerConfiguration conf = request.getContainer().getConf();
-        final IvyClasspathResolver resolver = new IvyClasspathResolver(conf, ivy, md,
-                usePreviousResolveIfExist, monitor);
-        final IStatus[] status = new IStatus[1];
-        Thread resolverThread = new Thread(new Runnable() {
-            public void run() {
-                status[0] = resolver.resolve();
-            }
-        });
-        resolverThread.setName("IvyDE resolver thread");
-
-        resolverThread.start();
-
-        IvyProgressMonitor ivyProgressMonitor = new IvyProgressMonitor();
-        if (ivyProgressMonitor.wait(ivy, monitor, resolverThread)) {
-            return Status.CANCEL_STATUS;
-        }
-
-        if (status[0] == Status.OK_STATUS) {
-            request.getContainer().updateClasspathEntries(resolver.getClasspathEntries());
-        }
-        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
-        ivyMarkerManager.setResolveStatus(status[0], conf.getJavaProject().getProject(),
-            conf.getIvyXmlPath());
-        return status[0];
-
     }
 
 }
