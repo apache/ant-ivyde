@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class IvyNature implements IProjectNature {
 
-    public static final String IVY_NATURE = "org.apache.ivyde.eclipse.ivyNature";
+    public static final String IVY_NATURE = "org.apache.ivyde.eclipse.ivynature";
 
     private IProject project;
 

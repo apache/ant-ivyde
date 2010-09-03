@@ -303,7 +303,7 @@
                   type="org.eclipse.core.resources.IProject">
                <test
                      property="org.eclipse.core.resources.projectNature"
-                     value="org.apache.ivyde.eclipse.ivyNature">
+                     value="org.apache.ivyde.eclipse.ivynature">
                </test>
             </adapt>
          </iterate>
@@ -316,7 +316,7 @@
                <not>
                   <test
                         property="org.eclipse.core.resources.projectNature"
-                        value="org.apache.ivyde.eclipse.ivyNature">
+                        value="org.apache.ivyde.eclipse.ivynature">
                   </test>
                </not>
             </adapt>
@@ -424,7 +424,7 @@
       </menuContribution>
    </extension>
    <extension
-         id="ivyNature"
+         id="ivynature"
          name="Ivy nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
@@ -443,7 +443,7 @@
             objectClass="org.eclipse.core.resources.IProject">
          <filter
                name="nature"
-               value="org.apache.ivyde.eclipse.ivyNature">
+               value="org.apache.ivyde.eclipse.ivynature">
          </filter>
       </page>
    </extension>
