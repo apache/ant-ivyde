@@ -45,7 +45,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID
+        = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     private IClasspathEntry[] classpathEntries;
 

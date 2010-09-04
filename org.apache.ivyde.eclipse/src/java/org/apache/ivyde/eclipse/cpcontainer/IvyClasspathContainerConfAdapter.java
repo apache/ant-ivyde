@@ -296,11 +296,13 @@ public final class IvyClasspathContainerConfAdapter {
             return "${workspace_loc:" + path + "}";
         }
         if (value.startsWith("file://./") || value.startsWith("file:./")) {
+            // CheckStyle:MagicNumber| OFF
             if (value.charAt(5) == '/') {
                 value = value.substring(8);
             } else {
                 value = value.substring(6);
             }
+            // CheckStyle:MagicNumber| ON
             return "${workspace_loc:" + conf.getJavaProject().getProject().getName() + value + "}";
         }
         return value;

@@ -85,7 +85,8 @@ public class IvyClasspathResolver extends IvyResolver {
      * TODO: the algorithm can be more clever and find which configuration are conflicting.
      * 
      */
-    private void warnIfDuplicates(Ivy ivy, IvyClasspathContainerMapper mapper, Set artifactReports) {
+    private void warnIfDuplicates(Ivy ivy, IvyClasspathContainerMapper mapper,
+            Set artifactReports) {
         ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) artifactReports
                 .toArray(new ArtifactDownloadReport[0]);
 
