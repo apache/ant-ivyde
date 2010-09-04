@@ -15,10 +15,9 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.resolve;
 
 import org.apache.ivyde.eclipse.CachedIvy;
-import org.apache.ivyde.eclipse.resolve.IvyResolver;
 
 public class ResolveRequest {
 

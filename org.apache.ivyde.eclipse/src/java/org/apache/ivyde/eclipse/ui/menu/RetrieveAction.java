@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
-import org.apache.ivyde.eclipse.cpcontainer.ResolveRequest;
+import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.resolve.IvyResolver;
+import org.apache.ivyde.eclipse.resolve.ResolveRequest;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.eclipse.jface.action.Action;

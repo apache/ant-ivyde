@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.resolve;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
