@@ -145,7 +145,8 @@ public abstract class CachedIvy {
                 } catch (IOException e) {
                     ivy = null;
                     throw new IvyDEException("Read error of the default Ivy settings",
-                            "The default Ivy settings file could not be read: " + e.getMessage(), e);
+                            "The default Ivy settings file could not be read: " 
+                            + e.getMessage(), e);
                 }
             }
             return ivy;
@@ -363,7 +364,8 @@ public abstract class CachedIvy {
             return md;
         } catch (MalformedURLException e) {
             throw new IvyDEException("Incorrect URL of the Ivy file",
-                    "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "'", e);
+                    "The URL to the ivy.xml file is incorrect: '"
+                    + file.getAbsolutePath() + "'", e);
         } catch (ParseException e) {
             throw new IvyDEException("Parsing error of the Ivy file", "The ivy file '"
                     + file.getAbsolutePath() + "' could not be parsed: " + e.getMessage(), e);

@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Display;
 
 public class ColorManager {
 
-    protected Map fKeyTable = new HashMap();
+    private Map fKeyTable = new HashMap();
 
-    protected Map fDisplayTable = new HashMap();
+    private Map fDisplayTable = new HashMap();
 
     public void dispose(Display display) {
         Map colorTable = (Map) fDisplayTable.get(display);
@@ -55,7 +55,7 @@ public class ColorManager {
         final Display display = Display.getCurrent();
         Map colorTable = (Map) fDisplayTable.get(display);
         if (colorTable == null) {
-            colorTable = new HashMap(10);
+            colorTable = new HashMap();
             fDisplayTable.put(display, colorTable);
             display.disposeExec(new Runnable() {
                 public void run() {
