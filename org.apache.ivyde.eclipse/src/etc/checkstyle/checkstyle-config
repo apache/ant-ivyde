@@ -19,6 +19,13 @@
    under the License.    
 -->
 <module name="Checker">
+  <!-- required licence file -->
+  <module name="Header">
+    <property name="headerFile" value="${checkstyle.src.dir}/RequiredHeader.txt"/>
+    <property name="ignoreLines" value="2"/>
+  </module>
+  <module name="FileLength"/>
+  <module name="FileTabCharacterCheck"/>
   <module name="TreeWalker">
     <!-- Javadoc requirements -->
     <!-- TODO uncomment this when javadoc will be improved
@@ -45,12 +52,6 @@
     <module name="ParameterName"/>
     <module name="StaticVariableName"/>
 
-    <!-- required licence file -->
-    <module name="Header">
-        <property name="headerFile" value="${checkstyle.src.dir}/RequiredHeader.txt"/>
-        <property name="ignoreLines" value="2"/>
-    </module>
-
     <!-- Import conventions -->
     <module name="AvoidStarImport"/>
     <!-- <module name="IllegalImport"/> -->
@@ -58,7 +59,6 @@
     <module name="UnusedImports"/>
 
     <!-- size limits -->
-    <module name="FileLength"/>
     <module name="LineLength">
       <property name="max" value="100"/>
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
@@ -73,7 +73,6 @@
     <module name="NoWhitespaceBefore"/>
     <module name="OperatorWrap"/>
     <module name="ParenPad"/>
-    <module name="TabCharacter"/>
     <module name="WhitespaceAfter"/>
     <module name="WhitespaceAround"/>
 

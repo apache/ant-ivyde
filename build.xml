@@ -377,10 +377,11 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="checkstyle-get-lib">
         <mkdir dir="${checkstyle.lib}" />
-        <get src="http://repo1.maven.org/maven2/checkstyle/checkstyle/4.3/checkstyle-4.3.jar" dest="${checkstyle.lib}/checkstyle-4.3.jar" />
+        <get src="http://repo1.maven.org/maven2/checkstyle/checkstyle/5.0/checkstyle-5.0.jar" dest="${checkstyle.lib}/checkstyle-5.0.jar" />
         <get src="http://repo1.maven.org/maven2/antlr/antlr/2.7.6/antlr-2.7.6.jar" dest="${checkstyle.lib}/antlr-2.7.6.jar" />
         <get src="http://repo1.maven.org/maven2/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar" dest="${checkstyle.lib}/commons-beanutils-core-1.7.0.jar" />
         <get src="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.3/commons-logging-1.0.3.jar" dest="${checkstyle.lib}/commons-logging-1.0.3.jar" />
+        <get src="http://repo1.maven.org/maven2/com/google/collections/google-collections/0.9/google-collections-0.9.jar" dest="${checkstyle.lib}/google-collections-0.9.jar" />
     </target>
 
     <target name="checkstyle" description="Generate checkstyle report">
