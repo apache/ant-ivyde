@@ -21,7 +21,6 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.editors.xml.ColorManager;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;

@@ -29,12 +29,10 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
 
 public final class IvyUtil {
 

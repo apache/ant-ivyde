@@ -20,10 +20,8 @@ package org.apache.ivyde.eclipse.ui.views;
 import java.net.URL;
 
 import org.apache.ivy.util.Message;
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;

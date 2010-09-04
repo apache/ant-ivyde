@@ -25,7 +25,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorFile;
-import org.apache.ivyde.common.model.IvyFile;
 
 public class IvyFileUtilTest extends TestCase {
     String hibContentStr;

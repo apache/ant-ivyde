@@ -17,11 +17,8 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collections;

@@ -20,11 +20,11 @@ package org.apache.ivyde.common.ivyfile;
 import java.io.File;
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.FileUtil;
-
-import junit.framework.TestCase;
 
 public class IvyFileUpdaterTest extends TestCase {
     private IvyFileUpdater updater = new IvyFileUpdater();
