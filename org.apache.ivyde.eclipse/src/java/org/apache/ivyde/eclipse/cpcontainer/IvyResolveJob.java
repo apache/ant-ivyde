@@ -174,6 +174,13 @@ public class IvyResolveJob extends Job {
             }
         }
 
+        // launch every post batch resolve
+        Iterator itRequests = toResolve.iterator();
+        while (itRequests.hasNext()) {
+            ResolveRequest request = (ResolveRequest) itRequests.next();
+            request.getResolver().postBatchResolve();
+        }
+
         if (errorsStatus.getChildren().length != 0) {
             return errorsStatus;
         }

@@ -42,6 +42,8 @@ public class IvyClasspathResolver extends IvyResolver {
 
     private final IvyClasspathContainer ivycp;
 
+    private IClasspathEntry[] classpathEntries = null;
+
     public IvyClasspathResolver(IvyClasspathContainer ivycp, boolean usePreviousResolveIfExist) {
         super(ivycp.getConf().getIvyXmlPath(), ivycp.getConf().getConfs(), ivycp.getConf()
                 .getJavaProject().getProject());
@@ -63,9 +65,18 @@ public class IvyClasspathResolver extends IvyResolver {
 
         warnIfDuplicates(ivy, mapper, resolveResult.getArtifactReports());
 
-        IClasspathEntry[] classpathEntries = mapper.map();
+        classpathEntries = mapper.map();
+    }
 
-        ivycp.updateClasspathEntries(classpathEntries);
+    /*
+     * Actually set the classpath only after every resolve has been done. This will avoid having the
+     * classpathsetter job blocked by this resolve job, and so have a popup blocking the end user of
+     * doing anything.
+     */
+    public void postBatchResolve() {
+        if (classpathEntries != null) {
+            ivycp.updateClasspathEntries(classpathEntries);
+        }
     }
 
     /**

@@ -45,6 +45,7 @@ import org.apache.ivy.util.filter.ArtifactTypeFilter;
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJob;
 import org.apache.ivyde.eclipse.cpcontainer.IvyResolveJobListener;
 import org.apache.ivyde.eclipse.cpcontainer.RefreshFolderJob;
 import org.eclipse.core.resources.IFolder;
@@ -311,6 +312,14 @@ public class IvyResolver {
             IvyPlugin.log(IStatus.ERROR,
                 "failed to parse a resolve report in order to do the retrieve", e);
         }
+    }
+
+    /**
+     * This function will be called by the {@link IvyResolveJob} after all resolve has been
+     * accomplished. Note that this function will be called even if the resolve failed.
+     */
+    public void postBatchResolve() {
+        // by default do nothing
     }
 
     public String toString() {
