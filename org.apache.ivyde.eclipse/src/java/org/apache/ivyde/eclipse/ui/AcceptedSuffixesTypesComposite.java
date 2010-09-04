@@ -48,7 +48,7 @@ public class AcceptedSuffixesTypesComposite extends Composite {
             + " to all jar artifact in modules with multiple jar artifacts and only one"
             + " source artifact";    
 
-    public static final String TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC= "Will map the javadoc artifact"
+    public static final String TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC = "Will map the javadoc artifact"
         + " to all jar artifact in modules with multiple jar artifacts and only one"
         + " javadoc artifact";    
 
@@ -109,7 +109,7 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         javadocSuffixesText.setToolTipText(TOOLTIP_JAVADOC_SUFFIXES);
         
-        mapIfOnlyOneSourceCheck= new Button(this, SWT.CHECK);
+        mapIfOnlyOneSourceCheck = new Button(this, SWT.CHECK);
         mapIfOnlyOneSourceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
                 false, 2, 1));
         mapIfOnlyOneSourceCheck.setText("Auto map jar artifacts with unique source artifact");

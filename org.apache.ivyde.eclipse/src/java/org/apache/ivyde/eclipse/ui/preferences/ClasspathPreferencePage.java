@@ -35,7 +35,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class ClasspathPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
+    public static final String PEREFERENCE_PAGE_ID
+        = "org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage";
 
     private Button resolveInWorkspaceCheck;
 

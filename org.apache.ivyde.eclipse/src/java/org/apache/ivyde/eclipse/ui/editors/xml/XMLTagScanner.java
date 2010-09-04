@@ -25,11 +25,13 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.swt.graphics.Color;
 
 public class XMLTagScanner extends RuleBasedScanner {
 
     public XMLTagScanner(ColorManager manager) {
-        IToken string = new Token(new TextAttribute(manager.getColor(PreferenceConstants.EDITOR_COLOR_STRING)));
+        Color color = manager.getColor(PreferenceConstants.EDITOR_COLOR_STRING);
+        IToken string = new Token(new TextAttribute(color));
 
         // CheckStyle:MagicNumber| OFF
         IRule[] rules = new IRule[3];

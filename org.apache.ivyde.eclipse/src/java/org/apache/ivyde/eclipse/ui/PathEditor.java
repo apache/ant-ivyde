@@ -118,8 +118,9 @@ public abstract class PathEditor extends Composite {
         // Filter closed projects
         dialog.addFilter(new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element) {
-                if (element instanceof IProject)
+                if (element instanceof IProject) {
                     return ((IProject) element).isAccessible();
+                }
 
                 return true;
             }
