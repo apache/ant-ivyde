@@ -47,7 +47,8 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
             return null;
         }
 
-        Map/* <IProject, Set<IvyClasspathContainer>> */projects = getProjectAndContainers((IStructuredSelection) selection);
+        // Map<IProject, Set<IvyClasspathContainer>>
+        Map projects = getProjectAndContainers((IStructuredSelection) selection);
 
         if (projects.size() > 0) {
             handleProjects(projects);

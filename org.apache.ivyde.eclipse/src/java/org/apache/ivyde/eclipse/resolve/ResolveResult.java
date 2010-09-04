@@ -28,7 +28,6 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * Container of result of an Ivy resolve and maybe retrieve
@@ -43,7 +42,7 @@ public class ResolveResult {
 
     private final ResolveReport report;
 
-    protected Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency = new HashMap();
+    private Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency = new HashMap();
 
     /**
      * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no

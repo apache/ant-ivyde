@@ -281,7 +281,8 @@ public class IvyResolver {
         options.setResolveId(result.getReport().getResolveId());
         options.setConfs(confs);
         if (retrieveTypes != null && !retrieveTypes.equals("*")) {
-            options.setArtifactFilter(new ArtifactTypeFilter(IvyClasspathUtil.split(retrieveTypes)));
+            List typeList = IvyClasspathUtil.split(retrieveTypes);
+            options.setArtifactFilter(new ArtifactTypeFilter(typeList));
         }
 
         // Actually do the retrieve

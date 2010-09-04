@@ -73,7 +73,8 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
                     int progress = (int) (currentLength * DOWNLOAD_MONITOR_LENGTH
                             / expectedTotalLength);
                     dlmonitor.worked(progress);
-                    monitor.subTask("downloading " + evt.getResource() + ": " + (currentLength / KILO_BITS_UNIT) + " / "
+                    monitor.subTask("downloading " + evt.getResource() + ": "
+                            + (currentLength / KILO_BITS_UNIT) + " / "
                             + (expectedTotalLength / KILO_BITS_UNIT) + "kB");
                 }
                 break;

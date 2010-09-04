@@ -47,6 +47,8 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class IvyResolveJob extends Job {
 
+    private static final int WAIT_BEFORE_LAUNCH = 1000;
+
     private final List resolveQueue = new ArrayList();
 
     public IvyResolveJob() {
@@ -67,7 +69,7 @@ public class IvyResolveJob extends Job {
         synchronized (resolveQueue) {
             resolveQueue.add(request);
         }
-        schedule(1000);
+        schedule(WAIT_BEFORE_LAUNCH);
     }
 
     protected IStatus run(IProgressMonitor monitor) {
@@ -140,11 +142,11 @@ public class IvyResolveJob extends Job {
             VersionMatcher versionMatcher = ((Ivy) ivys.get(request)).getSettings()
                     .getVersionMatcher();
 
-            WarningNonMatchingVersionReporter nonMatchingVersionReporter = new WarningNonMatchingVersionReporter();
+            WarningNonMatchingVersionReporter vReporter = new WarningNonMatchingVersionReporter();
             CircularDependencyStrategy circularDependencyStrategy = WarnCircularDependencyStrategy
                     .getInstance();
             ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(inworkspaceModules.keySet(),
-                    versionMatcher, nonMatchingVersionReporter, circularDependencyStrategy);
+                    versionMatcher, vReporter, circularDependencyStrategy);
             List sortedModuleDescriptors = sorter.sortModuleDescriptors();
 
             Iterator it = sortedModuleDescriptors.iterator();
