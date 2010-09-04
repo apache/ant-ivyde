@@ -45,7 +45,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -172,14 +171,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     /**
      * We will initialize file contents with a sample text.
      */
-
     private InputStream openContentStream() {
         return getClass().getResourceAsStream("ivy-template.xml");
-    }
-
-    private void throwCoreException(String message) throws CoreException {
-        IStatus status = new Status(IStatus.ERROR, "org.apache.ivyde", IStatus.OK, message, null);
-        throw new CoreException(status);
     }
 
     /**
@@ -190,7 +183,4 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.selection = selection;
     }
-    // public Image getDefaultPageImage() {
-    // return IvyPlugin.getImageDescriptor("icons/logo16x16.gif").createImage();
-    // }
 }
