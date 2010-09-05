@@ -184,6 +184,7 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
 
         public String getColumnText(Object element, int columnIndex) {
             StandaloneRetrieveSetup setup = (StandaloneRetrieveSetup) element;
+            // CheckStyle:MagicNumber| OFF
             switch (columnIndex) {
                 case 0:
                     return setup.getName();
@@ -194,6 +195,7 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
                 case 3:
                     return setup.getRetrieveSetup().getRetrieveTypes();
             }
+            // CheckStyle:MagicNumber| ON
             return null;
         }
 

@@ -20,7 +20,7 @@ package org.apache.ivyde.eclipse.ui.views;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.revdepexplorer.IvyUtil;
-import org.apache.ivyde.eclipse.revdepexplorer.MultiRevisionDependencyDescriptor;
+import org.apache.ivyde.eclipse.revdepexplorer.MultiRevDependencyDescriptor;
 import org.apache.ivyde.eclipse.revdepexplorer.SyncIvyFilesJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -71,7 +71,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
     private static TreeViewer viewer;
 
-    private static MultiRevisionDependencyDescriptor[] dependencies;
+    private static MultiRevDependencyDescriptor[] dependencies;
 
     private static Display display;
 
@@ -197,8 +197,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 for (int i = 0; i < items.length; i++) {
                     TreeItem item = items[i];
-                    MultiRevisionDependencyDescriptor multiRevisionDescriptor
-                        = (MultiRevisionDependencyDescriptor) item.getData();
+                    MultiRevDependencyDescriptor multiRevisionDescriptor
+                        = (MultiRevDependencyDescriptor) item.getData();
 
                     if (multiRevisionDescriptor.hasMultipleRevisons()
                             && !multiRevisionDescriptor.hasNewRevision()) {
@@ -232,8 +232,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
 
         public String getColumnText(Object obj, int index) {
-            if (obj instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) obj;
+            if (obj instanceof MultiRevDependencyDescriptor) {
+                MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) obj;
 
                 switch (index) {
                     case 0:
@@ -295,8 +295,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
         public Image getImage(Object obj) {
             ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
-            if (obj instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) obj;
+            if (obj instanceof MultiRevDependencyDescriptor) {
+                MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) obj;
 
                 if (mrdd.hasMultipleRevisons() && !mrdd.hasNewRevision()) {
                     return sharedImages.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
@@ -312,8 +312,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
 
         public Object[] getChildren(Object parent) {
-            if (parent instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) parent;
+            if (parent instanceof MultiRevDependencyDescriptor) {
+                MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) parent;
                 IvyClasspathContainer[] containers = mrdd.getIvyClasspathContainers();
 
                 Object[] wrappedProjects = new Object[containers.length];
@@ -333,8 +333,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
 
         public boolean hasChildren(Object parent) {
-            if (parent instanceof MultiRevisionDependencyDescriptor) {
-                MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) parent;
+            if (parent instanceof MultiRevDependencyDescriptor) {
+                MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) parent;
 
                 if (mrdd.getIvyClasspathContainers().length > 0) {
                     return true;
@@ -348,10 +348,10 @@ public class ReverseDependencyExplorerView extends ViewPart {
     class ClasspathContainerDependencyDescriptorComposite {
         private IvyClasspathContainer container;
 
-        private MultiRevisionDependencyDescriptor multiRevisionDescriptor;
+        private MultiRevDependencyDescriptor multiRevisionDescriptor;
 
         public ClasspathContainerDependencyDescriptorComposite(IvyClasspathContainer container,
-                MultiRevisionDependencyDescriptor multiRevisionDescriptor) {
+                MultiRevDependencyDescriptor multiRevisionDescriptor) {
             this.container = container;
             this.multiRevisionDescriptor = multiRevisionDescriptor;
         }
@@ -367,7 +367,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
             return container;
         }
 
-        public MultiRevisionDependencyDescriptor getMultiRevisionDescriptor() {
+        public MultiRevDependencyDescriptor getMultiRevisionDescriptor() {
             return multiRevisionDescriptor;
         }
     }
@@ -383,10 +383,10 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
         public Object getValue(Object element, String property) {
             if (!property.equals(NEW_REVISION)
-                    || !(element instanceof MultiRevisionDependencyDescriptor)) {
+                    || !(element instanceof MultiRevDependencyDescriptor)) {
                 return null;
             }
-            MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) element;
+            MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) element;
             String revision = mrdd.getNewRevision();
             if (revision == null) {
                 return "";
@@ -399,9 +399,9 @@ public class ReverseDependencyExplorerView extends ViewPart {
                 element = ((Item) element).getData();
             }
 
-            if (element instanceof MultiRevisionDependencyDescriptor
+            if (element instanceof MultiRevDependencyDescriptor
                     && property.equals(NEW_REVISION)) {
-                ((MultiRevisionDependencyDescriptor) element).setNewRevision((String) value);
+                ((MultiRevDependencyDescriptor) element).setNewRevision((String) value);
 
                 refresh(false);
             }

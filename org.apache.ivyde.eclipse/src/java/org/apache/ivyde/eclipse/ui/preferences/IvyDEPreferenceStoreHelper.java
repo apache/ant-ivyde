@@ -79,8 +79,10 @@ public class IvyDEPreferenceStoreHelper {
                 .getString(PreferenceConstants.SOURCES_SUFFIXES)));
         setup.setJavadocSuffixes(IvyClasspathUtil.split(prefStore
                 .getString(PreferenceConstants.JAVADOC_SUFFIXES)));
-        setup.setMapIfOnlyOneSource(prefStore.getBoolean(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE));
-        setup.setMapIfOnlyOneJavadoc(prefStore.getBoolean(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC));
+        setup.setMapIfOnlyOneSource(prefStore
+                .getBoolean(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE));
+        setup.setMapIfOnlyOneJavadoc(prefStore
+                .getBoolean(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC));
         return setup;
     }
 
@@ -95,8 +97,10 @@ public class IvyDEPreferenceStoreHelper {
                 .getSourceSuffixes()));
         prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil.concat(setup
                 .getJavadocSuffixes()));
-        prefStore.setValue(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE, setup.isMapIfOnlyOneSource());
-        prefStore.setValue(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC, setup.isMapIfOnlyOneJavadoc());
+        prefStore.setValue(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE,
+                setup.isMapIfOnlyOneSource());
+        prefStore.setValue(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC,
+                setup.isMapIfOnlyOneJavadoc());
     }
 
     public boolean isAlphOrder() {

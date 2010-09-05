@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
  */
 public class SyncIvyFilesJob extends WorkspaceJob {
 
-    private MultiRevisionDependencyDescriptor[] multiRevisionDependencies;
+    private MultiRevDependencyDescriptor[] multiRevisionDependencies;
 
     /**
      * FIXME Here we seriously abuse the Ivy core API to allow us to preserve an info element
@@ -96,7 +96,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         }
     }
     
-    public SyncIvyFilesJob(MultiRevisionDependencyDescriptor[] multiRevisionDependencies) {
+    public SyncIvyFilesJob(MultiRevDependencyDescriptor[] multiRevisionDependencies) {
         super("Synchronizing Ivy Files");
         this.multiRevisionDependencies = multiRevisionDependencies;
     }    
@@ -119,7 +119,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             DependencyDescriptor[] dependencies = md.getDependencies();
             for (int j = 0; j < dependencies.length; j++) {
                 for (int k = 0; k < multiRevisionDependencies.length; k++) {
-                    MultiRevisionDependencyDescriptor multiRevision = multiRevisionDependencies[k];
+                    MultiRevDependencyDescriptor multiRevision = multiRevisionDependencies[k];
                     ModuleRevisionId dependencyRevisionId = dependencies[j]
                             .getDependencyRevisionId();
                     if (dependencies[j].getDependencyId().equals(multiRevision.getModuleId())
@@ -183,7 +183,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         Collection/* <IvyClasspathContainer> */containers = new HashSet();
 
         for (int i = 0; i < multiRevisionDependencies.length; i++) {
-            MultiRevisionDependencyDescriptor multiRevision = multiRevisionDependencies[i];
+            MultiRevDependencyDescriptor multiRevision = multiRevisionDependencies[i];
             if (multiRevision.hasNewRevision()) {
                 containers.addAll(Arrays.asList(multiRevision.getIvyClasspathContainers()));
             }

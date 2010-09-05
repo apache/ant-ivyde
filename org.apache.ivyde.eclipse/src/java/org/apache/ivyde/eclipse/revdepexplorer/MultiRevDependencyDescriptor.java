@@ -28,7 +28,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 
-public class MultiRevisionDependencyDescriptor {
+public class MultiRevDependencyDescriptor {
     private final ModuleId moduleId;
 
     /**
@@ -38,7 +38,7 @@ public class MultiRevisionDependencyDescriptor {
 
     private String newRevision;
 
-    public MultiRevisionDependencyDescriptor(ModuleId moduleId) {
+    public MultiRevDependencyDescriptor(ModuleId moduleId) {
         this.moduleId = moduleId;
     }
 
@@ -48,8 +48,8 @@ public class MultiRevisionDependencyDescriptor {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof MultiRevisionDependencyDescriptor) {
-            MultiRevisionDependencyDescriptor mrdd = (MultiRevisionDependencyDescriptor) o;
+        if (o instanceof MultiRevDependencyDescriptor) {
+            MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) o;
 
             if (getOrganization().equals(mrdd.getOrganization())
                     && getModule().equals(mrdd.getModule())

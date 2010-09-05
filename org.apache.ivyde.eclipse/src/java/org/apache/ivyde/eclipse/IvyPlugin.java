@@ -126,6 +126,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         propertyListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 try {
+                    // CheckStyle:LineLength| OFF
                     if (event.getProperty() == PreferenceConstants.IVYSETTINGS_PATH
                             || event.getProperty() == PreferenceConstants.ACCEPTED_TYPES
                             || event.getProperty() == PreferenceConstants.SOURCES_TYPES
@@ -143,6 +144,7 @@ public class IvyPlugin extends AbstractUIPlugin {
                             || event.getProperty() == PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS) {
                         prefStoreChanged();
                     }
+                    // CheckStyle:LineLength| ON
                 } catch (JavaModelException e) {
                     MessageDialog.openError(IvyPlugin.getDefault().getWorkbench()
                             .getActiveWorkbenchWindow().getShell(),

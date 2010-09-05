@@ -97,10 +97,10 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
         addField(ignoreVersionOnWorkspaceProjects);
 
         Label warning = new Label(fieldParent, SWT.NONE);
-        warning.setText("WARNING: you should ignore branch and/or revision only\n" +
-        		        "if you are sure that all the project revisions that are\n" +
-        		        "open in your workspace can actually work together\n" +
-                        "(be careful with branch management for instance)");
+        warning.setText("WARNING: you should ignore branch and/or revision only\n"
+                    + "if you are sure that all the project revisions that are\n"
+                    + "open in your workspace can actually work together\n"
+                    + "(be careful with branch management for instance)");
         GridData gridData = new GridData();
         gridData.horizontalIndent = HORIZ_INDENT;
         warning.setLayoutData(gridData);

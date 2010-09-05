@@ -60,7 +60,7 @@ public final class IvyUtil {
         return (IProject[]) ivyProjects.toArray(new IProject[ivyProjects.size()]);
     }
 
-    public static MultiRevisionDependencyDescriptor[] getDependencyDescriptorsByProjects(
+    public static MultiRevDependencyDescriptor[] getDependencyDescriptorsByProjects(
             IProject[] projects) {
         // a temporary cache of multi-revision dependency descriptors
         Map/* <ModuleId, MultiRevisionDependencyDescriptor> */mdMap = new HashMap();
@@ -78,11 +78,11 @@ public final class IvyUtil {
                 DependencyDescriptor[] descriptors = md.getDependencies();
                 for (int j = 0; j < descriptors.length; j++) {
                     DependencyDescriptor descriptor = descriptors[j];
-                    MultiRevisionDependencyDescriptor syncabledd = (MultiRevisionDependencyDescriptor) mdMap
+                    MultiRevDependencyDescriptor syncabledd = (MultiRevDependencyDescriptor) mdMap
                             .get(descriptor.getDependencyId());
 
                     if (syncabledd == null) {
-                        syncabledd = new MultiRevisionDependencyDescriptor(
+                        syncabledd = new MultiRevDependencyDescriptor(
                                 descriptor.getDependencyId());
 
                         mdMap.put(descriptor.getDependencyId(), syncabledd);
@@ -98,8 +98,8 @@ public final class IvyUtil {
 
         Collections.sort(sorted, new Comparator/* <MultiRevisionDependencyDescriptor> */() {
             public int compare(Object o1, Object o2) {
-                MultiRevisionDependencyDescriptor desc1 = (MultiRevisionDependencyDescriptor) o1;
-                MultiRevisionDependencyDescriptor desc2 = (MultiRevisionDependencyDescriptor) o2;
+                MultiRevDependencyDescriptor desc1 = (MultiRevDependencyDescriptor) o1;
+                MultiRevDependencyDescriptor desc2 = (MultiRevDependencyDescriptor) o2;
 
                 int equal = desc1.getOrganization().compareTo(desc2.getOrganization());
                 if (equal == 0) {
@@ -111,8 +111,8 @@ public final class IvyUtil {
             }
         });
 
-        return (MultiRevisionDependencyDescriptor[]) sorted
-                .toArray(new MultiRevisionDependencyDescriptor[sorted.size()]);
+        return (MultiRevDependencyDescriptor[]) sorted
+                .toArray(new MultiRevDependencyDescriptor[sorted.size()]);
     }
 
     /**
@@ -121,7 +121,7 @@ public final class IvyUtil {
      * 
      * @return multi-revision dependency descriptors
      */
-    public static MultiRevisionDependencyDescriptor[] getAllDependencyDescriptorsInWorkspace() {
+    public static MultiRevDependencyDescriptor[] getAllDependencyDescriptorsInWorkspace() {
         return getDependencyDescriptorsByProjects(getIvyProjectsInWorkspace());
     }
 }

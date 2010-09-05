@@ -49,7 +49,8 @@ public class XMLEditorPreferencesPage extends FieldEditorPreferencePage implemen
         addField(new ColorFieldEditor(PreferenceConstants.EDITOR_COLOR_DEFAULT, "Default",
                 fieldParent));
 
-        addField(new ColorFieldEditor(PreferenceConstants.EDITOR_COLOR_TAG, "XML tag", fieldParent));
+        addField(new ColorFieldEditor(PreferenceConstants.EDITOR_COLOR_TAG, "XML tag",
+                fieldParent));
     }
 
     public void init(IWorkbench workbench) {

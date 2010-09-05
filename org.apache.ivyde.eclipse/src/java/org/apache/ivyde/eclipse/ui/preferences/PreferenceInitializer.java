@@ -134,8 +134,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.JAVADOC_TYPES, DEFAULT_JAVADOC_TYPES);
         store.setDefault(PreferenceConstants.SOURCES_SUFFIXES, DEFAULT_SOURCES_SUFFIXES);
         store.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, DEFAULT_JAVADOC_SUFFIXES);
-        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE, DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
-        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC, DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
+        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE,
+                DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
+        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC,
+                DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
 
         store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
