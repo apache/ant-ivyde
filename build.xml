@@ -28,7 +28,7 @@
 - local.build.properties : properties handled by developers, ignored by subversion.
                            The baseLocation property should be set there.
 -->
-<project name="ivyde" basedir="." default="build" xmlns:xooki="antlib:xooki">
+<project name="ivyde" basedir="." default="build" xmlns:xooki="antlib:xooki" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property file="local.build.properties" />
     <property file="build.properties" />
@@ -47,6 +47,19 @@
     <property name="checkstyle.report.dir" value="${basedir}/checkstyle/report" />
     <property name="checkstyle.lib" value="${basedir}/checkstyle/lib" />
     <property name="rat.dir" value="${work.dir}/rat" />
+
+    <target name="init-ivy">
+        <property name="ivy.version"  value="2.2.0-rc1"/>
+        <property name="ivy.jar.url"  value="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
+        <property name="ivy.jar.dir"  value="${work.dir}"/>
+        <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="${ivy.jar.url}" dest="${ivy.jar.file}" usetimestamp="true"/>
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
         <tstamp />
@@ -375,19 +388,9 @@ You have to specify the Ivy to install with one of the following property:
         ======================================================================================
     -->
 
-    <target name="checkstyle-get-lib">
-        <mkdir dir="${checkstyle.lib}" />
-        <get src="http://repo1.maven.org/maven2/checkstyle/checkstyle/5.0/checkstyle-5.0.jar" dest="${checkstyle.lib}/checkstyle-5.0.jar" />
-        <get src="http://repo1.maven.org/maven2/antlr/antlr/2.7.6/antlr-2.7.6.jar" dest="${checkstyle.lib}/antlr-2.7.6.jar" />
-        <get src="http://repo1.maven.org/maven2/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar" dest="${checkstyle.lib}/commons-beanutils-core-1.7.0.jar" />
-        <get src="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.3/commons-logging-1.0.3.jar" dest="${checkstyle.lib}/commons-logging-1.0.3.jar" />
-        <get src="http://repo1.maven.org/maven2/com/google/collections/google-collections/0.9/google-collections-0.9.jar" dest="${checkstyle.lib}/google-collections-0.9.jar" />
-    </target>
-
-    <target name="checkstyle" description="Generate checkstyle report">
-        <path id="checkstyle.classpath">
-            <fileset dir="${checkstyle.lib}" />
-        </path>
+    <target name="checkstyle" depends="init-ivy" description="Generate checkstyle report">
+        <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="5.0"
+                       inline="true" conf="default" pathid="checkstyle.classpath" transitive="true" />
         <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
 
         <mkdir dir="${checkstyle.report.dir}" />
@@ -595,23 +598,10 @@ forceContextQualifier=${hudson.version.qualifier}
         ======================================================================================
      -->
 
-    <target name="init-ivy">
-        <property name="ivy.version"  value="2.2.0-rc1"/>
-        <property name="ivy.jar.url"  value="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
-        <property name="ivy.jar.dir"  value="${work.dir}"/>
-        <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
-        <mkdir dir="${ivy.jar.dir}"/>
-        <get src="${ivy.jar.url}" dest="${ivy.jar.file}" usetimestamp="true"/>
-        <path id="ivy.lib.path">
-            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-        </path>
-        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
-    </target>
-
     <!-- RAT Release Auditing Tool -->
     <property name="rat.version" value="0.7" description="Which Version of RAT to use"/>
 
-    <target name="rat" description="--> Runs the ReleaseAuditingTool"  depends="init-ivy" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <target name="rat" description="--> Runs the ReleaseAuditingTool"  depends="init-ivy">
         <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="${rat.version}"
                        inline="true" conf="default" pathid="rat.classpath" transitive="true"/>
         <typedef resource="org/apache/rat/anttasks/antlib.xml"
