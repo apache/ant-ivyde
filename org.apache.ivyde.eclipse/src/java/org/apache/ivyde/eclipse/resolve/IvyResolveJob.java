@@ -47,6 +47,12 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class IvyResolveJob extends Job {
 
+    private static final int MONITOR_LENGTH = 1000;
+
+    private static final int IVY_LOAD_LENGTH = 100;
+
+    private static final int POST_RESOLVE_LENGTH = 100;
+
     private static final int WAIT_BEFORE_LAUNCH = 1000;
 
     private final List resolveQueue = new ArrayList();
@@ -79,6 +85,8 @@ public class IvyResolveJob extends Job {
             resolveQueue.clear();
         }
 
+        monitor.beginTask("Loading ivy descriptors...", MONITOR_LENGTH);
+
         Map/* <ModuleDescriptor, ResolveRequest> */inworkspaceModules = new LinkedHashMap();
         List/* <ResolveRequest> */otherModules = new ArrayList();
         Map/* <ResolveRequest, Ivy> */ivys = new HashMap();
@@ -86,6 +94,8 @@ public class IvyResolveJob extends Job {
 
         MultiStatus errorsStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                 "Some projects fail to be resolved", null);
+
+        int step = IVY_LOAD_LENGTH / toResolve.size();
 
         // Ivy use the SaxParserFactory, and we want it to instanciate the xerces parser which is in
         // the dependencies of IvyDE, so accessible via the current classloader
@@ -103,6 +113,7 @@ public class IvyResolveJob extends Job {
                     cachedIvy.setErrorMarker(e);
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to configure Ivy for "
                             + request));
+                    monitor.worked(step);
                     continue;
                 }
                 cachedIvy.setErrorMarker(null);
@@ -117,6 +128,7 @@ public class IvyResolveJob extends Job {
                     cachedIvy.setErrorMarker(e);
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to load the descriptor for "
                             + request));
+                    monitor.worked(step);
                     continue;
                 } finally {
                     ivy.popContext();
@@ -128,10 +140,13 @@ public class IvyResolveJob extends Job {
                 } else {
                     otherModules.add(request);
                 }
+                monitor.worked(step);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(old);
         }
+
+        step = (MONITOR_LENGTH - IVY_LOAD_LENGTH - POST_RESOLVE_LENGTH) / toResolve.size();
 
         if (!inworkspaceModules.isEmpty()) {
             // for the modules which are using the workspace resolver, make sure
@@ -154,7 +169,8 @@ public class IvyResolveJob extends Job {
                 request = (ResolveRequest) inworkspaceModules.get(it.next());
                 Ivy ivy = (Ivy) ivys.get(request);
                 ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
-                boolean canceled = launchResolveThread(request, monitor, errorsStatus, ivy, md);
+                boolean canceled = launchResolveThread(request, monitor, step, errorsStatus, ivy,
+                    md);
                 if (canceled) {
                     return Status.CANCEL_STATUS;
                 }
@@ -167,18 +183,22 @@ public class IvyResolveJob extends Job {
                 ResolveRequest request = (ResolveRequest) it.next();
                 Ivy ivy = (Ivy) ivys.get(request);
                 ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
-                boolean canceled = launchResolveThread(request, monitor, errorsStatus, ivy, md);
+                boolean canceled = launchResolveThread(request, monitor, step, errorsStatus, ivy,
+                    md);
                 if (canceled) {
                     return Status.CANCEL_STATUS;
                 }
             }
         }
 
+        step = POST_RESOLVE_LENGTH / toResolve.size();
+
         // launch every post batch resolve
         Iterator itRequests = toResolve.iterator();
         while (itRequests.hasNext()) {
             ResolveRequest request = (ResolveRequest) itRequests.next();
             request.getResolver().postBatchResolve();
+            monitor.worked(step);
         }
 
         if (errorsStatus.getChildren().length != 0) {
@@ -189,14 +209,14 @@ public class IvyResolveJob extends Job {
     }
 
     private boolean launchResolveThread(ResolveRequest request, final IProgressMonitor monitor,
-            MultiStatus errorsStatus, final Ivy ivy, final ModuleDescriptor md) {
+            final int step, MultiStatus errorsStatus, final Ivy ivy, final ModuleDescriptor md) {
 
         final IStatus[] status = new IStatus[1];
 
         final IvyResolver resolver = request.getResolver();
         Runnable resolveRunner = new Runnable() {
             public void run() {
-                status[0] = resolver.resolve(ivy, md, monitor);
+                status[0] = resolver.resolve(ivy, md, monitor, step);
             }
         };
 

@@ -57,8 +57,6 @@ import org.eclipse.core.runtime.Status;
  */
 public class IvyResolver {
 
-    private static final int MONITOR_LENGTH = 1000;
-
     private boolean usePreviousResolveIfExist = false;
 
     private String[] confs;
@@ -105,14 +103,13 @@ public class IvyResolver {
         return project;
     }
 
-    public IStatus resolve(Ivy ivy, ModuleDescriptor md, IProgressMonitor monitor) {
+    public IStatus resolve(Ivy ivy, ModuleDescriptor md, IProgressMonitor monitor, int step) {
         computeConfs(confInput, md);
         try {
             ivy.pushContext();
-            IvyResolveJobListener ivyResolveJobListener = new IvyResolveJobListener(monitor);
+            IvyResolveJobListener ivyResolveJobListener = new IvyResolveJobListener(monitor, step);
             ivy.getEventManager().addIvyListener(ivyResolveJobListener);
 
-            monitor.beginTask("Resolve of " + toString(), MONITOR_LENGTH);
             monitor.setTaskName("Resolve of " + toString());
 
             ResolveResult result = new ResolveResult();
@@ -143,7 +140,6 @@ public class IvyResolver {
                 return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
-                monitor.done();
                 ivy.getEventManager().removeIvyListener(ivyResolveJobListener);
             }
 
