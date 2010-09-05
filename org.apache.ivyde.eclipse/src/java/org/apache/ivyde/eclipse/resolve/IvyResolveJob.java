@@ -85,7 +85,7 @@ public class IvyResolveJob extends Job {
             resolveQueue.clear();
         }
 
-        monitor.beginTask("Loading ivy descriptors...", MONITOR_LENGTH);
+        monitor.beginTask("Loading ivy descriptors", MONITOR_LENGTH);
 
         Map/* <ModuleDescriptor, ResolveRequest> */inworkspaceModules = new LinkedHashMap();
         List/* <ResolveRequest> */otherModules = new ArrayList();
@@ -105,6 +105,7 @@ public class IvyResolveJob extends Job {
             Iterator itRequests = toResolve.iterator();
             while (itRequests.hasNext()) {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
+                monitor.subTask("loading " + request.getResolver().toString());
                 CachedIvy cachedIvy = request.getCachedIvy();
                 Ivy ivy;
                 try {
@@ -193,10 +194,13 @@ public class IvyResolveJob extends Job {
 
         step = POST_RESOLVE_LENGTH / toResolve.size();
 
+        monitor.setTaskName("Post resolve");
+
         // launch every post batch resolve
         Iterator itRequests = toResolve.iterator();
         while (itRequests.hasNext()) {
             ResolveRequest request = (ResolveRequest) itRequests.next();
+            monitor.setTaskName(request.getResolver().toString());
             request.getResolver().postBatchResolve();
             monitor.worked(step);
         }
