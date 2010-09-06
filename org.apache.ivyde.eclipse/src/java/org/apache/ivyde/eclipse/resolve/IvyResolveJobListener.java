@@ -26,36 +26,32 @@ import org.apache.ivy.core.event.resolve.EndResolveDependencyEvent;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
 import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class IvyResolveJobListener implements TransferListener, IvyListener {
 
-    private static final int DOWNLOAD_MONITOR_LENGTH = 100;
-
     private static final int KILO_BITS_UNIT = 1024;
-
-    private static final int WORK_PER_ARTIFACT = 100;
 
     private static final int RESOLVE_PERCENT = 2;
 
     private long totalLength = 1;
 
-    private int workPerArtifact = WORK_PER_ARTIFACT;
+    private int workPerArtifact = 0;
 
     private long currentLength = 0;
 
-    private final IProgressMonitor monitor;
+    private int currentProgress = 0;
 
-    private IProgressMonitor dlmonitor;
+    private final IProgressMonitor monitor;
 
     private final int downloadStep;
 
     private int resolveStep;
 
-    public IvyResolveJobListener(IProgressMonitor monitor, int step) {
+    public IvyResolveJobListener(final IProgressMonitor monitor, int step) {
         this.monitor = monitor;
         this.resolveStep = step / RESOLVE_PERCENT;
         this.downloadStep = step;
@@ -68,21 +64,27 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
                 break;
             case TransferEvent.TRANSFER_STARTED:
                 currentLength = 0;
+                currentProgress = 0;
                 if (evt.isTotalLengthSet()) {
                     totalLength = evt.getTotalLength();
-                    dlmonitor
-                            .beginTask("downloading " + evt.getResource(), DOWNLOAD_MONITOR_LENGTH);
+                    monitor.subTask("downloading " + evt.getResource() + ": 0 / "
+                            + (totalLength / KILO_BITS_UNIT) + "kB");
                 }
                 break;
             case TransferEvent.TRANSFER_PROGRESS:
                 if (totalLength > 1) {
                     currentLength += evt.getLength();
-                    int progress = (int) (currentLength * DOWNLOAD_MONITOR_LENGTH / totalLength);
-                    dlmonitor.worked(progress);
+                    int progress = (int) ((currentLength * workPerArtifact) / totalLength);
+                    // log an accumulated diff
+                    monitor.worked(progress - currentProgress);
+                    currentProgress = progress;
                     monitor.subTask("downloading " + evt.getResource() + ": "
                             + (currentLength / KILO_BITS_UNIT) + " / "
                             + (totalLength / KILO_BITS_UNIT) + "kB");
                 }
+                break;
+            case TransferEvent.TRANSFER_COMPLETED:
+                monitor.worked(workPerArtifact - currentProgress);
                 break;
             default:
         }
@@ -90,9 +92,7 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
 
     public void progress(IvyEvent event) {
         if (event instanceof TransferEvent) {
-            if (dlmonitor != null) {
-                transferProgress((TransferEvent) event);
-            }
+            transferProgress((TransferEvent) event);
         } else if (event instanceof PrepareDownloadEvent) {
             PrepareDownloadEvent pde = (PrepareDownloadEvent) event;
             Artifact[] artifacts = pde.getArtifacts();
@@ -102,19 +102,14 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
         } else if (event instanceof StartArtifactDownloadEvent) {
             StartArtifactDownloadEvent evt = (StartArtifactDownloadEvent) event;
             monitor.subTask("downloading " + evt.getArtifact());
-            if (dlmonitor != null) {
-                dlmonitor.done();
-            }
-            dlmonitor = new SubProgressMonitor(monitor, workPerArtifact);
         } else if (event instanceof EndArtifactDownloadEvent) {
-            if (dlmonitor != null) {
-                dlmonitor.done();
-            }
+            monitor.worked(workPerArtifact - currentProgress);
+            currentProgress = 0;
             monitor.subTask(" ");
-            dlmonitor = null;
         } else if (event instanceof StartResolveDependencyEvent) {
             StartResolveDependencyEvent ev = (StartResolveDependencyEvent) event;
-            monitor.subTask("resolving " + ev.getDependencyDescriptor().getDependencyRevisionId());
+            ModuleRevisionId mrid = ev.getDependencyDescriptor().getDependencyRevisionId();
+            monitor.subTask("looking for " + mrid);
         } else if (event instanceof EndResolveDependencyEvent) {
             monitor.subTask(" ");
         } else if (event instanceof EndResolveEvent) {
