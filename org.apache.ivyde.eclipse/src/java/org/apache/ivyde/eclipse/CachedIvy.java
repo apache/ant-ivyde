@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
@@ -164,7 +165,7 @@ public abstract class CachedIvy {
             // first try the standard way
             File file;
             try {
-                file = new File(url.toURI());
+                file = new File(new URI(url.toString()));
             } catch (URISyntaxException e) {
                 // probably a badly constructed url: "file://" + filename
                 file = new File(url.getPath());

@@ -124,7 +124,9 @@ public class StandaloneRetrieveSerializer {
             if (e.getException() instanceof IOException) {
                 throw (IOException) e.getException();
             }
-            throw new IOException(e.getMessage(), e);
+            IOException ioe = new IOException(e.getMessage());
+            ioe.initCause(e);
+            throw ioe;
         }
     }
 
@@ -227,11 +229,13 @@ public class StandaloneRetrieveSerializer {
             Throwable t = e.getCause();
             if (t instanceof IOException) {
                 throw (IOException) t;
-            } else if (t != null) {
-                throw new IOException(t.getMessage(), t);
-            } else {
-                throw new IOException(e.getMessage(), e);
             }
+            if (t == null) {
+                t = e;
+            }
+            IOException ioe = new IOException(t.getMessage());
+            ioe.initCause(t);
+            throw ioe;
         }
 
     }
