@@ -60,6 +60,12 @@ Having two projects "A" and "B" configured to use IvyDE and the workspace resolv
 <tr><td>[1.2,1.3)</td><td>$version</td><td>no project wiring</td></tr>
 </table>
 
+In some setup, if you want to mix some resolver of your own and the workspace resolver, and still want the transitive dependencies work nicely between them, you may want to turn the resolve mode to <a href="http://ant.apache.org/ivy/history/latest-milestone/use/resolve.html">dynamic</a>:
+<ul>
+    <li>see the defaultResolveMode attribute of <a href="http://ant.apache.org/ivy/history/latest-milestone/settings/settings.html">settings</a> in the ivysettings.</li>
+    <li>see the resolveMode attribute of <a href="http://ant.apache.org/ivy/history/latest-milestone/settings/module.html">module</a> in the ivysettings.</li>
+</ul>
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
