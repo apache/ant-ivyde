@@ -64,8 +64,10 @@ public final class IvyClasspathContainerConfAdapter {
         }
         conf.setAttributes(attributes);
 
-        // ensure that the project has the Ivy nature
-        IvyNature.addNature(conf.getJavaProject().getProject());
+        if (!FakeProjectManager.isFake(conf.getJavaProject())) {
+            // ensure that the project has the Ivy nature
+            IvyNature.addNature(conf.getJavaProject().getProject());
+        }
     }
 
     /**

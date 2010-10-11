@@ -49,55 +49,52 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
 
     public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry,
             ILaunchConfiguration configuration) throws CoreException {
-        IJavaProject project = entry.getJavaProject();
-        if (project == null) {
-            project = JavaRuntime.getJavaProject(configuration);
-        }
-        return computeDefaultContainerEntries(entry, project);
-    }
-
-    private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(
-            IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
-        if (project == null || entry == null) {
+        if (entry == null) {
             // cannot resolve without entry or project context
             return new IRuntimeClasspathEntry[0];
         }
-        IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-        if (container == null) {
-            String message = "Could not resolve classpath container: " + entry.getPath().toString();
-            throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID,
-                    IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, null));
-            // execution will not reach here - exception will be thrown
+
+        IvyClasspathContainer ivycp;
+
+        IJavaProject project = entry.getJavaProject();
+        if (project == null) {
+            project = JavaRuntime.getJavaProject(configuration);
+            ivycp = new IvyClasspathContainer(FakeProjectManager.createPlaceholderProject(),
+                    entry.getPath(), null, null);
+        } else {
+            IClasspathContainer container = JavaCore
+                    .getClasspathContainer(entry.getPath(), project);
+            if (container == null) {
+                String message = "Could not resolve classpath container: "
+                        + entry.getPath().toString();
+                throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID,
+                        IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, null));
+                // execution will not reach here - exception will be thrown
+            }
+            ivycp = (IvyClasspathContainer) container;
         }
-        IvyClasspathContainer ivycp = (IvyClasspathContainer) container;
-        if (ivycp.getConf().isInheritedResolveBeforeLaunch()) {
+
+        return computeDefaultContainerEntries(ivycp, entry, project);
+    }
+
+    private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(
+            IvyClasspathContainer ivycp, IRuntimeClasspathEntry entry, IJavaProject project)
+            throws CoreException {
+        if (ivycp.getClasspathEntries() == null
+                || ivycp.getConf().isInheritedResolveBeforeLaunch()) {
             IStatus status = ivycp.launchResolve(false, new NullProgressMonitor());
             if (status.getCode() != IStatus.OK) {
                 throw new CoreException(status);
             }
         }
-        IClasspathEntry[] cpes = container.getClasspathEntries();
-        int property;
-        switch (container.getKind()) {
-            case IClasspathContainer.K_APPLICATION:
-                property = IRuntimeClasspathEntry.USER_CLASSES;
-                break;
-            case IClasspathContainer.K_DEFAULT_SYSTEM:
-                property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-                break;
-            case IClasspathContainer.K_SYSTEM:
-                property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-                break;
-            default:
-                property = -1;
-        }
+        IClasspathEntry[] cpes = ivycp.getClasspathEntries();
         List resolved = new ArrayList(cpes.length);
         List projects = new ArrayList();
         for (int i = 0; i < cpes.length; i++) {
             IClasspathEntry cpe = cpes[i];
             if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-                IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(
-                    cpe.getPath().segment(0));
+                IProject p = ResourcesPlugin.getWorkspace().getRoot()
+                        .getProject(cpe.getPath().segment(0));
                 IJavaProject jp = JavaCore.create(p);
                 if (!projects.contains(jp)) {
                     projects.add(jp);
@@ -124,7 +121,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
         IRuntimeClasspathEntry[] result = new IRuntimeClasspathEntry[resolved.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = (IRuntimeClasspathEntry) resolved.get(i);
-            result[i].setClasspathProperty(property);
+            result[i].setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
         }
         return result;
     }
@@ -134,7 +131,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
         if (!(entry instanceof IRuntimeClasspathEntry2)) {
             return new IRuntimeClasspathEntry[] {entry};
         }
-        
+
         IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
         IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(null);
         List resolved = new ArrayList();

@@ -92,16 +92,12 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     }
                 }
 
-                // FIXME : this breaks the java launcher. IvyDERuntimeClasspathEntryResolver gets an
-                // unconfigured container. The culprit may be the resolver which doesn't handle properly
-                // project less container.
-
                 // recompute the path as it may have been "upgraded"
-                // IPath updatedPath = IvyClasspathContainerConfAdapter.getPath(ivycp.getConf());
-                // if (!updatedPath.equals(containerPath)) {
-                // updateIvyDEContainerPath(project, entry, attributes, exported, updatedPath);
-                // return;
-                // }
+                IPath updatedPath = IvyClasspathContainerConfAdapter.getPath(ivycp.getConf());
+                if (!updatedPath.equals(containerPath)) {
+                    updateIvyDEContainerPath(project, entry, attributes, exported, updatedPath);
+                    return;
+                }
 
                 JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project},
                     new IClasspathContainer[] {ivycp}, null);
@@ -123,8 +119,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     }
 
     private void updateIvyDEContainerPath(final IJavaProject project, final IClasspathEntry entry,
-            final IClasspathAttribute[] attributes, final boolean exported,
-            final IPath updatedPath) {
+            final IClasspathAttribute[] attributes, final boolean exported, final IPath updatedPath) {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 try {

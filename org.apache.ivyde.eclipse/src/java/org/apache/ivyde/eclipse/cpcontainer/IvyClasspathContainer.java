@@ -140,7 +140,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     private void setClasspathEntries(final IClasspathEntry[] entries) {
-        Display.getDefault().asyncExec(new Runnable() {
+        Display.getDefault().syncExec(new Runnable() {
             public void run() {
                 if (conf.isInheritedAlphaOrder()) {
                     Arrays.sort(entries, new Comparator() {
