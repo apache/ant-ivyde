@@ -265,8 +265,7 @@ public class IvyResolver {
 
     private void maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
             IProgressMonitor monitor) throws IOException {
-        if (result.isPreviousUsed() || retrievePattern == null
-                || FakeProjectManager.isFake(project)) {
+        if (retrievePattern == null || FakeProjectManager.isFake(project)) {
             return;
         }
 
@@ -274,7 +273,9 @@ public class IvyResolver {
         monitor.setTaskName("retrieving dependencies in " + pattern);
         RetrieveOptions options = new RetrieveOptions();
         options.setSync(retrieveSync);
-        options.setResolveId(result.getReport().getResolveId());
+        if (!result.isPreviousUsed()) {
+            options.setResolveId(result.getReport().getResolveId());
+        }
         options.setConfs(confs);
         if (retrieveTypes != null && !retrieveTypes.equals("*")) {
             List typeList = IvyClasspathUtil.split(retrieveTypes);
