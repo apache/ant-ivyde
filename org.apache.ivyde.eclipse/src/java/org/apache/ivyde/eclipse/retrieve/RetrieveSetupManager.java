@@ -40,7 +40,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class RetrieveSetupManager implements ISaveParticipant {
 
-    private static final String PREF_ID = "org.apache.ivyde.eclipse.standlaoneretrieve";
+    private static final String PREF_ID = "org.apache.ivyde.eclipse.standaloneretrieve";
 
     private Map/* <IProject, IEclipsePreferences> */projectPrefs = new HashMap();
 
