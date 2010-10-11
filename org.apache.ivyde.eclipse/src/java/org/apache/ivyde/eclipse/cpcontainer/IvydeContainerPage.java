@@ -37,8 +37,10 @@ import org.apache.ivyde.eclipse.ui.IvySettingsTab;
 import org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -203,9 +205,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         if (advancedProjectSpecificButton.getSelection()) {
             conf.setAdvancedProjectSpecific(true);
-            conf
-                    .setContainerMappingSetup(acceptedSuffixesTypesComposite
-                            .getContainerMappingSetup());
+            conf.setContainerMappingSetup(acceptedSuffixesTypesComposite.getContainerMappingSetup());
             conf.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
             conf.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
             conf.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
@@ -254,8 +254,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         if (entry == null) {
             conf = new IvyClasspathContainerConfiguration(project, "ivy.xml", true);
         } else {
-            conf = new IvyClasspathContainerConfiguration(project, entry.getPath(), true, entry
-                    .getExtraAttributes());
+            conf = new IvyClasspathContainerConfiguration(project, entry.getPath(), true,
+                    entry.getExtraAttributes());
             exported = entry.isExported();
         }
         state = new IvyClasspathContainerState(conf);
@@ -267,6 +267,18 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         checkProject();
         conf = new IvyClasspathContainerConfiguration(project, ivyfile.getProjectRelativePath()
                 .toString(), true);
+        // if there is an ivysettings.xml file at the root of the project, configure the container
+        // to use it
+        if (!FakeProjectManager.isFake(project)) {
+            IResource settings = project.getProject().findMember(new Path("ivysettings.xml"));
+            if (settings != null) {
+                conf.setSettingsProjectSpecific(true);
+                IvySettingsSetup setup = new IvySettingsSetup();
+                setup.setIvySettingsPath("${workspace_loc:" + project.getElementName()
+                        + "/ivysettings.xml}");
+                conf.setIvySettingsSetup(setup);
+            }
+        }
         state = new IvyClasspathContainerState(conf);
     }
 
@@ -464,16 +476,16 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             alphaOrderCheck.select(conf.isAlphaOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(conf.isResolveInWorkspace());
             resolveBeforeLaunchCheck.setSelection(conf.isResolveBeforeLaunch());
-            classpathTypeComposite.init(conf.isRetrievedClasspath(), conf
-                .getRetrievedClasspathSetup());
+            classpathTypeComposite.init(conf.isRetrievedClasspath(),
+                conf.getRetrievedClasspathSetup());
         } else {
             advancedProjectSpecificButton.setSelection(false);
             acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
             resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
-            classpathTypeComposite.init(helper.isRetrievedClasspath(), helper
-                .getRetrievedClasspathSetup());
+            classpathTypeComposite.init(helper.isRetrievedClasspath(),
+                helper.getRetrievedClasspathSetup());
         }
 
         settingsTab.updateFieldsStatusSettings();

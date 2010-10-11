@@ -38,7 +38,7 @@ public class IvySettingsSetup {
 
     private String ivySettingsPath;
 
-    private List/* <String> */propertyFiles;
+    private List/* <String> */propertyFiles = new ArrayList();
 
     private boolean loadSettingsOnDemand = false;
 

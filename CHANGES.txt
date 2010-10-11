@@ -8,6 +8,7 @@
 - NEW: support for retrieve configuration in non Java project
 - NEW: an IvyDE classpath can now be retrieved (IVYDE-56)
 - NEW: Add branch comparison to workspace resolver (IVYDE-234) (thanks to Jeffrey M. Metcalf)
+- NEW: Look for ivysettings.xml file in project root copying the behavior of ivy ant task (IVYDE-258)
 
 - IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)
 - IMPROVE: IvyDE now resolve by batch, then preventing too many workspace build (IVYDE-177)
