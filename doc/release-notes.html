@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+    <textarea id="xooki-source">
+<ol>
+    <li><a href="#what">What is Apache IvyDE?</a></li>
+    <li><a href="#status">Status of this release</a></li>
+    <li><a href="#majorchanges">Major Changes in this Release</a></li>
+    <li><a href="#contrib">Committers and Contributors for this release</a></li>
+    <li><a href="#changes">List of Changes in this Release</a></li>
+</ol>
+
+<h1><a name="what"></a>What is Apache IvyDE?</h1>
+
+IvyDE is the plugin which integrate Ivy into Eclipse.
+
+IvyDE lets you manage your dependencies declared in an ivy.xml in your Java
+Eclipse projects. IvyDE will contribute to the classpath of your Java project or
+you can make it retrieve your dependencies directly into your project. Last but
+not least IvyDE offer editors of ivy.xml and ivysettings.xml files with completion.
+
+<h1><a name="status"></a>Status of this release</h1>
+
+TO BE DISCUSSED
+
+This release contains sevral major improvements along with some bug fixes. The major
+improvements are about the resolve scheduler and how retrieved artifact are handled.
+Thus this release is considered as a beta one.
+
+<h1><a name="majorchanges"></a>Major Changes in this Release</h1>
+
+As for this release and the next ones, IvyDE now expects to be installed in Eclipse 3.4 or superior.
+
+IvyDE has now a synchronous job to launch resolve of dependencies on the projets. So
+IvyDE will be able to order the resolve of the projects in the correct order regarding
+their inter dependencies. And the immediate effect is that Eclipse get notified only
+one time of a classpath change, and thus triggerin only one wrokspace build.
+
+IvyDE is now capable of having a classpath based on retrieved artifact rather than
+on the cached ones.
+
+The existing retrieve configuration are now considered "standonale" ones, as they
+are independant of the classpath container. They can even now be part of non Java
+project.
+
+<h1><a name="contrib"></a>Committers and Contributors for this Release</h1>
+
+Here is the list of people who have contributed source code and documentation
+to this release. Many thanks to all of them, and also to the whole IvyDE community
+contributing ideas and feedback, and promoting the use of IvyDE. The list would be too
+long, but IvyDE couldn't be what it is without you!
+
+<ul>Committers
+<li>Maarten Coene</li>
+<li>Xavier Hanin</li>
+<li>Nicolas Lalev&eacute;e</li>
+<li>Jon Schneider</li>
+<li>Gilles Scokart</li>
+</ul>
+<ul>Contributors:
+<li>Clint Burghduff</li>
+<li>Gregory Fernandez</li>
+<li>Jeffrey M. Metcalf</li>
+</ul>
+
+<h1><a name="changes"></a>List of Changes in this Release</h1>
+
+For details about the following changes, check our JIRA install at 
+https://issues.apache.org/jira/browse/ivyde
+
+List of changes since IvyDE 2.1.0:
+<ul>
+    <li>NEW: Custom color in XML editors (IVYDE-73)</li>
+    <li>NEW: support for retrieve configuration in non Java project</li>
+    <li>NEW: an IvyDE classpath can now be retrieved (IVYDE-56)</li>
+    <li>NEW: Add branch comparison to workspace resolver (IVYDE-234) (thanks to Jeffrey M. Metcalf)</li>
+    <li>NEW: Look for ivysettings.xml file in project root copying the behavior of ivy ant task (IVYDE-258)</li>
+</ul><ul>
+    <li>IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)</li>
+    <li>IMPROVE: IvyDE now resolve by batch, then preventing too many workspace build (IVYDE-177)</li>
+    <li>IMPROVE: Shared Javadoc/Source attachments (IVYDE-230) (thanks to Gregory Fernandez)</li>
+    <li>IMPROVE: WorkspaceResolver: deal with self-dependencies (IVYDE-240)</li>
+    <li>IMPROVE: Impossible to resolve dependencies: missing diagnostics (IVYDE-233)</li>
+</ul><ul>
+    <li>FIX: Variable based path for ivysettings doesn't work it there are some spaces in the path (IVYDE-253)</li>
+    <li>FIX: Triggers are not called (IVYDE-244)</li>
+    <li>FIX: Missing ivysettings.xml can make the classpath container config to change (IVYDE-248)</li>
+</ul>
+
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

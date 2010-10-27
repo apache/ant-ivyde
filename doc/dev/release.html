@@ -60,24 +60,7 @@ The header should look like this
 <title>${title} | IvyDE $VERSION Documentation</title>
 </code>
 
-<h2>Release notes</h2>
-
-Go edit the RELEASE_NOTES.txt files. There are two things to change, marked by some <tt>TODO WHEN RELEASING</tt>:
-<ul>
-    <li>the list of contributors should be filled according to the "thanks to" in the CHANGE.txt file</li>
-    <li>the list of bug/features fixed in the release should be filled from the one in the CHANGE.txt file</li>
-</ul>
-
-Edit the IvyDE doc and add a new page just under the root of the documentation tree:
-<ul>
-    <li>Child page title: Release Notes</li>
-    <li>Child page path: release-notes</li>
-</ul>
-
-As content in that doc, copy paste the content of the RELEASE_NOTES.txt file.
-Then you should improve the style of the page by adding some h1, h2, remove unwanted line break. Normally you shouldn't care about the http link or the jira issue, xooki will take care of them.
-
-<h2>Commit your change</h2>
+<h2>Commit your changes</h2>
 
 Don't forget to commit the changes you've done into the release branch.
 
@@ -225,6 +208,15 @@ Update the versions needs to be updated in the following files:
 <li>build.properties (edit the qualifier)</li>
 <li>org.apache.ivyde.eclipse/META-INF/MANIFEST.MF</li>
 <li>org.apache.ivyde.feature/feature.xml</li>
+</ul>
+
+<h2>Clean up the release notes</h2>
+
+Edit the release notes in the documentation (doc/release-notes.html):
+<ul>
+    <li>edit the content under "Status of this release": update it with the goal of the next release, or a TODO if it has not yet been defined</li>
+    <li>edit the content under "Major Changes in this Release": wipe it all and put there something like "Nothing done yet"</li>
+    <li>edit the content under "List of Changes in this Release": remove the list of entries and update the version in "List of changes since IvyDE X.X.X"</li>
 </ul>
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>

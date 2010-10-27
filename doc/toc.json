@@ -23,6 +23,13 @@
         "title":"Documentation",
         "children": [
             {
+              "id":"release-notes",
+              "title":"Release Notes",
+              "children": [
+
+                ]
+            },
+            {
               "id":"compatibility",
               "title":"Compatibility",
               "children": [
