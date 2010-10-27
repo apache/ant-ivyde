@@ -34,6 +34,10 @@ In this doc, the released version is denoted as $VERSION, so it HAVE to be repla
 
 First in <a href="https://issues.apache.org/jira/browse/IVYDE">Jira</a> make sure that no more issues are opened for the target release.
 
+<h2>Release notes</h2>
+
+Make sure the release notes and the annoucement are up to date. Look at doc/release-notes.html.
+
 <h2>Release branch</h2>
 
 Some modifications of the branch are need to do the release. So a new branch is needed:
@@ -138,6 +142,12 @@ cp -R ~/public_html/ivyde-$VERSION /www/www.apache.org/dist/ant/ivyde/$VERSION
 
 Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html#deployment
 
+<h1>Annoucement</h1>
+
+The annoucement should have been already prepared and reviewed by other committers. Its content can be found in doc/release-notes.html.
+
+With that content, send a mail to announce@apache.org, ivy-user@ant.apache.org and dev@ant.apache.org with the title "[ANNOUNCE] Apache IvyDE $VERSION released", and with your apache email as sender (announce@ requires it). 
+
 <h1>Update the documentation</h1>
 
 <h2>Update the table of content</h2>
@@ -212,8 +222,9 @@ Update the versions needs to be updated in the following files:
 
 <h2>Clean up the release notes</h2>
 
-Edit the release notes in the documentation (doc/release-notes.html):
+Edit the release notes in the documentation (doc/release-notes.html) so it can be prepared and maintanined for the next release:
 <ul>
+    <li>edit the content under "Release Annoucement": edit the version it is talking about and clean it up so it is a summary of the release notes</li>
     <li>edit the content under "Status of this release": update it with the goal of the next release, or a TODO if it has not yet been defined</li>
     <li>edit the content under "Major Changes in this Release": wipe it all and put there something like "Nothing done yet"</li>
     <li>edit the content under "List of Changes in this Release": remove the list of entries and update the version in "List of changes since IvyDE X.X.X"</li>

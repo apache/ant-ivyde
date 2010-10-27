@@ -25,16 +25,51 @@
 <body>
     <textarea id="xooki-source">
 <ol>
+    <li><a href="#annoucement">Release Annoucement</a></li>
     <li><a href="#what">What is Apache IvyDE?</a></li>
     <li><a href="#status">Status of this release</a></li>
     <li><a href="#majorchanges">Major Changes in this Release</a></li>
-    <li><a href="#contrib">Committers and Contributors for this release</a></li>
+    <li><a href="#contrib">Committers and Contributors for this Release</a></li>
     <li><a href="#changes">List of Changes in this Release</a></li>
 </ol>
 
+<h1><a name="annoucement"></a>Release Annoucement</h1>
+
+<tt>
+The Apache IvyDE project is pleased to announce its 2.2.0 beta release.
+
+IvyDE is the plugin which integrates Ivy into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects. IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
+
+Major changes in this release:
+* a synchronous resolve job has been introduced to take into account projet's inter dependencies and avoid too many workspace build,
+* resolved classpath can now be based on retrieved artifacts,
+* IvyDE retrieve feature can now be use on non Java projets
+
+Compatibility:
+* this release is expected to work with every version of Ivy 2.1 or superior
+* as for this release and the next ones, IvyDE now expects to be installed in Eclipse 3.4 or superior.
+
+This release is considered as beta since the important changes in IvyDE resolve feature. We encourage our early users to test it and report us any issue they found.
+
+A more detailed release notes can be read there:
+http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
+
+Issues should be reported to:
+https://issues.apache.org/jira/browse/IVYDE
+
+Download the 2.2.0 beta release at:
+http://ant.apache.org/ivy/ivyde/download.cgi
+
+Or use directly the Eclipse updatesite:
+http://www.apache.org/dist/ant/ivyde/updatesite
+
+More information can be found on the IvyDE website:
+http://ant.apache.org/ivy/ivyde/
+</tt>
+
 <h1><a name="what"></a>What is Apache IvyDE?</h1>
 
-IvyDE is the plugin which integrate Ivy into Eclipse.
+IvyDE is the plugin which integrate Ivy dependency management into Eclipse.
 
 IvyDE lets you manage your dependencies declared in an ivy.xml in your Java
 Eclipse projects. IvyDE will contribute to the classpath of your Java project or
@@ -42,8 +77,6 @@ you can make it retrieve your dependencies directly into your project. Last but
 not least IvyDE offer editors of ivy.xml and ivysettings.xml files with completion.
 
 <h1><a name="status"></a>Status of this release</h1>
-
-TO BE DISCUSSED
 
 This release contains sevral major improvements along with some bug fixes. The major
 improvements are about the resolve scheduler and how retrieved artifact are handled.
@@ -87,10 +120,7 @@ long, but IvyDE couldn't be what it is without you!
 
 <h1><a name="changes"></a>List of Changes in this Release</h1>
 
-For details about the following changes, check our JIRA install at 
-https://issues.apache.org/jira/browse/ivyde
-
-List of changes since IvyDE 2.1.0:
+List of changes since <a href="/ivy/ivyde/history/2.1.0/release-notes.html">IvyDE 2.1.0</a>:
 <ul>
     <li>NEW: Custom color in XML editors (IVYDE-73)</li>
     <li>NEW: support for retrieve configuration in non Java project</li>
@@ -108,6 +138,9 @@ List of changes since IvyDE 2.1.0:
     <li>FIX: Triggers are not called (IVYDE-244)</li>
     <li>FIX: Missing ivysettings.xml can make the classpath container config to change (IVYDE-248)</li>
 </ul>
+
+Most of our changes are logged in our JIRA, where you can find comments and links to our subversion:
+https://issues.apache.org/jira/browse/ivyde
 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
