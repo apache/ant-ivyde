@@ -69,6 +69,13 @@
                       ]
                   },
                   {
+                    "id":"cpc/jarmapping",
+                    "title":"Jar mapping",
+                    "children": [
+
+                      ]
+                  },
+                  {
                     "id":"cpc/cleancache",
                     "title":"Clean the caches",
                     "children": [
