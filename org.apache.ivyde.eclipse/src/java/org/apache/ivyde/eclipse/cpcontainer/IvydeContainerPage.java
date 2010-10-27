@@ -488,6 +488,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 helper.getRetrievedClasspathSetup());
         }
 
+        if (FakeProjectManager.isFake(project)) {
+            // container in a launch config: always resolve before launch
+            resolveBeforeLaunchCheck.setEnabled(false);
+            resolveBeforeLaunchCheck.setSelection(true);
+        }
+
         settingsTab.updateFieldsStatusSettings();
         updateFieldsStatusAdvanced();
     }
@@ -499,7 +505,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
-        resolveBeforeLaunchCheck.setEnabled(projectSpecific);
+        resolveBeforeLaunchCheck.setEnabled(projectSpecific && !FakeProjectManager.isFake(project));
         classpathTypeComposite.setEnabled(projectSpecific);
     }
 
