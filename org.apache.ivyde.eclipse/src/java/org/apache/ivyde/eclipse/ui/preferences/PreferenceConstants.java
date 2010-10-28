@@ -110,4 +110,6 @@ public final class PreferenceConstants {
 
     public static final String MAP_IF_ONLY_ONE_JAVADOC = "mapIfOnlyOneJavadoc";
 
+    public static final String OFFLINE = "offline";
+
 }

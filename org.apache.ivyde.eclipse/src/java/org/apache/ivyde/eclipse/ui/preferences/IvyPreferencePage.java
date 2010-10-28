@@ -65,6 +65,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private Button doNothingOnChangeButton;
 
+    private Button offlineButton;
+
     public IvyPreferencePage() {
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
         Object ivydeVersion = IvyPlugin.getDefault().getBundle().getHeaders().get(
@@ -86,6 +88,10 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
         Label horizontalLine = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
         horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+        offlineButton = new Button(composite, SWT.CHECK);
+        offlineButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+        offlineButton.setText("Offline (use only the caches)");
 
         Group startupGroup = new Group(composite, SWT.NONE);
         startupGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -170,6 +176,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
         organizationText.setText(helper.getIvyOrg());
         organizationUrlText.setText(helper.getIvyOrgUrl());
+
+        offlineButton.setSelection(helper.isOffline());
     }
 
     public boolean performOk() {
@@ -191,6 +199,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
         helper.setOrganization(organizationText.getText());
         helper.setOrganizationUrl(organizationUrlText.getText());
+        
+        helper.setOffline(offlineButton.getSelection());
         return true;
     }
 
@@ -218,5 +228,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
         organizationText.setText(PreferenceInitializer.DEFAULT_ORGANISATION);
         organizationUrlText.setText(PreferenceInitializer.DEFAULT_ORGANISATION_URL);
+
+        offlineButton.setSelection(PreferenceInitializer.DEFAULT_OFFLINE);
     }
 }

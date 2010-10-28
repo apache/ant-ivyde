@@ -73,6 +73,8 @@ public class IvyResolver {
 
     private final String ivyXmlPath;
 
+    private boolean useCacheOnly = IvyPlugin.getPreferenceStoreHelper().isOffline();
+
     public IvyResolver(String ivyXmlPath, List confInput, IProject project) {
         this.ivyXmlPath = ivyXmlPath;
         this.confInput = confInput;
@@ -93,6 +95,10 @@ public class IvyResolver {
 
     public void setRetrieveTypes(String retrieveTypes) {
         this.retrieveTypes = retrieveTypes;
+    }
+
+    public void setUseCacheOnly(boolean useCacheOnly) {
+        this.useCacheOnly = useCacheOnly;
     }
 
     public String getIvyXmlPath() {
@@ -205,8 +211,10 @@ public class IvyResolver {
 
     private ResolveResult doResolve(Ivy ivy, ModuleDescriptor md) throws ParseException,
             IOException {
-        ResolveOptions resolveOption = new ResolveOptions().setConfs(confs);
+        ResolveOptions resolveOption = new ResolveOptions();
+        resolveOption.setConfs(confs);
         resolveOption.setValidate(ivy.getSettings().doValidate());
+        resolveOption.setUseCacheOnly(useCacheOnly);
         ResolveReport report = ivy.resolve(md, resolveOption);
 
         ResolveResult result = new ResolveResult(report);

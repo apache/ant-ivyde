@@ -271,4 +271,12 @@ public class IvyDEPreferenceStoreHelper {
                 .getRetrieveTypes());
     }
 
+    public boolean isOffline() {
+        return prefStore.getBoolean(PreferenceConstants.OFFLINE);
+    }
+
+    public void setOffline(boolean offline) {
+        prefStore.setValue(PreferenceConstants.OFFLINE, offline);
+    }
+
 }

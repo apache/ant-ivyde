@@ -120,6 +120,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         DEFAULT_RETRIEVED_CLASSPATH_SETUP.setRetrieveTypes(DEFAULT_RETRIEVED_CLASSPATH_TYPES);
     }
 
+    public static final boolean DEFAULT_OFFLINE = false;
+
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
@@ -179,6 +181,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             DEFAULT_RETRIEVED_CLASSPATH_SYNC);
         store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES,
             DEFAULT_RETRIEVED_CLASSPATH_TYPES);
+
+        store.setDefault(PreferenceConstants.OFFLINE, DEFAULT_OFFLINE);
     }
 
 }
