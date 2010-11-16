@@ -54,7 +54,7 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
     public IvyResolveJobListener(final IProgressMonitor monitor, int step) {
         this.monitor = monitor;
         this.resolveStep = step / RESOLVE_PERCENT;
-        this.downloadStep = step;
+        this.downloadStep = step - resolveStep;
     }
 
     public void transferProgress(TransferEvent evt) {
@@ -98,6 +98,8 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
             Artifact[] artifacts = pde.getArtifacts();
             if (artifacts.length > 0) {
                 workPerArtifact = downloadStep / artifacts.length;
+            } else {
+                monitor.worked(downloadStep);
             }
         } else if (event instanceof StartArtifactDownloadEvent) {
             StartArtifactDownloadEvent evt = (StartArtifactDownloadEvent) event;
