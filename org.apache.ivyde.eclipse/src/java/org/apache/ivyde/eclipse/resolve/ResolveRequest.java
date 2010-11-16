@@ -48,4 +48,7 @@ public class ResolveRequest {
         return inWorkspace;
     }
 
+    public String toString() {
+        return resolver.toString();
+    }
 }
