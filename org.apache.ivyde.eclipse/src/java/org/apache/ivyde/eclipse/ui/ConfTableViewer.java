@@ -149,7 +149,11 @@ public class ConfTableViewer extends Composite {
     }
 
     public void setModuleDescriptor(ModuleDescriptor md) {
-        orderedConfigurations = md.getConfigurations();
+        if (md == null) {
+            orderedConfigurations = new Configuration[0];
+        } else {
+            orderedConfigurations = md.getConfigurations();
+        }
         confTableViewer.setInput(orderedConfigurations);
     }
 
