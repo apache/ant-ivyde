@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -55,11 +56,18 @@ public class IvySettingsSetup {
         this.loadSettingsOnDemand = setup.loadSettingsOnDemand;
     }
 
-    public String getResolvedIvySettingsPath() throws IvyDEException {
+    public String getResolvedIvySettingsPath(IProject project) throws IvyDEException {
         String url;
         IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+        String path;
+        if (project != null) {
+            path = ivySettingsPath.replaceAll("\\$\\{ivyproject_loc\\}", "\\${workspace_loc:"
+                + project.getName() + "}");
+        } else {
+            path = ivySettingsPath;            
+        }
         try {
-            url = manager.performStringSubstitution(ivySettingsPath, false);
+            url = manager.performStringSubstitution(path, false);
         } catch (CoreException e) {
             throw new IvyDEException("Unrecognized variables",
                     "Unrecognized variables in the Ivy settings file " + ivySettingsPath, e);

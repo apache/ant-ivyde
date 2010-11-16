@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IJavaProject;
@@ -206,12 +207,19 @@ public class IvyClasspathContainerConfiguration {
     // Getters that take into account the global preferences
     // ///////////////////////////
 
+    private IProject getProject() {
+        if (javaProject == null) {
+            return null;
+        }
+        return javaProject.getProject();
+    }
+
     public String getInheritedIvySettingsPath() throws IvyDEException {
         if (!isSettingsProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .getResolvedIvySettingsPath();
+                    .getResolvedIvySettingsPath(getProject());
         }
-        return ivySettingsSetup.getResolvedIvySettingsPath();
+        return ivySettingsSetup.getResolvedIvySettingsPath(getProject());
     }
 
     public boolean getInheritedLoadSettingsOnDemandPath() {

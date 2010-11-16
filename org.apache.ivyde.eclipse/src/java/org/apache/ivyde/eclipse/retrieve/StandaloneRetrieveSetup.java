@@ -99,9 +99,9 @@ public class StandaloneRetrieveSetup {
     public String getInheritedIvySettingsPath() throws IvyDEException {
         if (!isSettingsProjectSpecific) {
             return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .getResolvedIvySettingsPath();
+                    .getResolvedIvySettingsPath(project);
         }
-        return ivySettingsSetup.getResolvedIvySettingsPath();
+        return ivySettingsSetup.getResolvedIvySettingsPath(project);
     }
 
     public Collection getInheritedPropertyFiles() throws IvyDEException {
