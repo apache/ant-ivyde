@@ -24,39 +24,53 @@ import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TableColumn;
 
 public class ConfTableViewer extends Composite {
 
     private CheckboxTableViewer confTableViewer;
 
-    private ModuleDescriptor md;
-
-    private Link select;
-
     private final List listeners = new ArrayList();
+
+    private Button selectAll;
+
+    private Button up;
+
+    private Button down;
+
+    private Configuration[] orderedConfigurations = new Configuration[0];
 
     public ConfTableViewer(Composite parent, int style) {
         super(parent, style);
-        GridLayout layout = new GridLayout();
+        GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         setLayout(layout);
+
+        selectAll = new Button(this, SWT.CHECK);
+        selectAll.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+        selectAll.setText("Select every configuration");
+        selectAll.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                confTableViewer.getTable().setEnabled(!selectAll.getSelection());
+                confTableUpdated();
+            }
+        });
 
         confTableViewer = CheckboxTableViewer.newCheckList(this, SWT.BORDER | SWT.H_SCROLL
                 | SWT.V_SCROLL);
@@ -74,70 +88,100 @@ public class ConfTableViewer extends Composite {
         confTableViewer.setColumnProperties(new String[] {"Name", "Description"});
         confTableViewer.getTable().setLayoutData(
             new GridData(GridData.FILL, GridData.FILL, true, true));
-        confTableViewer.setContentProvider(new IStructuredContentProvider() {
-            public Object[] getElements(Object inputElement) {
-                if (md != null) {
-                    return md.getConfigurations();
-                }
-                return new Configuration[0];
-            }
-
-            public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-                // nothing to do
-            }
-
-            public void dispose() {
-                // nothing to do
-            }
-        });
+        confTableViewer.setContentProvider(ArrayContentProvider.getInstance());
         confTableViewer.setLabelProvider(new ConfigurationLabelProvider());
         confTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
+                updateUpDownEnableButtons();
                 confTableUpdated();
             }
         });
 
-        select = new Link(this, SWT.PUSH);
-        select.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        select.setText("<A>All</A>/<A>None</A>");
-        select.addSelectionListener(new SelectionAdapter() {
+        Composite upDownButtons = new Composite(this, SWT.NONE);
+        upDownButtons.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true));
+        upDownButtons.setLayout(new GridLayout());
+
+        up = new Button(upDownButtons, SWT.PUSH);
+        up.setText("Up");
+        up.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+        up.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (e.text.equals("All") && md != null) {
-                    confTableViewer.setCheckedElements(md.getConfigurations());
-                } else {
-                    confTableViewer.setCheckedElements(new Configuration[0]);
-                }
+                int i = getSelectedConfigurationIndex();
+                Configuration c = orderedConfigurations[i];
+                orderedConfigurations[i] = orderedConfigurations[i - 1];
+                orderedConfigurations[i - 1] = c;
+                confTableViewer.refresh();
+                updateUpDownEnableButtons();
+            }
+        });
+
+        down = new Button(upDownButtons, SWT.PUSH);
+        down.setText("Down");
+        down.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+        down.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                int i = getSelectedConfigurationIndex();
+                Configuration c = orderedConfigurations[i];
+                orderedConfigurations[i] = orderedConfigurations[i + 1];
+                orderedConfigurations[i + 1] = c;
+                confTableViewer.refresh();
+                updateUpDownEnableButtons();
             }
         });
     }
 
+    private int getSelectedConfigurationIndex() {
+        IStructuredSelection selection = (IStructuredSelection) confTableViewer.getSelection();
+        Configuration c = (Configuration) selection.getFirstElement();
+        for (int i = 0; i < orderedConfigurations.length; i++) {
+            if (orderedConfigurations[i] == c) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void updateUpDownEnableButtons() {
+        boolean selected = confTableViewer.getTable().getSelectionCount() != 0;
+        int i = getSelectedConfigurationIndex();
+        up.setEnabled(selected && i > 0);
+        down.setEnabled(selected && i < orderedConfigurations.length - 1);
+    }
+
     public void setModuleDescriptor(ModuleDescriptor md) {
-        this.md = md;
-        confTableViewer.setInput(md);
+        orderedConfigurations = md.getConfigurations();
+        confTableViewer.setInput(orderedConfigurations);
     }
 
     public void init(List/* <String> */confs) {
-        if (md != null) {
-            Configuration[] configurations = md.getConfigurations();
-            if (confs.size() != 0 && "*".equals(confs.get(0))) {
-                confTableViewer.setCheckedElements(configurations);
-            } else {
-                for (int i = 0; i < confs.size(); i++) {
-                    Configuration configuration = md.getConfiguration((String) confs.get(i));
-                    if (configuration != null) {
-                        confTableViewer.setChecked(configuration, true);
+        if (confs.size() == 1 && "*".equals(confs.get(0))) {
+            selectAll.setSelection(true);
+            for (int i = 0; i < orderedConfigurations.length; i++) {
+                confTableViewer.setChecked(orderedConfigurations[i], true);
+            }
+        } else {
+            selectAll.setSelection(false);
+            for (int i = 0; i < confs.size(); i++) {
+                String c = (String) confs.get(i);
+                for (int j = 0; j < orderedConfigurations.length; j++) {
+                    if (orderedConfigurations[j].getName().equals(c)) {
+                        confTableViewer.setChecked(orderedConfigurations[j], true);
+                        break;
                     }
                 }
             }
         }
+        confTableViewer.getTable().setEnabled(!selectAll.getSelection());
+        boolean selected = confTableViewer.getTable().getSelectionCount() != 0;
+        up.setEnabled(!selectAll.getSelection() && selected);
+        down.setEnabled(!selectAll.getSelection() && selected);
     }
 
     public List getSelectedConfigurations() {
-        Object[] confs = confTableViewer.getCheckedElements();
-        int total = confTableViewer.getTable().getItemCount();
-        if (confs.length == total) {
+        if (selectAll.getSelection()) {
             return Arrays.asList(new String[] {"*"});
         }
+        Object[] confs = confTableViewer.getCheckedElements();
         List confList = new ArrayList();
         for (int i = 0; i < confs.length; i++) {
             Configuration c = (Configuration) confs[i];
@@ -187,7 +231,10 @@ public class ConfTableViewer extends Composite {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        confTableViewer.getTable().setEnabled(enabled);
-        select.setEnabled(enabled);
+        confTableViewer.getTable().setEnabled(enabled && !selectAll.getSelection());
+        boolean selected = confTableViewer.getTable().getSelectionCount() != 0;
+        up.setEnabled(enabled && !selectAll.getSelection() && selected);
+        down.setEnabled(enabled && !selectAll.getSelection() && selected);
+        selectAll.setEnabled(enabled);
     }
 }

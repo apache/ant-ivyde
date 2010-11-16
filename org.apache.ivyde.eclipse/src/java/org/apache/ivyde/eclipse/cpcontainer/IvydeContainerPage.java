@@ -339,7 +339,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         // CheckStyle:MagicNumber| OFF
         Composite configComposite = new Composite(composite, SWT.NONE);
-        configComposite.setLayout(new GridLayout(3, false));
+        configComposite.setLayout(new GridLayout(2, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         // Label for ivy file field
@@ -353,8 +353,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 checkIvyXmlPath();
             }
         });
-        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2,
-                1));
+        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
         // Label for ivy configurations field
         Label confLabel = new Label(configComposite, SWT.NONE);
@@ -371,8 +370,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         // refresh
         Button refreshConf = new Button(configComposite, SWT.NONE);
-        refreshConf.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
-        refreshConf.setText("Refresh");
+        refreshConf.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false, 2, 1));
+        refreshConf.setText("Reload the list of configurations");
         refreshConf.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent ev) {
                 ModuleDescriptor md;
