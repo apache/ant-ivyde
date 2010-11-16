@@ -35,6 +35,7 @@ import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -106,6 +107,12 @@ public class IvyResolveJob extends Job {
             while (itRequests.hasNext()) {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
                 monitor.subTask("loading " + request.getResolver().toString());
+                IProject project = request.getResolver().getProject();
+                if (!project.isAccessible()) {
+                    // closed project, skip it
+                    monitor.worked(step);
+                    continue;
+                }
                 CachedIvy cachedIvy = request.getCachedIvy();
                 Ivy ivy;
                 try {
