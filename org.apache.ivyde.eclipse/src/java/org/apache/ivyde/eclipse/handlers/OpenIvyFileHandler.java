@@ -38,6 +38,10 @@ public class OpenIvyFileHandler extends AbstractIvyDEHandler {
     public static final String COMMAND_ID = "org.apache.ivyde.commands.openivyfile";
 
     protected void handleContainer(IProject project, IvyClasspathContainer cp) {
+        open(cp);
+    }
+
+    public static void open(IvyClasspathContainer cp) {
         IvyClasspathContainerConfiguration conf = cp.getConf();
         if (FakeProjectManager.isFake(conf.getJavaProject())) {
             return;

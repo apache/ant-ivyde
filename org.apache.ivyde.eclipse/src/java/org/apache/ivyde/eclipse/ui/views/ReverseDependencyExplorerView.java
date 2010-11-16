@@ -19,10 +19,12 @@ package org.apache.ivyde.eclipse.ui.views;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.handlers.OpenIvyFileHandler;
 import org.apache.ivyde.eclipse.revdepexplorer.IvyUtil;
 import org.apache.ivyde.eclipse.revdepexplorer.MultiRevDependencyDescriptor;
 import org.apache.ivyde.eclipse.revdepexplorer.SyncIvyFilesJob;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -32,7 +34,11 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -144,6 +150,16 @@ public class ReverseDependencyExplorerView extends ViewPart {
         viewer.setContentProvider(ivyRevisionProvider);
         viewer.setLabelProvider(ivyRevisionProvider);
         viewer.setColumnProperties(PROPS);
+        viewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+                Object element = selection.getFirstElement();
+                if (element instanceof ClasspathContainerDependencyDescriptorComposite) {
+                    IvyClasspathContainer cp = ((ClasspathContainerDependencyDescriptorComposite) element).container;
+                    OpenIvyFileHandler.open(cp);
+                }
+            }
+        });
 
         Tree tree = viewer.getTree();
         tree.setLayoutData(new GridData(GridData.FILL_BOTH));
