@@ -152,8 +152,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
             public void doubleClick(DoubleClickEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
                 Object element = selection.getFirstElement();
-                if (element instanceof ClasspathContainerDependencyDescriptorComposite) {
-                    IvyClasspathContainer cp = ((ClasspathContainerDependencyDescriptorComposite) element).container;
+                if (element instanceof CPDependencyDescriptor) {
+                    IvyClasspathContainer cp = ((CPDependencyDescriptor) element).container;
                     OpenIvyFileHandler.open(cp);
                 }
             }
@@ -211,13 +211,13 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 for (int i = 0; i < items.length; i++) {
                     TreeItem item = items[i];
-                    MultiRevDependencyDescriptor multiRevisionDescriptor
-                        = (MultiRevDependencyDescriptor) item.getData();
+                    MultiRevDependencyDescriptor multiRD = (MultiRevDependencyDescriptor) item
+                            .getData();
 
-                    if (multiRevisionDescriptor.hasMultipleRevisons()
-                            && !multiRevisionDescriptor.hasNewRevision()) {
+                    if (multiRD.hasMultipleRevisons()
+                            && !multiRD.hasNewRevision()) {
                         item.setForeground(display.getSystemColor(SWT.COLOR_RED));
-                    } else if (multiRevisionDescriptor.hasNewRevision()) {
+                    } else if (multiRD.hasNewRevision()) {
                         item.setForeground(new Color(Display.getDefault(), LIGHT_GREEEN));
                     } else {
                         item.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
@@ -263,9 +263,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
                     default:
                         break;
                 }
-            } else if (obj instanceof ClasspathContainerDependencyDescriptorComposite) {
-                ClasspathContainerDependencyDescriptorComposite containerDescriptorComposite
-                        = (ClasspathContainerDependencyDescriptorComposite) obj;
+            } else if (obj instanceof CPDependencyDescriptor) {
+                CPDependencyDescriptor containerDescriptorComposite = (CPDependencyDescriptor) obj;
                 switch (index) {
                     case 0:
                         return containerDescriptorComposite.getIvyClasspathContainer()
@@ -317,7 +316,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
                 } else {
                     return IvyPlugin.getImageDescriptor("icons/synced.gif").createImage();
                 }
-            } else if (obj instanceof ClasspathContainerDependencyDescriptorComposite) {
+            } else if (obj instanceof CPDependencyDescriptor) {
                 return JavaUI.getSharedImages().getImage(
                     org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_LIBRARY);
             }
@@ -332,8 +331,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 Object[] wrappedProjects = new Object[containers.length];
                 for (int i = 0; i < containers.length; i++) {
-                    wrappedProjects[i] = new ClasspathContainerDependencyDescriptorComposite(
-                            containers[i], mrdd);
+                    wrappedProjects[i] = new CPDependencyDescriptor(containers[i],
+                            mrdd);
                 }
 
                 return wrappedProjects;
@@ -359,12 +358,12 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
     }
 
-    class ClasspathContainerDependencyDescriptorComposite {
+    class CPDependencyDescriptor {
         private IvyClasspathContainer container;
 
         private MultiRevDependencyDescriptor multiRevisionDescriptor;
 
-        public ClasspathContainerDependencyDescriptorComposite(IvyClasspathContainer container,
+        public CPDependencyDescriptor(IvyClasspathContainer container,
                 MultiRevDependencyDescriptor multiRevisionDescriptor) {
             this.container = container;
             this.multiRevisionDescriptor = multiRevisionDescriptor;
@@ -413,8 +412,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
                 element = ((Item) element).getData();
             }
 
-            if (element instanceof MultiRevDependencyDescriptor
-                    && property.equals(NEW_REVISION)) {
+            if (element instanceof MultiRevDependencyDescriptor && property.equals(NEW_REVISION)) {
                 ((MultiRevDependencyDescriptor) element).setNewRevision((String) value);
 
                 refresh(false);
