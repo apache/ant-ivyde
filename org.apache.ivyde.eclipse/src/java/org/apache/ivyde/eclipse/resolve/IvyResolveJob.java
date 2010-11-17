@@ -32,6 +32,7 @@ import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivyde.eclipse.CachedIvy;
+import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
@@ -108,7 +109,7 @@ public class IvyResolveJob extends Job {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
                 monitor.subTask("loading " + request.getResolver().toString());
                 IProject project = request.getResolver().getProject();
-                if (!project.isAccessible()) {
+                if (!FakeProjectManager.isFake(project) && !project.isAccessible()) {
                     // closed project, skip it
                     monitor.worked(step);
                     continue;
