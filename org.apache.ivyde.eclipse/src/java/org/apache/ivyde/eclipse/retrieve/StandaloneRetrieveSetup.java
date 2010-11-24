@@ -30,7 +30,7 @@ public class StandaloneRetrieveSetup {
 
     private IvySettingsSetup ivySettingsSetup = new IvySettingsSetup();
 
-    private String ivyXmlPath = "";
+    private String ivyXmlPath = "ivy.xml";
 
     private RetrieveSetup retrieveSetup = new RetrieveSetup();
 

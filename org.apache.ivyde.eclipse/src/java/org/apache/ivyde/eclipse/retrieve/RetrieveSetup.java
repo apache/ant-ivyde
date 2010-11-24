@@ -23,7 +23,7 @@ package org.apache.ivyde.eclipse.retrieve;
  */
 public class RetrieveSetup {
 
-    private String retrievePattern = "lib/[artifact]-[revision].[ext]";
+    private String retrievePattern = "lib/[type]s/[artifact]-[revision].[ext]";
 
     private boolean retrieveSync = false;
 
