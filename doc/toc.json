@@ -30,6 +30,10 @@
                 ]
             },
             {
+              "title":"License",
+              "url":"http://www.apache.org/licenses/"
+            },
+            {
               "id":"compatibility",
               "title":"Compatibility",
               "children": [
