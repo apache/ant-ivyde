@@ -23,7 +23,8 @@
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
-	<textarea id="xooki-source">IvyDE will resolve the dependencies and artifacts you are requiring. Then with the pool of resolved artifacts, it has to decide which is a binary jar, which contains sources, and which contains javadocs. And also how to bind one on each other.
+	<textarea id="xooki-source">
+Apache IvyDE will resolve the dependencies and artifacts you are requiring. Then with the pool of resolved artifacts, it has to decide which is a binary jar, which contains sources, and which contains javadocs. And also how to bind one on each other.
 
 <h1>Finding jars types</h1>
 
@@ -34,7 +35,7 @@ There are three types of jars handled by Eclipse:
     <li>the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of .html files respectin a layout produced by javadoc.</li>
 </ul>
 
-To find the binary jars, IvyDE is relying on the "Accepted types" preference field you can find in the <a href="create.html">container configuration panel</a>, or in the <a href="../preferences.html#classpath">global one</a>. If the artifact has a type listed here, it is then added to the classpath.
+To find the binary jars, Apache IvyDE is relying on the "Accepted types" preference field you can find in the <a href="create.html">container configuration panel</a>, or in the <a href="../preferences.html#classpath">global one</a>. If the artifact has a type listed here, it is then added to the classpath.
 
 For the sources, it is relying on the "Sources types".
 
@@ -42,7 +43,7 @@ For the javadocs, it is relying on the "Javadocs types".
 
 <h1>Binding the jars</h1>
 
-The second step is to bind a source artifact with a binary one. IvyDE has the folowing algorithm:
+The second step is to bind a source artifact with a binary one. Apache IvyDE has the folowing algorithm:
 <ul>
     <li>first if a binary jar has the same artifact name than a source one, there are bound together.</li>
     <li>if none matched, then IvyDE search for sources which have one of the suffix specified in "Sources suffixes".</li>
@@ -56,7 +57,7 @@ For instance, searching for the sources of mylib.jar (type=jar), with the defaul
 <li>mylib-src.jar (type=source)</li>
 </ul>
 
-Note that IvyDE don't care about the extension, it can be .zip too.
+Note that Apache IvyDE don't care about the extension, it can be .zip too.
 
 Same apply for javadocs with respectively "Javadocs suffixes".</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

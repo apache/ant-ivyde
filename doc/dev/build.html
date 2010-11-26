@@ -25,7 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-This page describes how to build the IvyDE plugin from the source. The build is based on the Eclipse build system so it requires an Eclipse install. You also need to have an Ivy bundle installed.
+This page describes how to build the Apache IvyDE plugin from the source. The build is based on the Eclipse build system so it requires an Eclipse install. You also need to have an Ivy bundle installed.
 
 <h1><a name="setup"></a>Setup of the build</h1>
 
@@ -40,9 +40,9 @@ Lots of ant target depends on that Eclipse installation, so they need a <tt>base
 baseLocation=/home/me/tools/eclipse-3.4
 </code>
 
-<h2><a name="install-ivy"></a>The Ivy bundle</h2>
+<h2><a name="install-ivy"></a>The Apache Ivy bundle</h2>
 
-The IvyDE plugins depends on the Ivy 2.0 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build. An ant target will accomplished that task quite automatically. Inline help will be displayed when no property is specified:
+The IvyDE plugins depends on the Apache Ivy 2.0 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build. An Ant target will accomplished that task quite automatically. Inline help will be displayed when no property is specified:
 <code>ant install-ivy</code>
 
 <u>Note</u>: due to <a href="https://issues.apache.org/jira/browse/IVY-802">an old bug in the build script of Ivy</a>, the OSGi version of Ivy is "0.0.0" for every version older than the 2.0.0-RC1. So older version than 2.0.0-RC1 is not supported.
