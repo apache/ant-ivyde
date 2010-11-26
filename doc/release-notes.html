@@ -38,7 +38,7 @@
 <tt>
 The Apache IvyDE project is pleased to announce its 2.2.0 beta release.
 
-IvyDE is the plugin which integrates Ivy into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects. IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
+Apache IvyDE is the Eclipse plugin which integrates Apache Ivy's dependency management into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
 
 Major changes in this release:
 * a synchronous resolve job has been introduced to take into account projet's inter dependencies and avoid too many workspace build,
@@ -60,21 +60,18 @@ https://issues.apache.org/jira/browse/IVYDE
 Download the 2.2.0 beta release at:
 http://ant.apache.org/ivy/ivyde/download.cgi
 
-Or use directly the Eclipse updatesite:
+Or use directly the Apache IvyDE's updatesite:
 http://www.apache.org/dist/ant/ivyde/updatesite
 
-More information can be found on the IvyDE website:
+More information can be found on the Apache IvyDE website:
 http://ant.apache.org/ivy/ivyde/
 </tt>
 
 <h1><a name="what"></a>What is Apache IvyDE?</h1>
 
-IvyDE is the plugin which integrate Ivy dependency management into Eclipse.
+Apache IvyDE is the Eclipse plugin which integrates Apache Ivy's dependency management into Eclipse.
 
-IvyDE lets you manage your dependencies declared in an ivy.xml in your Java
-Eclipse projects. IvyDE will contribute to the classpath of your Java project or
-you can make it retrieve your dependencies directly into your project. Last but
-not least IvyDE offer editors of ivy.xml and ivysettings.xml files with completion.
+Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html.
 
 <h1><a name="status"></a>Status of this release</h1>
 
@@ -84,14 +81,14 @@ Thus this release is considered as a beta one.
 
 <h1><a name="majorchanges"></a>Major Changes in this Release</h1>
 
-As for this release and the next ones, IvyDE now expects to be installed in Eclipse 3.4 or superior.
+As for this release and the next ones, Apache IvyDE now expects to be installed in Eclipse 3.4 or superior.
 
-IvyDE has now a synchronous job to launch resolve of dependencies on the projets. So
+Apache IvyDE has now a synchronous job to launch resolve of dependencies on the projets. So
 IvyDE will be able to order the resolve of the projects in the correct order regarding
 their inter dependencies. And the immediate effect is that Eclipse get notified only
 one time of a classpath change, and thus triggerin only one wrokspace build.
 
-IvyDE is now capable of having a classpath based on retrieved artifact rather than
+Apache IvyDE is now capable of having a classpath based on retrieved artifact rather than
 on the cached ones.
 
 The existing retrieve configuration are now considered "standonale" ones, as they
@@ -102,8 +99,8 @@ project.
 
 Here is the list of people who have contributed source code and documentation
 to this release. Many thanks to all of them, and also to the whole IvyDE community
-contributing ideas and feedback, and promoting the use of IvyDE. The list would be too
-long, but IvyDE couldn't be what it is without you!
+contributing ideas and feedback, and promoting the use of Apache IvyDE. The list would be too
+long, but Apache IvyDE couldn't be what it is without you!
 
 <ul>Committers
 <li>Maarten Coene</li>
@@ -120,7 +117,7 @@ long, but IvyDE couldn't be what it is without you!
 
 <h1><a name="changes"></a>List of Changes in this Release</h1>
 
-List of changes since <a href="/ivy/ivyde/history/2.1.0/release-notes.html">IvyDE 2.1.0</a>:
+List of changes since <a href="/ivy/ivyde/history/2.1.0/release-notes.html">Apache IvyDE 2.1.0</a>:
 <ul>
     <li>NEW: Custom color in XML editors (IVYDE-73)</li>
     <li>NEW: support for retrieve configuration in non Java project</li>

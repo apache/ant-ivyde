@@ -24,7 +24,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overrided in each <a href="cpc/edit.html">project</a>.
+Apache IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overrided in each <a href="cpc/edit.html">project</a>.
 
 The global configuration can be found in the preferences of Eclipse (menu Window > Preferences for Windows and Linux users, Eclipse > Preferences for mac users), and select the item Ivy.
 
@@ -34,7 +34,7 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <center><img src="images/pref.jpg"/></center>
 
 <ul>
-     <li><u>On Eclipse startup:</u> Specifies what IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse is starting up.</li>
+     <li><u>On Eclipse startup:</u> Specifies what Apache IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse is starting up.</li>
      <li><u>On Ivy file change:</u> Controls whether a resolve is performed each time Eclipse detects a change on an ivy.xml file configured by an IvyDE container via a save in the editor, a refresh, or a team/update.</li>
 	<li><u>Organisation:</u> Your company name for Ivy editor completion. </li>
 	<li><u>Organisation URL:</u> Your company web site url for Ivy editor completion.</li>
@@ -46,7 +46,7 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <center><img src="images/pref_classpath.jpg"/></center>
 
 <ul>
-	<li><u>Resolve dependencies in workpace:</u> IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</li>
+	<li><u>Resolve dependencies in workpace:</u> Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</li>
         <li><u>Resolve before launch:</u> an IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about <a href="cpc/launch.html">launch configurations</a> for further information on this feature.</li>
 	<li><u>Order of the classpath entries:</u> By default, the classpath container entries are ordered by order of declaration in the ivy.xml. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.</li>
 	<li><u>Accepted types:</u> A comma separated list of extensions which will make IvyDE add the artifact to the classpath</li>
@@ -75,7 +75,7 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <center><img src="images/pref_settings.jpg"/></center>
 
 <ul>
-	<li><u>Reload the settings only on demand:</u> By default, IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).</li>
+	<li><u>Reload the settings only on demand:</u> By default, Apache IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).</li>
 	<li><u>Ivy settings path:</u> The path to your ivy settings file. Leave it blank to use Ivy default resolvers.  See also the documentation about <a href="eclipsevar.html">Eclipse variables</a>.</li>
 	<li><u>Property files:</u> This is a comma separated list of Java properties files to be loaded along with the settings.</li>
 </ul>

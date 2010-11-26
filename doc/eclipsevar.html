@@ -27,9 +27,9 @@
 	<textarea id="xooki-source">
 Eclipse contains a <a href="http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/preferences/run-debug/ref-string_substitution.htm">string substitution mecanism</a>. This feature allows you to specify a path location that can be shared between developers.
 
-IvyDE uses it to find the ivysettings.xml and properties files in both the <a href="preferences.html#settings">glogal preference page</a> and the <a href="cpc/create.html#localconf">project specific preference page</a>.
+Apache IvyDE uses it to find the ivysettings.xml and properties files in both the <a href="preferences.html#settings">glogal preference page</a> and the <a href="cpc/create.html#localconf">project specific preference page</a>.
 
-Using the "Workspace..." button will open a window to choose a file in the workspace. IvyDE will automatically fill the field with the proper variable.
+Using the "Workspace..." button will open a window to choose a file in the workspace. Apache IvyDE will automatically fill the field with the proper variable.
 
 <center><img src="images/eclipsevar_workspace.jpg" /></center>
 
@@ -41,7 +41,7 @@ Finally, you can choose to depend on the Eclipse variable system by clicking on 
 
 <b>Backwards compatibility</b>
 
-Previously, IvyDE supported the <tt>project://projectName/path/to/file.ext</tt> protocol. It sill does, but references of this style will be automatically converted in the saved settings to the Eclipse variable way of defining this path: <tt>${workspace_loc:projectName/path/to/file.ext}.</tt>
+Previously, Apache IvyDE supported the <tt>project://projectName/path/to/file.ext</tt> protocol. It sill does, but references of this style will be automatically converted in the saved settings to the Eclipse variable way of defining this path: <tt>${workspace_loc:projectName/path/to/file.ext}.</tt>
 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
