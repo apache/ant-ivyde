@@ -40,6 +40,21 @@
         <created>2010-08-18</created>
         <revision>2.1.0</revision>
       </Version>
+      <Version>
+        <name>Apache IvyDE 2.0.0-final</name>
+        <created>2009-07-09</created>
+        <revision>2.0.0-final</revision>
+      </Version>
+      <Version>
+        <name>Apache IvyDE 2.0.0-beta1</name>
+        <created>2008-12-08</created>
+        <revision>2.0.0-beta1</revision>
+      </Version>
+      <Version>
+        <name>Apache IvyDE 2.0.0-alpha1</name>
+        <created>2008-06-30</created>
+        <revision>2.0.0-alpha1</revision>
+      </Version>
     </release>
     <repository>
       <SVNRepository>
