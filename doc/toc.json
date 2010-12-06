@@ -2,8 +2,12 @@
   "children": [
       {
         "id":"index",
-        "title":"Documentation",
+        "title":"Documentation (2.0.0.alpha1)",
         "children": [
+            {
+              "title":"License",
+              "url":"http://www.apache.org/licenses/"
+            },
             {
               "id":"editor",
               "title":"Editor",
