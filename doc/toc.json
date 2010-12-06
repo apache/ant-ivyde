@@ -2,7 +2,7 @@
   "children": [
       {
         "id":"index",
-        "title":"Documentation",
+        "title":"Documentation (1.2.0)",
         "children": [
             {
               "id":"editor",
