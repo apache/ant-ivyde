@@ -21,7 +21,8 @@
       id="org.apache.ivyde.feature"
       label="%featureName"
       version="2.2.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.apache.ivyde.eclipse">
 
    <description url="http://www.apache.org/dist/ant/ivyde/updatesite">
       %description
