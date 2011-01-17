@@ -45,7 +45,6 @@ public class IvyConsoleFilterAction extends Action implements IMenuCreator {
         if (fMenu != null) {
             fMenu.dispose();
         }
-        console = null;
     }
 
     public Menu getMenu(Menu parent) {
