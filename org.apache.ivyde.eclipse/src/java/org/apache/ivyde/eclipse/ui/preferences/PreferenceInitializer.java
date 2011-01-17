@@ -122,6 +122,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final boolean DEFAULT_OFFLINE = false;
 
+    public static final boolean DEFAULT_ERROR_POPUP = true;
+
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
@@ -183,6 +185,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             DEFAULT_RETRIEVED_CLASSPATH_TYPES);
 
         store.setDefault(PreferenceConstants.OFFLINE, DEFAULT_OFFLINE);
+        store.setDefault(PreferenceConstants.ERROR_POPUP, DEFAULT_ERROR_POPUP);
     }
 
 }

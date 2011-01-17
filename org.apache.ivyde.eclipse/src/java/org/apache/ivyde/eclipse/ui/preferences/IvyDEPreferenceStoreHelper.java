@@ -279,4 +279,12 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.OFFLINE, offline);
     }
 
+    public boolean isErrorPopup() {
+        return prefStore.getBoolean(PreferenceConstants.ERROR_POPUP);
+    }
+
+    public void setErrorPopup(boolean errorPopup) {
+        prefStore.setValue(PreferenceConstants.ERROR_POPUP, errorPopup);
+    }
+
 }

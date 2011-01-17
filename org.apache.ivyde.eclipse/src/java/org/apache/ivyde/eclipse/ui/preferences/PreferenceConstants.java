@@ -112,4 +112,6 @@ public final class PreferenceConstants {
 
     public static final String OFFLINE = "offline";
 
+    public static final String ERROR_POPUP = "error.popup";
+
 }

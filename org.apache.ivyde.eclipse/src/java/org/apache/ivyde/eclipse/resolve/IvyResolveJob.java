@@ -36,6 +36,7 @@ import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -213,7 +214,8 @@ public class IvyResolveJob extends Job {
             monitor.worked(step);
         }
 
-        if (errorsStatus.getChildren().length != 0) {
+        if (IvyPlugin.getPreferenceStoreHelper().isErrorPopup()
+                && errorsStatus.getChildren().length != 0) {
             return errorsStatus;
         }
 

@@ -67,6 +67,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private Button offlineButton;
 
+    private Button errorPopupButton;
+
     public IvyPreferencePage() {
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
         Object ivydeVersion = IvyPlugin.getDefault().getBundle().getHeaders().get(
@@ -144,6 +146,11 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         organizationUrlText = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
         organizationUrlText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true,
                 false));
+
+        errorPopupButton = new Button(composite, SWT.CHECK);
+        errorPopupButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+        errorPopupButton.setText("Open a popup on each failed resolve");
+
         // CheckStyle:MagicNumber| ON
 
         initPreferences();
@@ -178,6 +185,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         organizationUrlText.setText(helper.getIvyOrgUrl());
 
         offlineButton.setSelection(helper.isOffline());
+        errorPopupButton.setSelection(helper.isErrorPopup());
     }
 
     public boolean performOk() {
@@ -199,8 +207,9 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
         helper.setOrganization(organizationText.getText());
         helper.setOrganizationUrl(organizationUrlText.getText());
-        
+
         helper.setOffline(offlineButton.getSelection());
+        helper.setErrorPopup(errorPopupButton.getSelection());
         return true;
     }
 
@@ -230,5 +239,6 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         organizationUrlText.setText(PreferenceInitializer.DEFAULT_ORGANISATION_URL);
 
         offlineButton.setSelection(PreferenceInitializer.DEFAULT_OFFLINE);
+        errorPopupButton.setSelection(PreferenceInitializer.DEFAULT_ERROR_POPUP);
     }
 }
