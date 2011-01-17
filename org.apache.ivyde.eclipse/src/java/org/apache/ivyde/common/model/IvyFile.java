@@ -57,11 +57,11 @@ public abstract class IvyFile {
     protected String getDoc() {
         return doc;
     }
-    
+
     protected int getCurrentOffset() {
         return currentOffset;
     }
-    
+
     protected String getReversedDoc() {
         return reversed;
     }
@@ -86,8 +86,8 @@ public abstract class IvyFile {
                 return false;
             }
             if (c == '<'
-                    && (documentOffset + 1 >= doc.length() || (doc.charAt(documentOffset + 1) != '!'
-                    && doc.charAt(documentOffset + 1) != '?'))) {
+                    && (documentOffset + 1 >= doc.length() || (doc.charAt(documentOffset + 1) != '!' && doc
+                            .charAt(documentOffset + 1) != '?'))) {
                 return hasSpace;
             }
         }
@@ -200,7 +200,8 @@ public abstract class IvyFile {
 
     /**
      * Return the user typed string before calling completion stop on:<br>
-     * &lt; to match tag,<br/> space to found attribute name<br/>
+     * &lt; to match tag,<br/>
+     * space to found attribute name<br/>
      * 
      * @param documentOffset
      * @return
@@ -220,8 +221,8 @@ public abstract class IvyFile {
     }
 
     /**
-     * Return the user typed string before calling completion on attribute value stop on:<br> " to
-     * match value for attribute
+     * Return the user typed string before calling completion on attribute value stop on:<br>
+     * " to match value for attribute
      * 
      * @param documentOffset
      * @return
@@ -278,67 +279,63 @@ public abstract class IvyFile {
     }
 
     public int[] getParentTagIndex(int documentOffset) {
+        if (doc.length() <= documentOffset) {
+            return null;
+        }
         int offset = documentOffset;
         int lastSpaceIndex = offset;
         int parentEndTagIndex = -1;
         boolean parentEndTagReached = false;
         boolean inSimpleTag = false;
         Stack stack = new Stack();
-        while (true) {
-            try {
-                char c = doc.charAt(--offset);
-                if (c == '>' && doc.charAt(offset - 1) != '-') {
-                    if (doc.charAt(offset - 1) != '/') { // not a simple tag
-                        // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
-                        // 15));
-                        parentEndTagReached = true;
-                        parentEndTagIndex = offset;
-                        lastSpaceIndex = offset;
-                        // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
-                        // 15));
+        while (offset > 0) {
+            char c = doc.charAt(--offset);
+            if (c == '>' && doc.charAt(offset - 1) != '-') {
+                if (doc.charAt(offset - 1) != '/') { // not a simple tag
+                    // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
+                    // 15));
+                    parentEndTagReached = true;
+                    parentEndTagIndex = offset;
+                    lastSpaceIndex = offset;
+                    // System.out.println("parentEndTagReached:"+doc.get(documentOffset-15,
+                    // 15));
+                    continue;
+                } else { // simple tag
+                    inSimpleTag = true;
+                }
+            } else if (c == '<') {
+                if (inSimpleTag) { // simple tag end
+                    inSimpleTag = false;
+                } else if (doc.charAt(offset + 1) == '/') { // closing tag
+                    if (parentEndTagReached) {
+                        parentEndTagReached = false;
+                        stack.push(doc.substring(offset + 2, parentEndTagIndex).trim());
+                        lastSpaceIndex = offset + 2;
                         continue;
-                    } else { // simple tag
-                        inSimpleTag = true;
                     }
-                } else if (c == '<') {
-                    if (inSimpleTag) { // simple tag end
-                        inSimpleTag = false;
-                    } else if (doc.charAt(offset + 1) == '/') { // closing tag
-                        if (parentEndTagReached) {
-                            parentEndTagReached = false;
-                            stack.push(doc.substring(offset + 2, parentEndTagIndex).trim());
-                            lastSpaceIndex = offset + 2;
-                            continue;
-                        }
-                    } else { // opening tag
-                        if (doc.charAt(offset + 1) != '!' && doc.charAt(offset + 1) != '?') {
-                            // not a doc tag or xml
-                            if (!stack.isEmpty()) { // we found the closing tag before
-                                String closedName = (String) stack.peek();
-                                if (closedName.equalsIgnoreCase(doc.substring(offset + 1, offset
-                                        + 1 + closedName.length()))) {
-                                    stack.pop();
-                                    continue;
-                                }
-                            } else {
-                                if (parentEndTagReached) {
-                                    return new int[] {offset + 1, lastSpaceIndex};
-                                }
+                } else { // opening tag
+                    if (doc.charAt(offset + 1) != '!' && doc.charAt(offset + 1) != '?') {
+                        // not a doc tag or xml
+                        if (!stack.isEmpty()) { // we found the closing tag before
+                            String closedName = (String) stack.peek();
+                            if (closedName.equalsIgnoreCase(doc.substring(offset + 1, offset + 1
+                                    + closedName.length()))) {
+                                stack.pop();
+                                continue;
+                            }
+                        } else {
+                            if (parentEndTagReached) {
+                                return new int[] {offset + 1, lastSpaceIndex};
                             }
                         }
                     }
-                } else if (Character.isWhitespace(c)) {
-                    lastSpaceIndex = offset;
-                    continue;
                 }
-            } catch (IndexOutOfBoundsException e) {
-                // FIXME hu ? need some comments
-                if (settings != null) {
-                    settings.logError("Something bad happened", e);
-                }
-                return null;
+            } else if (Character.isWhitespace(c)) {
+                lastSpaceIndex = offset;
+                continue;
             }
         }
+        return null;
     }
 
     private int getReverseOffset(int documentOffset) {
