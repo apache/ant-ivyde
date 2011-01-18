@@ -41,6 +41,8 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
     private Button resolveInWorkspaceCheck;
 
     private Button resolveBeforeLaunchCheck;
+    
+    private Button useExtendedResolveIdCheck;
 
     private Combo alphaOrderCheck;
 
@@ -76,6 +78,13 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         resolveBeforeLaunchCheck
                 .setToolTipText("Trigger a resolve before each run of any kind of java launch configuration");
 
+        useExtendedResolveIdCheck = new Button(composite, SWT.CHECK);
+        useExtendedResolveIdCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+        useExtendedResolveIdCheck.setText("Use extended resolve id");
+        useExtendedResolveIdCheck
+                .setToolTipText("Will append status, branch and revision info to the default resolve id");
+
         Label label = new Label(composite, SWT.NONE);
         label.setText("Order of the classpath entries:");
 
@@ -105,6 +114,7 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
         resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
+        useExtendedResolveIdCheck.setSelection(helper.isUseExtendedResolveId());
         alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
         acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
         classpathTypeComposite.init(helper.isRetrievedClasspath(), helper
@@ -115,6 +125,7 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
         helper.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
         helper.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
+        helper.setUseExtendedResolveId(useExtendedResolveIdCheck.getSelection());
         helper.setAlphOrder(alphaOrderCheck.getSelectionIndex() == 1);
         helper.setContainerMappingSetup(acceptedSuffixesTypesComposite.getContainerMappingSetup());
         helper.setRetrievedClasspath(classpathTypeComposite.isRetrievedClasspath());
@@ -125,6 +136,7 @@ public class ClasspathPreferencePage extends PreferencePage implements IWorkbenc
     protected void performDefaults() {
         resolveInWorkspaceCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_IN_WORKSPACE);
         resolveBeforeLaunchCheck.setSelection(PreferenceInitializer.DEFAULT_RESOLVE_BEFORE_LAUNCH);
+        useExtendedResolveIdCheck.setSelection(PreferenceInitializer.DEFAULT_USE_EXTENDED_RESOLVE_ID);
         alphaOrderCheck.select(PreferenceInitializer.DEFAULT_ALPHABETICAL_ORDER ? 1 : 0);
         acceptedSuffixesTypesComposite.init(PreferenceInitializer.DEFAULT_CONTAINER_MAPPING_SETUP);
         classpathTypeComposite.init(PreferenceInitializer.DEFAULT_RETRIEVED_CLASSPATH,

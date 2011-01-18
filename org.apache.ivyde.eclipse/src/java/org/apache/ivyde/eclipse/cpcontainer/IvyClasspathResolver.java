@@ -49,6 +49,7 @@ public class IvyClasspathResolver extends IvyResolver {
                 .getJavaProject().getProject());
         this.ivycp = ivycp;
         this.conf = ivycp.getConf();
+        setUsePreviousResolveIfExist(ivycp.getConf().isInheritedUseExtendedResolveId());
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
         if (conf.isInheritedRetrievedClasspath()) {
             RetrieveSetup setup = conf.getInheritedRetrievedClasspathSetup();

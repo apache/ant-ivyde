@@ -55,6 +55,8 @@ public class IvyClasspathContainerConfiguration {
 
     private boolean resolveBeforeLaunch;
 
+    private boolean useExtendedResolveId;
+
     /**
      * attributes attached to the container but not IvyDE related (Webtools or AspectJfor instance)
      */
@@ -173,6 +175,14 @@ public class IvyClasspathContainerConfiguration {
 
     public void setResolveBeforeLaunch(boolean resolveBeforeLaunch) {
         this.resolveBeforeLaunch = resolveBeforeLaunch;
+    }
+    
+    public boolean isUseExtendedResolveId() {
+        return useExtendedResolveId;
+    }
+
+    public void setUseExtendedResolveId(boolean useExtendedResolveId) {
+        this.useExtendedResolveId = useExtendedResolveId;
     }
 
     public IJavaProject getJavaProject() {
@@ -327,6 +337,13 @@ public class IvyClasspathContainerConfiguration {
                     .isMapIfOnlyOneJavadoc();
         }
         return containerMappingSetup.isMapIfOnlyOneJavadoc();
+    }
+
+    public boolean isInheritedUseExtendedResolveId() {
+        if (!isAdvancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().isUseExtendedResolveId();
+        }
+        return useExtendedResolveId;
     }
 
     public String toString() {

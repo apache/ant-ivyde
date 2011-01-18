@@ -206,6 +206,10 @@ public final class IvyClasspathContainerConfAdapter {
                 standaloneRetrieveSetup.setRetrieveTypes(value);
                 isRetrieveProjectSpecific = true;
             }
+            else if (parameter[0].equals("useExtendedResolveId")) {
+                conf.setUseExtendedResolveId(Boolean.valueOf(value).booleanValue());
+                conf.setAdvancedProjectSpecific(true);
+            }
         }
         if (conf.isAdvancedProjectSpecific()) {
             // in this V1 version, it is just some paranoid check
@@ -368,6 +372,7 @@ public final class IvyClasspathContainerConfAdapter {
                 }
                 append(path, "mapIfOnlyOneSource", setup.isMapIfOnlyOneSource());
                 append(path, "mapIfOnlyOneJavadoc", setup.isMapIfOnlyOneJavadoc());
+                append(path, "useExtendedResolveId", conf.isUseExtendedResolveId());
             }
         } catch (UnsupportedEncodingException e) {
             IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);

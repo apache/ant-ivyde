@@ -24,7 +24,6 @@ import java.util.Comparator;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.resolve.ResolveRequest;
@@ -176,7 +175,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         if (md == null) {
             return null;
         }
-        String resolveId = ResolveOptions.getDefaultResolveId(md);
+        String resolveId = IvyClasspathUtil.buildResolveId(conf.isInheritedUseExtendedResolveId(), md);
         try {
             return ivy
                     .getResolutionCacheManager()

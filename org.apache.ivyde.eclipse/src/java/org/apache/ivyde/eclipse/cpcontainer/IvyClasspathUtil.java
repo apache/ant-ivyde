@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
@@ -325,5 +327,35 @@ public final class IvyClasspathUtil {
         if (writable.isOK()) {
             descriptor.toIvyFile(container.getState().getIvyFile());
         }
+    }
+
+    /**
+     * Build the resolve id used when reading and writing resolve reports.
+     * 
+     * @param conf  The IvyClasspathContainerConfiguration indicating if extended resolve id is being used.
+     * @param md  The ModuleDescriptor to be resolved.
+     * @return  The resolve id.
+     */
+    public static String buildResolveId(boolean useExtendedResolveId, ModuleDescriptor md) {
+        StringBuffer sb = new StringBuffer(ResolveOptions.getDefaultResolveId(md));
+        if (useExtendedResolveId) {
+            ModuleRevisionId mrid = md.getModuleRevisionId();
+            String sts = md.getStatus();
+            String bch = mrid.getBranch();
+            String rev = mrid.getRevision();
+            sb.append("-");
+            if (sts != null) {
+                sb.append(sts);
+            }
+            sb.append("-");
+            if (bch != null) {
+                sb.append(bch);
+            }
+            sb.append("-");
+            if (rev != null) {
+                sb.append(rev);
+            }
+        }
+        return sb.toString();
     }
 }

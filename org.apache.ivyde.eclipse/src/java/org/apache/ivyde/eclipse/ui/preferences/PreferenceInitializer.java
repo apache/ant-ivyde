@@ -91,6 +91,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final boolean DEFAULT_RESOLVE_BEFORE_LAUNCH = false;
 
+    public static final boolean DEFAULT_USE_EXTENDED_RESOLVE_ID = false;
+
     public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
 
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_CLOSE = true;

@@ -75,6 +75,8 @@ public class IvyResolver {
 
     private boolean useCacheOnly = IvyPlugin.getPreferenceStoreHelper().isOffline();
 
+    private boolean useExtendedResolveId = false;
+
     public IvyResolver(String ivyXmlPath, List confInput, IProject project) {
         this.ivyXmlPath = ivyXmlPath;
         this.confInput = confInput;
@@ -189,7 +191,7 @@ public class IvyResolver {
         // we check if all required configurations have been resolved
         for (int i = 0; i < confs.length; i++) {
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
-                ResolveOptions.getDefaultResolveId(md), confs[i]);
+                IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), confs[i]);
             if (report.exists()) {
                 // found a report, try to parse it.
                 try {
@@ -215,6 +217,7 @@ public class IvyResolver {
         resolveOption.setConfs(confs);
         resolveOption.setValidate(ivy.getSettings().doValidate());
         resolveOption.setUseCacheOnly(useCacheOnly);
+        resolveOption.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
         ResolveReport report = ivy.resolve(md, resolveOption);
 
         ResolveResult result = new ResolveResult(report);
@@ -289,6 +292,7 @@ public class IvyResolver {
             List typeList = IvyClasspathUtil.split(retrieveTypes);
             options.setArtifactFilter(new ArtifactTypeFilter(typeList));
         }
+        options.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
 
         // Actually do the retrieve
         // FIXME here we will parse a report we already have

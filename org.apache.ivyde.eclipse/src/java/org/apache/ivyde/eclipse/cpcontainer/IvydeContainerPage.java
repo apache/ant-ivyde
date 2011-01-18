@@ -83,6 +83,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private Button resolveInWorkspaceCheck;
 
     private Button resolveBeforeLaunchCheck;
+    
+    private Button useExtendedResolveIdCheck;
 
     private Button advancedProjectSpecificButton;
 
@@ -209,6 +211,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             conf.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
             conf.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
             conf.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
+            conf.setUseExtendedResolveId(useExtendedResolveIdCheck.getSelection());
             conf.setRetrievedClasspath(classpathTypeComposite.isRetrievedClasspath());
             if (classpathTypeComposite.isRetrievedClasspath()) {
                 conf.setRetrievedClasspathSetup(classpathTypeComposite.getRetrieveSetup());
@@ -439,6 +442,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         resolveBeforeLaunchCheck
                 .setToolTipText("Trigger a resolve before each run of any kind of java launch configuration");
 
+        useExtendedResolveIdCheck = new Button(configComposite, SWT.CHECK);
+        useExtendedResolveIdCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 3, 1));
+        useExtendedResolveIdCheck.setText("Use extended resolve id");
+        useExtendedResolveIdCheck
+                .setToolTipText("Will append status, branch and revision info to the default resolve id");
+
         Label label = new Label(configComposite, SWT.NONE);
         label.setText("Order of the classpath entries:");
 
@@ -475,6 +485,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             alphaOrderCheck.select(conf.isAlphaOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(conf.isResolveInWorkspace());
             resolveBeforeLaunchCheck.setSelection(conf.isResolveBeforeLaunch());
+            useExtendedResolveIdCheck.setSelection(conf.isUseExtendedResolveId());
             classpathTypeComposite.init(conf.isRetrievedClasspath(),
                 conf.getRetrievedClasspathSetup());
         } else {
@@ -483,6 +494,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
             resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
             resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
+            useExtendedResolveIdCheck.setSelection(helper.isUseExtendedResolveId());
             classpathTypeComposite.init(helper.isRetrievedClasspath(),
                 helper.getRetrievedClasspathSetup());
         }
@@ -504,6 +516,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
+        useExtendedResolveIdCheck.setEnabled(projectSpecific);
         resolveBeforeLaunchCheck.setEnabled(projectSpecific && !FakeProjectManager.isFake(project));
         classpathTypeComposite.setEnabled(projectSpecific);
     }

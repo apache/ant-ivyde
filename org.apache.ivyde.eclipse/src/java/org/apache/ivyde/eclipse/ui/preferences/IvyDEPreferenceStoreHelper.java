@@ -127,6 +127,14 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, resolveBeforeLaunch);
     }
 
+    public boolean isUseExtendedResolveId() {
+        return prefStore.getBoolean(PreferenceConstants.USE_EXTENDED_RESOLVE_ID);
+    }
+
+    public void setUseExtendedResolveId(boolean useExtendedResolveId) {
+        prefStore.setValue(PreferenceConstants.USE_EXTENDED_RESOLVE_ID, useExtendedResolveId);
+    }
+
     public String getOrganization() {
         return prefStore.getString(PreferenceConstants.ORGANISATION);
     }
