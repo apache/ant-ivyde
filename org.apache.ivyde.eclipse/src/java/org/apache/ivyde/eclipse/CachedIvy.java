@@ -169,6 +169,9 @@ public abstract class CachedIvy {
             } catch (URISyntaxException e) {
                 // probably a badly constructed url: "file://" + filename
                 file = new File(url.getPath());
+            } catch (IllegalArgumentException e) {
+                // probably a badly constructed url: "file:c:\" + filename
+                file = new File(url.getPath());
             }
             return getIvy(file);
         } else {
