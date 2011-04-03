@@ -71,7 +71,7 @@ public class IvyPlugin extends AbstractUIPlugin {
     public static final String MARKER_ID = ID + ".marker";
 
     // The shared instance.
-    private static IvyPlugin plugin;
+    private volatile static IvyPlugin plugin;
 
     // Resource bundle.
     private ResourceBundle resourceBundle;
@@ -178,7 +178,6 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
-        plugin = null;
         resourceBundle = null;
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         workspace.removeSaveParticipant(this);
@@ -197,6 +196,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         if (console != null) {
             console.destroy();
         }
+        plugin = null;
     }
 
     void prefStoreChanged() throws JavaModelException {
