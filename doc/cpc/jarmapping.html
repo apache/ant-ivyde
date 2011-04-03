@@ -28,11 +28,11 @@ Apache IvyDE will resolve the dependencies and artifacts you are requiring. Then
 
 <h1>Finding jars types</h1>
 
-There are three types of jars handled by Eclipse&#153;:
+There are three types of jars handled by Eclipse":
 <ul>
     <li>the binary jars: they will be added to the classpath in oder to compile and run; they contain the .class files.</li>
     <li>the source jars/zip: they will be bound to the binary one to browse dependency sources; they are basically a zip of .java files</li>
-    <li>the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of .html files respectin a layout produced by javadoc.</li>
+    <li>the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of .html files respectively in a layout produced by javadoc.</li>
 </ul>
 
 To find the binary jars, Apache IvyDE is relying on the "Accepted types" preference field you can find in the <a href="create.html">container configuration panel</a>, or in the <a href="../preferences.html#classpath">global one</a>. If the artifact has a type listed here, it is then added to the classpath.
@@ -43,11 +43,26 @@ For the javadocs, it is relying on the "Javadocs types".
 
 <h1>Binding the jars</h1>
 
-The second step is to bind a source artifact with a binary one. Apache IvyDE has the folowing algorithm:
+<h2>Alorithm</h2>
+
+The second step is to bind a source artifact with a binary one. IvyDE has the following algorithm:
 <ul>
-    <li>first if a binary jar has the same artifact name than a source one, there are bound together.</li>
+    <li>first, it looks up for a specified name in the ivy.xml via the "ivyde" namespace (see bellow)</li>
+    <li>next, if a binary jar has the same artifact name than a source one, there are bound together.</li>
     <li>if none matched, then IvyDE search for sources which have one of the suffix specified in "Sources suffixes".</li>
 </ul>
+
+<h2>The IvyDE namespace</h2>
+
+In the ivy.xml file in your repository, you can specifically bind a binary artifact to a source one and to a javadoc one, so IvyDE knows for sure which bind to the other.
+
+In the <a href="http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html">artifact</a> element, you can specify:
+<ul>
+<li><tt>ivyde:source="my-source-artifact-name"</tt> which specify the artifact name of the source to bind to the current binary one</li>
+<li><tt>ivyde:javadoc="my-javadoc-artifact-name"</tt> which specify the artifact name of the javadoc to bind to the current binary one</li>
+</ul>
+
+<h2>Exemples</h2>
 
 For instance, searching for the sources of mylib.jar (type=jar), with the default value of "Sources suffixes" ("-source,-sources,-src"), IvyDE will look to bind it to the first one existing of:
 <ul>
@@ -59,7 +74,27 @@ For instance, searching for the sources of mylib.jar (type=jar), with the defaul
 
 Note that Apache IvyDE don't care about the extension, it can be .zip too.
 
-Same apply for javadocs with respectively "Javadocs suffixes".</textarea>
+Same apply for javadocs with respectively "Javadocs suffixes".
+
+<hr />
+
+With the IvyDE namespace, having the ivy.xml file:
+<code>
+<ivy-module version="2.0" xmlns:ivyde="http://ant.apache.org/ivy/ivyde/ns/">
+    <info organisation="com.acme" module="mylib" />
+    <publications>
+        <artifact name="mylib" type="jar" ext="jar" ivyde:source="the-sources-of-mylib" ivyde:javadoc="the-javadoc-of-mylib" />
+        <artifact name="the-sources-of-mylib" type="source" ext="jar" />
+        <artifact name="the-javadoc-of-mylib" type="javadoc" ext="jar" />
+    </publications>
+</ivy-module>
+</code>
+
+Without furether setup in IvyDE preferences pages, IvyDE will bind:
+<ul>
+<li>the jar <tt>the-sources-of-mylib</tt> as sources of the jar <tt>mylib</tt></li>
+<li>the jar <tt>the-javadoc-of-mylib</tt> as javadoc of the jar <tt>mylib</tt></li>
+</ul></textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>
