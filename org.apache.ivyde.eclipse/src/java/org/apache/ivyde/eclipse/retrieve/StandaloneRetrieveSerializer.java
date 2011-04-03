@@ -211,6 +211,7 @@ public class StandaloneRetrieveSerializer {
                     if (item.getNodeName().equals(IVYSETTINGS)) {
                         IvySettingsSetup ivySettingsSetup = readIvySettingsSetup(item);
                         setup.setIvySettingsSetup(ivySettingsSetup);
+                        setup.setSettingsProjectSpecific(true);
                     } else if (item.getNodeName().equals(IVYXML)) {
                         String ivyXmlPath = readIvyXmlPath(item);
                         setup.setIvyXmlPath(ivyXmlPath);
