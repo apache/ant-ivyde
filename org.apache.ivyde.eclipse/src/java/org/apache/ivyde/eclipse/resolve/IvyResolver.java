@@ -132,7 +132,10 @@ public class IvyResolver {
                     result = doResolve(ivy, md);
                 }
 
-                maybeRetrieve(ivy, md, result, monitor);
+                IStatus retrieveStatus = maybeRetrieve(ivy, md, result, monitor);
+                if (!retrieveStatus.isOK()) {
+                    return retrieveStatus;
+                }
 
                 postResolveOrRefresh(ivy, md, result, monitor);
             } catch (ParseException e) {
@@ -273,10 +276,10 @@ public class IvyResolver {
         }
     }
 
-    private void maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
+    private IStatus maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
             IProgressMonitor monitor) throws IOException {
         if (retrievePattern == null || project == null) {
-            return;
+            return Status.OK_STATUS;
         }
 
         String pattern = project.getLocation().toPortableString() + "/" + retrievePattern;
@@ -293,15 +296,24 @@ public class IvyResolver {
         }
         options.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
 
+        String refreshPath = IvyPatternHelper.getTokenRoot(retrievePattern);
+        if (retrieveSync && refreshPath.length() == 0) {
+            // the root folder of the retrieve pattern is the the project itself
+            // so let's prevent from deleting the entire project
+            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                    "The root of the retrieve pattern is the root folder of the project."
+                            + " Your project would have then been entirely deleted."
+                            + " Change your retrieve pattern to have a sub folder.", null);
+        }
+
         // Actually do the retrieve
         // FIXME here we will parse a report we already have
         // with a better Java API, we could do probably better
         int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, options);
         if (numberOfItemsRetrieved > 0) {
             // Only refresh if we actually retrieved a file.
-            String refreshPath = IvyPatternHelper.getTokenRoot(retrievePattern);
-            IFolder folder = project.getFolder(refreshPath);
-            RefreshFolderJob refreshFolderJob = new RefreshFolderJob(folder);
+            IFolder retrieveFolder = project.getFolder(refreshPath);
+            RefreshFolderJob refreshFolderJob = new RefreshFolderJob(retrieveFolder);
             refreshFolderJob.schedule();
         }
 
@@ -315,9 +327,11 @@ public class IvyResolver {
             result.setRetrievedArtifacts(retrievedArtifacts);
         } catch (ParseException e) {
             // ooops, failed to parse a report we already have...
-            IvyPlugin.log(IStatus.ERROR,
-                "failed to parse a resolve report in order to do the retrieve", e);
+            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                    "failed to parse a resolve report in order to do the retrieve", e);
         }
+
+        return Status.OK_STATUS;
     }
 
     /**
