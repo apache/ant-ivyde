@@ -50,6 +50,10 @@ import org.eclipse.jdt.core.JavaCore;
  */
 public class IvyClasspathContainerMapper {
 
+    private static final String IVYDE_NS = "http://ant.apache.org/ivy/ivyde/ns/";
+
+    private static final String IVYDE_NS_PREFIX = "ivyde:";
+
     private final IProgressMonitor monitor;
 
     private final Ivy ivy;
@@ -117,7 +121,7 @@ public class IvyClasspathContainerMapper {
     }
 
     interface ArtifactMatcher {
-        boolean matchName(String binaryName, String artifactName);
+        boolean matchName(Artifact artifact, String artifactName);
 
         boolean match(Artifact a);
 
@@ -131,8 +135,7 @@ public class IvyClasspathContainerMapper {
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
             Artifact a = otherAdr.getArtifact();
-            if (otherAdr.getLocalFile() != null
-                    && matcher.matchName(artifact.getName(), a.getName())
+            if (otherAdr.getLocalFile() != null && matcher.matchName(artifact, a.getName())
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                     && matcher.match(a)) {
                 return getArtifactPath(otherAdr);
@@ -148,7 +151,7 @@ public class IvyClasspathContainerMapper {
             for (int i = 0; i < artifacts.length; i++) {
                 Artifact metaArtifact = artifacts[i];
                 if (matcher.match(metaArtifact)) {
-                    if (matcher.matchName(artifact.getName(), metaArtifact.getName())) {
+                    if (matcher.matchName(artifact, metaArtifact.getName())) {
                         // we've found a matching artifact, let's provision it
                         ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(
                             metaArtifact, new DownloadOptions());
@@ -180,8 +183,8 @@ public class IvyClasspathContainerMapper {
     }
 
     private ArtifactMatcher sourceArtifactMatcher = new ArtifactMatcher() {
-        public boolean matchName(String jar, String source) {
-            return isArtifactName(jar, source, conf.getInheritedSourceSuffixes());
+        public boolean matchName(Artifact artifact, String source) {
+            return isArtifactName(artifact, source, conf.getInheritedSourceSuffixes(), "sources");
         }
 
         public boolean match(Artifact a) {
@@ -194,8 +197,8 @@ public class IvyClasspathContainerMapper {
     };
 
     private ArtifactMatcher javadocArtifactMatcher = new ArtifactMatcher() {
-        public boolean matchName(String jar, String javadoc) {
-            return isArtifactName(jar, javadoc, conf.getInheritedJavadocSuffixes());
+        public boolean matchName(Artifact artifact, String javadoc) {
+            return isArtifactName(artifact, javadoc, conf.getInheritedJavadocSuffixes(), "javadoc");
         }
 
         public boolean match(Artifact a) {
@@ -207,7 +210,14 @@ public class IvyClasspathContainerMapper {
         }
     };
 
-    private boolean isArtifactName(String jar, String name, Collection/* <String> */suffixes) {
+    private boolean isArtifactName(Artifact artifact, String name,
+            Collection/* <String> */suffixes, String type) {
+        String artifactNameToMatch = (String) artifact.getExtraAttribute(IVYDE_NS_PREFIX + type);
+        if (artifactNameToMatch != null) {
+            // some name is specified, it overrides suffix matching
+            return name.equals(artifactNameToMatch);
+        }
+        String jar = artifact.getName();
         if (name.equals(jar)) {
             return true;
         }
