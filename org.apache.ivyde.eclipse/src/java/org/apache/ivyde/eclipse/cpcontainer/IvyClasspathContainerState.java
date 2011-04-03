@@ -49,7 +49,7 @@ public class IvyClasspathContainerState extends CachedIvy {
     }
 
     protected IProject getProject() {
-        return conf.getJavaProject().getProject();
+        return conf.getJavaProject() == null ? null : conf.getJavaProject().getProject();
     }
 
     protected Collection getPropertyFiles() throws IvyDEException {

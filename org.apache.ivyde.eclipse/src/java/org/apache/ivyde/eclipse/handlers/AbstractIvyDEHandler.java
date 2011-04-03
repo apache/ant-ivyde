@@ -73,13 +73,15 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
                 IvyClasspathContainer ivycp = IvyClasspathUtil
                         .jdt2IvyCPC(((ClassPathContainer) element));
                 IJavaProject javaProject = ivycp.getConf().getJavaProject();
-                Set/* <IvyClasspathContainer> */cplist = (Set) projects.get(javaProject
-                        .getProject());
-                if (cplist == null) {
-                    cplist = new HashSet();
-                    projects.put(javaProject.getProject(), cplist);
+                if (javaProject != null) {
+                    Set/* <IvyClasspathContainer> */cplist = (Set) projects.get(javaProject
+                            .getProject());
+                    if (cplist == null) {
+                        cplist = new HashSet();
+                        projects.put(javaProject.getProject(), cplist);
+                    }
+                    cplist.add(ivycp);
                 }
-                cplist.add(ivycp);
             } else {
                 addElement(projects, element);
             }
@@ -111,8 +113,8 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
             Entry entry = (Entry) it.next();
             Iterator itContainers = ((Set) entry.getValue()).iterator();
             while (itContainers.hasNext()) {
-                handleContainer((IProject) entry.getKey(), (IvyClasspathContainer) itContainers
-                        .next());
+                handleContainer((IProject) entry.getKey(),
+                    (IvyClasspathContainer) itContainers.next());
             }
         }
     }

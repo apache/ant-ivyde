@@ -249,6 +249,9 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
     private void doCollectContainer(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
             IvyClasspathContainer ivycp) {
         IJavaProject javaProject = ivycp.getConf().getJavaProject();
+        if (javaProject == null) {
+            return;
+        }
         Set/* <IvyClasspathContainer> */cplist = (Set) containers.get(javaProject.getProject());
         if (cplist == null) {
             cplist = new HashSet();

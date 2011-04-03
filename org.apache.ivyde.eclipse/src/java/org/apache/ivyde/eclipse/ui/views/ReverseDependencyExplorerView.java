@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -214,8 +215,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
                     MultiRevDependencyDescriptor multiRD = (MultiRevDependencyDescriptor) item
                             .getData();
 
-                    if (multiRD.hasMultipleRevisons()
-                            && !multiRD.hasNewRevision()) {
+                    if (multiRD.hasMultipleRevisons() && !multiRD.hasNewRevision()) {
                         item.setForeground(display.getSystemColor(SWT.COLOR_RED));
                     } else if (multiRD.hasNewRevision()) {
                         item.setForeground(new Color(Display.getDefault(), LIGHT_GREEEN));
@@ -267,11 +267,12 @@ public class ReverseDependencyExplorerView extends ViewPart {
                 CPDependencyDescriptor containerDescriptorComposite = (CPDependencyDescriptor) obj;
                 switch (index) {
                     case 0:
+                        IJavaProject javaProject = containerDescriptorComposite
+                                .getIvyClasspathContainer().getConf().getJavaProject();
                         return containerDescriptorComposite.getIvyClasspathContainer()
                                 .getDescription()
-                                + " in \""
-                                + containerDescriptorComposite.getIvyClasspathContainer().getConf()
-                                        .getJavaProject().getProject().getName() + "\"";
+                                + (javaProject == null ? "" : (" in \""
+                                        + javaProject.getElementName() + "\""));
                     case 2:
                         return toRevisionList(containerDescriptorComposite.getRevisions());
                     default:
@@ -331,8 +332,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 Object[] wrappedProjects = new Object[containers.length];
                 for (int i = 0; i < containers.length; i++) {
-                    wrappedProjects[i] = new CPDependencyDescriptor(containers[i],
-                            mrdd);
+                    wrappedProjects[i] = new CPDependencyDescriptor(containers[i], mrdd);
                 }
 
                 return wrappedProjects;

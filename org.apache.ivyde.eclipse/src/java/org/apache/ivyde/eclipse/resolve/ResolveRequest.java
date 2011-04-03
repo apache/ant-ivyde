@@ -27,9 +27,19 @@ public class ResolveRequest {
 
     private boolean inWorkspace = false;
 
+    private boolean forceFailOnError = false;
+
     public ResolveRequest(IvyResolver resolver, CachedIvy cachedIvy) {
         this.resolver = resolver;
         this.cachedIvy = cachedIvy;
+    }
+
+    public void setForceFailOnError(boolean forceFailOnError) {
+        this.forceFailOnError = forceFailOnError;
+    }
+
+    public boolean isForceFailOnError() {
+        return forceFailOnError;
     }
 
     public IvyResolver getResolver() {

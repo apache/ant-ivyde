@@ -44,8 +44,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class IvyClasspathContainer implements IClasspathContainer {
 
-    public static final String CONTAINER_ID
-        = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
     private IClasspathEntry[] classpathEntries;
 
@@ -156,6 +155,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     void notifyUpdateClasspathEntries() {
+        if (conf.getJavaProject() == null) {
+            return;
+        }
         try {
             JavaCore.setClasspathContainer(path, new IJavaProject[] {conf.getJavaProject()},
                 new IClasspathContainer[] {new IvyClasspathContainer(IvyClasspathContainer.this)},
@@ -175,7 +177,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
         if (md == null) {
             return null;
         }
-        String resolveId = IvyClasspathUtil.buildResolveId(conf.isInheritedUseExtendedResolveId(), md);
+        String resolveId = IvyClasspathUtil.buildResolveId(conf.isInheritedUseExtendedResolveId(),
+            md);
         try {
             return ivy
                     .getResolutionCacheManager()
