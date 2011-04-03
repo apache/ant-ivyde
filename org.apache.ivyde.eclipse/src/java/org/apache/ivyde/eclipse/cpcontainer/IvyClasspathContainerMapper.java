@@ -184,7 +184,7 @@ public class IvyClasspathContainerMapper {
 
     private ArtifactMatcher sourceArtifactMatcher = new ArtifactMatcher() {
         public boolean matchName(Artifact artifact, String source) {
-            return isArtifactName(artifact, source, conf.getInheritedSourceSuffixes(), "sources");
+            return isArtifactName(artifact, source, conf.getInheritedSourceSuffixes(), "source");
         }
 
         public boolean match(Artifact a) {

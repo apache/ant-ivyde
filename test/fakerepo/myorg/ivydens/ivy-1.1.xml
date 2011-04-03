@@ -29,7 +29,7 @@
 		<conf name="default" visibility="public"/>
 	</configurations>
 	<publications>
-		<artifact name="ivydens"        type="jar"     ext="jar" conf="default" ivyde:sources="sources-to-map" ivyde:javadoc="javadoc-to-map" />
+		<artifact name="ivydens"        type="jar"     ext="jar" conf="default" ivyde:source="sources-to-map" ivyde:javadoc="javadoc-to-map" />
         <artifact name="sources-to-map" type="source"  ext="jar" conf="default"/>
         <artifact name="ivydens"        type="source"  ext="jar" conf="default"/>
         <artifact name="javadoc-to-map" type="javadoc" ext="jar" conf="default"/>
