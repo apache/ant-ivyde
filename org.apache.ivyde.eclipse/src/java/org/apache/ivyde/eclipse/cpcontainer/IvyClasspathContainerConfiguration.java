@@ -35,7 +35,7 @@ import org.eclipse.jdt.core.IJavaProject;
  */
 public class IvyClasspathContainerConfiguration {
 
-    private final IJavaProject javaProject;
+    private IJavaProject javaProject;
 
     private IvySettingsSetup ivySettingsSetup = new IvySettingsSetup();
 
@@ -187,6 +187,10 @@ public class IvyClasspathContainerConfiguration {
 
     public IJavaProject getJavaProject() {
         return javaProject;
+    }
+
+    public void setProject(IJavaProject javaProject) {
+        this.javaProject = javaProject;
     }
 
     public void setAttributes(IClasspathAttribute[] attributes) {

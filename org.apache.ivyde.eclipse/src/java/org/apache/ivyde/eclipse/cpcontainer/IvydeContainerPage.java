@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
@@ -83,7 +82,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     private Button resolveInWorkspaceCheck;
 
     private Button resolveBeforeLaunchCheck;
-    
+
     private Button useExtendedResolveIdCheck;
 
     private Button advancedProjectSpecificButton;
@@ -115,6 +114,10 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
      */
     public IvydeContainerPage() {
         super("IvyDE Container");
+    }
+
+    public IJavaProject getProject() {
+        return project;
     }
 
     void checkCompleted() {
@@ -225,17 +228,20 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         entry = JavaCore.newContainerEntry(path, null, atts, exported);
 
-        try {
-            IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
-                    new IClasspathEntry[0], atts);
-            JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
-                new IClasspathContainer[] {ivycp}, null);
-            ivycp.launchResolve(false, null);
-        } catch (JavaModelException e) {
-            IvyPlugin.log(e);
+        if (project != null) {
+            try {
+                IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
+                        new IClasspathEntry[0], atts);
+                JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
+                    new IClasspathContainer[] {ivycp}, null);
+                ivycp.launchResolve(false, null);
+            } catch (JavaModelException e) {
+                IvyPlugin.log(e);
+            }
         }
 
-        if (oldIvyFile != null && !oldIvyFile.equals(conf.getIvyXmlPath())) {
+        if (conf.getJavaProject() != null && oldIvyFile != null
+                && !oldIvyFile.equals(conf.getIvyXmlPath())) {
             // changing the ivy.xml, remove old marker on the old file, if any
             IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
             ivyMarkerManager.removeMarkers(conf.getJavaProject().getProject(), oldIvyFile);
@@ -244,16 +250,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return true;
     }
 
-    public IJavaProject getProject() {
-        return project;
-    }
-
     public IClasspathEntry getSelection() {
         return entry;
     }
 
     public void setSelection(IClasspathEntry entry) {
-        checkProject();
         if (entry == null) {
             conf = new IvyClasspathContainerConfiguration(project, "ivy.xml", true);
         } else {
@@ -267,12 +268,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     public void setSelection(IFile ivyfile) {
-        checkProject();
         conf = new IvyClasspathContainerConfiguration(project, ivyfile.getProjectRelativePath()
                 .toString(), true);
         // if there is an ivysettings.xml file at the root of the project, configure the container
         // to use it
-        if (!FakeProjectManager.isFake(project)) {
+        if (project != null) {
             IResource settings = project.getProject().findMember(new Path("ivysettings.xml"));
             if (settings != null) {
                 conf.setSettingsProjectSpecific(true);
@@ -283,12 +283,6 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             }
         }
         state = new IvyClasspathContainerState(conf);
-    }
-
-    private void checkProject() {
-        if (project == null) {
-            project = FakeProjectManager.createPlaceholderProject();
-        }
     }
 
     public void createControl(Composite parent) {
@@ -349,7 +343,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         Label pathLabel = new Label(configComposite, SWT.NONE);
         pathLabel.setText("Ivy File");
 
-        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project.getProject());
+        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project == null ? null
+                : project.getProject());
         ivyFilePathText.addListener(new IvyXmlPathListener() {
             public void ivyXmlPathUpdated(String path) {
                 conf.setIvyXmlPath(path);
@@ -499,7 +494,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 helper.getRetrievedClasspathSetup());
         }
 
-        if (FakeProjectManager.isFake(project)) {
+        if (project == null) {
             // container in a launch config: always resolve before launch
             resolveBeforeLaunchCheck.setEnabled(false);
             resolveBeforeLaunchCheck.setSelection(true);
@@ -517,7 +512,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
         useExtendedResolveIdCheck.setEnabled(projectSpecific);
-        resolveBeforeLaunchCheck.setEnabled(projectSpecific && !FakeProjectManager.isFake(project));
+        resolveBeforeLaunchCheck.setEnabled(projectSpecific && project != null);
         classpathTypeComposite.setEnabled(projectSpecific);
     }
 

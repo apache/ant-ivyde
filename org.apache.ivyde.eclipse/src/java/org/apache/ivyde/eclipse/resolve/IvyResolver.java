@@ -42,7 +42,6 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.resources.IFolder;
@@ -276,7 +275,7 @@ public class IvyResolver {
 
     private void maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
             IProgressMonitor monitor) throws IOException {
-        if (retrievePattern == null || FakeProjectManager.isFake(project)) {
+        if (retrievePattern == null || project == null) {
             return;
         }
 
@@ -330,6 +329,6 @@ public class IvyResolver {
     }
 
     public String toString() {
-        return ivyXmlPath + confInput + " in " + project.getName();
+        return ivyXmlPath + confInput + (project == null ? "" : (" in " + project.getName()));
     }
 }

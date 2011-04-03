@@ -30,7 +30,6 @@ import java.util.List;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
@@ -117,7 +116,7 @@ public final class IvyClasspathUtil {
     public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(
             IJavaProject javaProject) {
         List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
+        if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
         try {
@@ -144,7 +143,7 @@ public final class IvyClasspathUtil {
     public static List/* <IvyClasspathContainer> */getIvyFileClasspathContainers(IFile ivyfile) {
         IJavaProject javaProject = JavaCore.create(ivyfile.getProject());
         List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
+        if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
         try {
@@ -176,7 +175,7 @@ public final class IvyClasspathUtil {
             IFile ivySettings) {
         IJavaProject javaProject = JavaCore.create(ivySettings.getProject());
         List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
+        if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
         try {
@@ -282,7 +281,7 @@ public final class IvyClasspathUtil {
      */
     public static IClasspathEntry getIvyClasspathEntry(IPath containerPath,
             IJavaProject javaProject) {
-        if (FakeProjectManager.isFake(javaProject) || !javaProject.exists()) {
+        if (javaProject == null || !javaProject.exists()) {
             return null;
         }
         try {

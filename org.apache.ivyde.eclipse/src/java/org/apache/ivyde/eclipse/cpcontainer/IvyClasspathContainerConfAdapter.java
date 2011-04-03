@@ -24,7 +24,6 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyNature;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
@@ -32,10 +31,14 @@ import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
@@ -64,7 +67,7 @@ public final class IvyClasspathContainerConfAdapter {
         }
         conf.setAttributes(attributes);
 
-        if (!FakeProjectManager.isFake(conf.getJavaProject())) {
+        if (conf.getJavaProject() != null) {
             // ensure that the project has the Ivy nature
             IvyNature.addNature(conf.getJavaProject().getProject());
         }
@@ -122,7 +125,14 @@ public final class IvyClasspathContainerConfAdapter {
                 IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
                 throw new RuntimeException(UTF8_ERROR, e);
             }
-            if (parameter[0].equals("ivyXmlPath")) {
+            if (parameter[0].equals("project")) {
+                if (value.trim().length() != 0) {
+                    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                    IProject project = root.getProject(value.trim());
+                    IJavaProject javaProject = JavaCore.create(project);
+                    conf.setProject(javaProject);
+                }
+            } else if (parameter[0].equals("ivyXmlPath")) {
                 ivyXmlPath = value;
                 conf.setIvyXmlPath(value);
             } else if (parameter[0].equals("confs")) {
@@ -291,7 +301,7 @@ public final class IvyClasspathContainerConfAdapter {
      * @return
      */
     private static String readOldSettings(IvyClasspathContainerConfiguration conf, String value) {
-        if (FakeProjectManager.isFake(conf.getJavaProject())) {
+        if (conf.getJavaProject() == null) {
             return value;
         }
         if (value.startsWith(PROJECT_SCHEME_PREFIX)) {
@@ -343,8 +353,13 @@ public final class IvyClasspathContainerConfAdapter {
     public static IPath getPath(IvyClasspathContainerConfiguration conf) {
         StringBuffer path = new StringBuffer();
         path.append('?');
-        path.append("ivyXmlPath=");
+        IJavaProject javaProject = conf.getJavaProject();
         try {
+            path.append("project=");
+            if (javaProject != null) {
+                path.append(URLEncoder.encode(javaProject.getElementName(), "UTF-8"));
+            }
+            path.append("&ivyXmlPath=");
             path.append(URLEncoder.encode(conf.getIvyXmlPath(), "UTF-8"));
             append(path, "confs", conf.getConfs());
             if (conf.isSettingsProjectSpecific()) {

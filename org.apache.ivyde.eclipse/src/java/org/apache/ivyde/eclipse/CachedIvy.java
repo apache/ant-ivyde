@@ -245,9 +245,11 @@ public abstract class CachedIvy {
         } else {
             ivySettings = new IvySettings();
         }
-        IPath location = getProject().getLocation();
-        if (location != null) {
-            ivySettings.setBaseDir(location.toFile());
+        if (getProject() != null) {
+            IPath location = getProject().getLocation();
+            if (location != null) {
+                ivySettings.setBaseDir(location.toFile());
+            }
         }
         Collection propFiles = getPropertyFiles();
         if (propFiles != null) {
@@ -297,7 +299,7 @@ public abstract class CachedIvy {
 
     public File getIvyFile() {
         File file = new File(getIvyXmlPath());
-        if (!file.isAbsolute() && !FakeProjectManager.isFake(getProject())) {
+        if (!file.isAbsolute() && getProject() != null) {
             Path ivyPath = new Path(getIvyXmlPath());
             // get the file location in Eclipse "space"
             IFile ivyfile = getProject().getFile(ivyPath);

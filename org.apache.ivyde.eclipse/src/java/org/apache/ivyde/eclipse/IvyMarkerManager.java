@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Status;
 public class IvyMarkerManager {
 
     private IResource findResource(IProject project, String ivyXmlFile) {
-        if (FakeProjectManager.isFake(project)) {
+        if (project == null) {
             return null;
         }
         IResource r = project.getFile(ivyXmlFile);

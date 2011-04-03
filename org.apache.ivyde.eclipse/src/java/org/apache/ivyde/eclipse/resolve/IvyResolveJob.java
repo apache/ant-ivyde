@@ -32,11 +32,9 @@ import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivyde.eclipse.CachedIvy;
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -100,6 +98,8 @@ public class IvyResolveJob extends Job {
 
         int step = IVY_LOAD_LENGTH / toResolve.size();
 
+        boolean forceFailOnError = false;
+
         // Ivy use the SaxParserFactory, and we want it to instanciate the xerces parser which is in
         // the dependencies of IvyDE, so accessible via the current classloader
         ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -108,9 +108,10 @@ public class IvyResolveJob extends Job {
             Iterator itRequests = toResolve.iterator();
             while (itRequests.hasNext()) {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
+                forceFailOnError = forceFailOnError || request.isForceFailOnError();
                 monitor.subTask("loading " + request.getResolver().toString());
                 IProject project = request.getResolver().getProject();
-                if (!FakeProjectManager.isFake(project) && !project.isAccessible()) {
+                if (project != null && !project.isAccessible()) {
                     // closed project, skip it
                     monitor.worked(step);
                     continue;
@@ -201,6 +202,14 @@ public class IvyResolveJob extends Job {
             }
         }
 
+        if (errorsStatus.getChildren().length != 0) {
+            // some errors happend, stop here
+            if (forceFailOnError || IvyPlugin.getPreferenceStoreHelper().isErrorPopup()) {
+                return errorsStatus;
+            }
+            return Status.OK_STATUS;
+        }
+
         step = POST_RESOLVE_LENGTH / toResolve.size();
 
         monitor.setTaskName("Post resolve");
@@ -212,11 +221,6 @@ public class IvyResolveJob extends Job {
             monitor.setTaskName(request.getResolver().toString());
             request.getResolver().postBatchResolve();
             monitor.worked(step);
-        }
-
-        if (IvyPlugin.getPreferenceStoreHelper().isErrorPopup()
-                && errorsStatus.getChildren().length != 0) {
-            return errorsStatus;
         }
 
         return Status.OK_STATUS;

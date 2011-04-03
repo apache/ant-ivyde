@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse.handlers;
 
-import org.apache.ivyde.eclipse.FakeProjectManager;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
 import org.eclipse.core.resources.IFile;
@@ -43,7 +42,7 @@ public class OpenIvyFileHandler extends AbstractIvyDEHandler {
 
     public static void open(IvyClasspathContainer cp) {
         IvyClasspathContainerConfiguration conf = cp.getConf();
-        if (FakeProjectManager.isFake(conf.getJavaProject())) {
+        if (conf.getJavaProject() == null) {
             return;
         }
         IFile file = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
