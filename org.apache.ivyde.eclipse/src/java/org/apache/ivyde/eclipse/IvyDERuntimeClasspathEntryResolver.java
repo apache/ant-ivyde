@@ -107,6 +107,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
                     projects.add(jp);
                     IRuntimeClasspathEntry classpath = JavaRuntime
                             .newProjectRuntimeClasspathEntry(jp);
+                    resolved.add(classpath);
                     IRuntimeClasspathEntry[] entries = JavaRuntime.resolveRuntimeClasspathEntry(
                         classpath, jp);
                     for (int j = 0; j < entries.length; j++) {
