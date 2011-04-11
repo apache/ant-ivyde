@@ -126,7 +126,7 @@ public final class IvyClasspathContainerConfAdapter {
                 throw new RuntimeException(UTF8_ERROR, e);
             }
             if (parameter[0].equals("project")) {
-                if (value.trim().length() != 0) {
+                if (conf.getJavaProject() == null && value.trim().length() != 0) {
                     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
                     IProject project = root.getProject(value.trim());
                     IJavaProject javaProject = JavaCore.create(project);
