@@ -177,7 +177,7 @@
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
         <property name="checkUpToDate" value="true" />
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
-        <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}/doc" checkUpToDate="${checkUpToDate}">
+        <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}/doc" checkUpToDate="${checkUpToDate}" xookidir="${basedir}/doc/xooki">
             <fileset dir="${src.doc.dir}">
                 <include name="**/*.html" />
                 <exclude name="template*.html" />
@@ -189,13 +189,13 @@
     <target name="package-binaries" depends="build,generate-dist-doc-files,generate-dist-doc-html">
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
         <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
             <fileset dir="${basedir}">
                 <include name="LICENSE" />
                 <include name="NOTICE" />
                 <include name="CHANGES.txt" />
                 <include name="README.txt" />
-                <include name="RELEASE_NOTES.txt" />
             </fileset>
         </copy>
         <mkdir dir="${dist.dir}" />
@@ -465,7 +465,17 @@ You have to specify the Ivy to install with one of the following property:
         <eclipse-download name="${hudson.download.gef.name}" dropdir="${hudson.download.gef.dropdir}" />
     </target>
 
-    <target name="hudson-get-eclipse" depends="hudson-get-sdk,hudson-get-wtp,hudson-get-emf,hudson-get-xsd,hudson-get-gef" />
+    <target name="hudson-check-download-zest">
+        <condition property="hudson.zest.downloaded">
+            <available file="${hudson.download.zest.name}.zip" />
+        </condition>
+    </target>
+
+    <target name="hudson-get-zest" depends="hudson-check-download-zest" unless="hudson.zest.downloaded">
+        <eclipse-download name="${hudson.download.zest.name}" dropdir="${hudson.download.zest.dropdir}" />
+    </target>
+
+    <target name="hudson-get-eclipse" depends="hudson-get-sdk,hudson-get-wtp,hudson-get-emf,hudson-get-xsd,hudson-get-gef,hudson-get-zest" />
 
     <!-- wrapper of eclipse download urls which have a common pattern -->
     <macrodef name="eclipse-download">
@@ -488,6 +498,7 @@ You have to specify the Ivy to install with one of the following property:
         <unzip src="${hudson.download.emf.name}.zip" dest="${basedir}" />
         <unzip src="${hudson.download.xsd.name}.zip" dest="${basedir}" />
         <unzip src="${hudson.download.gef.name}.zip" dest="${basedir}" />
+        <unzip src="${hudson.download.zest.name}.zip" dest="${basedir}" />
         <move file="eclipse" tofile="${hudson.download.sdk.name}" />
     </target>
 

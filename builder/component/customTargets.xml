@@ -32,6 +32,10 @@
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
     </target>
 
+    <target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature">
+        <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
+    </target>
+
     <!-- ===================================================================== -->
     <!-- ===================================================================== -->
     <target name="getBaseComponents" depends="checkLocalBase" unless="skipBase">
@@ -110,7 +114,19 @@
                 <include name="NOTICE" />
             </fileset>
         </copy>
+        <copy todir="${buildDirectory}/features/org.apache.ivyde.eclipse.resolvevisualizer.feature/">
+            <fileset dir="${buildDirectory}/../..">
+                <include name="LICENSE" />
+                <include name="NOTICE" />
+            </fileset>
+        </copy>
         <copy todir="${buildDirectory}/plugins/org.apache.ivyde.eclipse/META-INF/">
+            <fileset dir="${buildDirectory}/../..">
+                <include name="LICENSE" />
+                <include name="NOTICE" />
+            </fileset>
+        </copy>
+        <copy todir="${buildDirectory}/plugins/org.apache.ivyde.eclipse.resolvevisualizer/META-INF/">
             <fileset dir="${buildDirectory}/../..">
                 <include name="LICENSE" />
                 <include name="NOTICE" />

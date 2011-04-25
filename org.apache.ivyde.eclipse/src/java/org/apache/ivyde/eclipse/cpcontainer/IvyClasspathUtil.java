@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -357,4 +359,24 @@ public final class IvyClasspathUtil {
         }
         return sb.toString();
     }
+
+    /**
+     * This will return all ivy projects in the workspace <br>
+     * 
+     * @return collection of ivy projects
+     */
+    public static IProject[] getIvyProjectsInWorkspace() {
+        Collection/* <IProject> */ivyProjects = new HashSet();
+
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+        for (int i = 0; i < projects.length; i++) {
+            if (projects[i].isOpen() && getIvyClasspathContainers(projects[i]).size() > 0) {
+                ivyProjects.add(projects[i]);
+            }
+        }
+
+        return (IProject[]) ivyProjects.toArray(new IProject[ivyProjects.size()]);
+    }
+
 }

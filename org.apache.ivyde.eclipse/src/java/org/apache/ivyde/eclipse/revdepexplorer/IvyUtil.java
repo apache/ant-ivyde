@@ -40,26 +40,6 @@ public final class IvyUtil {
         // utility class
     }
 
-    /**
-     * This will return all ivy projects in the workspace <br>
-     * 
-     * @return collection of ivy projects
-     */
-    public static IProject[] getIvyProjectsInWorkspace() {
-        Collection/* <IProject> */ivyProjects = new HashSet();
-
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen()
-                    && IvyClasspathUtil.getIvyClasspathContainers(projects[i]).size() > 0) {
-                ivyProjects.add(projects[i]);
-            }
-        }
-
-        return (IProject[]) ivyProjects.toArray(new IProject[ivyProjects.size()]);
-    }
-
     public static MultiRevDependencyDescriptor[] getDependencyDescriptorsByProjects(
             IProject[] projects) {
         // a temporary cache of multi-revision dependency descriptors
@@ -122,6 +102,6 @@ public final class IvyUtil {
      * @return multi-revision dependency descriptors
      */
     public static MultiRevDependencyDescriptor[] getAllDependencyDescriptorsInWorkspace() {
-        return getDependencyDescriptorsByProjects(getIvyProjectsInWorkspace());
+        return getDependencyDescriptorsByProjects(IvyClasspathUtil.getIvyProjectsInWorkspace());
     }
 }

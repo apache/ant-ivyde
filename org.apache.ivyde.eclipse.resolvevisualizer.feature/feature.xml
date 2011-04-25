@@ -18,11 +18,10 @@
    under the License.    
 -->
 <feature
-      id="org.apache.ivyde.feature"
+      id="org.apache.ivyde.eclipse.resolvevisualizer.feature"
       label="%featureName"
       version="2.2.0.qualifier"
-      provider-name="%providerName"
-      plugin="org.apache.ivyde.eclipse">
+      provider-name="%providerName">
 
    <description url="http://ant.apache.org/ivy/ivyde/">
       %description
@@ -44,28 +43,20 @@
    <requires>
       <import plugin="org.eclipse.ui" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.jface.text" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.editors" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.core.resources" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.ide" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.forms" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.search" version="3.4.0" match="compatible"/>
+      <import plugin="org.apache.ivyde.eclipse" version="2.2.0" match="equivalent"/>
+      <import plugin="org.eclipse.zest.core" version="1.2.0" match="compatible"/>
+      <import plugin="org.eclipse.zest.layouts" version="1.1.0" match="compatible"/>
       <import plugin="org.eclipse.jdt.core" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.console" version="3.4.0" match="compatible"/>
+      <import plugin="org.eclipse.core.resources" version="3.4.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.forms" version="3.4.0" match="compatible"/>
       <import plugin="org.apache.ivy" version="2.1.0" match="compatible"/>
-      <import plugin="org.eclipse.help" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.core" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.jdt.launching" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.ui" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.0" match="compatible"/>
    </requires>
 
    <plugin
-         id="org.apache.ivyde.eclipse"
+         id="org.apache.ivyde.eclipse.resolvevisualizer"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

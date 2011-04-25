@@ -24,6 +24,7 @@ import java.util.Comparator;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.resolve.ResolveRequest;
@@ -53,6 +54,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
     private IvyClasspathContainerConfiguration conf;
 
     private final IvyClasspathContainerState state;
+
+    private ResolveReport resolveReport;
 
     /**
      * Create an Ivy class path container from some predefined classpath entries. The provided class
@@ -84,6 +87,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         conf = cp.conf;
         classpathEntries = cp.classpathEntries;
         state = cp.state;
+        resolveReport = cp.resolveReport;
     }
 
     public IvyClasspathContainerConfiguration getConf() {
@@ -197,5 +201,13 @@ public class IvyClasspathContainer implements IClasspathContainer {
 
     public String toString() {
         return conf.toString();
+    }
+
+    public void setResolveReport(ResolveReport resolveReport) {
+        this.resolveReport = resolveReport;
+    }
+
+    public ResolveReport getResolveReport() {
+        return resolveReport;
     }
 }

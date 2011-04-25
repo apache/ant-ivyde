@@ -26,6 +26,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.resolve.IvyResolver;
 import org.apache.ivyde.eclipse.resolve.ResolveResult;
@@ -42,6 +43,8 @@ public class ClasspathEntriesResolver extends IvyResolver {
 
     private IClasspathEntry[] classpathEntries = null;
 
+    private ResolveReport resolveReport;
+
     public ClasspathEntriesResolver(IvyClasspathContainer ivycp, boolean usePreviousResolveIfExist) {
         super(ivycp.getConf().getIvyXmlPath(), ivycp.getConf().getConfs(), ivycp.getConf()
                 .getJavaProject() == null ? null : ivycp.getConf().getJavaProject().getProject());
@@ -56,10 +59,6 @@ public class ClasspathEntriesResolver extends IvyResolver {
         }
     }
 
-    public IClasspathEntry[] getClasspathEntries() {
-        return classpathEntries;
-    }
-
     protected void postResolveOrRefresh(Ivy ivy, ModuleDescriptor md, ResolveResult resolveResult,
             IProgressMonitor monitor) throws IOException {
         IvyClasspathContainerMapper mapper = new IvyClasspathContainerMapper(monitor, ivy, conf,
@@ -68,6 +67,15 @@ public class ClasspathEntriesResolver extends IvyResolver {
         warnIfDuplicates(ivy, mapper, resolveResult.getArtifactReports());
 
         classpathEntries = mapper.map();
+        resolveReport = resolveResult.getReport();
+    }
+
+    public IClasspathEntry[] getClasspathEntries() {
+        return classpathEntries;
+    }
+
+    public ResolveReport getResolveReport() {
+        return resolveReport;
     }
 
     /**
