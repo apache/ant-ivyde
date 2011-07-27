@@ -543,7 +543,7 @@ forceContextQualifier=${hudson.version.qualifier}
         </copy>
         <copy file="${src.doc.dir}/template-eclipse.html" tofile="${doc-eclipse.work.dir}/template.html" overwrite="true" />
         <property name="checkUpToDate" value="true" />
-        <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}">
+        <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}" xookidir="${basedir}/doc/xooki">
             <fileset dir="${doc-eclipse.work.dir}">
                 <include name="**/*.html" />
                 <exclude name="template*.html" />
