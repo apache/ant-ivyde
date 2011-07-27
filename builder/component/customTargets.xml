@@ -36,6 +36,22 @@
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
     </target>
 
+    <target name="assemble.org.apache.ivyde.feature.p2">
+        <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
+    </target>
+
+    <target name="assemble.org.apache.ivyde.feature.group.group.group">
+        <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
+    </target>
+
+    <target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature.p2">
+        <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
+    </target>
+
+    <target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature.group.group.group">
+        <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
+    </target>
+
     <!-- ===================================================================== -->
     <!-- ===================================================================== -->
     <target name="getBaseComponents" depends="checkLocalBase" unless="skipBase">
