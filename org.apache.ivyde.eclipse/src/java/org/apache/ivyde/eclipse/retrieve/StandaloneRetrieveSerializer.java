@@ -147,7 +147,7 @@ public class StandaloneRetrieveSerializer {
             String file = (String) it.next();
             Node pathNode = document.createElement(PROPERTYFILE);
             settingsNode.appendChild(pathNode);
-            attributes = settingsNode.getAttributes();
+            attributes = pathNode.getAttributes();
             attr = document.createAttribute(PROPERTYFILE_PATH);
             attr.setValue(file);
             attributes.setNamedItem(attr);
@@ -266,7 +266,7 @@ public class StandaloneRetrieveSerializer {
         for (int j = 0; j != children.getLength(); j++) {
             Node item = children.item(j);
             if (item.getNodeName().equals(PROPERTYFILE)) {
-                attributes = node.getAttributes();
+                attributes = item.getAttributes();
 
                 path = getAttribute(attributes, PROPERTYFILE_PATH);
                 propertyFiles.add(path);
