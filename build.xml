@@ -173,7 +173,7 @@
         </copy>
     </target>
 
-    <target name="generate-dist-doc-html">
+    <target name="generate-dist-doc-html" unless="skip.doc">
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
         <property name="checkUpToDate" value="true" />
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
@@ -186,10 +186,14 @@
         </xooki:generate>
     </target>
 
-    <target name="package-binaries" depends="build,generate-dist-doc-files,generate-dist-doc-html">
+    <target name="package-binaries" depends="build,generate-p2-category,generate-dist-doc-files,generate-dist-doc-html">
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
         <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
         <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <!-- packaging the zip as a p2 repository -->
+        <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
+            <fileset dir="${eclipse.work.dir}/p2repo" />
+        </copy>
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
             <fileset dir="${basedir}">
                 <include name="LICENSE" />
@@ -228,6 +232,35 @@ ivyde.build.version=${build.version}
         <mkdir dir="${dist.dir}" />
         <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources" />
         <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz" basedir="${work.dir}/sources" compression="gzip" />
+    </target>
+
+    <target name="generate-p2-category" depends="compute-version,eclipse-classpath">
+        <loadfile property="ASL2-header" srcFile="${basedir}/builder/ASL2-header.xml"/>
+        <echo file="${work.dir}/category.xml"><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
+<site>
+    <category-def name="org.apache.ivyde.category" label="Apache IvyDE Eclipse plugins" />
+    <feature url="features/org.apache.ivyde.feature_${build.version}.jar" id="org.apache.ivyde.feature" version="${build.version}">
+        <category name="org.apache.ivyde.category"/>
+    </feature>
+    <feature url="features/org.apache.ivyde.eclipse.resolvevisualizer.feature_${build.version}.jar" id="org.apache.ivyde.eclipse.resolvevisualizer.feature" version="${build.version}">
+        <category name="org.apache.ivyde.category"/>
+    </feature>
+</site>
+]]></echo>
+        <makeurl file="${eclipse.work.dir}/p2repo" property="p2repo.eclipse.work.dir.url"/>
+        <makeurl file="${work.dir}/category.xml" property="p2repo.category.url"/>
+        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+            <arg line="-clean" />
+            <arg line="-application org.eclipse.equinox.p2.publisher.CategoryPublisher" />
+            <arg line="-metadataRepository ${p2repo.eclipse.work.dir.url}" />
+            <arg line="-categoryDefinition ${p2repo.category.url}" />
+            <arg line="-categoryQualifier" />
+            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+        </java>
+        <!-- as we're at it, let's put the ASL header -->
+        <replaceregexp match="&lt;repository name='" replace="${ASL2-header}&lt;repository name='" flags="g">
+            <fileset dir="${eclipse.work.dir}/p2repo" includes="*.xml" />
+        </replaceregexp>
     </target>
 
     <!-- 
@@ -536,7 +569,7 @@ forceContextQualifier=${hudson.version.qualifier}
         <delete dir="${eclipse-doc.dir}" />
     </target>
 
-    <target name="generate-eclipse-doc-html">
+    <target name="generate-eclipse-doc-html" unless="skip.doc">
         <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
         <copy todir="${doc-eclipse.work.dir}">
             <fileset dir="${src.doc.dir}" />
