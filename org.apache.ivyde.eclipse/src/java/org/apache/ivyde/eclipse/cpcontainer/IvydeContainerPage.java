@@ -109,6 +109,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private ClasspathTypeComposite classpathTypeComposite;
 
+    private Label alphaOrderLabel;
+
     /**
      * Constructor
      */
@@ -444,8 +446,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         useExtendedResolveIdCheck
                 .setToolTipText("Will append status, branch and revision info to the default resolve id");
 
-        Label label = new Label(configComposite, SWT.NONE);
-        label.setText("Order of the classpath entries:");
+        alphaOrderLabel = new Label(configComposite, SWT.NONE);
+        alphaOrderLabel.setText("Order of the classpath entries:");
 
         alphaOrderCheck = new Combo(configComposite, SWT.READ_ONLY);
         alphaOrderCheck
@@ -509,6 +511,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         conf.setAdvancedProjectSpecific(projectSpecific);
         advancedGeneralSettingsLink.setEnabled(!projectSpecific);
         acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
+        alphaOrderLabel.setEnabled(projectSpecific);
         alphaOrderCheck.setEnabled(projectSpecific);
         resolveInWorkspaceCheck.setEnabled(projectSpecific);
         useExtendedResolveIdCheck.setEnabled(projectSpecific);

@@ -43,14 +43,14 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     public static final String TOOLTIP_JAVADOC_SUFFIXES = "Comma separated list of suffixes to"
             + " match javadocs to artifacts.\nExample: -javadoc, -doc";
-    
+
     public static final String TOOLTIP_MAP_IF_ONLY_ONE_SOURCE = "Will map the source artifact"
             + " to all jar artifact in modules with multiple jar artifacts and only one"
-            + " source artifact";    
+            + " source artifact";
 
     public static final String TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC = "Will map the javadoc artifact"
-        + " to all jar artifact in modules with multiple jar artifacts and only one"
-        + " javadoc artifact";    
+            + " to all jar artifact in modules with multiple jar artifacts and only one"
+            + " javadoc artifact";
 
     private Text acceptedTypesText;
 
@@ -66,6 +66,16 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     private Button mapIfOnlyOneJavadocCheck;
 
+    private Label acceptedTypesLabel;
+
+    private Label sourceTypesLabel;
+
+    private Label sourceSuffixesLabel;
+
+    private Label javadocTypesLabel;
+
+    private Label javadocSuffixesLabel;
+
     public AcceptedSuffixesTypesComposite(Composite parent, int style) {
         super(parent, style);
         GridLayout layout = new GridLayout(2, false);
@@ -73,42 +83,41 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         layout.marginWidth = 0;
         setLayout(layout);
 
-        Label label = new Label(this, SWT.NONE);
-        label.setText("Accepted types:");
+        acceptedTypesLabel = new Label(this, SWT.NONE);
+        acceptedTypesLabel.setText("Accepted types:");
 
         acceptedTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         acceptedTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         acceptedTypesText.setToolTipText(TOOLTIP_ACCEPTED_TYPES);
 
-        label = new Label(this, SWT.NONE);
-        label.setText("Sources types:");
+        sourceTypesLabel = new Label(this, SWT.NONE);
+        sourceTypesLabel.setText("Sources types:");
 
         sourceTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        sourceTypesText
-                .setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+        sourceTypesText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
         sourceTypesText.setToolTipText(TOOLTIP_SOURCE_TYPES);
 
-        label = new Label(this, SWT.NONE);
-        label.setText("Sources suffixes:");
+        sourceSuffixesLabel = new Label(this, SWT.NONE);
+        sourceSuffixesLabel.setText("Sources suffixes:");
 
         sourceSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         sourceSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         sourceSuffixesText.setToolTipText(TOOLTIP_SOURCE_SUFFIXES);
 
-        label = new Label(this, SWT.NONE);
-        label.setText("Javadoc types:");
+        javadocTypesLabel = new Label(this, SWT.NONE);
+        javadocTypesLabel.setText("Javadoc types:");
 
         javadocTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         javadocTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         javadocTypesText.setToolTipText(TOOLTIP_JAVADOC_TYPES);
 
-        label = new Label(this, SWT.NONE);
-        label.setText("Javadoc suffixes:");
+        javadocSuffixesLabel = new Label(this, SWT.NONE);
+        javadocSuffixesLabel.setText("Javadoc suffixes:");
 
         javadocSuffixesText = new Text(this, SWT.SINGLE | SWT.BORDER);
         javadocSuffixesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         javadocSuffixesText.setToolTipText(TOOLTIP_JAVADOC_SUFFIXES);
-        
+
         mapIfOnlyOneSourceCheck = new Button(this, SWT.CHECK);
         mapIfOnlyOneSourceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
                 false, 2, 1));
@@ -120,7 +129,7 @@ public class AcceptedSuffixesTypesComposite extends Composite {
                 false, 2, 1));
         mapIfOnlyOneJavadocCheck.setText("Auto map jar artifacts with unique javadoc artifact");
         mapIfOnlyOneJavadocCheck.setToolTipText(TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC);
-        
+
     }
 
     public void init(ContainerMappingSetup setup) {
@@ -135,10 +144,15 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        acceptedTypesLabel.setEnabled(enabled);
         acceptedTypesText.setEnabled(enabled);
+        sourceTypesLabel.setEnabled(enabled);
         sourceTypesText.setEnabled(enabled);
+        sourceSuffixesLabel.setEnabled(enabled);
         sourceSuffixesText.setEnabled(enabled);
+        javadocTypesLabel.setEnabled(enabled);
         javadocTypesText.setEnabled(enabled);
+        javadocSuffixesLabel.setEnabled(enabled);
         javadocSuffixesText.setEnabled(enabled);
         mapIfOnlyOneSourceCheck.setEnabled(enabled);
         mapIfOnlyOneJavadocCheck.setEnabled(enabled);
