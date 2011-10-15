@@ -78,7 +78,7 @@ public class SettingsEditor extends Composite {
         loadOnDemandButton.setText("reload the settings only on demand");
         loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        settingsEditor = new PathEditor(this, SWT.NONE, "Ivy settings path:", null) {
+        settingsEditor = new PathEditor(this, SWT.NONE, "Ivy settings path:", null, "*.xml") {
 
             protected Text createText(Composite parent) {
                 errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
@@ -145,7 +145,7 @@ public class SettingsEditor extends Composite {
         };
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        propFilesEditor = new PathEditor(this, SWT.NONE, "Property files:", null) {
+        propFilesEditor = new PathEditor(this, SWT.NONE, "Property files:", null, "*.properties") {
 
             protected void textUpdated() {
                 settingsPathUpdated();

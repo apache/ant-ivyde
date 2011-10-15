@@ -53,9 +53,12 @@ public abstract class PathEditor extends Composite {
 
     private final IJavaProject project;
 
-    public PathEditor(Composite parent, int style, String label, IJavaProject project) {
+    private final String defaultExtension;
+
+    public PathEditor(Composite parent, int style, String label, IJavaProject project, String defaultExtension) {
         super(parent, style);
         this.project = project;
+        this.defaultExtension = defaultExtension;
 
         GridLayout layout = new GridLayout(2, false);
         setLayout(layout);
@@ -145,7 +148,7 @@ public abstract class PathEditor extends Composite {
         if (text != null) {
             dialog.setFileName(text.getText());
         }
-        dialog.setFilterExtensions(new String[] {"*.xml", "*"});
+        dialog.setFilterExtensions(new String[] {defaultExtension, "*"});
         String file = dialog.open();
         if (file != null) {
             setFile(file);
