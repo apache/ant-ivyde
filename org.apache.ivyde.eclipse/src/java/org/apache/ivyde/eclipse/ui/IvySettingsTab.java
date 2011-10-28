@@ -89,7 +89,7 @@ public class IvySettingsTab {
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         settingsEditor = new SettingsEditor(configComposite, SWT.NONE);
-        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
         settingsEditor.addListener(new SettingsEditorListener() {
             public void settingsEditorUpdated(IvySettingsSetup setup) {
                 settingsUpdated();

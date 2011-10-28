@@ -51,7 +51,7 @@ public class SettingsPreferencePage extends PreferencePage implements IWorkbench
         composite.setLayout(new GridLayout());
 
         settingsEditor = new SettingsEditor(composite, SWT.NONE);
-        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         // CheckStyle:MagicNumber| ON
 
         initPreferences();

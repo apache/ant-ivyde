@@ -39,7 +39,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TableColumn;
 
 public class ConfTableViewer extends Composite {

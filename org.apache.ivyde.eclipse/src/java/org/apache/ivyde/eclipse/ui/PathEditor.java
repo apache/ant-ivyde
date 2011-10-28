@@ -41,7 +41,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public abstract class PathEditor extends Composite {
+public class PathEditor extends Composite {
 
     private Text text;
 
