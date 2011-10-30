@@ -34,7 +34,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
 import org.eclipse.core.resources.IProject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -100,7 +100,7 @@ public class StandaloneRetrieveSerializer {
 
                 Node settingsNode = document.createElement(IVYSETTINGS);
                 node.appendChild(settingsNode);
-                writeIvySettingsSetup(document, settingsNode, setup.getIvySettingsSetup());
+                writeSettingsSetup(document, settingsNode, setup.getSettingsSetup());
 
                 Node ivyxmlNode = document.createElement(IVYXML);
                 node.appendChild(ivyxmlNode);
@@ -130,19 +130,19 @@ public class StandaloneRetrieveSerializer {
         }
     }
 
-    private void writeIvySettingsSetup(Document document, Node settingsNode,
-            IvySettingsSetup ivySettingsSetup) {
+    private void writeSettingsSetup(Document document, Node settingsNode,
+            SettingsSetup settingsSetup) {
         NamedNodeMap attributes = settingsNode.getAttributes();
 
         Attr attr = document.createAttribute(IVYSETTING_PATH);
-        attr.setValue(ivySettingsSetup.getRawIvySettingsPath());
+        attr.setValue(settingsSetup.getRawIvySettingsPath());
         attributes.setNamedItem(attr);
 
         attr = document.createAttribute(IVYSETTING_LOADONDEMAND);
-        attr.setValue(Boolean.toString(ivySettingsSetup.isLoadSettingsOnDemand()));
+        attr.setValue(Boolean.toString(settingsSetup.isLoadSettingsOnDemand()));
         attributes.setNamedItem(attr);
 
-        Iterator it = ivySettingsSetup.getRawPropertyFiles().iterator();
+        Iterator it = settingsSetup.getRawPropertyFiles().iterator();
         while (it.hasNext()) {
             String file = (String) it.next();
             Node pathNode = document.createElement(PROPERTYFILE);
@@ -209,8 +209,8 @@ public class StandaloneRetrieveSerializer {
                 for (int j = 0; j < children.getLength(); j++) {
                     Node item = children.item(j);
                     if (item.getNodeName().equals(IVYSETTINGS)) {
-                        IvySettingsSetup ivySettingsSetup = readIvySettingsSetup(item);
-                        setup.setIvySettingsSetup(ivySettingsSetup);
+                        SettingsSetup settingsSetup = readSettingsSetup(item);
+                        setup.setSettingsSetup(settingsSetup);
                         setup.setSettingsProjectSpecific(true);
                     } else if (item.getNodeName().equals(IVYXML)) {
                         String ivyXmlPath = readIvyXmlPath(item);
@@ -249,16 +249,16 @@ public class StandaloneRetrieveSerializer {
         return node.getNodeValue();
     }
 
-    private IvySettingsSetup readIvySettingsSetup(Node node) throws SAXException {
+    private SettingsSetup readSettingsSetup(Node node) throws SAXException {
         NamedNodeMap attributes = node.getAttributes();
 
-        IvySettingsSetup ivySettingsSetup = new IvySettingsSetup();
+        SettingsSetup settingsSetup = new SettingsSetup();
 
         String path = getAttribute(attributes, IVYSETTING_PATH);
-        ivySettingsSetup.setIvySettingsPath(path);
+        settingsSetup.setIvySettingsPath(path);
 
         String loadOnDemand = getAttribute(attributes, IVYSETTING_LOADONDEMAND);
-        ivySettingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(loadOnDemand).booleanValue());
+        settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(loadOnDemand).booleanValue());
 
         List/* <String> */propertyFiles = new ArrayList();
 
@@ -273,9 +273,9 @@ public class StandaloneRetrieveSerializer {
             }
         }
 
-        ivySettingsSetup.setPropertyFiles(propertyFiles);
+        settingsSetup.setPropertyFiles(propertyFiles);
 
-        return ivySettingsSetup;
+        return settingsSetup;
     }
 
     private String readIvyXmlPath(Node node) throws SAXException {

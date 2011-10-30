@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 /**
@@ -58,7 +59,7 @@ public class IvyClasspathContainerMapper {
 
     private final Ivy ivy;
 
-    private final IvyClasspathContainerConfiguration conf;
+    private final IJavaProject javaProject;
 
     private final Collection/* <ArtifactDownloadReport> */all;
 
@@ -68,11 +69,17 @@ public class IvyClasspathContainerMapper {
                       * <ArtifactDownloadReport , Set<String>>
                       */retrievedArtifacts;
 
+    private ClasspathSetup classpathSetup;
+
+    private MappingSetup mapping;
+
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,
             IvyClasspathContainerConfiguration conf, ResolveResult resolveResult) {
         this.monitor = monitor;
         this.ivy = ivy;
-        this.conf = conf;
+        this.javaProject = conf.getJavaProject();
+        this.classpathSetup = conf.getInheritedClasspathSetup();
+        this.mapping = conf.getInheritedMappingSetup();
         this.all = resolveResult.getArtifactReports();
         this.artifactsByDependency = resolveResult.getArtifactsByDependency();
         this.retrievedArtifacts = resolveResult.getRetrievedArtifacts();
@@ -88,16 +95,16 @@ public class IvyClasspathContainerMapper {
             if (artifact.getType().equals(WorkspaceResolver.ECLIPSE_PROJECT_TYPE)) {
                 // This is a java project in the workspace, add project path
                 // but only add it if it is not a self dependency
-                if (conf.getJavaProject() == null
-                        || !artifact.getName().equals(conf.getJavaProject().getPath().toString())) {
+                if (javaProject == null
+                        || !artifact.getName().equals(javaProject.getPath().toString())) {
                     paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
                 }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
                 Path classpathArtifact = getArtifactPath(artifact);
                 Path sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
-                    conf.isInheritedMapIfOnlyOneSource());
+                    mapping.isMapIfOnlyOneSource());
                 Path javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
-                    conf.isInheritedMapIfOnlyOneJavadoc());
+                    mapping.isMapIfOnlyOneJavadoc());
                 paths.add(JavaCore.newLibraryEntry(classpathArtifact,
                     getSourceAttachment(classpathArtifact, sourcesArtifact),
                     getSourceAttachmentRoot(classpathArtifact, sourcesArtifact), null,
@@ -184,11 +191,11 @@ public class IvyClasspathContainerMapper {
 
     private ArtifactMatcher sourceArtifactMatcher = new ArtifactMatcher() {
         public boolean matchName(Artifact artifact, String source) {
-            return isArtifactName(artifact, source, conf.getInheritedSourceSuffixes(), "source");
+            return isArtifactName(artifact, source, mapping.getSourceSuffixes(), "source");
         }
 
         public boolean match(Artifact a) {
-            return conf.getInheritedSourceTypes().contains(a.getType());
+            return mapping.getSourceTypes().contains(a.getType());
         }
 
         public String getName() {
@@ -198,11 +205,11 @@ public class IvyClasspathContainerMapper {
 
     private ArtifactMatcher javadocArtifactMatcher = new ArtifactMatcher() {
         public boolean matchName(Artifact artifact, String javadoc) {
-            return isArtifactName(artifact, javadoc, conf.getInheritedJavadocSuffixes(), "javadoc");
+            return isArtifactName(artifact, javadoc, mapping.getJavadocSuffixes(), "javadoc");
         }
 
         public boolean match(Artifact a) {
-            return conf.getInheritedJavadocTypes().contains(a.getType());
+            return mapping.getJavadocTypes().contains(a.getType());
         }
 
         public String getName() {
@@ -288,9 +295,9 @@ public class IvyClasspathContainerMapper {
      * @return <code>true</code> if the artifact can be added
      */
     public boolean accept(Artifact artifact) {
-        return conf.getInheritedAcceptedTypes().contains(artifact.getType())
-                && !conf.getInheritedSourceTypes().contains(artifact.getType())
-                && !conf.getInheritedJavadocTypes().contains(artifact.getType());
+        return classpathSetup.getAcceptedTypes().contains(artifact.getType())
+                && !mapping.getSourceTypes().contains(artifact.getType())
+                && !mapping.getJavadocTypes().contains(artifact.getType());
     }
 
 }

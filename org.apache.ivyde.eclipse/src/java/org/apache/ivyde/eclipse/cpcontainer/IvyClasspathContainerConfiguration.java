@@ -18,12 +18,9 @@
 package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -37,34 +34,30 @@ public class IvyClasspathContainerConfiguration {
 
     private IJavaProject javaProject;
 
-    private IvySettingsSetup ivySettingsSetup = new IvySettingsSetup();
-
-    private ContainerMappingSetup containerMappingSetup = new ContainerMappingSetup();
-
     private String ivyXmlPath;
 
     private List/* <String> */confs = Arrays.asList(new String[] {"*"});
 
-    private boolean alphaOrder;
+    private SettingsSetup settingsSetup = new SettingsSetup();
 
-    private boolean resolveInWorkspace;
+    private ClasspathSetup classpathSetup = new ClasspathSetup();
 
-    private boolean isAdvancedProjectSpecific;
+    private MappingSetup mappingSetup = new MappingSetup();
 
-    private boolean isSettingsProjectSpecific;
+    private AdvancedSetup advancedSetup = new AdvancedSetup();
 
-    private boolean resolveBeforeLaunch;
+    private boolean settingsProjectSpecific;
 
-    private boolean useExtendedResolveId;
+    private boolean classthProjectSpecific;
+
+    private boolean mappingProjectSpecific;
+
+    private boolean advancedProjectSpecific;
 
     /**
      * attributes attached to the container but not IvyDE related (Webtools or AspectJfor instance)
      */
     private IClasspathAttribute[] attributes = new IClasspathAttribute[0];
-
-    private boolean retrievedClasspath;
-
-    private RetrieveSetup retrievedClasspathSetup = new RetrieveSetup();
 
     /**
      * Constructor
@@ -121,68 +114,68 @@ public class IvyClasspathContainerConfiguration {
         this.confs = confs;
     }
 
-    public IvySettingsSetup getIvySettingsSetup() {
-        return ivySettingsSetup;
+    public SettingsSetup getIvySettingsSetup() {
+        return settingsSetup;
     }
 
-    public void setIvySettingsSetup(IvySettingsSetup ivySettingsSetup) {
-        this.ivySettingsSetup = ivySettingsSetup;
+    public void setIvySettingsSetup(SettingsSetup ivySettingsSetup) {
+        this.settingsSetup = ivySettingsSetup;
     }
 
-    public ContainerMappingSetup getContainerMappingSetup() {
-        return containerMappingSetup;
+    public ClasspathSetup getClasspathSetup() {
+        return classpathSetup;
     }
 
-    public void setContainerMappingSetup(ContainerMappingSetup containerMappingSetup) {
-        this.containerMappingSetup = containerMappingSetup;
+    public void setClasspathSetup(ClasspathSetup classpathSetup) {
+        this.classpathSetup = classpathSetup;
     }
 
-    public boolean isAlphaOrder() {
-        return alphaOrder;
+    public MappingSetup getMappingSetup() {
+        return mappingSetup;
     }
 
-    public void setAlphaOrder(boolean alphaOrder) {
-        this.alphaOrder = alphaOrder;
+    public void setMappingSetup(MappingSetup mappingSetup) {
+        this.mappingSetup = mappingSetup;
     }
 
-    public boolean isResolveInWorkspace() {
-        return resolveInWorkspace;
+    public AdvancedSetup getAdvancedSetup() {
+        return advancedSetup;
     }
 
-    public void setResolveInWorkspace(boolean resolveInWorkspace) {
-        this.resolveInWorkspace = resolveInWorkspace;
+    public void setAdvancedSetup(AdvancedSetup advancedSetup) {
+        this.advancedSetup = advancedSetup;
     }
 
-    public boolean isAdvancedProjectSpecific() {
-        return isAdvancedProjectSpecific;
+    public boolean isClassthProjectSpecific() {
+        return classthProjectSpecific;
     }
 
-    public void setAdvancedProjectSpecific(boolean isAdvancedProjectSpecific) {
-        this.isAdvancedProjectSpecific = isAdvancedProjectSpecific;
+    public void setClassthProjectSpecific(boolean classthProjectSpecific) {
+        this.classthProjectSpecific = classthProjectSpecific;
+    }
+
+    public boolean isMappingProjectSpecific() {
+        return mappingProjectSpecific;
+    }
+
+    public void setMappingProjectSpecific(boolean mappingProjectSpecific) {
+        this.mappingProjectSpecific = mappingProjectSpecific;
     }
 
     public boolean isSettingsProjectSpecific() {
-        return isSettingsProjectSpecific;
+        return settingsProjectSpecific;
     }
 
     public void setSettingsProjectSpecific(boolean isSettingsProjectSpecific) {
-        this.isSettingsProjectSpecific = isSettingsProjectSpecific;
+        this.settingsProjectSpecific = isSettingsProjectSpecific;
     }
 
-    public boolean isResolveBeforeLaunch() {
-        return resolveBeforeLaunch;
+    public boolean isAdvancedProjectSpecific() {
+        return advancedProjectSpecific;
     }
 
-    public void setResolveBeforeLaunch(boolean resolveBeforeLaunch) {
-        this.resolveBeforeLaunch = resolveBeforeLaunch;
-    }
-    
-    public boolean isUseExtendedResolveId() {
-        return useExtendedResolveId;
-    }
-
-    public void setUseExtendedResolveId(boolean useExtendedResolveId) {
-        this.useExtendedResolveId = useExtendedResolveId;
+    public void setAdvancedProjectSpecific(boolean advancedProjectSpecific) {
+        this.advancedProjectSpecific = advancedProjectSpecific;
     }
 
     public IJavaProject getJavaProject() {
@@ -201,153 +194,43 @@ public class IvyClasspathContainerConfiguration {
         return attributes;
     }
 
-    public boolean isRetrievedClasspath() {
-        return retrievedClasspath;
-    }
-
-    public void setRetrievedClasspath(boolean retrievedClasspath) {
-        this.retrievedClasspath = retrievedClasspath;
-    }
-
-    public RetrieveSetup getRetrievedClasspathSetup() {
-        return retrievedClasspathSetup;
-    }
-
-    public void setRetrievedClasspathSetup(RetrieveSetup retrievedClasspathSetup) {
-        this.retrievedClasspathSetup = retrievedClasspathSetup;
-    }
-
     // ///////////////////////////
     // Getters that take into account the global preferences
     // ///////////////////////////
 
-    private IProject getProject() {
+    public IProject getProject() {
         if (javaProject == null) {
             return null;
         }
         return javaProject.getProject();
     }
 
-    public String getInheritedIvySettingsPath() throws IvyDEException {
-        if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .getResolvedIvySettingsPath(getProject());
+    public SettingsSetup getInheritedSettingsSetup() {
+        if (!settingsProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getSettingsSetup();
         }
-        return ivySettingsSetup.getResolvedIvySettingsPath(getProject());
+        return settingsSetup;
     }
 
-    public boolean getInheritedLoadSettingsOnDemandPath() {
-        if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .isLoadSettingsOnDemand();
+    public ClasspathSetup getInheritedClasspathSetup() {
+        if (!classthProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getClasspathSetup();
         }
-        return ivySettingsSetup.isLoadSettingsOnDemand();
+        return classpathSetup;
     }
 
-    public Collection getInheritedPropertyFiles() throws IvyDEException {
-        if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .getResolvedPropertyFiles();
-        } else {
-            return ivySettingsSetup.getResolvedPropertyFiles();
+    public MappingSetup getInheritedMappingSetup() {
+        if (!mappingProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getMappingSetup();
         }
+        return mappingSetup;
     }
 
-    public Collection getInheritedAcceptedTypes() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
-                    .getAcceptedTypes();
+    public AdvancedSetup getInheritedAdvancedSetup() {
+        if (!advancedProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getAdvancedSetup();
         }
-        return containerMappingSetup.getAcceptedTypes();
-    }
-
-    public Collection getInheritedSourceTypes() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup().getSourceTypes();
-        }
-        return containerMappingSetup.getSourceTypes();
-    }
-
-    public Collection getInheritedSourceSuffixes() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
-                    .getSourceSuffixes();
-        }
-        return containerMappingSetup.getSourceSuffixes();
-    }
-
-    public Collection getInheritedJavadocTypes() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
-                    .getJavadocTypes();
-        }
-        return containerMappingSetup.getJavadocTypes();
-    }
-
-    public Collection getInheritedJavadocSuffixes() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
-                    .getJavadocSuffixes();
-        }
-        return containerMappingSetup.getJavadocSuffixes();
-    }
-
-    public boolean isInheritedAlphaOrder() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().isAlphOrder();
-        }
-        return alphaOrder;
-    }
-
-    public boolean isInheritedResolveInWorkspace() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().isResolveInWorkspace();
-        }
-        return resolveInWorkspace;
-    }
-
-    public boolean isInheritedResolveBeforeLaunch() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().isResolveBeforeLaunch();
-        }
-        return resolveBeforeLaunch;
-    }
-
-    public boolean isInheritedRetrievedClasspath() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().isRetrievedClasspath();
-        }
-        return retrievedClasspath;
-    }
-
-    public RetrieveSetup getInheritedRetrievedClasspathSetup() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getRetrievedClasspathSetup();
-        }
-        return retrievedClasspathSetup;
-    }
-
-    public boolean isInheritedMapIfOnlyOneSource() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
-                    .isMapIfOnlyOneSource();
-        }
-        return containerMappingSetup.isMapIfOnlyOneSource();
-    }
-
-    public boolean isInheritedMapIfOnlyOneJavadoc() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getContainerMappingSetup()
-                    .isMapIfOnlyOneJavadoc();
-        }
-        return containerMappingSetup.isMapIfOnlyOneJavadoc();
-    }
-
-    public boolean isInheritedUseExtendedResolveId() {
-        if (!isAdvancedProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().isUseExtendedResolveId();
-        }
-        return useExtendedResolveId;
+        return advancedSetup;
     }
 
     public String toString() {

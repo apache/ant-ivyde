@@ -32,7 +32,7 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
     }
 
     protected String getIvySettingsPath() throws IvyDEException {
-        return setup.getInheritedIvySettingsPath();
+        return setup.getInheritedSettingSetup().getResolvedIvySettingsPath(setup.getProject());
     }
 
     protected String getIvyXmlPath() {
@@ -44,11 +44,11 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
     }
 
     protected Collection getPropertyFiles() throws IvyDEException {
-        return setup.getInheritedPropertyFiles();
+        return setup.getInheritedSettingSetup().getResolvedPropertyFiles();
     }
 
     protected boolean isLoadSettingsOnDemandPath() {
-        return setup.isInheritedLoadSettingsOnDemand();
+        return setup.getInheritedSettingSetup().isLoadSettingsOnDemand();
     }
 
     protected boolean isResolveInWorkspace() {

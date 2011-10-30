@@ -19,7 +19,7 @@ package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
-import org.apache.ivyde.eclipse.ui.IvySettingsTab;
+import org.apache.ivyde.eclipse.ui.SettingsSetupTab;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -46,7 +46,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
 
     private RetrieveComposite retrieveComposite;
 
-    private IvySettingsTab settingsTab;
+    private SettingsSetupTab settingsTab;
 
     private StandaloneRetrieveSetup setup;
 
@@ -64,7 +64,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
 
-        settingsTab = new IvySettingsTab(tabs) {
+        settingsTab = new SettingsSetupTab(tabs) {
             protected void settingsUpdated() {
                 super.settingsUpdated();
             }
@@ -72,7 +72,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
 
         nameText.setText(retrieveSetup.getName());
         settingsTab.init(retrieveSetup.isSettingProjectSpecific(),
-            retrieveSetup.getIvySettingsSetup());
+            retrieveSetup.getSettingsSetup());
         ivyFilePathText.init(retrieveSetup.getIvyXmlPath());
         retrieveComposite.init(retrieveSetup.getRetrieveSetup());
 
@@ -114,7 +114,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         setup = new StandaloneRetrieveSetup();
         setup.setName(nameText.getText());
         setup.setSettingsProjectSpecific(settingsTab.isProjectSpecific());
-        setup.setIvySettingsSetup(settingsTab.getSettingsEditor().getIvySettingsSetup());
+        setup.setSettingsSetup(settingsTab.getSettingsEditor().getIvySettingsSetup());
         setup.setIvyXmlPath(ivyFilePathText.getIvyFilePath());
         setup.setRetrieveSetup(retrieveComposite.getRetrieveSetup());
         super.okPressed();

@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 
-public class SettingsEditor extends Composite {
+public class SettingsSetupEditor extends Composite {
 
     public static final String TOOLTIP_SETTINGS_PATH = "The url where your ivysettings file can be"
             + " found. \nLeave it empty to reference the default ivy settings. \n"
@@ -67,7 +67,7 @@ public class SettingsEditor extends Composite {
 
     private Button defaultButton;
 
-    public SettingsEditor(Composite parent, int style) {
+    public SettingsSetupEditor(Composite parent, int style) {
         super(parent, style);
 
         GridLayout layout = new GridLayout();
@@ -148,8 +148,8 @@ public class SettingsEditor extends Composite {
         propFilesEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
     }
 
-    public IvySettingsSetup getIvySettingsSetup() {
-        IvySettingsSetup setup = new IvySettingsSetup();
+    public SettingsSetup getIvySettingsSetup() {
+        SettingsSetup setup = new SettingsSetup();
         setup.setIvySettingsPath(settingsEditor.getText().getText());
         setup.setLoadSettingsOnDemand(loadOnDemandButton.getSelection());
         setup.setPropertyFiles(propFilesEditor.getFiles());
@@ -157,7 +157,7 @@ public class SettingsEditor extends Composite {
     }
 
     public interface SettingsEditorListener {
-        void settingsEditorUpdated(IvySettingsSetup setup);
+        void settingsEditorUpdated(SettingsSetup setup);
     }
 
     public void addListener(SettingsEditorListener listener) {
@@ -174,7 +174,7 @@ public class SettingsEditor extends Composite {
 
     void settingsPathUpdated() {
         synchronized (listeners) {
-            IvySettingsSetup setup = getIvySettingsSetup();
+            SettingsSetup setup = getIvySettingsSetup();
             Iterator it = listeners.iterator();
             while (it.hasNext()) {
                 ((SettingsEditorListener) it.next()).settingsEditorUpdated(setup);
@@ -222,7 +222,7 @@ public class SettingsEditor extends Composite {
         return null;
     }
 
-    public void init(IvySettingsSetup setup) {
+    public void init(SettingsSetup setup) {
         settingsEditor.getText().setText(setup.getRawIvySettingsPath());
         propFilesEditor.init(setup.getRawPropertyFiles());
         loadOnDemandButton.setSelection(setup.isLoadSettingsOnDemand());

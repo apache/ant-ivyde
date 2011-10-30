@@ -17,10 +17,6 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
-import org.apache.ivyde.eclipse.ui.SettingsEditor.SettingsEditorListener;
-import org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,29 +25,25 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-public class IvySettingsTab {
+public abstract class AbstractSetupTab {
 
-    private Button settingsProjectSpecificButton;
+    private Button projectSpecificButton;
 
     private Link mainGeneralSettingsLink;
 
-    private SettingsEditor settingsEditor;
+    private Composite setupEditor;
 
-    public IvySettingsTab(TabFolder tabs) {
-        TabItem settingsTab = new TabItem(tabs, SWT.NONE);
-        settingsTab.setText("Settings");
-        settingsTab.setControl(createSettingsTab(tabs));
-    }
+    public AbstractSetupTab(final TabFolder tabs, String title, final String preferencePageId) {
+        TabItem tab = new TabItem(tabs, SWT.NONE);
+        tab.setText(title);
 
-    private Control createSettingsTab(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
+        Composite composite = new Composite(tabs, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
@@ -59,12 +51,11 @@ public class IvySettingsTab {
         headerComposite.setLayout(new GridLayout(2, false));
         headerComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        settingsProjectSpecificButton = new Button(headerComposite, SWT.CHECK);
-        settingsProjectSpecificButton.setText("Enable project specific settings");
-        settingsProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
+        projectSpecificButton = new Button(headerComposite, SWT.CHECK);
+        projectSpecificButton.setText("Enable project specific settings");
+        projectSpecificButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                updateFieldsStatusSettings();
-                settingsUpdated();
+                projectSpecificChanged();
             }
         });
 
@@ -73,8 +64,8 @@ public class IvySettingsTab {
         mainGeneralSettingsLink.setText("<A>Configure Workspace Settings...</A>");
         mainGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(parent
-                        .getShell(), SettingsPreferencePage.PEREFERENCE_PAGE_ID, null, null);
+                PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(tabs.getShell(),
+                    preferencePageId, null, null);
                 dialog.open();
             }
         });
@@ -85,47 +76,33 @@ public class IvySettingsTab {
 
         // CheckStyle:MagicNumber| OFF
         Composite configComposite = new Composite(composite, SWT.NONE);
-        configComposite.setLayout(new GridLayout(3, false));
+        configComposite.setLayout(new GridLayout());
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        settingsEditor = new SettingsEditor(configComposite, SWT.NONE);
-        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
-        settingsEditor.addListener(new SettingsEditorListener() {
-            public void settingsEditorUpdated(IvySettingsSetup setup) {
-                settingsUpdated();
-            }
-        });
+        setupEditor = createSetupEditor(configComposite);
 
-        return composite;
+        tab.setControl(composite);
     }
 
-    public void init(boolean isProjectSpecific, IvySettingsSetup setup) {
+    abstract protected Composite createSetupEditor(Composite configComposite);
+
+    public void init(boolean isProjectSpecific) {
         if (isProjectSpecific) {
-            settingsProjectSpecificButton.setSelection(true);
-            settingsEditor.init(setup);
+            projectSpecificButton.setSelection(true);
         } else {
-            settingsProjectSpecificButton.setSelection(false);
-            settingsEditor.init(IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup());
-            settingsEditor.setEnabled(false);
+            projectSpecificButton.setSelection(false);
+            setupEditor.setEnabled(false);
         }
     }
 
     public boolean isProjectSpecific() {
-        return settingsProjectSpecificButton.getSelection();
+        return projectSpecificButton.getSelection();
     }
 
-    public void updateFieldsStatusSettings() {
-        boolean projectSpecific = settingsProjectSpecificButton.getSelection();
+    public void projectSpecificChanged() {
+        boolean projectSpecific = projectSpecificButton.getSelection();
         mainGeneralSettingsLink.setEnabled(!projectSpecific);
-        settingsEditor.setEnabled(projectSpecific);
-    }
-
-    protected void settingsUpdated() {
-        // nothing to do
-    }
-
-    public SettingsEditor getSettingsEditor() {
-        return settingsEditor;
+        setupEditor.setEnabled(projectSpecific);
     }
 
 }

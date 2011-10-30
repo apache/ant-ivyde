@@ -26,15 +26,14 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.ui.AcceptedSuffixesTypesComposite;
-import org.apache.ivyde.eclipse.ui.ClasspathTypeComposite;
+import org.apache.ivyde.eclipse.ui.AdvancedSetupTab;
+import org.apache.ivyde.eclipse.ui.ClasspathSetupTab;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer.ConfTableListener;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
-import org.apache.ivyde.eclipse.ui.IvySettingsTab;
-import org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage;
-import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
+import org.apache.ivyde.eclipse.ui.MappingSetupTab;
+import org.apache.ivyde.eclipse.ui.SettingsSetupTab;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -49,21 +48,17 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Editor of the classpath container configuration at the project level.
@@ -77,25 +72,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private ConfTableViewer confTableViewer;
 
-    private Combo alphaOrderCheck;
-
-    private Button resolveInWorkspaceCheck;
-
-    private Button resolveBeforeLaunchCheck;
-
-    private Button useExtendedResolveIdCheck;
-
-    private Button advancedProjectSpecificButton;
-
-    private Link advancedGeneralSettingsLink;
-
     private IvyClasspathContainerConfiguration conf;
 
     private IClasspathEntry entry;
 
     private TabFolder tabs;
-
-    private AcceptedSuffixesTypesComposite acceptedSuffixesTypesComposite;
 
     private boolean exported = false;
 
@@ -105,11 +86,13 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private IvyClasspathContainerState state;
 
-    private IvySettingsTab settingsTab;
+    private SettingsSetupTab settingsSetupTab;
 
-    private ClasspathTypeComposite classpathTypeComposite;
+    private ClasspathSetupTab classpathSetupTab;
 
-    private Label alphaOrderLabel;
+    private MappingSetupTab mappingSetupTab;
+
+    private AdvancedSetupTab advancedSetupTab;
 
     /**
      * Constructor
@@ -203,24 +186,30 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         }
         conf.setConfs(confs);
 
-        if (settingsTab.isProjectSpecific()) {
+        if (settingsSetupTab.isProjectSpecific()) {
             conf.setSettingsProjectSpecific(true);
-            conf.setIvySettingsSetup(settingsTab.getSettingsEditor().getIvySettingsSetup());
+            conf.setIvySettingsSetup(settingsSetupTab.getSettingsEditor().getIvySettingsSetup());
         } else {
             conf.setSettingsProjectSpecific(false);
         }
 
-        if (advancedProjectSpecificButton.getSelection()) {
+        if (classpathSetupTab.isProjectSpecific()) {
+            conf.setClassthProjectSpecific(true);
+            conf.setClasspathSetup(classpathSetupTab.getClasspathSetupEditor().getClasspathSetup());
+        } else {
+            conf.setClassthProjectSpecific(false);
+        }
+
+        if (mappingSetupTab.isProjectSpecific()) {
+            conf.setMappingProjectSpecific(true);
+            conf.setMappingSetup(mappingSetupTab.getMappingSetupEditor().getMappingSetup());
+        } else {
+            conf.setMappingProjectSpecific(false);
+        }
+
+        if (advancedSetupTab.isProjectSpecific()) {
             conf.setAdvancedProjectSpecific(true);
-            conf.setContainerMappingSetup(acceptedSuffixesTypesComposite.getContainerMappingSetup());
-            conf.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
-            conf.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
-            conf.setResolveBeforeLaunch(resolveBeforeLaunchCheck.getSelection());
-            conf.setUseExtendedResolveId(useExtendedResolveIdCheck.getSelection());
-            conf.setRetrievedClasspath(classpathTypeComposite.isRetrievedClasspath());
-            if (classpathTypeComposite.isRetrievedClasspath()) {
-                conf.setRetrievedClasspathSetup(classpathTypeComposite.getRetrieveSetup());
-            }
+            conf.setAdvancedSetup(advancedSetupTab.getAdvancedSetupEditor().getAdvancedSetup());
         } else {
             conf.setAdvancedProjectSpecific(false);
         }
@@ -278,7 +267,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             IResource settings = project.getProject().findMember(new Path("ivysettings.xml"));
             if (settings != null) {
                 conf.setSettingsProjectSpecific(true);
-                IvySettingsSetup setup = new IvySettingsSetup();
+                SettingsSetup setup = new SettingsSetup();
                 setup.setIvySettingsPath("${workspace_loc:" + project.getElementName()
                         + "/ivysettings.xml}");
                 conf.setIvySettingsSetup(setup);
@@ -298,7 +287,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
 
-        settingsTab = new IvySettingsTab(tabs) {
+        settingsSetupTab = new SettingsSetupTab(tabs) {
             protected void settingsUpdated() {
                 try {
                     conf.setSettingsProjectSpecific(isProjectSpecific());
@@ -313,14 +302,16 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             }
         };
 
-        TabItem advancedTab = new TabItem(tabs, SWT.NONE);
-        advancedTab.setText("Advanced");
-        advancedTab.setControl(createAdvancedTab(tabs));
+        classpathSetupTab = new ClasspathSetupTab(tabs);
+
+        mappingSetupTab = new MappingSetupTab(tabs);
+
+        advancedSetupTab = new AdvancedSetupTab(tabs);
 
         tabs.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ivyFilePathText.updateErrorMarker();
-                settingsTab.getSettingsEditor().updateErrorMarker();
+                settingsSetupTab.getSettingsEditor().updateErrorMarker();
             }
         });
 
@@ -389,134 +380,20 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         return composite;
     }
 
-    private Control createAdvancedTab(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-
-        Composite headerComposite = new Composite(composite, SWT.NONE);
-        headerComposite.setLayout(new GridLayout(2, false));
-        headerComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-
-        advancedProjectSpecificButton = new Button(headerComposite, SWT.CHECK);
-        advancedProjectSpecificButton.setText("Enable project specific settings");
-        advancedProjectSpecificButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                updateFieldsStatusAdvanced();
-            }
-        });
-
-        advancedGeneralSettingsLink = new Link(headerComposite, SWT.NONE);
-        advancedGeneralSettingsLink.setFont(composite.getFont());
-        advancedGeneralSettingsLink.setText("<A>Configure Workspace Settings...</A>");
-        advancedGeneralSettingsLink.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(),
-                    ClasspathPreferencePage.PEREFERENCE_PAGE_ID, null, null);
-                dialog.open();
-            }
-        });
-        advancedGeneralSettingsLink.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-
-        Label horizontalLine = new Label(headerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-
-        Composite configComposite = new Composite(composite, SWT.NONE);
-        configComposite.setLayout(new GridLayout(3, false));
-        configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-
-        resolveInWorkspaceCheck = new Button(configComposite, SWT.CHECK);
-        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-                false, 3, 1));
-        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
-        resolveInWorkspaceCheck
-                .setToolTipText("Will replace jars on the classpath with workspace projects");
-
-        resolveBeforeLaunchCheck = new Button(configComposite, SWT.CHECK);
-        resolveBeforeLaunchCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-                false, 3, 1));
-        resolveBeforeLaunchCheck.setText("Resolve before launch");
-        resolveBeforeLaunchCheck
-                .setToolTipText("Trigger a resolve before each run of any kind of java launch configuration");
-
-        useExtendedResolveIdCheck = new Button(configComposite, SWT.CHECK);
-        useExtendedResolveIdCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-                false, 3, 1));
-        useExtendedResolveIdCheck.setText("Use extended resolve id");
-        useExtendedResolveIdCheck
-                .setToolTipText("Will append status, branch and revision info to the default resolve id");
-
-        alphaOrderLabel = new Label(configComposite, SWT.NONE);
-        alphaOrderLabel.setText("Order of the classpath entries:");
-
-        alphaOrderCheck = new Combo(configComposite, SWT.READ_ONLY);
-        alphaOrderCheck
-                .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-        alphaOrderCheck.setToolTipText("Order of the artifacts in the classpath container");
-        alphaOrderCheck.add("From the ivy.xml");
-        alphaOrderCheck.add("Lexical");
-
-        acceptedSuffixesTypesComposite = new AcceptedSuffixesTypesComposite(configComposite,
-                SWT.NONE);
-        acceptedSuffixesTypesComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-                true, false, 3, 1));
-
-        classpathTypeComposite = new ClasspathTypeComposite(composite, SWT.NONE);
-        classpathTypeComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-                false, 3, 1));
-
-        return composite;
-    }
-
     private void loadFromConf() {
         ivyFilePathText.init(conf.getIvyXmlPath());
         confTableViewer.init(conf.getConfs());
 
-        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
+        settingsSetupTab.init(conf.isSettingsProjectSpecific(), conf.getIvySettingsSetup());
+        classpathSetupTab.init(conf.isClassthProjectSpecific(), conf.getClasspathSetup());
+        mappingSetupTab.init(conf.isMappingProjectSpecific(), conf.getMappingSetup());
+        // project == null <==> container in a launch config: always resolve before launch
+        advancedSetupTab.init(conf.isAdvancedProjectSpecific(), conf.getAdvancedSetup(), project == null);
 
-        settingsTab.init(conf.isSettingsProjectSpecific(), conf.getIvySettingsSetup());
-
-        if (conf.isAdvancedProjectSpecific()) {
-            advancedProjectSpecificButton.setSelection(true);
-            acceptedSuffixesTypesComposite.init(conf.getContainerMappingSetup());
-            alphaOrderCheck.select(conf.isAlphaOrder() ? 1 : 0);
-            resolveInWorkspaceCheck.setSelection(conf.isResolveInWorkspace());
-            resolveBeforeLaunchCheck.setSelection(conf.isResolveBeforeLaunch());
-            useExtendedResolveIdCheck.setSelection(conf.isUseExtendedResolveId());
-            classpathTypeComposite.init(conf.isRetrievedClasspath(),
-                conf.getRetrievedClasspathSetup());
-        } else {
-            advancedProjectSpecificButton.setSelection(false);
-            acceptedSuffixesTypesComposite.init(helper.getContainerMappingSetup());
-            alphaOrderCheck.select(helper.isAlphOrder() ? 1 : 0);
-            resolveInWorkspaceCheck.setSelection(helper.isResolveInWorkspace());
-            resolveBeforeLaunchCheck.setSelection(helper.isResolveBeforeLaunch());
-            useExtendedResolveIdCheck.setSelection(helper.isUseExtendedResolveId());
-            classpathTypeComposite.init(helper.isRetrievedClasspath(),
-                helper.getRetrievedClasspathSetup());
-        }
-
-        if (project == null) {
-            // container in a launch config: always resolve before launch
-            resolveBeforeLaunchCheck.setEnabled(false);
-            resolveBeforeLaunchCheck.setSelection(true);
-        }
-
-        settingsTab.updateFieldsStatusSettings();
-        updateFieldsStatusAdvanced();
-    }
-
-    void updateFieldsStatusAdvanced() {
-        boolean projectSpecific = advancedProjectSpecificButton.getSelection();
-        conf.setAdvancedProjectSpecific(projectSpecific);
-        advancedGeneralSettingsLink.setEnabled(!projectSpecific);
-        acceptedSuffixesTypesComposite.setEnabled(projectSpecific);
-        alphaOrderLabel.setEnabled(projectSpecific);
-        alphaOrderCheck.setEnabled(projectSpecific);
-        resolveInWorkspaceCheck.setEnabled(projectSpecific);
-        useExtendedResolveIdCheck.setEnabled(projectSpecific);
-        resolveBeforeLaunchCheck.setEnabled(projectSpecific && project != null);
-        classpathTypeComposite.setEnabled(projectSpecific);
+        settingsSetupTab.projectSpecificChanged();
+        classpathSetupTab.projectSpecificChanged();
+        mappingSetupTab.projectSpecificChanged();
+        advancedSetupTab.projectSpecificChanged();
     }
 
     public void initialize(IJavaProject p, IClasspathEntry[] currentEntries) {

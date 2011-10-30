@@ -19,9 +19,7 @@ package org.apache.ivyde.eclipse.cpcontainer;
 
 import java.util.List;
 
-public class ContainerMappingSetup {
-
-    private List/* <String> */acceptedTypes;
+public class MappingSetup {
 
     private List/* <String> */sourceTypes;
 
@@ -38,26 +36,17 @@ public class ContainerMappingSetup {
     /**
      * Default constructor
      */
-    public ContainerMappingSetup() {
+    public MappingSetup() {
         // default constructor
     }
 
-    public void set(ContainerMappingSetup setup) {
-        this.acceptedTypes = setup.acceptedTypes;
+    public void set(MappingSetup setup) {
         this.sourceTypes = setup.sourceTypes;
         this.javadocTypes = setup.javadocTypes;
         this.sourceSuffixes = setup.sourceSuffixes;
         this.javadocSuffixes = setup.javadocSuffixes;
         this.mapIfOnlyOneSource = setup.mapIfOnlyOneSource;
         this.mapIfOnlyOneJavadoc = setup.mapIfOnlyOneJavadoc;
-    }
-
-    public List getAcceptedTypes() {
-        return acceptedTypes;
-    }
-
-    public void setAcceptedTypes(List acceptedTypes) {
-        this.acceptedTypes = acceptedTypes;
     }
 
     public List getSourceTypes() {

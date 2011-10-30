@@ -92,8 +92,8 @@ public final class IvyClasspathUtil {
     public static IvyClasspathContainer jdt2IvyCPC(ClassPathContainer cpc) {
         IClasspathEntry entry = cpc.getClasspathEntry();
         try {
-            IClasspathContainer icp = JavaCore.getClasspathContainer(entry.getPath(), cpc
-                    .getJavaProject());
+            IClasspathContainer icp = JavaCore.getClasspathContainer(entry.getPath(),
+                cpc.getJavaProject());
             if (icp instanceof IvyClasspathContainer) {
                 return (IvyClasspathContainer) icp;
             }
@@ -158,8 +158,8 @@ public final class IvyClasspathUtil {
                         IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
                         if (cp instanceof IvyClasspathContainer) {
                             IvyClasspathContainer ivycp = (IvyClasspathContainer) cp;
-                            if (ivycp.getConf().getIvyXmlPath().equals(
-                                ivyfile.getProjectRelativePath().toString())) {
+                            if (ivycp.getConf().getIvyXmlPath()
+                                    .equals(ivyfile.getProjectRelativePath().toString())) {
                                 containers.add(ivycp);
                             }
                         }
@@ -192,13 +192,14 @@ public final class IvyClasspathUtil {
                             IvyClasspathContainer ivycp = (IvyClasspathContainer) cp;
                             String settingsPath;
                             try {
-                                settingsPath = ivycp.getConf().getInheritedIvySettingsPath();
+                                settingsPath = ivycp.getConf().getInheritedSettingsSetup()
+                                        .getResolvedIvySettingsPath(ivycp.getConf().getProject());
                             } catch (IvyDEException e) {
                                 // cannot resolve the ivy settings so just ignore
                                 continue;
                             }
-                            if (settingsPath.equals(
-                                ivySettings.getProjectRelativePath().toString())) {
+                            if (settingsPath
+                                    .equals(ivySettings.getProjectRelativePath().toString())) {
                                 containers.add(ivycp);
                             }
                         }
@@ -281,8 +282,7 @@ public final class IvyClasspathUtil {
      *            the project to search into
      * @return the Ivy classpath container if found, otherwise return <code>null</code>
      */
-    public static IClasspathEntry getIvyClasspathEntry(IPath containerPath,
-            IJavaProject javaProject) {
+    public static IClasspathEntry getIvyClasspathEntry(IPath containerPath, IJavaProject javaProject) {
         if (javaProject == null || !javaProject.exists()) {
             return null;
         }
@@ -333,9 +333,12 @@ public final class IvyClasspathUtil {
     /**
      * Build the resolve id used when reading and writing resolve reports.
      * 
-     * @param conf  The IvyClasspathContainerConfiguration indicating if extended resolve id is being used.
-     * @param md  The ModuleDescriptor to be resolved.
-     * @return  The resolve id.
+     * @param conf
+     *            The IvyClasspathContainerConfiguration indicating if extended resolve id is being
+     *            used.
+     * @param md
+     *            The ModuleDescriptor to be resolved.
+     * @return The resolve id.
      */
     public static String buildResolveId(boolean useExtendedResolveId, ModuleDescriptor md) {
         StringBuffer sb = new StringBuffer(ResolveOptions.getDefaultResolveId(md));

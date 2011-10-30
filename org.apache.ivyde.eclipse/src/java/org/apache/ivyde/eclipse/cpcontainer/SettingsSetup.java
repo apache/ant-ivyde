@@ -35,7 +35,7 @@ import org.eclipse.core.variables.VariablesPlugin;
  * This class is just a simple bean defining the properties which configure an IvyDE classpath
  * container.
  */
-public class IvySettingsSetup {
+public class SettingsSetup {
 
     private String ivySettingsPath;
 
@@ -46,11 +46,11 @@ public class IvySettingsSetup {
     /**
      * Default constructor
      */
-    public IvySettingsSetup() {
+    public SettingsSetup() {
         // default constructor
     }
 
-    public void set(IvySettingsSetup setup) {
+    public void set(SettingsSetup setup) {
         this.ivySettingsPath = setup.ivySettingsPath;
         this.propertyFiles = setup.propertyFiles;
         this.loadSettingsOnDemand = setup.loadSettingsOnDemand;

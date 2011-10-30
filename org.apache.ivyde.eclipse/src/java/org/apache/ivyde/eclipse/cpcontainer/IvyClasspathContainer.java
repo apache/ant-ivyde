@@ -122,7 +122,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     public IStatus launchResolve(boolean usePreviousResolveIfExist, IProgressMonitor monitor) {
         ResolveRequest request = new ResolveRequest(new IvyClasspathResolver(this,
                 usePreviousResolveIfExist), getState());
-        request.setInWorkspace(getConf().isInheritedResolveInWorkspace());
+        request.setInWorkspace(getConf().getInheritedClasspathSetup().isResolveInWorkspace());
         IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         if (monitor != null) {
             return resolveJob.launchRequest(request, monitor);
@@ -144,7 +144,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     private void setClasspathEntries(final IClasspathEntry[] entries) {
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                if (conf.isInheritedAlphaOrder()) {
+                if (conf.getInheritedClasspathSetup().isAlphaOrder()) {
                     Arrays.sort(entries, new Comparator() {
                         public int compare(Object o1, Object o2) {
                             return ((IClasspathEntry) o1).getPath().lastSegment()
@@ -181,8 +181,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
         if (md == null) {
             return null;
         }
-        String resolveId = IvyClasspathUtil.buildResolveId(conf.isInheritedUseExtendedResolveId(),
-            md);
+        String resolveId = IvyClasspathUtil.buildResolveId(conf.getInheritedAdvancedSetup()
+                .isUseExtendedResolveId(), md);
         try {
             return ivy
                     .getResolutionCacheManager()

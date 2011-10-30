@@ -49,10 +49,10 @@ public class ClasspathEntriesResolver extends IvyResolver {
         super(ivycp.getConf().getIvyXmlPath(), ivycp.getConf().getConfs(), ivycp.getConf()
                 .getJavaProject() == null ? null : ivycp.getConf().getJavaProject().getProject());
         this.conf = ivycp.getConf();
-        setUsePreviousResolveIfExist(ivycp.getConf().isInheritedUseExtendedResolveId());
+        setUsePreviousResolveIfExist(ivycp.getConf().getInheritedAdvancedSetup().isUseExtendedResolveId());
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
-        if (conf.isInheritedRetrievedClasspath()) {
-            RetrieveSetup setup = conf.getInheritedRetrievedClasspathSetup();
+        if (conf.getInheritedClasspathSetup().isRetrievedClasspath()) {
+            RetrieveSetup setup = conf.getInheritedClasspathSetup().getRetrieveSetup();
             setRetrievePattern(setup.getRetrievePattern());
             setRetrieveSync(setup.isRetrieveSync());
             setRetrieveTypes(setup.getRetrieveTypes());

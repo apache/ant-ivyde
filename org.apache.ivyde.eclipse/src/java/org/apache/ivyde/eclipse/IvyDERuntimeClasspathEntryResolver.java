@@ -81,11 +81,13 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
     private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(
             IvyClasspathContainer ivycp, IRuntimeClasspathEntry entry) throws CoreException {
         IClasspathEntry[] cpes;
-        if (ivycp.getClasspathEntries() == null || ivycp.getConf().isInheritedResolveBeforeLaunch()) {
+        if (ivycp.getClasspathEntries() == null
+                || ivycp.getConf().getInheritedAdvancedSetup().isResolveBeforeLaunch()) {
             ClasspathEntriesResolver resolver = new ClasspathEntriesResolver(ivycp, false);
             ResolveRequest request = new ResolveRequest(resolver, ivycp.getState());
             request.setForceFailOnError(true);
-            request.setInWorkspace(ivycp.getConf().isInheritedResolveInWorkspace());
+            request.setInWorkspace(ivycp.getConf().getInheritedClasspathSetup()
+                    .isResolveInWorkspace());
             IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
             IStatus status = resolveJob.launchRequest(request, new NullProgressMonitor());
             if (status.getCode() != IStatus.OK) {

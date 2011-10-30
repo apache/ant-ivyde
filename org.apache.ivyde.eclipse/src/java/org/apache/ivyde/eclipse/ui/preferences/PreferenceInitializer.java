@@ -19,9 +19,11 @@ package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
+import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
+import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
+import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.apache.ivyde.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -43,72 +45,23 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
 
-    public static final IvySettingsSetup DEFAULT_IVY_SETTINGS_SETUP = new IvySettingsSetup();
+    public static final SettingsSetup DEFAULT_SETTINGS_SETUP = new SettingsSetup();
 
     static {
-        DEFAULT_IVY_SETTINGS_SETUP.setIvySettingsPath(DEFAULT_IVYSETTINGS_PATH);
-        DEFAULT_IVY_SETTINGS_SETUP.setLoadSettingsOnDemand(DEFAULT_LOAD_SETTINGS_ON_DEMAND);
-        DEFAULT_IVY_SETTINGS_SETUP.setPropertyFiles(IvyClasspathUtil.split(DEFAULT_PROPERTY_FILES));
+        DEFAULT_SETTINGS_SETUP.setIvySettingsPath(DEFAULT_IVYSETTINGS_PATH);
+        DEFAULT_SETTINGS_SETUP.setLoadSettingsOnDemand(DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        DEFAULT_SETTINGS_SETUP.setPropertyFiles(IvyClasspathUtil.split(DEFAULT_PROPERTY_FILES));
     }
 
     public static final String DEFAULT_ACCEPTED_TYPES = "jar,bundle,ejb,maven-plugin";
-
-    public static final String DEFAULT_SOURCES_TYPES = "source";
-
-    public static final String DEFAULT_JAVADOC_TYPES = "javadoc";
-
-    public static final String DEFAULT_SOURCES_SUFFIXES = "-source,-sources,-src";
-
-    public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
-
-    public static final boolean DEFAULT_MAP_IF_ONLY_ONE_SOURCE = false;
-
-    public static final boolean DEFAULT_MAP_IF_ONLY_ONE_JAVADOC = false;
-    
-    public static final int DEFAULT_IVY_CONSOLE_LOG_MESSAGE = Message.MSG_INFO;
-
-    public static final ContainerMappingSetup DEFAULT_CONTAINER_MAPPING_SETUP =
-        new ContainerMappingSetup();
-
-    static {
-        DEFAULT_CONTAINER_MAPPING_SETUP.setAcceptedTypes(IvyClasspathUtil
-                .split(DEFAULT_ACCEPTED_TYPES));
-        DEFAULT_CONTAINER_MAPPING_SETUP.setSourceTypes(IvyClasspathUtil
-                .split(DEFAULT_SOURCES_TYPES));
-        DEFAULT_CONTAINER_MAPPING_SETUP.setJavadocTypes(IvyClasspathUtil
-                .split(DEFAULT_JAVADOC_TYPES));
-        DEFAULT_CONTAINER_MAPPING_SETUP.setSourceSuffixes(IvyClasspathUtil
-                .split(DEFAULT_SOURCES_SUFFIXES));
-        DEFAULT_CONTAINER_MAPPING_SETUP.setJavadocSuffixes(IvyClasspathUtil
-                .split(DEFAULT_JAVADOC_SUFFIXES));
-        DEFAULT_CONTAINER_MAPPING_SETUP.setMapIfOnlyOneSource(DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
-        DEFAULT_CONTAINER_MAPPING_SETUP.setMapIfOnlyOneJavadoc(DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
-    }
 
     public static final boolean DEFAULT_ALPHABETICAL_ORDER = false;
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
 
-    public static final boolean DEFAULT_RESOLVE_BEFORE_LAUNCH = false;
-
-    public static final boolean DEFAULT_USE_EXTENDED_RESOLVE_ID = false;
-
-    public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
-
-    public static final boolean DEFAULT_AUTO_RESOLVE_ON_CLOSE = true;
-
-    public static final boolean DEFAULT_AUTO_RESOLVE_ON_OPEN = false;
-
-    public static final boolean DEFAULT_AUTO_RESOLVE_ON_CHANGE = true;
-
-    public static final boolean DEFAULT_IGNORE_BRANCH_ON_WORKSPACE_PROJECTS = false;
-
-    public static final boolean DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS = false;
-
     public static final boolean DEFAULT_RETRIEVED_CLASSPATH = false;
 
-    private static final String DEFAULT_RETRIEVED_CLASSPATH_PATTERN =
-        "lib/[artifact]-[revision].[ext]";
+    private static final String DEFAULT_RETRIEVED_CLASSPATH_PATTERN = "lib/[artifact]-[revision].[ext]";
 
     private static final boolean DEFAULT_RETRIEVED_CLASSPATH_SYNC = false;
 
@@ -121,6 +74,64 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         DEFAULT_RETRIEVED_CLASSPATH_SETUP.setRetrieveSync(DEFAULT_RETRIEVED_CLASSPATH_SYNC);
         DEFAULT_RETRIEVED_CLASSPATH_SETUP.setRetrieveTypes(DEFAULT_RETRIEVED_CLASSPATH_TYPES);
     }
+
+    public static final ClasspathSetup DEFAULT_CLASSPATH_SETUP = new ClasspathSetup();
+
+    static {
+        DEFAULT_CLASSPATH_SETUP.setAcceptedTypes(IvyClasspathUtil.split(DEFAULT_ACCEPTED_TYPES));
+        DEFAULT_CLASSPATH_SETUP.setAlphaOrder(DEFAULT_ALPHABETICAL_ORDER);
+        DEFAULT_CLASSPATH_SETUP.setResolveInWorkspace(DEFAULT_RESOLVE_IN_WORKSPACE);
+        DEFAULT_CLASSPATH_SETUP.setRetrievedClasspath(DEFAULT_RETRIEVED_CLASSPATH);
+        DEFAULT_CLASSPATH_SETUP.setRetrieveSetup(DEFAULT_RETRIEVED_CLASSPATH_SETUP);
+    }
+
+    public static final String DEFAULT_SOURCES_TYPES = "source";
+
+    public static final String DEFAULT_JAVADOC_TYPES = "javadoc";
+
+    public static final String DEFAULT_SOURCES_SUFFIXES = "-source,-sources,-src";
+
+    public static final String DEFAULT_JAVADOC_SUFFIXES = "-javadoc,-javadocs,-doc,-docs";
+
+    public static final boolean DEFAULT_MAP_IF_ONLY_ONE_SOURCE = false;
+
+    public static final boolean DEFAULT_MAP_IF_ONLY_ONE_JAVADOC = false;
+
+    public static final int DEFAULT_IVY_CONSOLE_LOG_MESSAGE = Message.MSG_INFO;
+
+    public static final MappingSetup DEFAULT_MAPPING_SETUP = new MappingSetup();
+
+    static {
+        DEFAULT_MAPPING_SETUP.setSourceTypes(IvyClasspathUtil.split(DEFAULT_SOURCES_TYPES));
+        DEFAULT_MAPPING_SETUP.setJavadocTypes(IvyClasspathUtil.split(DEFAULT_JAVADOC_TYPES));
+        DEFAULT_MAPPING_SETUP.setSourceSuffixes(IvyClasspathUtil.split(DEFAULT_SOURCES_SUFFIXES));
+        DEFAULT_MAPPING_SETUP.setJavadocSuffixes(IvyClasspathUtil.split(DEFAULT_JAVADOC_SUFFIXES));
+        DEFAULT_MAPPING_SETUP.setMapIfOnlyOneSource(DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
+        DEFAULT_MAPPING_SETUP.setMapIfOnlyOneJavadoc(DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
+    }
+
+    public static final boolean DEFAULT_RESOLVE_BEFORE_LAUNCH = false;
+
+    public static final boolean DEFAULT_USE_EXTENDED_RESOLVE_ID = false;
+
+    public static final AdvancedSetup DEFAULT_ADVANCED_SETUP = new AdvancedSetup();
+
+    static {
+        DEFAULT_ADVANCED_SETUP.setResolveBeforeLaunch(DEFAULT_RESOLVE_BEFORE_LAUNCH);
+        DEFAULT_ADVANCED_SETUP.setUseExtendedResolveId(DEFAULT_USE_EXTENDED_RESOLVE_ID);
+    }
+
+    public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
+
+    public static final boolean DEFAULT_AUTO_RESOLVE_ON_CLOSE = true;
+
+    public static final boolean DEFAULT_AUTO_RESOLVE_ON_OPEN = false;
+
+    public static final boolean DEFAULT_AUTO_RESOLVE_ON_CHANGE = true;
+
+    public static final boolean DEFAULT_IGNORE_BRANCH_ON_WORKSPACE_PROJECTS = false;
+
+    public static final boolean DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS = false;
 
     public static final boolean DEFAULT_OFFLINE = false;
 
@@ -140,10 +151,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.JAVADOC_TYPES, DEFAULT_JAVADOC_TYPES);
         store.setDefault(PreferenceConstants.SOURCES_SUFFIXES, DEFAULT_SOURCES_SUFFIXES);
         store.setDefault(PreferenceConstants.JAVADOC_SUFFIXES, DEFAULT_JAVADOC_SUFFIXES);
-        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE,
-                DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
+        store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE, DEFAULT_MAP_IF_ONLY_ONE_SOURCE);
         store.setDefault(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC,
-                DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
+            DEFAULT_MAP_IF_ONLY_ONE_JAVADOC);
 
         store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
@@ -155,11 +165,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CLOSE, DEFAULT_AUTO_RESOLVE_ON_CLOSE);
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_OPEN, DEFAULT_AUTO_RESOLVE_ON_OPEN);
-        store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE,
-            DEFAULT_AUTO_RESOLVE_ON_CHANGE);
+        store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, DEFAULT_AUTO_RESOLVE_ON_CHANGE);
 
-        store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL,
-            DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
+        store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
 
         store.setDefault(PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS,
             DEFAULT_IGNORE_BRANCH_ON_WORKSPACE_PROJECTS);

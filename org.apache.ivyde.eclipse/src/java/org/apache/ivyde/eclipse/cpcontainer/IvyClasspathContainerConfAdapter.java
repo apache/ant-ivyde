@@ -98,9 +98,10 @@ public final class IvyClasspathContainerConfAdapter {
      *            the path of the container
      */
     private static void loadV1(IvyClasspathContainerConfiguration conf, IPath path) {
-        ContainerMappingSetup mappingSetup = conf.getContainerMappingSetup();
-        IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
-        RetrieveSetup retrievedClasspathSetup = conf.getRetrievedClasspathSetup();
+        SettingsSetup settingsSetup = conf.getIvySettingsSetup();
+        ClasspathSetup classpathSetup = conf.getClasspathSetup();
+        MappingSetup mappingSetup = conf.getMappingSetup();
+        AdvancedSetup advancedSetup = conf.getAdvancedSetup();
 
         String url = path.segment(1).substring(1);
         String[] parameters = url.split("&");
@@ -151,49 +152,50 @@ public final class IvyClasspathContainerConfAdapter {
                 settingsSetup.setPropertyFiles(IvyClasspathUtil.split(value));
                 conf.setSettingsProjectSpecific(true);
             } else if (parameter[0].equals("acceptedTypes")) {
-                mappingSetup.setAcceptedTypes(IvyClasspathUtil.split(value));
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.setAcceptedTypes(IvyClasspathUtil.split(value));
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("sourceTypes")) {
                 mappingSetup.setSourceTypes(IvyClasspathUtil.split(value));
-                conf.setAdvancedProjectSpecific(true);
+                conf.setMappingProjectSpecific(true);
             } else if (parameter[0].equals("javadocTypes")) {
                 mappingSetup.setJavadocTypes(IvyClasspathUtil.split(value));
-                conf.setAdvancedProjectSpecific(true);
+                conf.setMappingProjectSpecific(true);
             } else if (parameter[0].equals("sourceSuffixes")) {
                 mappingSetup.setSourceSuffixes(IvyClasspathUtil.split(value));
-                conf.setAdvancedProjectSpecific(true);
+                conf.setMappingProjectSpecific(true);
             } else if (parameter[0].equals("javadocSuffixes")) {
                 mappingSetup.setJavadocSuffixes(IvyClasspathUtil.split(value));
-                conf.setAdvancedProjectSpecific(true);
+                conf.setMappingProjectSpecific(true);
             } else if (parameter[0].equals("alphaOrder")) {
                 // if the value is not actually "true" or "false", the Boolean class ensure to
                 // return false, so it is fine
-                conf.setAlphaOrder(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.setAlphaOrder(Boolean.valueOf(value).booleanValue());
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("resolveInWorkspace")) {
-                conf.setResolveInWorkspace(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.setResolveInWorkspace(Boolean.valueOf(value).booleanValue());
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("resolveBeforeLaunch")) {
-                conf.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
+                advancedSetup.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
                 conf.setAdvancedProjectSpecific(true);
             } else if (parameter[0].equals("retrievedClasspath")) {
-                conf.setRetrievedClasspath(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.setRetrievedClasspath(Boolean.valueOf(value).booleanValue());
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("retrievedClasspathPattern")) {
-                retrievedClasspathSetup.setRetrievePattern(value);
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.getRetrieveSetup().setRetrievePattern(value);
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("retrievedClasspathSync")) {
-                retrievedClasspathSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.getRetrieveSetup().setRetrieveSync(
+                    Boolean.valueOf(value).booleanValue());
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("retrievedClasspathTypes")) {
-                retrievedClasspathSetup.setRetrieveTypes(value);
-                conf.setAdvancedProjectSpecific(true);
+                classpathSetup.getRetrieveSetup().setRetrieveTypes(value);
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("mapIfOnlyOneSource")) {
                 mappingSetup.setMapIfOnlyOneSource(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                conf.setMappingProjectSpecific(true);
             } else if (parameter[0].equals("mapIfOnlyOneJavadoc")) {
                 mappingSetup.setMapIfOnlyOneJavadoc(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                conf.setMappingProjectSpecific(true);
 
                 // the following is the retrieve conf pre -IVYDE-56
                 // from this conf should be build StandaloneRetrieveSetup
@@ -215,9 +217,8 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("retrieveTypes")) {
                 standaloneRetrieveSetup.setRetrieveTypes(value);
                 isRetrieveProjectSpecific = true;
-            }
-            else if (parameter[0].equals("useExtendedResolveId")) {
-                conf.setUseExtendedResolveId(Boolean.valueOf(value).booleanValue());
+            } else if (parameter[0].equals("useExtendedResolveId")) {
+                advancedSetup.setUseExtendedResolveId(Boolean.valueOf(value).booleanValue());
                 conf.setAdvancedProjectSpecific(true);
             }
         }
@@ -233,7 +234,7 @@ public final class IvyClasspathContainerConfAdapter {
 
     private static void convertOldRetrieveConf(IvyClasspathContainerConfiguration conf,
             boolean isRetrieveProjectSpecific, boolean doStandaloneRetrieve,
-            RetrieveSetup retrieveSetup, IvySettingsSetup settingsSetup, String ivyXmlPath) {
+            RetrieveSetup retrieveSetup, SettingsSetup settingsSetup, String ivyXmlPath) {
         if (conf.getJavaProject() == null) {
             // no project means no retrieve possible
             return;
@@ -241,7 +242,7 @@ public final class IvyClasspathContainerConfAdapter {
 
         StandaloneRetrieveSetup setup = new StandaloneRetrieveSetup();
         setup.setName("dependencies");
-        setup.setIvySettingsSetup(settingsSetup);
+        setup.setSettingsSetup(settingsSetup);
         setup.setIvyXmlPath(ivyXmlPath);
         setup.setSettingsProjectSpecific(conf.isSettingsProjectSpecific());
         setup.setProject(conf.getJavaProject().getProject());
@@ -325,16 +326,18 @@ public final class IvyClasspathContainerConfAdapter {
     }
 
     private static void checkNonNullConf(IvyClasspathContainerConfiguration conf) {
-        ContainerMappingSetup mappingSetup = conf.getContainerMappingSetup();
-        IvySettingsSetup settingsSetup = conf.getIvySettingsSetup();
-        ContainerMappingSetup prefStoreMappingSetup = IvyPlugin.getPreferenceStoreHelper()
-                .getContainerMappingSetup();
+        ClasspathSetup classpathSetup = conf.getClasspathSetup();
+        ClasspathSetup prefStoreClasspathSetup = IvyPlugin.getPreferenceStoreHelper()
+                .getClasspathSetup();
+        MappingSetup mappingSetup = conf.getMappingSetup();
+        SettingsSetup settingsSetup = conf.getIvySettingsSetup();
+        MappingSetup prefStoreMappingSetup = IvyPlugin.getPreferenceStoreHelper().getMappingSetup();
         if (settingsSetup.getRawPropertyFiles() == null) {
-            settingsSetup.setPropertyFiles(IvyPlugin.getPreferenceStoreHelper()
-                    .getIvySettingsSetup().getRawPropertyFiles());
+            settingsSetup.setPropertyFiles(IvyPlugin.getPreferenceStoreHelper().getSettingsSetup()
+                    .getRawPropertyFiles());
         }
-        if (mappingSetup.getAcceptedTypes() == null) {
-            mappingSetup.setAcceptedTypes(prefStoreMappingSetup.getAcceptedTypes());
+        if (classpathSetup.getAcceptedTypes() == null) {
+            classpathSetup.setAcceptedTypes(prefStoreClasspathSetup.getAcceptedTypes());
         }
         if (mappingSetup.getSourceTypes() == null) {
             mappingSetup.setSourceTypes(prefStoreMappingSetup.getSourceTypes());
@@ -363,31 +366,37 @@ public final class IvyClasspathContainerConfAdapter {
             path.append(URLEncoder.encode(conf.getIvyXmlPath(), "UTF-8"));
             append(path, "confs", conf.getConfs());
             if (conf.isSettingsProjectSpecific()) {
-                IvySettingsSetup setup = conf.getIvySettingsSetup();
+                SettingsSetup setup = conf.getIvySettingsSetup();
                 append(path, "ivySettingsPath", setup.getRawIvySettingsPath());
                 append(path, "loadSettingsOnDemand", setup.isLoadSettingsOnDemand());
                 append(path, "propertyFiles", setup.getRawPropertyFiles());
             }
-            if (conf.isAdvancedProjectSpecific()) {
-                ContainerMappingSetup setup = conf.getContainerMappingSetup();
+            if (conf.isClassthProjectSpecific()) {
+                ClasspathSetup setup = conf.getClasspathSetup();
                 append(path, "acceptedTypes", setup.getAcceptedTypes());
-                append(path, "sourceTypes", setup.getSourceTypes());
-                append(path, "javadocTypes", setup.getJavadocTypes());
-                append(path, "sourceSuffixes", setup.getSourceSuffixes());
-                append(path, "javadocSuffixes", setup.getJavadocSuffixes());
-                append(path, "alphaOrder", conf.isAlphaOrder());
-                append(path, "resolveInWorkspace", conf.isResolveInWorkspace());
-                append(path, "resolveBeforeLaunch", conf.isResolveBeforeLaunch());
-                append(path, "retrievedClasspath", conf.isRetrievedClasspath());
-                if (conf.isRetrievedClasspath()) {
-                    RetrieveSetup retrieveSetup = conf.getRetrievedClasspathSetup();
+                append(path, "alphaOrder", setup.isAlphaOrder());
+                append(path, "resolveInWorkspace", setup.isResolveInWorkspace());
+                append(path, "retrievedClasspath", setup.isRetrievedClasspath());
+                if (setup.isRetrievedClasspath()) {
+                    RetrieveSetup retrieveSetup = setup.getRetrieveSetup();
                     append(path, "retrievedClasspathPattern", retrieveSetup.getRetrievePattern());
                     append(path, "retrievedClasspathSync", retrieveSetup.isRetrieveSync());
                     append(path, "retrievedClasspathTypes", retrieveSetup.getRetrieveTypes());
                 }
+            }
+            if (conf.isMappingProjectSpecific()) {
+                MappingSetup setup = conf.getMappingSetup();
+                append(path, "sourceTypes", setup.getSourceTypes());
+                append(path, "javadocTypes", setup.getJavadocTypes());
+                append(path, "sourceSuffixes", setup.getSourceSuffixes());
+                append(path, "javadocSuffixes", setup.getJavadocSuffixes());
                 append(path, "mapIfOnlyOneSource", setup.isMapIfOnlyOneSource());
                 append(path, "mapIfOnlyOneJavadoc", setup.isMapIfOnlyOneJavadoc());
-                append(path, "useExtendedResolveId", conf.isUseExtendedResolveId());
+            }
+            if (conf.isAdvancedProjectSpecific()) {
+                AdvancedSetup setup = conf.getAdvancedSetup();
+                append(path, "resolveBeforeLaunch", setup.isResolveBeforeLaunch());
+                append(path, "useExtendedResolveId", setup.isUseExtendedResolveId());
             }
         } catch (UnsupportedEncodingException e) {
             IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);

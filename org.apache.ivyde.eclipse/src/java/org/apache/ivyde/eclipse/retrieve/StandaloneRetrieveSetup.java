@@ -17,24 +17,21 @@
  */
 package org.apache.ivyde.eclipse.retrieve;
 
-import java.util.Collection;
-
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
 import org.eclipse.core.resources.IProject;
 
 public class StandaloneRetrieveSetup {
 
     private String name = "dependencies";
 
-    private IvySettingsSetup ivySettingsSetup = new IvySettingsSetup();
+    private SettingsSetup settingsSetup = new SettingsSetup();
 
     private String ivyXmlPath = "ivy.xml";
 
     private RetrieveSetup retrieveSetup = new RetrieveSetup();
 
-    private boolean isSettingsProjectSpecific;
+    private boolean settingsProjectSpecific;
 
     private IProject project;
 
@@ -52,12 +49,12 @@ public class StandaloneRetrieveSetup {
         this.name = name;
     }
 
-    public IvySettingsSetup getIvySettingsSetup() {
-        return ivySettingsSetup;
+    public SettingsSetup getSettingsSetup() {
+        return settingsSetup;
     }
 
-    public void setIvySettingsSetup(IvySettingsSetup ivySettingsSetup) {
-        this.ivySettingsSetup = ivySettingsSetup;
+    public void setSettingsSetup(SettingsSetup settingsSetup) {
+        this.settingsSetup = settingsSetup;
     }
 
     public String getIvyXmlPath() {
@@ -77,11 +74,11 @@ public class StandaloneRetrieveSetup {
     }
 
     public boolean isSettingProjectSpecific() {
-        return isSettingsProjectSpecific;
+        return settingsProjectSpecific;
     }
 
     public void setSettingsProjectSpecific(boolean isSettingsProjectSpecific) {
-        this.isSettingsProjectSpecific = isSettingsProjectSpecific;
+        this.settingsProjectSpecific = isSettingsProjectSpecific;
     }
 
     public IProject getProject() {
@@ -96,28 +93,12 @@ public class StandaloneRetrieveSetup {
         return name != null ? name : retrieveSetup.getRetrievePattern();
     }
 
-    public String getInheritedIvySettingsPath() throws IvyDEException {
-        if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .getResolvedIvySettingsPath(project);
+    public SettingsSetup getInheritedSettingSetup() {
+        if (!settingsProjectSpecific) {
+            return IvyPlugin.getPreferenceStoreHelper().getSettingsSetup();
         }
-        return ivySettingsSetup.getResolvedIvySettingsPath(project);
-    }
+        return settingsSetup;
 
-    public Collection getInheritedPropertyFiles() throws IvyDEException {
-        if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .getResolvedPropertyFiles();
-        }
-        return ivySettingsSetup.getResolvedPropertyFiles();
-    }
-
-    public boolean isInheritedLoadSettingsOnDemand() {
-        if (!isSettingsProjectSpecific) {
-            return IvyPlugin.getPreferenceStoreHelper().getIvySettingsSetup()
-                    .isLoadSettingsOnDemand();
-        }
-        return ivySettingsSetup.isLoadSettingsOnDemand();
     }
 
 }

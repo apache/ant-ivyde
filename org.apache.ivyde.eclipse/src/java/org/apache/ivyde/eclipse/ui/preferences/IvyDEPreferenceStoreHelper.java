@@ -17,9 +17,11 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
+import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
+import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.IvySettingsSetup;
+import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
+import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -49,8 +51,8 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.ORGANISATION_URL, url);
     }
 
-    public IvySettingsSetup getIvySettingsSetup() {
-        IvySettingsSetup setup = new IvySettingsSetup();
+    public SettingsSetup getSettingsSetup() {
+        SettingsSetup setup = new SettingsSetup();
         setup.setIvySettingsPath(prefStore.getString(PreferenceConstants.IVYSETTINGS_PATH));
         setup.setLoadSettingsOnDemand(prefStore
                 .getBoolean(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND));
@@ -59,18 +61,48 @@ public class IvyDEPreferenceStoreHelper {
         return setup;
     }
 
-    public void setIvySettingsSetup(IvySettingsSetup setup) {
+    public void setSettingsSetup(SettingsSetup setup) {
         prefStore.setValue(PreferenceConstants.IVYSETTINGS_PATH, setup.getRawIvySettingsPath());
-        prefStore.setValue(PreferenceConstants.PROPERTY_FILES, IvyClasspathUtil.concat(setup
-                .getRawPropertyFiles()));
-        prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND, setup
-                .isLoadSettingsOnDemand());
+        prefStore.setValue(PreferenceConstants.PROPERTY_FILES,
+            IvyClasspathUtil.concat(setup.getRawPropertyFiles()));
+        prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
+            setup.isLoadSettingsOnDemand());
     }
 
-    public ContainerMappingSetup getContainerMappingSetup() {
-        ContainerMappingSetup setup = new ContainerMappingSetup();
+    public ClasspathSetup getClasspathSetup() {
+        ClasspathSetup setup = new ClasspathSetup();
+        setup.setResolveInWorkspace(prefStore.getBoolean(PreferenceConstants.RESOLVE_IN_WORKSPACE));
         setup.setAcceptedTypes(IvyClasspathUtil.split(prefStore
                 .getString(PreferenceConstants.ACCEPTED_TYPES)));
+        setup.setAlphaOrder(prefStore.getBoolean(PreferenceConstants.ALPHABETICAL_ORDER));
+        setup.setRetrievedClasspath(prefStore.getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH));
+        RetrieveSetup retrieveSetup = new RetrieveSetup();
+        retrieveSetup.setRetrievePattern(prefStore
+                .getString(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN));
+        retrieveSetup.setRetrieveSync(prefStore
+                .getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC));
+        retrieveSetup.setRetrieveTypes(prefStore
+                .getString(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES));
+        return setup;
+    }
+
+    public void setClasspathSetup(ClasspathSetup setup) {
+        prefStore.setValue(PreferenceConstants.RESOLVE_IN_WORKSPACE, setup.isResolveInWorkspace());
+        prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES,
+            IvyClasspathUtil.concat(setup.getAcceptedTypes()));
+        prefStore.setValue(PreferenceConstants.ALPHABETICAL_ORDER, setup.isAlphaOrder());
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH, setup.isRetrievedClasspath());
+        RetrieveSetup retrieveSetup = setup.getRetrieveSetup();
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN,
+            retrieveSetup.getRetrievePattern());
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC,
+            retrieveSetup.isRetrieveSync());
+        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES,
+            retrieveSetup.getRetrieveTypes());
+    }
+
+    public MappingSetup getMappingSetup() {
+        MappingSetup setup = new MappingSetup();
         setup.setSourceTypes(IvyClasspathUtil.split(prefStore
                 .getString(PreferenceConstants.SOURCES_TYPES)));
         setup.setJavadocTypes(IvyClasspathUtil.split(prefStore
@@ -86,53 +118,35 @@ public class IvyDEPreferenceStoreHelper {
         return setup;
     }
 
-    public void setContainerMappingSetup(ContainerMappingSetup setup) {
-        prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES, IvyClasspathUtil.concat(setup
-                .getAcceptedTypes()));
-        prefStore.setValue(PreferenceConstants.SOURCES_TYPES, IvyClasspathUtil.concat(setup
-                .getSourceTypes()));
-        prefStore.setValue(PreferenceConstants.JAVADOC_TYPES, IvyClasspathUtil.concat(setup
-                .getJavadocTypes()));
-        prefStore.setValue(PreferenceConstants.SOURCES_SUFFIXES, IvyClasspathUtil.concat(setup
-                .getSourceSuffixes()));
-        prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES, IvyClasspathUtil.concat(setup
-                .getJavadocSuffixes()));
-        prefStore.setValue(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE,
-                setup.isMapIfOnlyOneSource());
+    public void setMappingSetup(MappingSetup setup) {
+        prefStore.setValue(PreferenceConstants.SOURCES_TYPES,
+            IvyClasspathUtil.concat(setup.getSourceTypes()));
+        prefStore.setValue(PreferenceConstants.JAVADOC_TYPES,
+            IvyClasspathUtil.concat(setup.getJavadocTypes()));
+        prefStore.setValue(PreferenceConstants.SOURCES_SUFFIXES,
+            IvyClasspathUtil.concat(setup.getSourceSuffixes()));
+        prefStore.setValue(PreferenceConstants.JAVADOC_SUFFIXES,
+            IvyClasspathUtil.concat(setup.getJavadocSuffixes()));
+        prefStore
+                .setValue(PreferenceConstants.MAP_IF_ONLY_ONE_SOURCE, setup.isMapIfOnlyOneSource());
         prefStore.setValue(PreferenceConstants.MAP_IF_ONLY_ONE_JAVADOC,
-                setup.isMapIfOnlyOneJavadoc());
+            setup.isMapIfOnlyOneJavadoc());
     }
 
-    public boolean isAlphOrder() {
-        return prefStore.getBoolean(PreferenceConstants.ALPHABETICAL_ORDER);
+    public AdvancedSetup getAdvancedSetup() {
+        AdvancedSetup setup = new AdvancedSetup();
+        setup.setResolveBeforeLaunch(prefStore
+                .getBoolean(PreferenceConstants.RESOLVE_BEFORE_LAUNCH));
+        setup.setUseExtendedResolveId(prefStore
+                .getBoolean(PreferenceConstants.USE_EXTENDED_RESOLVE_ID));
+        return setup;
     }
 
-    public void setAlphOrder(boolean alpha) {
-        prefStore.setValue(PreferenceConstants.ALPHABETICAL_ORDER, alpha);
-    }
-
-    public boolean isResolveInWorkspace() {
-        return prefStore.getBoolean(PreferenceConstants.RESOLVE_IN_WORKSPACE);
-    }
-
-    public void setResolveInWorkspace(boolean inWorkspace) {
-        prefStore.setValue(PreferenceConstants.RESOLVE_IN_WORKSPACE, inWorkspace);
-    }
-
-    public boolean isResolveBeforeLaunch() {
-        return prefStore.getBoolean(PreferenceConstants.RESOLVE_BEFORE_LAUNCH);
-    }
-
-    public void setResolveBeforeLaunch(boolean resolveBeforeLaunch) {
-        prefStore.setValue(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, resolveBeforeLaunch);
-    }
-
-    public boolean isUseExtendedResolveId() {
-        return prefStore.getBoolean(PreferenceConstants.USE_EXTENDED_RESOLVE_ID);
-    }
-
-    public void setUseExtendedResolveId(boolean useExtendedResolveId) {
-        prefStore.setValue(PreferenceConstants.USE_EXTENDED_RESOLVE_ID, useExtendedResolveId);
+    public void setAdvancedSetup(AdvancedSetup setup) {
+        prefStore
+                .setValue(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, setup.isResolveBeforeLaunch());
+        prefStore.setValue(PreferenceConstants.USE_EXTENDED_RESOLVE_ID,
+            setup.isUseExtendedResolveId());
     }
 
     public String getOrganization() {
@@ -249,34 +263,6 @@ public class IvyDEPreferenceStoreHelper {
 
     public void setEditorColorTag(RGB color) {
         PreferenceConverter.setValue(prefStore, PreferenceConstants.EDITOR_COLOR_TAG, color);
-    }
-
-    public boolean isRetrievedClasspath() {
-        return prefStore.getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH);
-    }
-
-    public void setRetrievedClasspath(boolean retrievedClasspath) {
-        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH, retrievedClasspath);
-    }
-
-    public RetrieveSetup getRetrievedClasspathSetup() {
-        RetrieveSetup retrieveSetup = new RetrieveSetup();
-        retrieveSetup.setRetrievePattern(prefStore
-                .getString(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN));
-        retrieveSetup.setRetrieveSync(prefStore
-                .getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC));
-        retrieveSetup.setRetrieveTypes(prefStore
-                .getString(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES));
-        return retrieveSetup;
-    }
-
-    public void setRetrievedClasspathSetup(RetrieveSetup retrieveSetup) {
-        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN, retrieveSetup
-                .getRetrievePattern());
-        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC, retrieveSetup
-                .isRetrieveSync());
-        prefStore.setValue(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES, retrieveSetup
-                .getRetrieveTypes());
     }
 
     public boolean isOffline() {

@@ -18,25 +18,23 @@
 package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.ui.SettingsEditor;
+import org.apache.ivyde.eclipse.ui.AdvancedSetupEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class SettingsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class AdvancedSetupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID =
-        "org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage";
+    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage";
 
-    private SettingsEditor settingsEditor;
+    private AdvancedSetupEditor advancedSetupEditor;
 
-    public SettingsPreferencePage() {
+    public AdvancedSetupPreferencePage() {
         setPreferenceStore(IvyPlugin.getDefault().getPreferenceStore());
     }
 
@@ -45,32 +43,21 @@ public class SettingsPreferencePage extends PreferencePage implements IWorkbench
     }
 
     protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        // CheckStyle:MagicNumber| OFF
-        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        composite.setLayout(new GridLayout());
+        advancedSetupEditor = new AdvancedSetupEditor(parent, SWT.NONE);
+        advancedSetupEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        settingsEditor = new SettingsEditor(composite, SWT.NONE);
-        settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-        // CheckStyle:MagicNumber| ON
+        advancedSetupEditor.init(IvyPlugin.getPreferenceStoreHelper().getAdvancedSetup(), false);
 
-        initPreferences();
-
-        return composite;
-    }
-
-    private void initPreferences() {
-        IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        settingsEditor.init(helper.getIvySettingsSetup());
+        return advancedSetupEditor;
     }
 
     public boolean performOk() {
         IvyDEPreferenceStoreHelper helper = IvyPlugin.getPreferenceStoreHelper();
-        helper.setIvySettingsSetup(settingsEditor.getIvySettingsSetup());
+        helper.setAdvancedSetup(advancedSetupEditor.getAdvancedSetup());
         return true;
     }
 
     protected void performDefaults() {
-        settingsEditor.init(PreferenceInitializer.DEFAULT_IVY_SETTINGS_SETUP);
+        advancedSetupEditor.init(PreferenceInitializer.DEFAULT_ADVANCED_SETUP, false);
     }
 }

@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.cpcontainer.ContainerMappingSetup;
+import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -27,10 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class AcceptedSuffixesTypesComposite extends Composite {
-
-    public static final String TOOLTIP_ACCEPTED_TYPES = "Comma separated list of artifact types"
-            + " to use in IvyDE Managed Dependencies Library.\n" + "Example: jar, zip";
+public class MappingSetupEditor extends Composite {
 
     public static final String TOOLTIP_SOURCE_TYPES = "Comma separated list of artifact types to"
             + " be used as sources.\nExample: source, src";
@@ -39,10 +36,10 @@ public class AcceptedSuffixesTypesComposite extends Composite {
             + " be used as javadoc.\nExample: javadoc.";
 
     public static final String TOOLTIP_SOURCE_SUFFIXES = "Comma separated list of suffixes to match"
-            + " sources to artifacts.\nExample: -source, -src";
+            + " sources to jars in the classpath.\nExample: -source, -src";
 
     public static final String TOOLTIP_JAVADOC_SUFFIXES = "Comma separated list of suffixes to"
-            + " match javadocs to artifacts.\nExample: -javadoc, -doc";
+            + " match javadocs to jars in the classpath.\nExample: -javadoc, -doc";
 
     public static final String TOOLTIP_MAP_IF_ONLY_ONE_SOURCE = "Will map the source artifact"
             + " to all jar artifact in modules with multiple jar artifacts and only one"
@@ -51,8 +48,6 @@ public class AcceptedSuffixesTypesComposite extends Composite {
     public static final String TOOLTIP_MAP_IF_ONLY_ONE_JAVADOC = "Will map the javadoc artifact"
             + " to all jar artifact in modules with multiple jar artifacts and only one"
             + " javadoc artifact";
-
-    private Text acceptedTypesText;
 
     private Text sourceTypesText;
 
@@ -66,8 +61,6 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     private Button mapIfOnlyOneJavadocCheck;
 
-    private Label acceptedTypesLabel;
-
     private Label sourceTypesLabel;
 
     private Label sourceSuffixesLabel;
@@ -76,19 +69,9 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     private Label javadocSuffixesLabel;
 
-    public AcceptedSuffixesTypesComposite(Composite parent, int style) {
+    public MappingSetupEditor(Composite parent, int style) {
         super(parent, style);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        setLayout(layout);
-
-        acceptedTypesLabel = new Label(this, SWT.NONE);
-        acceptedTypesLabel.setText("Accepted types:");
-
-        acceptedTypesText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        acceptedTypesText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        acceptedTypesText.setToolTipText(TOOLTIP_ACCEPTED_TYPES);
+        setLayout(new GridLayout(2, false));
 
         sourceTypesLabel = new Label(this, SWT.NONE);
         sourceTypesLabel.setText("Sources types:");
@@ -132,8 +115,7 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     }
 
-    public void init(ContainerMappingSetup setup) {
-        acceptedTypesText.setText(IvyClasspathUtil.concat(setup.getAcceptedTypes()));
+    public void init(MappingSetup setup) {
         sourceTypesText.setText(IvyClasspathUtil.concat(setup.getSourceTypes()));
         sourceSuffixesText.setText(IvyClasspathUtil.concat(setup.getSourceSuffixes()));
         javadocTypesText.setText(IvyClasspathUtil.concat(setup.getJavadocTypes()));
@@ -144,8 +126,6 @@ public class AcceptedSuffixesTypesComposite extends Composite {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        acceptedTypesLabel.setEnabled(enabled);
-        acceptedTypesText.setEnabled(enabled);
         sourceTypesLabel.setEnabled(enabled);
         sourceTypesText.setEnabled(enabled);
         sourceSuffixesLabel.setEnabled(enabled);
@@ -158,9 +138,8 @@ public class AcceptedSuffixesTypesComposite extends Composite {
         mapIfOnlyOneJavadocCheck.setEnabled(enabled);
     }
 
-    public ContainerMappingSetup getContainerMappingSetup() {
-        ContainerMappingSetup setup = new ContainerMappingSetup();
-        setup.setAcceptedTypes(IvyClasspathUtil.split(acceptedTypesText.getText()));
+    public MappingSetup getMappingSetup() {
+        MappingSetup setup = new MappingSetup();
         setup.setSourceTypes(IvyClasspathUtil.split(sourceTypesText.getText()));
         setup.setJavadocTypes(IvyClasspathUtil.split(javadocTypesText.getText()));
         setup.setSourceSuffixes(IvyClasspathUtil.split(sourceSuffixesText.getText()));

@@ -41,7 +41,7 @@ public class IvyClasspathContainerState extends CachedIvy {
     }
 
     protected String getIvySettingsPath() throws IvyDEException {
-        return conf.getInheritedIvySettingsPath();
+        return conf.getInheritedSettingsSetup().getResolvedIvySettingsPath(getProject());
     }
 
     protected String getIvyXmlPath() {
@@ -49,19 +49,19 @@ public class IvyClasspathContainerState extends CachedIvy {
     }
 
     protected IProject getProject() {
-        return conf.getJavaProject() == null ? null : conf.getJavaProject().getProject();
+        return conf.getProject();
     }
 
     protected Collection getPropertyFiles() throws IvyDEException {
-        return conf.getInheritedPropertyFiles();
+        return conf.getInheritedSettingsSetup().getResolvedPropertyFiles();
     }
 
     protected boolean isLoadSettingsOnDemandPath() {
-        return conf.getInheritedLoadSettingsOnDemandPath();
+        return conf.getInheritedSettingsSetup().isLoadSettingsOnDemand();
     }
 
     protected boolean isResolveInWorkspace() {
-        return conf.isInheritedResolveInWorkspace();
+        return conf.getInheritedClasspathSetup().isResolveInWorkspace();
     }
 
     public String toString() {

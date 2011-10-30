@@ -101,15 +101,15 @@
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage"
-            id="org.apache.ivyde.eclipse.ui.preferences.ClasspathPreferencePage"
-            name="Classpath">
+            class="org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage"
+            name="Settings">
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
-            id="org.apache.ivyde.eclipse.ui.preferences.SettingsPreferencePage"
-            name="Settings">
+            class="org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage"
+            name="Classpath Container">
       </page>
       <page
             name="Workspace Resolver"
@@ -119,9 +119,21 @@
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.eclipse.ui.preferences.MappingSetupPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.MappingSetupPreferencePage"
+            name="Source/Javadoc Mapping">
+      </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
             class="org.apache.ivyde.eclipse.ui.preferences.XMLEditorPreferencesPage"
             id="org.apache.ivyde.eclipse.ui.preferences.XMLEditorPreferencesPage"
             name="XML Editor">
+      </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage"
+            name="Advanced">
       </page>
    </extension>
    <extension
