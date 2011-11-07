@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -143,6 +144,14 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
+        String contextId = "ivyde.workspaceresolver." + getName() + "." + dd.getDependencyRevisionId().toString();
+        DependencyDescriptor parentDD = (DependencyDescriptor) IvyContext.getContext().get(contextId);
+        if (parentDD != null && parentDD.getDependencyRevisionId().equals(dd.getDependencyRevisionId())) {
+            // this very workspace resolver has been already called for the same dependency
+            // we are going into a circular dependency, let's return 'not found'
+            return null;
+        }
+        IvyContext.getContext().set(contextId, dd);
 
         ModuleRevisionId dependencyMrid = dd.getDependencyRevisionId();
 
