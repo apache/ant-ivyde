@@ -326,7 +326,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
 
     public void addCleanable(MenuManager menuManager, List/* <IContributionItem> */items,
             String name, List/* <Cleanable> */cleanables) {
-        CleanCacheAction action = new CleanCacheAction(cleanables);
+        CleanCacheAction action = new CleanCacheAction(name, cleanables);
         action.setText(name);
         fillMenu(menuManager, items, new ActionContributionItem(action));
     }

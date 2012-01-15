@@ -19,19 +19,25 @@ package org.apache.ivyde.eclipse.ui.menu;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 
 public class CleanCacheAction extends Action {
 
     private final List/* <Cleanable> */cleanables;
+
+    private final String name;
 
     public abstract static class Cleanable {
         public void launchClean() {
@@ -83,21 +89,27 @@ public class CleanCacheAction extends Action {
         }
     }
 
-    public CleanCacheAction(List/* <Cleanable> */cleanables) {
+    public CleanCacheAction(String name, List/* <Cleanable> */cleanables) {
+        this.name = name;
         this.cleanables = cleanables;
     }
 
     public void run() {
-        StringBuffer builder = new StringBuffer("Ivy cache cleaned: ");
-        Iterator itCleanable = cleanables.iterator();
-        while (itCleanable.hasNext()) {
-            Cleanable cleanable = (Cleanable) itCleanable.next();
-            cleanable.launchClean();
-            builder.append(cleanable.getName());
-            if (itCleanable.hasNext()) {
-                builder.append(", ");
+        final boolean ok[] = new boolean[1];
+        Display.getDefault().syncExec(new Runnable() {
+            public void run() {
+                ok[0] = MessageDialog.openConfirm(IvyPlugin.getActiveWorkbenchShell(), name,
+                    "Are you sure you want to " + name.toLowerCase(Locale.US)
+                            + ". (cannot be undone)");
+            }
+        });
+        if (ok[0]) {
+            Iterator itCleanable = cleanables.iterator();
+            while (itCleanable.hasNext()) {
+                Cleanable cleanable = (Cleanable) itCleanable.next();
+                cleanable.launchClean();
+                Message.log(Message.MSG_INFO, "Ivy cache cleaned: " + cleanable.getName());
             }
         }
-        IvyPlugin.log(IStatus.INFO, builder.toString(), null);
     }
 }
