@@ -108,7 +108,7 @@ public class CleanCacheAction extends Action {
             while (itCleanable.hasNext()) {
                 Cleanable cleanable = (Cleanable) itCleanable.next();
                 cleanable.launchClean();
-                Message.log(Message.MSG_INFO, "Ivy cache cleaned: " + cleanable.getName());
+                Message.info("Ivy cache cleaned: " + cleanable.getName());
             }
         }
     }
