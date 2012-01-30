@@ -30,7 +30,6 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h1><a name="global"></a>Global Ivy preferences</h1>
 
-<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref.jpg"/></center>
 
 <h4>Offline</h4>
@@ -48,14 +47,16 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h1><a name="advanced"></a>Advanced</h1>
 
-<b><font color="red">TODO: SCREENSHOT</font></b>
+<center><img src="images/pref_advanced.jpg"/></center>
 
 <h4>Resolve before launch:</h4>
 <p>An IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about <a href="cpc/launch.html">launch configurations</a> for further information on this feature.</p>
 
+<h4>Use extended resolve id</h4>
+<p>A resolve id is an identifier which helps Ivy to make cache of results of resolve. By default IvyDE each the id which is composed of the organisation and the module name. An extended resolve id is also composed of the status, branch and revision. If you have troubles with the resolve of multiple versions of the same project within the same workspace, you should probably enable this option.</p>
+
 <h1><a name="classpath"></a>Classpath container</h1>
 
-<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref_classpath.jpg"/></center>
 
 <h4>Resolve dependencies in workpace:</h4>
@@ -75,7 +76,6 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h1><a name="settings"></a>Ivy settings</h1>
 
-<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref_settings.jpg"/></center>
 
 <h4>Reload the settings only on demand:</h4>
@@ -87,8 +87,7 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h1><a name="mapping"></a>Source/Javadoc mapping</h1>
 
-<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
-<center><img src="images/pref_workspace.jpg"/></center>
+<center><img src="images/pref_source_javadoc_mapping.jpg"/></center>
 
 <h4>Sources types:</h4>
 <p>A comma separated list of Ivy "type" names which should be considered sources.</p>
@@ -107,7 +106,6 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h1><a name="workspace"></a>Workspace resolver</h1>
 
-<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref_workspace.jpg"/></center>
 
 <h4>Closing trigger resolve:</h4>
@@ -119,8 +117,7 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h1><a name="xmleditor"></a>XML Editor</h1>
 
-<b><font color="red">TODO: SCREENSHOT</font></b>
-<center><img src="images/xmleditor_color_config.jpg"/></center>
+<center><img src="images/xml_editor_color.jpg"/></center>
 
 This configuration panel allow you to change the color used in the <a href="ivyeditor.html">Ivy file editor</a> and the <a href="settingseditor.html">Ivy settings editor</a>.
 </textarea>
