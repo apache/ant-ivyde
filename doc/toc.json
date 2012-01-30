@@ -31,7 +31,10 @@
             },
             {
               "title":"License",
-              "url":"http://www.apache.org/licenses/"
+              "url":"http://www.apache.org/licenses/",
+              "children": [
+
+                ]
             },
             {
               "id":"compatibility",
@@ -131,6 +134,13 @@
                 ]
             },
             {
+              "id":"non-java",
+              "title":"Non-Java project",
+              "children": [
+
+                ]
+            },
+            {
               "id":"ivyeditor",
               "title":"Ivy file editor",
               "children": [
@@ -175,6 +185,13 @@
             {
               "id":"revdepexplorer",
               "title":"Reverse Dependency Explorer",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"resolve-visualizer",
+              "title":"Resolve Visualizer",
               "children": [
 
                 ]
