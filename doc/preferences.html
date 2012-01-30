@@ -33,63 +33,89 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref.jpg"/></center>
 
-<ul>
-     <li><u>On Eclipse startup:</u> Specifies what Apache IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse&#153; is starting up.</li>
-     <li><u>On Ivy file change:</u> Controls whether a resolve is performed each time Eclipse detects a change on an ivy.xml file configured by an IvyDE container via a save in the editor, a refresh, or a team/update.</li>
-	<li><u>Organisation:</u> Your company name for Ivy editor completion. </li>
-	<li><u>Organisation URL:</u> Your company web site url for Ivy editor completion.</li>
-</ul>
+<h4>Offline</h4>
+<p>If checked, it will force Ivy to never check resources via any network and trust its cache</p>
+<h4>On Eclipse startup:</h4>
+<p>Specifies what Apache IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse&#153; is starting up.</p>
+<h4>On Ivy file change:</h4>
+<p>Controls whether a resolve is performed each time Eclipse detects a change on an ivy.xml file configured by an IvyDE container via a save in the editor, a refresh, or a team/update.</p>
+<h4>Organisation:</h4>
+<p>Your company name for Ivy editor completion.</p>
+<h4>Organisation URL:</h4>
+<p>Your company web site url for Ivy editor completion.</p>
+<h4>Open a popup on each failed resolve</h4>
+<p>On a resolve error, IvyDE mark an error on the ivy.xml of the project; if checked it will also open a popup with a detailed error message</p>
 
-<h1><a name="classpath"></a>Classpath configuration</h1>
+<h1><a name="advanced"></a>Advanced</h1>
+
+<b><font color="red">TODO: SCREENSHOT</font></b>
+
+<h4>Resolve before launch:</h4>
+<p>An IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about <a href="cpc/launch.html">launch configurations</a> for further information on this feature.</p>
+
+<h1><a name="classpath"></a>Classpath container</h1>
 
 <b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref_classpath.jpg"/></center>
 
-<ul>
-	<li><u>Resolve dependencies in workpace:</u> Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</li>
-        <li><u>Resolve before launch:</u> an IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about <a href="cpc/launch.html">launch configurations</a> for further information on this feature.</li>
-	<li><u>Order of the classpath entries:</u> By default, the classpath container entries are ordered by order of declaration in the ivy.xml. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.</li>
-	<li><u>Accepted types:</u> A comma separated list of extensions which will make IvyDE add the artifact to the classpath</li>
-	<li><u>Sources types:</u> A comma separated list of Ivy "type" names which should be considered sources.</li>
-	<li><u>Sources suffixes:</u> a comma separated list of suffixes which will make IvyDE attach as source the artifact with the suffix to the artifact without the suffix. For instance, "commons-lang-sources.jar" will be attached as source to "commons-lang.jar" with the default value.</li>
-	<li><u>Javadoc types:</u> same as sources types but for javadocs</li>
-	<li><u>Javadoc suffixes:</u> same as sources suffixes but for javadocs</li>
-</ul>
-
-<h1><a name="retrieve"></a>Retrieve setup</h1>
-
-<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
-<center><img src="images/pref_retrieve.jpg"/></center>
-
-<ul>
-    If checked, a retrieve job will be triggered after each the resolve.<br/>
-	<li><u>Retrieve pattern:</u> The pattern to use for the retrieve. Check <a href="../../../history/latest-milestone/use/retrieve.html">Ivy documentation</a> for pattern explanation.</li>
-        <li><u>Delete old retrieve artifacts:</u> On each retrieve, the previously retrieved libraries will be removed (similar to the sync argument in the Ant task).</li>
-        <li><u>Retrieve configurations:</u> The configurations to retrieve (a comma separated list)</li>
-        <li><u>Retrieve types:</u> The types of artifact to retrieve (a comma separated list)</li>
-</ul>
+<h4>Resolve dependencies in workpace:</h4>
+<p>Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</p>
+<h4>Accepted types:</h4>
+<p>A comma separated list of extensions which will make IvyDE add the artifact to the classpath</p>
+<h4>Order of the classpath entries:</h4>
+<p>By default, the classpath container entries are ordered by order of declaration in the ivy.xml. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.</p>
+<h4>Build the classpath with:</h4>
+<p>Either Ivy with build a classpath with references to the artifacts in its cache.</p>
+<p>Or Ivy will retrieve the artifacts with the specified pattern, and then build a classpath with the retrieved jars.
+  <ul><li><u>Retrieve pattern:</u> The pattern to use for the retrieve. Check <a href="../../../history/latest-milestone/use/retrieve.html">Ivy documentation</a> for pattern explanation.</li>
+    <li><u>Delete old retrieve artifacts:</u> On each retrieve, the previously retrieved libraries will be removed (similar to the sync argument in the Ant task).</li>
+    <li><u>Types:</u> The types of artifact to retrieve (a comma separated list)</li>
+  </ul>
+</p>
 
 <h1><a name="settings"></a>Ivy settings</h1>
 
 <b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref_settings.jpg"/></center>
 
-<ul>
-	<li><u>Reload the settings only on demand:</u> By default, Apache IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).</li>
-	<li><u>Ivy settings path:</u> The path to your ivy settings file. Leave it blank to use Ivy default resolvers.  See also the documentation about <a href="eclipsevar.html">Eclipse variables</a>.</li>
-	<li><u>Property files:</u> This is a comma separated list of Java properties files to be loaded along with the settings.</li>
-</ul>
+<h4>Reload the settings only on demand:</h4>
+<p>By default, Apache IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).</p>
+<h4>Ivy settings path:</h4>
+<p>The path to your ivy settings file. Leave it blank to use Ivy default resolvers. See also the documentation about <a href="eclipsevar.html">Eclipse variables</a>.</p>
+<h4>Property files:</h4>
+<p>This is a list of Java properties files to load before loading the ivysettings.xml. Specify in this files properties which you expect to use in the ivysettings.xml</p>
+
+<h1><a name="mapping"></a>Source/Javadoc mapping</h1>
+
+<b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
+<center><img src="images/pref_workspace.jpg"/></center>
+
+<h4>Sources types:</h4>
+<p>A comma separated list of Ivy "type" names which should be considered sources.</p>
+<h4>Sources suffixes:</h4>
+<p>A comma separated list of suffixes which will make IvyDE attach as source the artifact with the suffix to the artifact without the suffix. For instance, "commons-lang-sources.jar" will be attached as source to "commons-lang.jar" with the default value.</p>
+<h4>Javadoc types:</h4>
+<p>same as sources types but for javadocs</p>
+<h4>Javadoc suffixes:</h4>
+<p>same as sources suffixes but for javadocs</p>
+<h4>Auto map jar artifacts with unique source artifact</h4>
+<p>If checked, in case there is only one artifact which is detected of type source, then IvyDE will consider this artifact the source of every jar of the module</p>
+<h4>Auto map jar artifacts with unique javadoc artifact</h4>
+<p>Same as above but with javadoc</p>
+
+<p>For further information on how the mapping works, checkout this <a href="cpc/jarmapping.html">specific documentation</a>.</p>
 
 <h1><a name="workspace"></a>Workspace resolver</h1>
 
 <b><font color="red">TODO: SCREENSHOT NOT UP TO DATE</font></b>
 <center><img src="images/pref_workspace.jpg"/></center>
 
-<ul>
-	<li><u>Closing trigger resolve:</u> Closing a project which has the workspace resolver enabled will trigger a resolve on every project that depends on it.</li>
-	<li><u>Opening trigger resolve:</u> When a project is opened, IvyDE will trigger the resolve of every other project which has the workspace resolver enabled.</li>
-        <li><u>Ignore version when resolving workspace projects:</u> This option forces the workspace resolver to ignore the version of a module specified in an ivy.xml if a project containing an Ivy file with that module organization and name is found in the workspace, instead substituting a project reference.  This may have unintended consequences.</li>
-</ul>
+<h4>Closing trigger resolve:</h4>
+<p>Closing a project which has the workspace resolver enabled will trigger a resolve on every project that depends on it.</p>
+<h4>Opening trigger resolve:</h4>
+<p>When a project is opened, IvyDE will trigger the resolve of every other project which has the workspace resolver enabled.</p>
+<h4>Ignore version when resolving workspace projects:</h4>
+<p>This option forces the workspace resolver to ignore the version of a module specified in an ivy.xml if a project containing an Ivy file with that module organization and name is found in the workspace, instead substituting a project reference.  This may have unintended consequences.</p>
 
 <h1><a name="xmleditor"></a>XML Editor</h1>
 
