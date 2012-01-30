@@ -1,0 +1,5 @@
+<ivysettings>
+	<property name="anyivy.local.dir" value="/Users/hibou/dev/anyivy/svn/" override="false" />
+	<settings defaultResolver="anyivy-local" />
+    <include file="/Users/hibou/dev/anyivy/svn/ivysettings.xml" />
+</ivysettings>
