@@ -24,9 +24,9 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-It is possible to make Apache IvyDE copy resolved dependencies into your project: a retrieve of the dependencies can be triggered on each resolve of the classpath container.
+It is possible to make the classpath container be composed of a retrieved dependencies. Instead of having the container point to the jars in Ivy's cache, jars can be retrieved in the project with a specified pattern and have the container be composed of them.
 
-To enable this behavior, enter the classpath container configuration panel, and select the second tab, "Retrieve".
+To enable this behavior, enter the classpath container configuration panel, select the third tab "Classpath" and select "retrieved artifacts".
 
 <center><img src="../images/retrieve.jpg"/></center>
 
@@ -34,7 +34,7 @@ The <b>Retrieve pattern</b> specifies the location where the dependencies should
 
 The <b>Delete old retrieved artifacts</b> check box will cause IvyDE to clean the output directory before each retrieve.  Note that any other artifacts other than those previously retrieved by IvyDE in this container will be deleted as well if this option is selected.
 
-Finally, you can select which <b>Configurations</b> should be resolved and you can select which <b>Types</b> of artifacts should actually be retrieved. In both fields, <i>*</i> means <i>all</i>.
+Finally, you can select which <b>Types</b> of artifacts should actually be retrieved (<i>*</i> means <i>all</i>).
 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>

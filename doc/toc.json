@@ -97,13 +97,6 @@
                       ]
                   },
                   {
-                    "id":"cpc/reload_settings",
-                    "title":"Reload settings",
-                    "children": [
-
-                      ]
-                  },
-                  {
                     "id":"cpc/workspace",
                     "title":"Resolve in workspace",
                     "children": [
