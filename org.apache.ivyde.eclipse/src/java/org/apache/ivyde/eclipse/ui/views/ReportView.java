@@ -49,6 +49,10 @@ public class ReportView extends ViewPart implements ISelectionListener {
         // nothing to do
     }
 
+    public void dispose() {
+        getSite().getPage().removeSelectionListener(this);
+    }
+
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         if (sel instanceof IStructuredSelection) {
             IvyClasspathContainer ivycp = IvyClasspathUtil
