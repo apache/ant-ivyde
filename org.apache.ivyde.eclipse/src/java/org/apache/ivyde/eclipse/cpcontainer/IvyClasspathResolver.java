@@ -36,8 +36,8 @@ public class IvyClasspathResolver extends ClasspathEntriesResolver {
      */
     public void postBatchResolve() {
         if (getClasspathEntries() != null) {
-            ivycp.updateClasspathEntries(getClasspathEntries());
             ivycp.setResolveReport(getResolveReport());
+            ivycp.updateClasspathEntries(getClasspathEntries());
         }
     }
 
