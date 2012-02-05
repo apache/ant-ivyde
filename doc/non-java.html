@@ -30,15 +30,15 @@ Ivy is a generic dependency manager and can manipulate jars as well as any other
 
 In this document we will document how to work with IvyDE and non Java dependencies with a concrete exemple: we will manage the dependencies between some javascript files and bring them into a Java webapp.
 
-<h2>Import the sample project into Eclipse</h2>
+<h1>Import the sample project into Eclipse</h1>
 
 The full project sample can be downloaded from <a href="sample/webapp-js-repo.zip">there</a>. Unzip it somewhere and import it into Eclipse (see "Existing Projects into Workspace" in the "Import" menu).
 
 The Eclipse project is already configured with an IvyDE classpath container so we can run the Java webapp. We will just have to add the retrieve of the javascript files.
 
-<h2><a name="configure"></a>Configure the non-Java dependencies</h2>
+<h1><a name="configure"></a>Configure the non-Java dependencies</h1>
 
-<h3><a name="configure-nature"></a>Configure the Ivy nature</h3>
+<h2><a name="configure-nature"></a>Configure the Ivy nature</h2>
 
 In order to manage dependencies with Ivy, it is required for the Eclipse project to have the "Ivy" nature.
 
@@ -48,7 +48,7 @@ In case your project doesn't has it, right click on the project and in the menu 
 
 <center><img src="images/add_ivy_nature.jpg"/></center>
 
-<h3><a name="configure-retrieve"></a>Add a retrieve setup</h3>
+<h2><a name="configure-retrieve"></a>Add a retrieve setup</h2>
 
 Now that the project has the Ivy nature, a new entry should have appeared in the properties of your project. This is where non Java dependencies are managed.
 
@@ -89,7 +89,7 @@ For the sample project, we want to use the ivysettings in the java project: <tt>
 
 Finally, click <b>OK</b> to finish.
 
-<h3>Launch a retrieve</h3>
+<h1>Launch a retrieve</h1>
 
 Now that the retrieve is setup, a new entry should be available in the "Ivy" context menu. The menu entry should be "Retrieve 'xxx'" where "xxx" is the name you gave to the retrieve setup. For the sample project, it will be "Retrieve 'javascripts'".
 
@@ -97,7 +97,7 @@ Select the entry to actually launch the retrieve. The Eclipse project get automa
 
 <center><img src="images/launch_standalone_retrieve.jpg"/></center>
 
-<h3>Launch the sample webapp</h3>
+<h1>Launch the sample webapp</h1>
 
 To see the result, we'll launch the Java webapp and look it it your browser locally.
 
