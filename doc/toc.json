@@ -128,7 +128,7 @@
             },
             {
               "id":"non-java",
-              "title":"Non-Java project",
+              "title":"Non-Java dependencies",
               "children": [
 
                 ]

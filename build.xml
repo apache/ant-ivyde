@@ -561,12 +561,16 @@ forceContextQualifier=${hudson.version.qualifier}
         ======================================================================================
      -->
 
-    <target name="generate-eclipse-doc" depends="clean-eclipse-doc,generate-eclipse-doc-html,generate-eclipse-doc-files,generate-eclipse-toc">
+    <target name="generate-eclipse-doc" depends="clean-eclipse-doc,generate-sample-zip,generate-eclipse-doc-html,generate-eclipse-doc-files,generate-eclipse-toc">
     </target>
 
     <target name="clean-eclipse-doc">
         <delete dir="${doc-eclipse.work.dir}" />
         <delete dir="${eclipse-doc.dir}" />
+    </target>
+
+    <target name="generate-sample-zip">
+        <zip destfile="${src.doc.dir}/sample/webapp-js-repo.zip" basedir="${src.doc.dir}/sample/webapp-js-repo" />
     </target>
 
     <target name="generate-eclipse-doc-html" unless="skip.doc">
