@@ -99,12 +99,10 @@ http://ant.apache.org/ivy/history/trunk/dev/updatesite.html
 
 <h1>Vote for the released artifacts</h1>
 
-It is recommended to publish the distribution artifacts and the updatesite in your public_html on people.apache.org directory so not only committers can test it.
+First the release needs to be publicly available.
 
-On people.apache.org, create your "staging" directory:
-<pre>mkdir ~/public_html/ivyde-$VERSION/</pre>
-And then the copy:
-<pre>scp dist/* $LOGIN@people.apache.org:/home/$LOGIN/public_html/ivyde-$VERSION/</pre>
+You can use the dev area of the dist subversion for that. Then just commit the artifacts into https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
+
 It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/trunk/dev/updatesite.html">that page</a> to know how to proceed.
 
 And launch the vote on the ant-dev mailing list:
@@ -113,9 +111,9 @@ Subject: [VOTE] IvyDE $VERSION Release
 
 I have built a release candidate for Apache IvyDE $VERSION
 
-You can download the distribution from this URL: http://people.apache.org/~$LOGIN/ivyde-$VERSION/
+You can download the distribution from this URL: https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
 
-And a staging update site has been setup there: http://people.apache.org/~$LOGIN/staging/updatesite
+And a staging update site has been setup there: https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite
 
 Do you vote for the release of these binaries?
 
@@ -133,10 +131,13 @@ Note: this <a href="http://ant.apache.org/bylaws.html">page</a> is defining when
 
 <h2>Publish the artifacts</h2>
 
-The binaries have to be pushed with their signatures and checksums in the apache dist directory. On people.apache.org:
-<pre>
-cp -R ~/public_html/ivyde-$VERSION /www/www.apache.org/dist/ant/ivyde/$VERSION
-</pre>
+The binaries have to be pushed with their signatures and checksums in the apache dist. It is manageg by svnpusub so it needs to be committed into the subversion https://dist.apache.org/repos/dist/release/ant/
+
+Then just do:
+<code>
+$ svn copy https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION https://dist.apache.org/repos/dist/release/ant/ivyde/$VERSION
+$ svn rm https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
+</code>
 
 <h2>Deploy the updatesite</h2>
 
