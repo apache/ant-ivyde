@@ -139,6 +139,8 @@ $ svn copy https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION https://dis
 $ svn rm https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
 </code>
 
+In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the <a href="http://archive.apache.org/dist/ant/ivyde/">archive</a>. To do so, just use the <tt>svn rm</tt> command against the artifacts or folders to remove.
+
 <h2>Deploy the updatesite</h2>
 
 Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html#deployment
