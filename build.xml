@@ -316,8 +316,8 @@ You have to specify the Ivy to install with one of the following property:
         </fail>
         <mkdir dir="${ivy.work.dir}/distrib" />
         <property name="ivy.zip.url" value="${mirror.url}/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
-        <get src="${ivy.zip.url}" usetimestamp="true" dest="${basedir}/apache-ivy-${ivy.version}-bin.zip" verbose="true" />
-        <unzip overwrite="true" src="${basedir}/apache-ivy-${ivy.version}-bin.zip" dest="${ivy.work.dir}/distrib" />
+        <get src="${ivy.zip.url}" usetimestamp="true" dest="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" verbose="true" />
+        <unzip overwrite="true" src="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" dest="${ivy.work.dir}/distrib" />
         <path id="ivy.jar.path">
             <first count="1">
                 <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar" />
@@ -451,9 +451,7 @@ You have to specify the Ivy to install with one of the following property:
     <target name="hudson-prepare-eclipse" depends="hudson-get-eclipse,hudson-unzip-eclipse" />
 
     <target name="hudson-check-download-sdk">
-        <condition property="hudson.sdk.downloaded">
-            <available file="${hudson.download.sdk.name}.zip" />
-        </condition>
+        <check-eclipse-download name="${hudson.download.sdk.name}" property="hudson.sdk.downloaded" md5="${hudson.download.sdk.md5}" />
     </target>
 
     <target name="hudson-get-sdk" depends="hudson-check-download-sdk" unless="hudson.sdk.downloaded">
@@ -461,9 +459,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-check-download-wtp">
-        <condition property="hudson.wtp.downloaded">
-            <available file="${hudson.download.wtp.name}.zip" />
-        </condition>
+        <check-eclipse-download name="${hudson.download.wtp.name}" property="hudson.wtp.downloaded" md5="${hudson.download.wtp.md5}" />
     </target>
 
     <target name="hudson-get-wtp" depends="hudson-check-download-wtp" unless="hudson.wtp.downloaded">
@@ -471,9 +467,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-check-download-emf">
-        <condition property="hudson.emf.downloaded">
-            <available file="${hudson.download.emf.name}.zip" />
-        </condition>
+        <check-eclipse-download name="${hudson.download.emf.name}" property="hudson.emf.downloaded" md5="${hudson.download.emf.md5}" />
     </target>
 
     <target name="hudson-get-emf" depends="hudson-check-download-emf" unless="hudson.emf.downloaded">
@@ -481,9 +475,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-check-download-xsd">
-        <condition property="hudson.xsd.downloaded">
-            <available file="${hudson.download.xsd.name}.zip" />
-        </condition>
+        <check-eclipse-download name="${hudson.download.xsd.name}" property="hudson.xsd.downloaded" md5="${hudson.download.xsd.md5}" />
     </target>
 
     <target name="hudson-get-xsd" depends="hudson-check-download-xsd" unless="hudson.xsd.downloaded">
@@ -491,9 +483,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-check-download-gef">
-        <condition property="hudson.gef.downloaded">
-            <available file="${hudson.download.gef.name}.zip" />
-        </condition>
+        <check-eclipse-download name="${hudson.download.gef.name}" property="hudson.gef.downloaded" md5="${hudson.download.gef.md5}" />
     </target>
 
     <target name="hudson-get-gef" depends="hudson-check-download-gef" unless="hudson.gef.downloaded">
@@ -501,9 +491,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-check-download-zest">
-        <condition property="hudson.zest.downloaded">
-            <available file="${hudson.download.zest.name}.zip" />
-        </condition>
+        <check-eclipse-download name="${hudson.download.zest.name}" property="hudson.zest.downloaded" md5="${hudson.download.zest.md5}" />
     </target>
 
     <target name="hudson-get-zest" depends="hudson-check-download-zest" unless="hudson.zest.downloaded">
@@ -513,39 +501,56 @@ You have to specify the Ivy to install with one of the following property:
     <target name="hudson-get-eclipse" depends="hudson-get-sdk,hudson-get-wtp,hudson-get-emf,hudson-get-xsd,hudson-get-gef,hudson-get-zest" />
 
     <!-- wrapper of eclipse download urls which have a common pattern -->
+    <macrodef name="check-eclipse-download">
+        <attribute name="property" />
+        <attribute name="name" />
+        <attribute name="md5" />
+        <sequential>
+            <echo file="${basedir}/dependencies/@{name}.zip.md5" message="@{md5}" />
+            <condition property="@{property}">
+                <and>
+                    <available file="${basedir}/dependencies/@{name}.zip" />
+                    <checksum file="${basedir}/dependencies/@{name}.zip" algorithm="MD5" />
+                </and>
+            </condition>
+        </sequential>
+    </macrodef>
     <macrodef name="eclipse-download">
         <attribute name="name" />
         <attribute name="dropdir" />
         <sequential>
-            <get src="${hudson.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;url=${hudson.download.mirror.url}/@{dropdir}/@{name}.zip&amp;mirror_id=${hudson.download.mirror.id}" dest="@{name}.zip" verbose="yes" />            
+            <mkdir dir="${basedir}/dependencies" />
+            <delete file="${basedir}/dependencies/@{name}.zip" failonerror="false" />
+            <get src="${hudson.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;url=${hudson.download.mirror.url}/@{dropdir}/@{name}.zip&amp;mirror_id=${hudson.download.mirror.id}" dest="${basedir}/dependencies/@{name}.zip" verbose="yes" />
+            <checksum file="${basedir}/dependencies/@{name}.zip" algorithm="MD5" />
         </sequential>
     </macrodef>
 
     <target name="hudson-check-unzip-eclipse">
         <condition property="hudson.eclipse.unzipped">
-            <available file="${hudson.download.sdk.name}" />
+            <available file="${basedir}/dependencies/${hudson.download.sdk.name}" />
         </condition>
     </target>
 
     <target name="hudson-unzip-eclipse" depends="hudson-check-unzip-eclipse" unless="hudson.eclipse.unzipped">
-        <unzip src="${hudson.download.sdk.name}.zip" dest="${basedir}" />
-        <unzip src="${hudson.download.wtp.name}.zip" dest="${basedir}" />
-        <unzip src="${hudson.download.emf.name}.zip" dest="${basedir}" />
-        <unzip src="${hudson.download.xsd.name}.zip" dest="${basedir}" />
-        <unzip src="${hudson.download.gef.name}.zip" dest="${basedir}" />
-        <unzip src="${hudson.download.zest.name}.zip" dest="${basedir}" />
-        <move file="eclipse" tofile="${hudson.download.sdk.name}" />
+        <unzip src="${basedir}/dependencies/${hudson.download.sdk.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${hudson.download.wtp.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${hudson.download.emf.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${hudson.download.xsd.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${hudson.download.gef.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${hudson.download.zest.name}.zip" dest="${basedir}/dependencies/" />
+        <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${hudson.download.sdk.name}" />
     </target>
 
     <target name="hudson-prepare-properties">
         <tstamp />
-        <property name="baseLocation" value="${basedir}/${hudson.eclipse.name}" />
+        <property name="baseLocation" value="${basedir}/dependencies/${hudson.eclipse.name}" />
         <condition property="hudson.version.qualifier" value="${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}">
             <length string="${version.qualifier}" trim="true" length="0" />
         </condition>
         <property name="hudson.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}" />
         <echo file="local.build.properties">
-baseLocation=${basedir}/${hudson.download.sdk.name}
+baseLocation=${basedir}/dependencies/${hudson.download.sdk.name}
 forceContextQualifier=${hudson.version.qualifier}
 </echo>
     </target>
@@ -553,7 +558,7 @@ forceContextQualifier=${hudson.version.qualifier}
     <target name="hudson-install-ivy">
         <ant antfile="build.xml" target="install-ivy">
             <property name="ivy.version" value="${hudson.ivy.version}" />
-            <property name="baseLocation" location="${basedir}/${hudson.download.sdk.name}" />
+            <property name="baseLocation" location="${basedir}/dependencies/${hudson.download.sdk.name}" />
         </ant>
     </target>
 
