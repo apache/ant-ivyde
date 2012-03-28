@@ -64,6 +64,12 @@ The header should look like this
 <title>${title} | Apache IvyDE $VERSION Documentation</title>
 </code>
 
+You'll need to fix the revision of the svn:external in doc. Edit the svn:external property on the folder doc and set it to the latest revision. It should look like:
+<pre>
+xooki -r1306546 https://svn.apache.org/repos/asf/ant/site/xooki/
+style -r1306546 https://svn.apache.org/repos/asf/ant/site/ivyde/sources/style/
+</pre>
+
 <h2>Commit your changes</h2>
 
 Don't forget to commit the changes you've done into the release branch.
@@ -84,13 +90,6 @@ Then it is time to tag the release as soon as you are happy with your artifacts:
            https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
       -m "Tag IvyDE release $VERSION"
 </code>
-
-And don't forget to set the svn:external on doc/xooki to a fixed revision. Edit the svn:external property on the folder doc/xooki in the tag and set it to the revision of the commit of the tag. It should look like:
-<pre>
-xooki -r790212 https://svn.apache.org/repos/asf/ant/ivy/site/xooki/
-</pre>
-
-And commit that modification.
 
 <h1>Prepare the updatesite</h1>
 
