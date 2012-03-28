@@ -98,9 +98,11 @@ public class StandaloneRetrieveSerializer {
                 attr.setValue(setup.getName());
                 attributes.setNamedItem(attr);
 
-                Node settingsNode = document.createElement(IVYSETTINGS);
-                node.appendChild(settingsNode);
-                writeSettingsSetup(document, settingsNode, setup.getSettingsSetup());
+                if (setup.isSettingProjectSpecific()) {
+                    Node settingsNode = document.createElement(IVYSETTINGS);
+                    node.appendChild(settingsNode);
+                    writeSettingsSetup(document, settingsNode, setup.getSettingsSetup());
+                }
 
                 Node ivyxmlNode = document.createElement(IVYXML);
                 node.appendChild(ivyxmlNode);
