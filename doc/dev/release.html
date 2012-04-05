@@ -219,9 +219,13 @@ Update the <a href="https://issues.apache.org/jira/secure/project/ManageVersions
 Update the versions needs to be updated in the following files:
 <ul>
 <li>build.properties (edit the qualifier)</li>
-<li>org.apache.ivyde.eclipse/META-INF/MANIFEST.MF</li>
-<li>org.apache.ivyde.feature/feature.xml</li>
+<li>*/META-INF/MANIFEST.MF</li>
+<li>*/feature.xml</li>
 </ul>
+
+<h2>Update the doap file</h2>
+
+Add the just released version in IvyDE's doap file: see doap_IvyDE.rdf at the root of the project.
 
 <h2>Clean up the release notes</h2>
 
