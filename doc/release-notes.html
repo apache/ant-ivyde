@@ -36,19 +36,16 @@
 <h1><a name="annoucement"></a>Release Annoucement</h1>
 
 <tt>
-The Apache IvyDE project is pleased to announce its 2.2.0 beta1 release.
+The Apache IvyDE project is pleased to announce its 2.2.0 beta2 release.
 
 The Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
 
 Major changes in this release:
-* a synchronous resolve job has been introduced to take into account projet's inter dependencies and avoid too many workspace build,
-* resolved classpath can now be based on retrieved artifacts,
-* IvyDE retrieve feature can now be use on non Java projets
+
+!!!!!!! TODO !!!!!!!!!
 
 Compatibility:
 * this release is expected to work with every version of Ivy 2.1 or superior
-* as for this release and the next ones, IvyDE now expects to be installed in Eclipse 3.4 or superior.
-* the Eclipse updatesite has been upgrade and now only supports Eclipse 3.5 or superior. Eclipse 3.4 users can still install it manually.
 
 This release is considered as beta since the important changes in IvyDE resolve feature. We encourage our early users to test it and report us any issue they found.
 
@@ -58,7 +55,7 @@ http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
 Issues should be reported to:
 https://issues.apache.org/jira/browse/IVYDE
 
-Download the 2.2.0 beta1 release at:
+Download the 2.2.0 beta2 release at:
 http://ant.apache.org/ivy/ivyde/download.cgi
 
 Or use directly the Apache IvyDE's updatesite:
@@ -118,37 +115,13 @@ long, but Apache IvyDE couldn't be what it is without you!
 
 <h1><a name="changes"></a>List of Changes in this Release</h1>
 
-List of changes since <a href="/ivy/ivyde/history/2.1.0/release-notes.html">Apache IvyDE 2.1.0</a>:
+List of changes since <a href="/ivy/ivyde/history/2.2.0.beta1/release-notes.html">Apache IvyDE 2.2.0 beta1</a>:
 <ul>
-    <li>NEW: Custom color in XML editors (IVYDE-73)</li>
-    <li>NEW: support for retrieve configuration in non Java project</li>
-    <li>NEW: an IvyDE classpath can now be retrieved (IVYDE-56)</li>
-    <li>NEW: Add branch comparison to workspace resolver (IVYDE-234) (thanks to Jeffrey M. Metcalf)</li>
-    <li>NEW: Look for ivysettings.xml file in project root copying the behavior of ivy ant task (IVYDE-258)</li>
-    <li>NEW: IvyDE can now resolve in an offline mode, where Ivy use only the caches (Ivy 2.3 required)</li>
-    <li>NEW: Explicit ordering of configurations (IVYDE-159)</li>
-    <li>NEW: Open the ivy file on the double click in the reverse dependency explorer</li>
-    <li>NEW: The ivysettings field editor now supports the variable ${ivyproject_loc} which is referencing the current project being resolved (IVYDE-247)</li>
-    <li>NEW: Resolve error popups can now be avoided (IVYDE-268)</li>
-    <li>NEW: Add configuration option to use an extended revision id when resolving eclipse projects (IVYDE-235) (thanks to Jeffrey M. Metcalf)</li>
-    <li>NEW: Allow specifying source and javadoc mapping on binaries directly in the ivy.xml (IVYDE-267)</li>
-    <li>NEW: Ivy Resolve Visualizer (IVYDE-208)</li>
-    <li>NEW: "clean caches" operations have now a confirm popup (IVYDE-289)</li>
-</ul><ul>
-    <li>IMPROVE: let IvyDE refresh workspace after a resolve (IVYDE-27) (thanks to Clint Burghduff)</li>
-    <li>IMPROVE: IvyDE now resolve by batch, then preventing too many workspace build (IVYDE-177)</li>
-    <li>IMPROVE: Shared Javadoc/Source attachments (IVYDE-230) (thanks to Gregory Fernandez)</li>
-    <li>IMPROVE: WorkspaceResolver: deal with self-dependencies (IVYDE-240)</li>
-    <li>IMPROVE: Impossible to resolve dependencies: missing diagnostics (IVYDE-233)</li>
-</ul><ul>
-    <li>FIX: Variable based path for ivysettings doesn't work it there are some spaces in the path (IVYDE-253)</li>
-    <li>FIX: Triggers are not called (IVYDE-244)</li>
-    <li>FIX: Missing ivysettings.xml can make the classpath container config to change (IVYDE-248)</li>
-    <li>FIX: Multiple eclipse projects with similar ivy library definitions results in launch config source path collisions (IVYDE-237)</li>
-    <li>FIX: NPE when starting the IvyPlugin (IVYDE-269)</li>
-    <li>FIX: IvyDE deletes entirely a project if the retrieve pattern resolved to be the root of the project (IVYDE-272)</li>
-    <li>FIX: java.lang.StackOverflowError on Ivy>Resolve of a pom.xml with a parent and the workspace resolver (IVYDE-273)</li>
-    <li>FIX: ivy.xsd bundled with IvyDE appears to be incorrect (IVYDE-297)</li>
+    <!-- samples
+    <li>NEW: new new new (IVYDE-XXX) (thanks to XXX)</li>
+    <li>IMPROVE: new new new (IVYDE-XXX) (thanks to XXX)</li>
+    <li>FIX: new new new (IVYDE-XXX) (thanks to XXX)</li>
+    -->
 </ul>
 
 Most of our changes are logged in our JIRA, where you can find comments and links to our subversion:
