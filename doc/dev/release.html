@@ -157,17 +157,17 @@ With that content, send a mail to announce@apache.org, ivy-user@ant.apache.org a
 
 The table of content needs to be updated so that the last documentation point to that new release.
 
-First we need to update the external links. In svn/site/ivyde/history:
+First we need to update the external links. In svn/site/ivyde/sources/history:
 <pre>svn pe svn:externals .</pre>
 And: <ul><li>update latest-milestone:
 <code>
-latest-milestone https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION/doc </code>
+latest-milestone https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION/doc </code>
 </li>
 <li>add an entry:
-<code>$VERSION https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION/doc </code></li>
+<code>$VERSION https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION/doc </code></li>
 </ul>
 
-Then we need to edit svn/site/ivyde/toc.json:
+Then we need to edit svn/site/ivyde/sources/toc.json:
 <ul>
 <li>add the following data to the correct abstract node:
 <pre>
@@ -187,7 +187,7 @@ Then svn update your working copy (to retrieve the new history branch).
 
 <h2>Update the download page</h2>
 
-In the page svn/site/ivyde/download.html change every reference of the old version to the new one.
+In the page svn/site/ivyde/sources/download.html change every reference of the old version to the new one.
 
 <h2>Deploy</h2>
 
@@ -197,12 +197,12 @@ And now let's generate the site and deploy it:
 <ol>
     <li>generate the part of the site for the new version:</li>
 <code>
-ant generate-history-ivyde -Dhistory.version=$VERSION
+ant generate-history -Dhistory.version=$VERSION
 </code>
 <u>WARNING:</u> that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
     <li>generate the website with the new toc:</li>
 <code>
-ant /all generate-site-ivyde
+ant /all generate-site
 </code>
     <li>you should verify that the site generated in target is OK. And once your happy with it, commit the changes in target (some svn add might be needed !)</li>
     <li>deploy the website: go on people.apache.org and <tt>svn up /www/ant.apache.org/ivy/ivyde</tt></li>
