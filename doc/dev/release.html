@@ -93,16 +93,13 @@ Then it is time to tag the release as soon as you are happy with your artifacts:
 
 <h1>Prepare the updatesite</h1>
 
-The instructions to build the updatesite are there:
-http://ant.apache.org/ivy/history/trunk/dev/updatesite.html
+The instructions to build the updatesite are <a href="updatesite.html">there</a>.
 
 <h1>Vote for the released artifacts</h1>
 
 First the release needs to be publicly available.
 
 You can use the dev area of the dist subversion for that. Then just commit the artifacts into https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
-
-It is recommended to also deploy a staging updatesite there. See <a href="http://ant.apache.org/ivy/history/trunk/dev/updatesite.html">that page</a> to know how to proceed.
 
 And launch the vote on the ant-dev mailing list:
 <code>
@@ -143,7 +140,7 @@ In order to keep the main dist area of a reasonable size, old releases should be
 
 <h2>Deploy the updatesite</h2>
 
-Follow the instructions of that page: http://ant.apache.org/ivy/history/latest-milestone/dev/updatesite.html#deployment
+Follow the instructions of that <a href="updatesite.html#deployment">page</a>.
 
 <h1>Annoucement</h1>
 
@@ -205,7 +202,6 @@ ant generate-history -Dhistory.version=$VERSION
 ant /all generate-site
 </code>
     <li>you should verify that the site generated in target is OK. And once your happy with it, commit the changes in target (some svn add might be needed !)</li>
-    <li>deploy the website: go on people.apache.org and <tt>svn up /www/ant.apache.org/ivy/ivyde</tt></li>
 </ol>
 
 <h1>Post release tasks</h1>
