@@ -206,6 +206,13 @@
                     "children": [
 
                       ]
+                  },
+                  {
+                    "id":"dev/updatesite",
+                    "title":"Updatesite",
+                    "children": [
+
+                      ]
                   }
                 ]
             }
