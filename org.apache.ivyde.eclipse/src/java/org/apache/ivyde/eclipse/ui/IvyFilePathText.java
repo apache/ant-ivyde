@@ -17,42 +17,30 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IControlCreator;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class IvyFilePathText extends Composite {
+public class IvyFilePathText extends PathEditor {
 
     private Text ivyFilePathText;
 
@@ -60,22 +48,17 @@ public class IvyFilePathText extends Composite {
 
     private IvyDEException ivyXmlError;
 
-    private final IProject project;
-
     private final List listeners = new ArrayList();
-
-    private Button browseButton;
 
     private FieldDecoration errorDecoration;
 
-    public IvyFilePathText(Composite parent, int style, IProject project) {
-        super(parent, style);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        setLayout(layout);
-        this.project = project;
+    private Button defaultButton;
 
+    public IvyFilePathText(Composite parent, int style) {
+        super(parent, SWT.NONE, "Ivy File:", null, "*.xml");
+    }
+
+    protected Text createText(Composite parent) {
         errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
             FieldDecorationRegistry.DEC_ERROR);
 
@@ -86,28 +69,39 @@ public class IvyFilePathText extends Composite {
         });
         ivyFilePathTextDeco.addFieldDecoration(errorDecoration, SWT.TOP | SWT.LEFT, false);
         ivyFilePathTextDeco.hideDecoration(errorDecoration);
-        // this doesn't work well: we want the decoration image to be clickable, but it actually
-        // hides the clickable area
-        // ivyFilePathTextDeco.getLayoutControl().addMouseListener(new MouseAdapter() {
-        // public void mouseDown(MouseEvent e) {
-        // if (ivyXmlError != null) {
-        // ivyXmlError.show(IStatus.ERROR, "IvyDE configuration problem", null);
-        // }
-        // }
-        // });
 
         ivyFilePathText = (Text) ivyFilePathTextDeco.getControl();
         ivyFilePathTextDeco.getLayoutControl().setLayoutData(
             new GridData(GridData.FILL, GridData.CENTER, true, false));
-        ivyFilePathText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent ev) {
-                ivyXmlPathUpdated();
+
+        return ivyFilePathText;
+    }
+
+    protected boolean addButtons(Composite buttons) {
+        defaultButton = new Button(buttons, SWT.NONE);
+        defaultButton.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
+        defaultButton.setText("Default");
+        defaultButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                getText().setText("ivy.xml");
             }
         });
+        return true;
+    }
 
-        browseButton = new Button(this, SWT.NONE);
-        browseButton.setText("Browse");
-        browseButton.addSelectionListener(new BrowseButtonListener());
+    protected void setFile(String f) {
+        try {
+            getText().setText(new File(f).toURI().toURL().toExternalForm());
+            textUpdated();
+        } catch (MalformedURLException ex) {
+            // this cannot happen
+            IvyPlugin.log(IStatus.ERROR, "The file got from the file browser has not a valid URL",
+                ex);
+        }
+    }
+
+    protected void textUpdated() {
+        ivyXmlPathUpdated();
     }
 
     public interface IvyXmlPathListener {
@@ -163,57 +157,6 @@ public class IvyFilePathText extends Composite {
         }
     }
 
-    private class BrowseButtonListener extends SelectionAdapter {
-        public void widgetSelected(SelectionEvent e) {
-            String path = null;
-            if (project != null && project.getProject().getLocation() != null) {
-                ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(Display
-                        .getDefault().getActiveShell(), new WorkbenchLabelProvider(),
-                        new WorkbenchContentProvider());
-                dialog.setValidator(new ISelectionStatusValidator() {
-                    private final IStatus errorStatus = new Status(IStatus.ERROR, IvyPlugin.ID, 0,
-                            "", null);
-
-                    public IStatus validate(Object[] selection) {
-                        if (selection.length == 0) {
-                            return errorStatus;
-                        }
-                        for (int i = 0; i < selection.length; i++) {
-                            Object o = selection[i];
-                            if (!(o instanceof IFile)) {
-                                return errorStatus;
-                            }
-                        }
-                        return Status.OK_STATUS;
-                    }
-
-                });
-                dialog.setTitle("choose ivy file");
-                dialog.setMessage("choose the ivy file to use to resolve dependencies");
-                dialog.setInput(project.getProject());
-                // deprecated use as of 3.3 but we need to say compatible with 3.2
-                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-
-                if (dialog.open() == Window.OK) {
-                    Object[] elements = dialog.getResult();
-                    if (elements.length > 0 && elements[0] instanceof IFile) {
-                        IPath p = ((IFile) elements[0]).getProjectRelativePath();
-                        path = p.toString();
-                    }
-                }
-            } else {
-                FileDialog dialog = new FileDialog(IvyPlugin.getActiveWorkbenchShell(), SWT.OPEN);
-                dialog.setText("Choose an ivy.xml");
-                path = dialog.open();
-            }
-
-            if (path != null) {
-                ivyFilePathText.setText(path);
-                ivyXmlPathUpdated();
-            }
-        }
-    }
-
     public void init(String ivyXmlPath) {
         ivyFilePathText.setText(ivyXmlPath);
     }
@@ -221,6 +164,5 @@ public class IvyFilePathText extends Composite {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         ivyFilePathText.setEnabled(enabled);
-        browseButton.setEnabled(enabled);
     }
 }

@@ -332,19 +332,14 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         configComposite.setLayout(new GridLayout(2, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        // Label for ivy file field
-        Label pathLabel = new Label(configComposite, SWT.NONE);
-        pathLabel.setText("Ivy File");
-
-        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project == null ? null
-                : project.getProject());
+        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE);
         ivyFilePathText.addListener(new IvyXmlPathListener() {
             public void ivyXmlPathUpdated(String path) {
                 conf.setIvyXmlPath(path);
                 checkIvyXmlPath();
             }
         });
-        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 
         // Label for ivy configurations field
         Label confLabel = new Label(configComposite, SWT.NONE);
