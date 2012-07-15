@@ -104,7 +104,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     public String getDescription() {
-        return conf.getIvyXmlPath() + " " + conf.getConfs();
+        return "Ivy";
     }
 
     public int getKind() {

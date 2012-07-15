@@ -459,5 +459,17 @@
          </filter>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="false"
+            class="org.apache.ivyde.eclipse.ui.IvyDEClasspathContainerDecorator"
+            id="org.apache.ivyde.eclipse.decorator"
+            label="IvyDE decorator"
+            lightweight="false"
+            objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"
+            state="true">
+      </decorator>
+   </extension>
 
 </plugin>
