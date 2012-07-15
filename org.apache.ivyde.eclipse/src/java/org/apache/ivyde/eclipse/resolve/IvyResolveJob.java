@@ -86,6 +86,10 @@ public class IvyResolveJob extends Job {
             resolveQueue.clear();
         }
 
+        if (toResolve.isEmpty()) {
+            return Status.OK_STATUS;
+        }
+
         monitor.beginTask("Loading ivy descriptors", MONITOR_LENGTH);
 
         Map/* <ModuleDescriptor, ResolveRequest> */inworkspaceModules = new LinkedHashMap();
