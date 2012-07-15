@@ -52,6 +52,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -119,7 +120,11 @@ public class IvyPlugin extends AbstractUIPlugin {
         workspace.addSaveParticipant(this, retrieveSetupManager);
 
         colorManager = new ColorManager();
-        colorManager.refreshFromStore(getPreferenceStore());
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                colorManager.refreshFromStore(getPreferenceStore());
+            }
+        });
 
         prefStoreHelper = new IvyDEPreferenceStoreHelper(getPreferenceStore());
 
