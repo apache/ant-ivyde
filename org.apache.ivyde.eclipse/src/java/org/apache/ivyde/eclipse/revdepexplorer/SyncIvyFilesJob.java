@@ -37,6 +37,7 @@ import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
@@ -61,13 +62,13 @@ public class SyncIvyFilesJob extends WorkspaceJob {
 
     /**
      * FIXME Here we seriously abuse the Ivy core API to allow us to preserve an info element
-     * containing no revision attribute.  Ivy code should be altered to allow us to preserve
-     * revision (including the lack of its definition!).
+     * containing no revision attribute. Ivy code should be altered to allow us to preserve revision
+     * (including the lack of its definition!).
      */
     private class RevisionPreservingNamespace extends Namespace {
         private class NullableRevisionModuleRevisionId extends ModuleRevisionId {
             private String revision;
-            
+
             public NullableRevisionModuleRevisionId(ModuleId moduleId, String revision) {
                 super(moduleId, revision);
                 this.revision = revision;
@@ -75,31 +76,31 @@ public class SyncIvyFilesJob extends WorkspaceJob {
 
             public String getRevision() {
                 return revision;
-            }            
+            }
         }
-        
+
         private class RevisionPreservingNamespaceTransformer implements NamespaceTransformer {
             public boolean isIdentity() {
                 return false;
             }
-    
+
             public ModuleRevisionId transform(ModuleRevisionId mrid) {
                 if (mrid.getRevision().indexOf("working@") > -1) {
                     return new NullableRevisionModuleRevisionId(mrid.getModuleId(), null);
                 }
                 return new ModuleRevisionId(mrid.getModuleId(), mrid.getRevision());
-            }        
+            }
         }
 
         public NamespaceTransformer getToSystemTransformer() {
             return new RevisionPreservingNamespaceTransformer();
         }
     }
-    
+
     public SyncIvyFilesJob(MultiRevDependencyDescriptor[] multiRevisionDependencies) {
         super("Synchronizing Ivy Files");
         this.multiRevisionDependencies = multiRevisionDependencies;
-    }    
+    }
 
     protected IStatus executeJob(IProgressMonitor monitor) {
         MultiStatus errorStatuses = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
@@ -125,20 +126,26 @@ public class SyncIvyFilesJob extends WorkspaceJob {
                     if (dependencies[j].getDependencyId().equals(multiRevision.getModuleId())
                             && multiRevision.hasNewRevision()
                             && multiRevision.isForContainer(container)) {
-                        newRevisions.put(dependencyRevisionId, multiRevisionDependencies[k]
-                                .getNewRevision());
+                        newRevisions.put(dependencyRevisionId,
+                            multiRevisionDependencies[k].getNewRevision());
                         break; // move on to the next dependency
                     }
                 }
             }
-            
-            UpdateOptions updateOptions = new UpdateOptions()
-                .setResolvedRevisions(newRevisions)
-                .setReplaceInclude(false)
-                .setGenerateRevConstraint(false)
-                .setNamespace(new RevisionPreservingNamespace());
-            File ivyFile = container.getState().getIvyFile();
-            
+
+            UpdateOptions updateOptions = new UpdateOptions().setResolvedRevisions(newRevisions)
+                    .setReplaceInclude(false).setGenerateRevConstraint(false)
+                    .setNamespace(new RevisionPreservingNamespace());
+
+            File ivyFile;
+            try {
+                ivyFile = container.getState().getIvyFile();
+            } catch (IvyDEException e) {
+                errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                        "Fail to resolve the ivy file", e));
+                continue;
+            }
+
             File ivyTempFile = new File(ivyFile.toString() + ".temp");
             try {
                 XmlModuleDescriptorUpdater.update(ivyFile.toURI().toURL(), ivyTempFile,
@@ -146,16 +153,13 @@ public class SyncIvyFilesJob extends WorkspaceJob {
                 saveChanges(container, ivyFile, ivyTempFile);
             } catch (MalformedURLException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                        "Failed to write Ivy file " + container.getState().getIvyFile().getPath()
-                                + " (malformed URL)", e));
+                        "Failed to write Ivy file " + ivyFile + " (malformed URL)", e));
             } catch (IOException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                        "Failed to write Ivy file " + container.getState().getIvyFile().getPath(),
-                        e));
+                        "Failed to write Ivy file " + ivyFile, e));
             } catch (SAXException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                    "Failed to write Ivy file " + container.getState().getIvyFile().getPath(),
-                    e));
+                        "Failed to write Ivy file " + ivyFile, e));
             } finally {
                 ivyTempFile.delete();
             }
@@ -199,8 +203,8 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         IFile virtualIvyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
         IStatus writable = virtualIvyFile.getWorkspace().validateEdit(new IFile[] {virtualIvyFile},
             IWorkspace.VALIDATE_PROMPT);
-        if (writable.isOK()) {            
-            FileWriter writer = new FileWriter(permanentSaveTarget, false);            
+        if (writable.isOK()) {
+            FileWriter writer = new FileWriter(permanentSaveTarget, false);
             BufferedReader reader = new BufferedReader(new FileReader(temporaryChanges));
             while (reader.ready()) {
                 writer.write(reader.readLine() + "\n");
@@ -209,5 +213,5 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             writer.close();
             reader.close();
         }
-    }    
+    }
 }

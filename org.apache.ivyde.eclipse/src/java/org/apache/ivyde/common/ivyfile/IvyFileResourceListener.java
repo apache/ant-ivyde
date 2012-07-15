@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
@@ -71,10 +72,14 @@ public class IvyFileResourceListener implements IResourceChangeListener {
             Iterator containerIter = containers.iterator();
             while (containerIter.hasNext()) {
                 IvyClasspathContainer container = (IvyClasspathContainer) containerIter.next();
-                File containerIvyFile = container.getState().getIvyFile();
-                if (containerIvyFile.equals(resourceFile.getLocation().toFile())) {
-                    container.launchResolve(false, null);
-                    return;
+                try {
+                    File containerIvyFile = container.getState().getIvyFile();
+                    if (containerIvyFile.equals(resourceFile.getLocation().toFile())) {
+                        container.launchResolve(false, null);
+                        return;
+                    }
+                } catch (IvyDEException e) {
+                    // we are in a listener, do nothing
                 }
             }
         }

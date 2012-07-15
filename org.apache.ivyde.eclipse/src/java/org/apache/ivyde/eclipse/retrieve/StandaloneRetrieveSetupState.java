@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.ResolvedPath;
 import org.eclipse.core.resources.IProject;
 
 public class StandaloneRetrieveSetupState extends CachedIvy {
@@ -31,7 +32,7 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
         this.setup = setup;
     }
 
-    protected String getIvySettingsPath() throws IvyDEException {
+    protected ResolvedPath getIvySettingsPath() throws IvyDEException {
         return setup.getInheritedSettingSetup().getResolvedIvySettingsPath(setup.getProject());
     }
 

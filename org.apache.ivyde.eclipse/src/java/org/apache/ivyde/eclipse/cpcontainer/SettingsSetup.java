@@ -17,17 +17,14 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.ResolvedPath;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 
@@ -56,32 +53,8 @@ public class SettingsSetup {
         this.loadSettingsOnDemand = setup.loadSettingsOnDemand;
     }
 
-    public String getResolvedIvySettingsPath(IProject project) throws IvyDEException {
-        String url;
-        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-        String path;
-        if (project != null) {
-            path = ivySettingsPath.replaceAll("\\$\\{ivyproject_loc\\}", "\\${workspace_loc:"
-                + project.getName() + "}");
-        } else {
-            path = ivySettingsPath;            
-        }
-        try {
-            url = manager.performStringSubstitution(path, false);
-        } catch (CoreException e) {
-            throw new IvyDEException("Unrecognized variables",
-                    "Unrecognized variables in the Ivy settings file " + ivySettingsPath, e);
-        }
-        if (ivySettingsPath.trim().startsWith("$")) {
-            // it starts with a variable, let's add the file protocol.
-            try {
-                url = new File(url).toURI().toURL().toExternalForm();
-            } catch (MalformedURLException e) {
-                IvyPlugin.log(IStatus.ERROR,
-                    "The file got from the workspace browser has not a valid URL", e);
-            }
-        }
-        return url;
+    public ResolvedPath getResolvedIvySettingsPath(IProject project) throws IvyDEException {
+        return new ResolvedPath(ivySettingsPath, project);
     }
 
     public String getRawIvySettingsPath() {

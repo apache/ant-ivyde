@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.ResolvedPath;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -40,7 +41,7 @@ public class IvyClasspathContainerState extends CachedIvy {
         reset();
     }
 
-    protected String getIvySettingsPath() throws IvyDEException {
+    protected ResolvedPath getIvySettingsPath() throws IvyDEException {
         return conf.getInheritedSettingsSetup().getResolvedIvySettingsPath(getProject());
     }
 
