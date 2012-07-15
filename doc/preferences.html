@@ -62,7 +62,7 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <h4>Resolve dependencies in workpace:</h4>
 <p>Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</p>
 <h4>Accepted types:</h4>
-<p>A comma separated list of extensions which will make IvyDE add the artifact to the classpath</p>
+<p>A comma separated list of extensions which will make IvyDE add the artifact to the classpath. Setting <tt>*</tt> will make very kind of type accepted. Note that a type specified as a <a href="#mapping">source or javadoc type</a> won't be accepted in any manner.</p>
 <h4>Order of the classpath entries:</h4>
 <p>By default, the classpath container entries are ordered by order of declaration in the ivy.xml. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.</p>
 <h4>Build the classpath with:</h4>

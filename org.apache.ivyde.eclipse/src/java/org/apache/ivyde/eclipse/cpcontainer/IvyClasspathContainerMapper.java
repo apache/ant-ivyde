@@ -295,8 +295,12 @@ public class IvyClasspathContainerMapper {
      * @return <code>true</code> if the artifact can be added
      */
     public boolean accept(Artifact artifact) {
-        return classpathSetup.getAcceptedTypes().contains(artifact.getType())
-                && !mapping.getSourceTypes().contains(artifact.getType())
+        boolean accepted = classpathSetup.getAcceptedTypes().contains(artifact.getType());
+        if (!accepted && classpathSetup.getAcceptedTypes().size() == 1
+                && classpathSetup.getAcceptedTypes().get(0).equals("*")) {
+            accepted = true;
+        }
+        return accepted && !mapping.getSourceTypes().contains(artifact.getType())
                 && !mapping.getJavadocTypes().contains(artifact.getType());
     }
 
