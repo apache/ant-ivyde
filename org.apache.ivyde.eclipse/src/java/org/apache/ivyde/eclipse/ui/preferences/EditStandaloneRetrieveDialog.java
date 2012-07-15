@@ -64,7 +64,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
 
-        settingsTab = new SettingsSetupTab(tabs) {
+        settingsTab = new SettingsSetupTab(tabs, project) {
             protected void settingsUpdated() {
                 super.settingsUpdated();
             }
@@ -98,7 +98,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         ivyFileComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
         ivyFileComposite.setLayout(new GridLayout(2, false));
 
-        ivyFilePathText = new IvyFilePathText(ivyFileComposite, SWT.NONE);
+        ivyFilePathText = new IvyFilePathText(ivyFileComposite, SWT.NONE, project);
         ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 
         retrieveComposite = new RetrieveComposite(body, SWT.NONE, true);

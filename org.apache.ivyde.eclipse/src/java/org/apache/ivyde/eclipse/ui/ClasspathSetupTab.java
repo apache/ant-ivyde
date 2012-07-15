@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
 import org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -29,11 +30,11 @@ public class ClasspathSetupTab extends AbstractSetupTab {
 
     private ClasspathSetupEditor classpathSetupEditor;
 
-    public ClasspathSetupTab(TabFolder tabs) {
-        super(tabs, "Classpath", ClasspathSetupPreferencePage.PEREFERENCE_PAGE_ID);
+    public ClasspathSetupTab(TabFolder tabs, IProject project) {
+        super(tabs, "Classpath", ClasspathSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
     }
 
-    protected Composite createSetupEditor(Composite configComposite) {
+    protected Composite createSetupEditor(Composite configComposite, IProject project) {
         classpathSetupEditor = new ClasspathSetupEditor(configComposite, SWT.NONE);
         classpathSetupEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         return classpathSetupEditor;

@@ -35,6 +35,7 @@ import org.apache.ivyde.eclipse.ui.IvyFilePathText.IvyXmlPathListener;
 import org.apache.ivyde.eclipse.ui.MappingSetupTab;
 import org.apache.ivyde.eclipse.ui.SettingsSetupTab;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -287,7 +288,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         mainTab.setText("Main");
         mainTab.setControl(createMainTab(tabs));
 
-        settingsSetupTab = new SettingsSetupTab(tabs) {
+        IProject p = project == null ? null : project.getProject();
+        settingsSetupTab = new SettingsSetupTab(tabs, p) {
             protected void settingsUpdated() {
                 try {
                     conf.setSettingsProjectSpecific(isProjectSpecific());
@@ -302,11 +304,11 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             }
         };
 
-        classpathSetupTab = new ClasspathSetupTab(tabs);
+        classpathSetupTab = new ClasspathSetupTab(tabs, p);
 
-        mappingSetupTab = new MappingSetupTab(tabs);
+        mappingSetupTab = new MappingSetupTab(tabs, p);
 
-        advancedSetupTab = new AdvancedSetupTab(tabs);
+        advancedSetupTab = new AdvancedSetupTab(tabs, p);
 
         tabs.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -332,14 +334,16 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         configComposite.setLayout(new GridLayout(2, false));
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE);
+        ivyFilePathText = new IvyFilePathText(configComposite, SWT.NONE, project == null ? null
+                : project.getProject());
         ivyFilePathText.addListener(new IvyXmlPathListener() {
             public void ivyXmlPathUpdated(String path) {
                 conf.setIvyXmlPath(path);
                 checkIvyXmlPath();
             }
         });
-        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+        ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2,
+                1));
 
         // Label for ivy configurations field
         Label confLabel = new Label(configComposite, SWT.NONE);
@@ -383,7 +387,8 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         classpathSetupTab.init(conf.isClassthProjectSpecific(), conf.getClasspathSetup());
         mappingSetupTab.init(conf.isMappingProjectSpecific(), conf.getMappingSetup());
         // project == null <==> container in a launch config: always resolve before launch
-        advancedSetupTab.init(conf.isAdvancedProjectSpecific(), conf.getAdvancedSetup(), project == null);
+        advancedSetupTab.init(conf.isAdvancedProjectSpecific(), conf.getAdvancedSetup(),
+            project == null);
 
         settingsSetupTab.projectSpecificChanged();
         classpathSetupTab.projectSpecificChanged();

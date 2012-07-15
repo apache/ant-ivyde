@@ -54,8 +54,8 @@ public class IvyFilePathText extends PathEditor {
 
     private Button defaultButton;
 
-    public IvyFilePathText(Composite parent, int style) {
-        super(parent, SWT.NONE, "Ivy File:", null, "*.xml");
+    public IvyFilePathText(Composite parent, int style, IProject project) {
+        super(parent, SWT.NONE, "Ivy File:", project, "*.xml");
     }
 
     protected Text createText(Composite parent) {

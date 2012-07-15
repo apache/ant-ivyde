@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
 import org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -29,11 +30,11 @@ public class AdvancedSetupTab extends AbstractSetupTab {
 
     private AdvancedSetupEditor advancedSetupEditor;
 
-    public AdvancedSetupTab(TabFolder tabs) {
-        super(tabs, "Advanced", AdvancedSetupPreferencePage.PEREFERENCE_PAGE_ID);
+    public AdvancedSetupTab(TabFolder tabs, IProject project) {
+        super(tabs, "Advanced", AdvancedSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
     }
 
-    protected Composite createSetupEditor(Composite configComposite) {
+    protected Composite createSetupEditor(Composite configComposite, IProject project) {
         advancedSetupEditor = new AdvancedSetupEditor(configComposite, SWT.NONE);
         advancedSetupEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         return advancedSetupEditor;

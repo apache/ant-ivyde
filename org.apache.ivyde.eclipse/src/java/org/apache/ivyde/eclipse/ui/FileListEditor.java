@@ -20,7 +20,7 @@ package org.apache.ivyde.eclipse.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -52,7 +52,7 @@ public class FileListEditor extends Composite {
     private Button down;
 
     public FileListEditor(Composite parent, int style,  String label, final String labelPopup,
-            final IJavaProject project, final String defaultExtension) {
+            final IProject project, final String defaultExtension) {
         super(parent, style);
         setLayout(new GridLayout(3, false));
 

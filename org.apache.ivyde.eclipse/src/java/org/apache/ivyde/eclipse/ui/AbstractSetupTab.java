@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +40,7 @@ public abstract class AbstractSetupTab {
 
     private Composite setupEditor;
 
-    public AbstractSetupTab(final TabFolder tabs, String title, final String preferencePageId) {
+    public AbstractSetupTab(final TabFolder tabs, String title, final String preferencePageId, IProject project) {
         TabItem tab = new TabItem(tabs, SWT.NONE);
         tab.setText(title);
 
@@ -79,12 +80,12 @@ public abstract class AbstractSetupTab {
         configComposite.setLayout(new GridLayout());
         configComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        setupEditor = createSetupEditor(configComposite);
+        setupEditor = createSetupEditor(configComposite, project);
 
         tab.setControl(composite);
     }
 
-    abstract protected Composite createSetupEditor(Composite configComposite);
+    abstract protected Composite createSetupEditor(Composite configComposite, IProject project);
 
     public void init(boolean isProjectSpecific) {
         if (isProjectSpecific) {

@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -51,11 +50,13 @@ public class PathEditor extends Composite {
 
     private Button browseWorkspace;
 
-    private final IJavaProject project;
+    private final IProject project;
 
     private final String defaultExtension;
 
-    public PathEditor(Composite parent, int style, String label, IJavaProject project, String defaultExtension) {
+    private Button browseProject;
+
+    public PathEditor(Composite parent, int style, String label, IProject project, String defaultExtension) {
         super(parent, style);
         this.project = project;
         this.defaultExtension = defaultExtension;
@@ -76,13 +77,24 @@ public class PathEditor extends Composite {
         Composite buttons = new Composite(this, SWT.NONE);
         buttons.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true, 2, 1));
         // CheckStyle:MagicNumber| OFF
-        layout = new GridLayout(4, false);
+        layout = new GridLayout(project == null ? 4 : 5, false);
         // CheckStyle:MagicNumber| ON
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         buttons.setLayout(layout);
 
         boolean added = addButtons(buttons);
+
+        if (project != null) {
+            browseProject = new Button(buttons, SWT.NONE);
+            browseProject.setLayoutData(new GridData(GridData.END, GridData.CENTER, !added, false));
+            browseProject.setText("Project...");
+            browseProject.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    selectInProject();
+                }
+            });
+        }
 
         browseWorkspace = new Button(buttons, SWT.NONE);
         browseWorkspace.setLayoutData(new GridData(GridData.END, GridData.CENTER, !added, false));
@@ -113,11 +125,41 @@ public class PathEditor extends Composite {
         });
     }
 
+    private void selectInProject() {
+        ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
+                new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+        dialog.setTitle("Select a file in the project:");
+        dialog.setMessage("Select a file in the project:");
+        // Filter to the project
+        dialog.addFilter(new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof IProject) {
+                    return ((IProject) element).getName().equals(project.getName());
+                }
+
+                return true;
+            }
+        });
+        dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+        // TODO try to preselect the current file
+        dialog.open();
+        Object[] results = dialog.getResult();
+        if ((results != null) && (results.length > 0) && (results[0] instanceof IFile)) {
+            IPath path = ((IFile) results[0]).getFullPath();
+            if (project != null && path.segment(0).equals(project.getProject().getName())) {
+                setProjectLoc(path.removeFirstSegments(1).makeRelative().toString());
+            } else {
+                String containerName = path.makeRelative().toString();
+                setWorkspaceLoc("${workspace_loc:" + containerName + "}");
+            }
+        }
+    }
+
     private void selectInWorkspace() {
         ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
                 new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
-        dialog.setTitle("Select a workspace relative file:");
-        dialog.setMessage("Select a workspace relative file:");
+        dialog.setTitle("Select a file in the workspace:");
+        dialog.setMessage("Select a file in the workspace:");
         // Filter closed projects
         dialog.addFilter(new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -134,12 +176,7 @@ public class PathEditor extends Composite {
         Object[] results = dialog.getResult();
         if ((results != null) && (results.length > 0) && (results[0] instanceof IFile)) {
             IPath path = ((IFile) results[0]).getFullPath();
-            if (project != null && path.segment(0).equals(project.getProject().getName())) {
-                setWorkspaceLoc(path.removeFirstSegments(1).makeRelative().toString());
-            } else {
-                String containerName = path.makeRelative().toString();
-                setWorkspaceLoc("${workspace_loc:" + containerName + "}");
-            }
+            setProjectLoc(path.removeFirstSegments(1).makeRelative().toString());
         }
     }
 
@@ -171,6 +208,11 @@ public class PathEditor extends Composite {
 
     protected void setFile(String file) {
         text.setText(file);
+        textUpdated();
+    }
+
+    protected void setProjectLoc(String projectLoc) {
+        text.setText(projectLoc);
         textUpdated();
     }
 

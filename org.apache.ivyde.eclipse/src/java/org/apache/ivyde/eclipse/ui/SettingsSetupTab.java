@@ -21,6 +21,7 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
 import org.apache.ivyde.eclipse.ui.SettingsSetupEditor.SettingsEditorListener;
 import org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -30,12 +31,12 @@ public class SettingsSetupTab extends AbstractSetupTab {
 
     private SettingsSetupEditor settingsEditor;
 
-    public SettingsSetupTab(TabFolder tabs) {
-        super(tabs, "Settings", SettingsSetupPreferencePage.PEREFERENCE_PAGE_ID);
+    public SettingsSetupTab(TabFolder tabs, IProject project) {
+        super(tabs, "Settings", SettingsSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
     }
 
-    protected Composite createSetupEditor(Composite configComposite) {
-        settingsEditor = new SettingsSetupEditor(configComposite, SWT.NONE);
+    protected Composite createSetupEditor(Composite configComposite, IProject project) {
+        settingsEditor = new SettingsSetupEditor(configComposite, SWT.NONE, project);
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         settingsEditor.addListener(new SettingsEditorListener() {
             public void settingsEditorUpdated(SettingsSetup setup) {

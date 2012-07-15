@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -67,7 +68,7 @@ public class SettingsSetupEditor extends Composite {
 
     private Button defaultButton;
 
-    public SettingsSetupEditor(Composite parent, int style) {
+    public SettingsSetupEditor(Composite parent, int style, IProject project) {
         super(parent, style);
 
         GridLayout layout = new GridLayout();
@@ -77,7 +78,7 @@ public class SettingsSetupEditor extends Composite {
         loadOnDemandButton.setText("reload the settings only on demand");
         loadOnDemandButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        settingsEditor = new PathEditor(this, SWT.NONE, "Ivy settings path:", null, "*.xml") {
+        settingsEditor = new PathEditor(this, SWT.NONE, "Ivy settings path:", project, "*.xml") {
 
             protected Text createText(Composite parent) {
                 errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
@@ -144,7 +145,7 @@ public class SettingsSetupEditor extends Composite {
         };
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        propFilesEditor = new FileListEditor(this, SWT.NONE, "Property files:", "Property file:", null, "*.properties");
+        propFilesEditor = new FileListEditor(this, SWT.NONE, "Property files:", "Property file:", project, "*.properties");
         propFilesEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
     }
 

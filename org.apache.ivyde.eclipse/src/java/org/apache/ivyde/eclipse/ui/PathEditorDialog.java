@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -29,7 +29,7 @@ public class PathEditorDialog extends Dialog {
 
     private String label;
 
-    private IJavaProject project;
+    private IProject project;
 
     private String defaultExtension;
 
@@ -37,7 +37,7 @@ public class PathEditorDialog extends Dialog {
 
     private String file;
 
-    protected PathEditorDialog(Shell parentShell, String label, IJavaProject project,
+    protected PathEditorDialog(Shell parentShell, String label, IProject project,
             String defaultExtension) {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);

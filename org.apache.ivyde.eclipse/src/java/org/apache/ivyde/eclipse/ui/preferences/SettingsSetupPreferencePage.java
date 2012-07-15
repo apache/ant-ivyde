@@ -43,7 +43,7 @@ public class SettingsSetupPreferencePage extends PreferencePage implements IWork
     }
 
     protected Control createContents(Composite parent) {
-        settingsEditor = new SettingsSetupEditor(parent, SWT.NONE);
+        settingsEditor = new SettingsSetupEditor(parent, SWT.NONE, null);
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         settingsEditor.init(IvyPlugin.getPreferenceStoreHelper().getSettingsSetup());

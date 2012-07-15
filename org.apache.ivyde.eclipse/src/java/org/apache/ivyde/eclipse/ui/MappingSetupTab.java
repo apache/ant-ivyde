@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
 import org.apache.ivyde.eclipse.ui.preferences.MappingSetupPreferencePage;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -29,11 +30,11 @@ public class MappingSetupTab extends AbstractSetupTab {
 
     private MappingSetupEditor mappingSetupEditor;
 
-    public MappingSetupTab(TabFolder tabs) {
-        super(tabs, "Source/Javadoc", MappingSetupPreferencePage.PEREFERENCE_PAGE_ID);
+    public MappingSetupTab(TabFolder tabs, IProject project) {
+        super(tabs, "Source/Javadoc", MappingSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
     }
 
-    protected Composite createSetupEditor(Composite configComposite) {
+    protected Composite createSetupEditor(Composite configComposite, IProject project) {
         mappingSetupEditor = new MappingSetupEditor(configComposite, SWT.NONE);
         mappingSetupEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         return mappingSetupEditor;
