@@ -76,6 +76,8 @@ public class StandaloneRetrieveSerializer {
 
     private static final String RETRIEVE_PATTERN = "pattern";
 
+    private static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
+
     public void write(OutputStream out, List/* <StandaloneRetrieveSetup> */setuplist)
             throws IOException {
         try {
@@ -96,6 +98,10 @@ public class StandaloneRetrieveSerializer {
                 NamedNodeMap attributes = node.getAttributes();
                 Attr attr = document.createAttribute(SETUP_NAME);
                 attr.setValue(setup.getName());
+                attributes.setNamedItem(attr);
+
+                attr = document.createAttribute(RESOLVE_IN_WORKSPACE);
+                attr.setValue(Boolean.toString(setup.isResolveInWorkspace()));
                 attributes.setNamedItem(attr);
 
                 if (setup.isSettingProjectSpecific()) {
@@ -206,6 +212,11 @@ public class StandaloneRetrieveSerializer {
 
                 NamedNodeMap attributes = node.getAttributes();
                 setup.setName(getAttribute(attributes, SETUP_NAME));
+
+                Node attr = attributes.getNamedItem(RESOLVE_IN_WORKSPACE);
+                if (attr != null) {
+                    setup.setResolveInWorkspace(Boolean.valueOf(attr.getNodeValue()).booleanValue());
+                }
 
                 NodeList children = node.getChildNodes();
                 for (int j = 0; j < children.getLength(); j++) {

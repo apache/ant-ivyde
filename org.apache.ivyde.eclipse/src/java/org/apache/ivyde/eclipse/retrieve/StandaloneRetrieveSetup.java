@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IProject;
 
 public class StandaloneRetrieveSetup {
 
+    private boolean resolveInWorkspace;
+
     private String name = "dependencies";
 
     private SettingsSetup settingsSetup = new SettingsSetup();
@@ -40,6 +42,15 @@ public class StandaloneRetrieveSetup {
     public StandaloneRetrieveSetupState getState() {
         return state;
     }
+
+    public boolean isResolveInWorkspace() {
+        return resolveInWorkspace;
+    }
+
+    public void setResolveInWorkspace(boolean resolveInWorkspace) {
+        this.resolveInWorkspace = resolveInWorkspace;
+    }
+
 
     public String getName() {
         return name;

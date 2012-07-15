@@ -53,7 +53,7 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
     }
 
     protected boolean isResolveInWorkspace() {
-        return false;
+        return setup.isResolveInWorkspace();
     }
 
 }

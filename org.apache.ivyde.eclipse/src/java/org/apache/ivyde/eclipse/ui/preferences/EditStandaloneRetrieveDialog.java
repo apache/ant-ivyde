@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -49,6 +50,8 @@ public class EditStandaloneRetrieveDialog extends Dialog {
     private SettingsSetupTab settingsTab;
 
     private StandaloneRetrieveSetup setup;
+
+    private Button resolveInWorkspaceCheck;
 
     protected EditStandaloneRetrieveDialog(Shell parentShell, IProject project,
             StandaloneRetrieveSetup retrieveSetup) {
@@ -75,7 +78,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
             retrieveSetup.getSettingsSetup());
         ivyFilePathText.init(retrieveSetup.getIvyXmlPath());
         retrieveComposite.init(retrieveSetup.getRetrieveSetup());
-
+        resolveInWorkspaceCheck.setSelection(retrieveSetup.isResolveInWorkspace());
         return tabs;
     }
 
@@ -101,6 +104,13 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         ivyFilePathText = new IvyFilePathText(ivyFileComposite, SWT.NONE, project);
         ivyFilePathText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
 
+        resolveInWorkspaceCheck = new Button(body, SWT.CHECK);
+        resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 2, 1));
+        resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
+        resolveInWorkspaceCheck
+                .setToolTipText("Will replace jars on the classpath with workspace projects");
+
         retrieveComposite = new RetrieveComposite(body, SWT.NONE, true);
         retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
@@ -113,6 +123,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         setup.setSettingsSetup(settingsTab.getSettingsEditor().getIvySettingsSetup());
         setup.setIvyXmlPath(ivyFilePathText.getIvyFilePath());
         setup.setRetrieveSetup(retrieveComposite.getRetrieveSetup());
+        setup.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
         super.okPressed();
     }
 
