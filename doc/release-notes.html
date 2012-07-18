@@ -73,32 +73,22 @@ Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Ja
 
 <h1><a name="status"></a>Status of this release</h1>
 
-This release contains sevral major improvements along with some bug fixes. The major
-improvements are about the resolve scheduler and how retrieved artifact are handled.
+This release contains sevral major improvements along with some bug fixes. The major improvements are about the resolve scheduler and how retrieved artifact are handled.
 Thus this release is considered as a beta one.
 
 <h1><a name="majorchanges"></a>Major Changes in this Release</h1>
 
 As for this release and the next ones, Apache IvyDE now expects to be installed in Eclipse 3.4 or superior.
 
-Apache IvyDE has now a synchronous job to launch resolve of dependencies on the projets. So
-IvyDE will be able to order the resolve of the projects in the correct order regarding
-their inter dependencies. And the immediate effect is that Eclipse get notified only
-one time of a classpath change, and thus triggerin only one wrokspace build.
+Apache IvyDE has now a synchronous job to launch resolve of dependencies on the projets. So IvyDE will be able to order the resolve of the projects in the correct order regarding their inter dependencies. And the immediate effect is that Eclipse get notified only one time of a classpath change, and thus triggerin only one wrokspace build.
 
-Apache IvyDE is now capable of having a classpath based on retrieved artifact rather than
-on the cached ones.
+Apache IvyDE is now capable of having a classpath based on retrieved artifact rather than on the cached ones.
 
-The existing retrieve configuration are now considered "standonale" ones, as they
-are independant of the classpath container. They can even now be part of non Java
-project.
+The existing retrieve configuration are now considered "standonale" ones, as they are independant of the classpath container. They can even now be part of non Java project.
 
-<h1><a name="contrib"></a>Committers and Contributors for this Release</h1>
+<h1><a name="contrib"></a>Committers and Contributors</h1>
 
-Here is the list of people who have contributed source code and documentation
-to this release. Many thanks to all of them, and also to the whole IvyDE community
-contributing ideas and feedback, and promoting the use of Apache IvyDE. The list would be too
-long, but Apache IvyDE couldn't be what it is without you!
+Here is the list of people who have contributed source code and documentation up to this release. Many thanks to all of them, and also to the whole IvyDE community contributing ideas and feedback, and promoting the use of Apache IvyDE !
 
 <ul>Committers
 <li>Maarten Coene</li>
@@ -108,11 +98,26 @@ long, but Apache IvyDE couldn't be what it is without you!
 <li>Gilles Scokart</li>
 </ul>
 <ul>Contributors:
+<li>Daniel Becheanu</li>
+<li>Peter Blstak</li>
 <li>Clint Burghduff</li>
+<li>Peter Chanthamynavong</li>
 <li>Gregory Fernandez</li>
+<li>Thomas Friol</li>
+<li>Troy Gaines</li>
+<li>Eugene Goldfarb</li>
+<li>Matt Goldspink</li>
+<li>Will Gorman</li>
+<li>Miguel Griffa</li>
+<li>Adam Karl</li>
+<li>Ivica Loncar</li>
 <li>Jeffrey M. Metcalf</li>
+<li>S&eacute;bastien Moran</li>
+<li>Marko Niemi</li>
 <li>Peter Oxenham</li>
 <li>Joe Sortelli</li>
+<li>Phillip Webb</li>
+<li>James Wilkins</li>
 </ul>
 
 <h1><a name="changes"></a>List of Changes in this Release</h1>
@@ -121,15 +126,23 @@ List of changes since <a href="/ivy/ivyde/history/2.2.0.beta1/release-notes.html
 <ul>
     <li>FIX: org.eclipse.swt.SWTException: Invalid thread access with Eclipse Juno (IVYDE-313)</li>
     <li>FIX: Divide by zero during IvyDE resolve (IVYDE-312) (thanks to Joe Sortelli)</li>
+</ul>
+<ul>
     <li>NEW: Support Accepted Types: * (IVYDE-306)</li>
     <li>NEW: Support Workspace/Filesystem/Variables for "Ivy File" setting (IVYDE-304)</li>
     <li>NEW: Retrieve list does not resolve workspace projects (IVYDE-308) (thanks to Peter Oxenham)</li>
-    <!-- samples
-    <li>NEW: new new new (IVYDE-XXX) (thanks to XXX)</li>
-    <li>IMPROVE: new new new (IVYDE-XXX) (thanks to XXX)</li>
-    <li>FIX: new new new (IVYDE-XXX) (thanks to XXX)</li>
-    -->
 </ul>
+    <!-- samples
+<ul>
+    <li>NEW: new new new (IVYDE-XXX) (thanks to XXX)</li>
+</ul>
+<ul>
+    <li>IMPROVE: improve improve improve (IVYDE-XXX) (thanks to XXX)</li>
+</ul>
+<ul>
+    <li>FIX: fix fix fix (IVYDE-XXX) (thanks to XXX)</li>
+</ul>
+    -->
 
 Most of our changes are logged in our JIRA, where you can find comments and links to our subversion:
 https://issues.apache.org/jira/browse/ivyde
