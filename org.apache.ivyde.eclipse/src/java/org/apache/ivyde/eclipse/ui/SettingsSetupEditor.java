@@ -68,6 +68,8 @@ public class SettingsSetupEditor extends Composite {
 
     private Button defaultButton;
 
+    private PathEditor ivyUserDirEditor;
+
     public SettingsSetupEditor(Composite parent, int style, IProject project) {
         super(parent, style);
 
@@ -145,6 +147,9 @@ public class SettingsSetupEditor extends Composite {
         };
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
+        ivyUserDirEditor = new PathEditor(this, SWT.NONE, "Ivy user dir:", project, null);
+        ivyUserDirEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+        
         propFilesEditor = new FileListEditor(this, SWT.NONE, "Property files:", "Property file:", project, "*.properties");
         propFilesEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
     }
@@ -153,6 +158,7 @@ public class SettingsSetupEditor extends Composite {
         SettingsSetup setup = new SettingsSetup();
         setup.setIvySettingsPath(settingsEditor.getText().getText());
         setup.setLoadSettingsOnDemand(loadOnDemandButton.getSelection());
+        setup.setIvyUserDir(ivyUserDirEditor.getText().getText());
         setup.setPropertyFiles(propFilesEditor.getFiles());
         return setup;
     }
@@ -226,6 +232,7 @@ public class SettingsSetupEditor extends Composite {
     public void init(SettingsSetup setup) {
         settingsEditor.getText().setText(setup.getRawIvySettingsPath());
         propFilesEditor.init(setup.getRawPropertyFiles());
+        ivyUserDirEditor.getText().setText(setup.getRawIvyUserDir());
         loadOnDemandButton.setSelection(setup.isLoadSettingsOnDemand());
     }
 
@@ -233,6 +240,7 @@ public class SettingsSetupEditor extends Composite {
         super.setEnabled(enabled);
         settingsEditor.setEnabled(enabled);
         defaultButton.setEnabled(enabled);
+        ivyUserDirEditor.setEnabled(enabled);
         propFilesEditor.setEnabled(enabled);
         loadOnDemandButton.setEnabled(enabled);
     }

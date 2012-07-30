@@ -56,6 +56,7 @@ public class IvyDEPreferenceStoreHelper {
         setup.setIvySettingsPath(prefStore.getString(PreferenceConstants.IVYSETTINGS_PATH));
         setup.setLoadSettingsOnDemand(prefStore
                 .getBoolean(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND));
+        setup.setIvyUserDir(prefStore.getString(PreferenceConstants.IVY_USER_DIR));
         setup.setPropertyFiles(IvyClasspathUtil.split(prefStore
                 .getString(PreferenceConstants.PROPERTY_FILES)));
         return setup;
@@ -65,6 +66,7 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.IVYSETTINGS_PATH, setup.getRawIvySettingsPath());
         prefStore.setValue(PreferenceConstants.PROPERTY_FILES,
             IvyClasspathUtil.concat(setup.getRawPropertyFiles()));
+        prefStore.setValue(PreferenceConstants.IVY_USER_DIR, setup.getRawIvyUserDir());
         prefStore.setValue(PreferenceConstants.LOAD_SETTINGS_ON_DEMAND,
             setup.isLoadSettingsOnDemand());
     }

@@ -41,6 +41,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final String DEFAULT_IVYSETTINGS_PATH = "";
 
+    public static final String DEFAULT_IVY_USER_DIR = "";
+
     public static final String DEFAULT_PROPERTY_FILES = "";
 
     public static final boolean DEFAULT_LOAD_SETTINGS_ON_DEMAND = false;
@@ -50,6 +52,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     static {
         DEFAULT_SETTINGS_SETUP.setIvySettingsPath(DEFAULT_IVYSETTINGS_PATH);
         DEFAULT_SETTINGS_SETUP.setLoadSettingsOnDemand(DEFAULT_LOAD_SETTINGS_ON_DEMAND);
+        DEFAULT_SETTINGS_SETUP.setIvyUserDir(DEFAULT_IVY_USER_DIR);
         DEFAULT_SETTINGS_SETUP.setPropertyFiles(IvyClasspathUtil.split(DEFAULT_PROPERTY_FILES));
     }
 
@@ -144,6 +147,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.P_STRING, "Default value");
 
         store.setDefault(PreferenceConstants.IVYSETTINGS_PATH, DEFAULT_IVYSETTINGS_PATH);
+        store.setDefault(PreferenceConstants.IVY_USER_DIR, DEFAULT_IVY_USER_DIR);
         store.setDefault(PreferenceConstants.ORGANISATION, DEFAULT_ORGANISATION);
         store.setDefault(PreferenceConstants.ORGANISATION_URL, DEFAULT_ORGANISATION_URL);
         store.setDefault(PreferenceConstants.ACCEPTED_TYPES, DEFAULT_ACCEPTED_TYPES);

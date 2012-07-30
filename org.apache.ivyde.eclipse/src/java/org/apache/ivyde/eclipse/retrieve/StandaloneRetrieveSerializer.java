@@ -58,6 +58,8 @@ public class StandaloneRetrieveSerializer {
 
     private static final String IVYSETTING_LOADONDEMAND = "loadondemand";
 
+    private static final String IVY_USER_DIR = "ivyUserDir";
+
     private static final String PROPERTYFILE = "propertyfile";
 
     private static final String PROPERTYFILE_PATH = "path";
@@ -148,6 +150,10 @@ public class StandaloneRetrieveSerializer {
 
         attr = document.createAttribute(IVYSETTING_LOADONDEMAND);
         attr.setValue(Boolean.toString(settingsSetup.isLoadSettingsOnDemand()));
+        attributes.setNamedItem(attr);
+
+        attr = document.createAttribute(IVY_USER_DIR);
+        attr.setValue(settingsSetup.getRawIvyUserDir());
         attributes.setNamedItem(attr);
 
         Iterator it = settingsSetup.getRawPropertyFiles().iterator();
@@ -272,6 +278,9 @@ public class StandaloneRetrieveSerializer {
 
         String loadOnDemand = getAttribute(attributes, IVYSETTING_LOADONDEMAND);
         settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(loadOnDemand).booleanValue());
+
+        String ivyUserDir = getAttribute(attributes, IVY_USER_DIR);
+        settingsSetup.setIvyUserDir(ivyUserDir);
 
         List/* <String> */propertyFiles = new ArrayList();
 

@@ -148,6 +148,9 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("loadSettingsOnDemand")) {
                 settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(value).booleanValue());
                 conf.setSettingsProjectSpecific(true);
+            } else if (parameter[0].equals("ivyUserDir")) {
+                settingsSetup.setIvyUserDir(value);
+                conf.setSettingsProjectSpecific(true);
             } else if (parameter[0].equals("propertyFiles")) {
                 settingsSetup.setPropertyFiles(IvyClasspathUtil.split(value));
                 conf.setSettingsProjectSpecific(true);
@@ -332,6 +335,10 @@ public final class IvyClasspathContainerConfAdapter {
         MappingSetup mappingSetup = conf.getMappingSetup();
         SettingsSetup settingsSetup = conf.getIvySettingsSetup();
         MappingSetup prefStoreMappingSetup = IvyPlugin.getPreferenceStoreHelper().getMappingSetup();
+        if (settingsSetup.getRawIvyUserDir() == null) {
+            settingsSetup.setIvyUserDir(IvyPlugin.getPreferenceStoreHelper().getSettingsSetup()
+                    .getRawIvyUserDir());
+        }
         if (settingsSetup.getRawPropertyFiles() == null) {
             settingsSetup.setPropertyFiles(IvyPlugin.getPreferenceStoreHelper().getSettingsSetup()
                     .getRawPropertyFiles());
@@ -369,6 +376,7 @@ public final class IvyClasspathContainerConfAdapter {
                 SettingsSetup setup = conf.getIvySettingsSetup();
                 append(path, "ivySettingsPath", setup.getRawIvySettingsPath());
                 append(path, "loadSettingsOnDemand", setup.isLoadSettingsOnDemand());
+                append(path, "ivyUserDir", setup.getRawIvyUserDir());
                 append(path, "propertyFiles", setup.getRawPropertyFiles());
             }
             if (conf.isClassthProjectSpecific()) {

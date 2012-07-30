@@ -133,6 +133,7 @@ public class IvyPlugin extends AbstractUIPlugin {
                 try {
                     // CheckStyle:LineLength| OFF
                     if (event.getProperty() == PreferenceConstants.IVYSETTINGS_PATH
+                            || event.getProperty() == PreferenceConstants.IVY_USER_DIR
                             || event.getProperty() == PreferenceConstants.ACCEPTED_TYPES
                             || event.getProperty() == PreferenceConstants.SOURCES_TYPES
                             || event.getProperty() == PreferenceConstants.JAVADOC_TYPES

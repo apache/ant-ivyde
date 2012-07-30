@@ -40,6 +40,8 @@ public class SettingsSetup {
 
     private boolean loadSettingsOnDemand = false;
 
+    private String ivyUserDir = "";
+
     /**
      * Default constructor
      */
@@ -51,6 +53,7 @@ public class SettingsSetup {
         this.ivySettingsPath = setup.ivySettingsPath;
         this.propertyFiles = setup.propertyFiles;
         this.loadSettingsOnDemand = setup.loadSettingsOnDemand;
+        this.ivyUserDir = setup.ivyUserDir;
     }
 
     public ResolvedPath getResolvedIvySettingsPath(IProject project) throws IvyDEException {
@@ -96,6 +99,18 @@ public class SettingsSetup {
 
     public void setLoadSettingsOnDemand(boolean loadSettingsOnDemand) {
         this.loadSettingsOnDemand = loadSettingsOnDemand;
+    }
+
+    public void setIvyUserDir(String ivyUserDir) {
+        this.ivyUserDir = ivyUserDir;
+    }
+
+    public ResolvedPath getResolvedIvyUserDir(IProject project) throws IvyDEException {
+        return new ResolvedPath(ivyUserDir, project);
+    }
+
+    public String getRawIvyUserDir() {
+        return ivyUserDir;
     }
 
 }

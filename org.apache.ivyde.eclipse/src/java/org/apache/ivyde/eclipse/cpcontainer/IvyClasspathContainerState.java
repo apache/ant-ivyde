@@ -61,6 +61,10 @@ public class IvyClasspathContainerState extends CachedIvy {
         return conf.getInheritedSettingsSetup().isLoadSettingsOnDemand();
     }
 
+    protected ResolvedPath getIvyUserDir() throws IvyDEException {
+        return conf.getInheritedSettingsSetup().getResolvedIvyUserDir(getProject());
+    }
+
     protected boolean isResolveInWorkspace() {
         return conf.getInheritedClasspathSetup().isResolveInWorkspace();
     }

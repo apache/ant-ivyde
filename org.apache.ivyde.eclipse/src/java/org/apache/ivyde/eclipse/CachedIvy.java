@@ -36,7 +36,6 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceIvySettings;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -85,6 +84,8 @@ public abstract class CachedIvy {
     protected abstract ResolvedPath getIvySettingsPath() throws IvyDEException;
 
     protected abstract boolean isLoadSettingsOnDemandPath();
+
+    protected abstract ResolvedPath getIvyUserDir() throws IvyDEException;
 
     protected abstract Collection getPropertyFiles() throws IvyDEException;
 
@@ -233,6 +234,15 @@ public abstract class CachedIvy {
             if (location != null) {
                 ivySettings.setBaseDir(location.toFile());
             }
+        }
+        ResolvedPath ivyUserDir = getIvyUserDir();
+        if (ivyUserDir.getError() != null) {
+            throw new IvyDEException("Incorrect path of the Ivy user dir",
+                    "The Ivy user dir '" + ivyUserDir.getInputPath() + "' is incorrect: "
+                            + ivyUserDir.getError().getMessage(), ivyUserDir.getError());
+        }
+        if (ivyUserDir.isSet()) {
+            ivySettings.setDefaultIvyUserDir(ivyUserDir.getFile());
         }
         Collection propFiles = getPropertyFiles();
         if (propFiles != null) {
