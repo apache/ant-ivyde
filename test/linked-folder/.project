@@ -36,7 +36,7 @@
 		<link>
 			<name>link</name>
 			<type>2</type>
-			<location>/Users/hibou/dev/ivy/git-ivyde/test/linked-folder/linked</location>
+			<locationURI>PROJECT_LOC/linked</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
