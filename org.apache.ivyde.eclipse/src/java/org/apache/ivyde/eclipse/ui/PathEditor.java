@@ -242,6 +242,9 @@ public class PathEditor extends Composite {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         text.setEnabled(enabled);
+        if (browseProject != null) {
+            browseProject.setEnabled(enabled);
+        }
         browseFileSystem.setEnabled(enabled);
         browseWorkspace.setEnabled(enabled);
         variableButton.setEnabled(enabled);
