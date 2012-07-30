@@ -1,0 +1,1 @@
+project which ivy.xml location is in another project
