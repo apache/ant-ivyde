@@ -269,8 +269,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             if (settings != null) {
                 conf.setSettingsProjectSpecific(true);
                 SettingsSetup setup = new SettingsSetup();
-                setup.setIvySettingsPath("${workspace_loc:" + project.getElementName()
-                        + "/ivysettings.xml}");
+                setup.setIvySettingsPath("ivysettings.xml");
                 conf.setIvySettingsSetup(setup);
             }
         }
