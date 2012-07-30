@@ -17,8 +17,10 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
@@ -33,6 +35,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -137,7 +140,10 @@ public class PathEditor extends Composite {
                 if (element instanceof IProject) {
                     return ((IProject) element).getName().equals(project.getName());
                 }
-
+                if (defaultExtension == null) {
+                    // we want a folder
+                    return element instanceof IContainer;
+                }
                 return true;
             }
         });
@@ -145,14 +151,9 @@ public class PathEditor extends Composite {
         // TODO try to preselect the current file
         dialog.open();
         Object[] results = dialog.getResult();
-        if ((results != null) && (results.length > 0) && (results[0] instanceof IFile)) {
-            IPath path = ((IFile) results[0]).getFullPath();
-            if (project != null && path.segment(0).equals(project.getProject().getName())) {
-                setProjectLoc(path.removeFirstSegments(1).makeRelative().toString());
-            } else {
-                String containerName = path.makeRelative().toString();
-                setWorkspaceLoc("${workspace_loc:" + containerName + "}");
-            }
+        if ((results != null) && (results.length > 0) && (results[0] instanceof IResource)) {
+            IPath path = ((IResource) results[0]).getFullPath();
+            setProjectLoc(path.removeFirstSegments(1).makeRelative().toString());
         }
     }
 
@@ -167,7 +168,10 @@ public class PathEditor extends Composite {
                 if (element instanceof IProject) {
                     return ((IProject) element).isAccessible();
                 }
-
+                if (defaultExtension == null) {
+                    // we want a folder
+                    return element instanceof IContainer;
+                }
                 return true;
             }
         });
@@ -175,19 +179,31 @@ public class PathEditor extends Composite {
         // TODO try to preselect the current file
         dialog.open();
         Object[] results = dialog.getResult();
-        if ((results != null) && (results.length > 0) && (results[0] instanceof IFile)) {
-            IPath path = ((IFile) results[0]).getFullPath();
-            setProjectLoc(path.removeFirstSegments(1).makeRelative().toString());
+        if (results != null && results.length > 0 && results[0] instanceof IResource) {
+            IPath path = ((IResource) results[0]).getFullPath();
+            if (project != null && path.segment(0).equals(project.getProject().getName())) {
+                setProjectLoc(path.removeFirstSegments(1).makeRelative().toString());
+            } else {
+                String containerName = path.makeRelative().toString();
+                setWorkspaceLoc("${workspace_loc:" + containerName + "}");
+            }
         }
     }
 
     private void selectInFileSystem() {
-        FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-        if (text != null) {
-            dialog.setFileName(text.getText());
+        String file;
+        if (defaultExtension == null) {
+            // we want a folder
+            DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+            file = dialog.open();
+        } else {
+            FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+            if (text != null) {
+                dialog.setFileName(text.getText());
+            }
+            dialog.setFilterExtensions(new String[] {defaultExtension, "*"});
+            file = dialog.open();            
         }
-        dialog.setFilterExtensions(new String[] {defaultExtension, "*"});
-        String file = dialog.open();
         if (file != null) {
             setFile(file);
         }
