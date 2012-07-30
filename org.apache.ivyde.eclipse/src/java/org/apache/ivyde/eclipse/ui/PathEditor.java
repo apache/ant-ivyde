@@ -97,7 +97,8 @@ public class PathEditor extends Composite {
         }
 
         browseWorkspace = new Button(buttons, SWT.NONE);
-        browseWorkspace.setLayoutData(new GridData(GridData.END, GridData.CENTER, !added, false));
+        browseWorkspace.setLayoutData(new GridData(project == null ? GridData.END : GridData.CENTER, GridData.CENTER,
+                !added && project == null, false));
         browseWorkspace.setText("Workspace...");
         browseWorkspace.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
