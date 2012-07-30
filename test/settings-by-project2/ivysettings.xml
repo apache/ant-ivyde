@@ -16,16 +16,13 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0">
-    <info organisation="org.apache.ivyde" module="ivytest-settings-by-project">
-        <description>
-            Project with settings local to the project (using the variable ivyproject_loc)
-        </description>
-    </info>
-    <configurations>
-        <conf name="default" />
-    </configurations>
-    <dependencies>
-        <dependency org="myorg" name="mymodule" rev="1.1" conf="default" />
-    </dependencies>
-</ivy-module>
+<ivysettings>
+    <caches defaultCacheDir="${ivy.settings.dir}/../cache-fakerepo" useOrigin="false" />
+    <settings defaultResolver="fakerepo" checkUpToDate="false" />
+    <resolvers>
+        <filesystem name="fakerepo">
+            <ivy pattern="${ivy.settings.dir}/../fakerepo/[organisation]/[module]/ivy-[revision].xml"/>
+            <artifact pattern="${ivy.settings.dir}/../fakerepo/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+        </filesystem>
+    </resolvers>
+</ivysettings>

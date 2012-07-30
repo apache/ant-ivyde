@@ -17,9 +17,9 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="org.apache.ivyde" module="ivytest-settings-by-project">
+    <info organisation="org.apache.ivyde" module="ivytest-settings-by-project2">
         <description>
-            Project with settings local to the project (using the variable ivyproject_loc)
+            Project with settings local to the project, but not with the variable ivyproject_loc
         </description>
     </info>
     <configurations>

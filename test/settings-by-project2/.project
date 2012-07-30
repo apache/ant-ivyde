@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -16,16 +17,20 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0">
-    <info organisation="org.apache.ivyde" module="ivytest-settings-by-project">
-        <description>
-            Project with settings local to the project (using the variable ivyproject_loc)
-        </description>
-    </info>
-    <configurations>
-        <conf name="default" />
-    </configurations>
-    <dependencies>
-        <dependency org="myorg" name="mymodule" rev="1.1" conf="default" />
-    </dependencies>
-</ivy-module>
+<projectDescription>
+	<name>ivydetest-settings-by-project2</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.apache.ivyde.eclipse.ivynature</nature>
+	</natures>
+</projectDescription>
