@@ -82,6 +82,8 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 <p>By default, Apache IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).</p>
 <h4>Ivy settings path:</h4>
 <p>The path to your ivy settings file. Leave it blank to use Ivy default resolvers. See also the documentation about <a href="eclipsevar.html">Eclipse variables</a>.</p>
+<h4>Ivy user dir:</h4>
+<p>The path to the default Ivy user directory, where Ivy have its default cache location</p>
 <h4>Property files:</h4>
 <p>This is a list of Java properties files to load before loading the ivysettings.xml. Specify in this files properties which you expect to use in the ivysettings.xml</p>
 
