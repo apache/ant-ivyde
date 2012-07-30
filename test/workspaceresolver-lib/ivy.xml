@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="org.apache.ivyde" module="ivytest-workspaceresolver-lib">
+    <info organisation="org.apache.ivyde" module="ivydetest-workspaceresolver-lib">
         <description>
             Project using the resolve in workspace feature
         </description>
@@ -26,6 +26,6 @@
         <conf name="default" />
     </configurations>
     <dependencies>
-        <dependency org="org.apache.ivyde" name="ivytest-workspaceresolver-common" rev="latest.integration" conf="default" />
+        <dependency org="org.apache.ivyde" name="ivydetest-workspaceresolver-common" rev="latest.integration" conf="default" />
     </dependencies>
 </ivy-module>
