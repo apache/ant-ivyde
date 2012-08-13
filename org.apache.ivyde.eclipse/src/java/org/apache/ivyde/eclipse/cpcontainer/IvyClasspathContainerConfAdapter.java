@@ -177,6 +177,9 @@ public final class IvyClasspathContainerConfAdapter {
             } else if (parameter[0].equals("resolveInWorkspace")) {
                 classpathSetup.setResolveInWorkspace(Boolean.valueOf(value).booleanValue());
                 conf.setClassthProjectSpecific(true);
+            } else if (parameter[0].equals("readOSGiMetadata")) {
+                classpathSetup.setReadOSGiMetadata(Boolean.valueOf(value).booleanValue());
+                conf.setClassthProjectSpecific(true);
             } else if (parameter[0].equals("resolveBeforeLaunch")) {
                 advancedSetup.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
                 conf.setAdvancedProjectSpecific(true);
@@ -384,6 +387,7 @@ public final class IvyClasspathContainerConfAdapter {
                 append(path, "acceptedTypes", setup.getAcceptedTypes());
                 append(path, "alphaOrder", setup.isAlphaOrder());
                 append(path, "resolveInWorkspace", setup.isResolveInWorkspace());
+                append(path, "readOSGiMetadata", setup.isReadOSGiMetadata());
                 append(path, "retrievedClasspath", setup.isRetrievedClasspath());
                 if (setup.isRetrievedClasspath()) {
                     RetrieveSetup retrieveSetup = setup.getRetrieveSetup();

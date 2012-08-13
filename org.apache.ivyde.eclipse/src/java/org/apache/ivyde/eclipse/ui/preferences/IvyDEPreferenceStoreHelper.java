@@ -74,6 +74,7 @@ public class IvyDEPreferenceStoreHelper {
     public ClasspathSetup getClasspathSetup() {
         ClasspathSetup setup = new ClasspathSetup();
         setup.setResolveInWorkspace(prefStore.getBoolean(PreferenceConstants.RESOLVE_IN_WORKSPACE));
+        setup.setReadOSGiMetadata(prefStore.getBoolean(PreferenceConstants.READ_OSGI_METADATA));
         setup.setAcceptedTypes(IvyClasspathUtil.split(prefStore
                 .getString(PreferenceConstants.ACCEPTED_TYPES)));
         setup.setAlphaOrder(prefStore.getBoolean(PreferenceConstants.ALPHABETICAL_ORDER));
@@ -90,6 +91,7 @@ public class IvyDEPreferenceStoreHelper {
 
     public void setClasspathSetup(ClasspathSetup setup) {
         prefStore.setValue(PreferenceConstants.RESOLVE_IN_WORKSPACE, setup.isResolveInWorkspace());
+        prefStore.setValue(PreferenceConstants.READ_OSGI_METADATA, setup.isReadOSGiMetadata());
         prefStore.setValue(PreferenceConstants.ACCEPTED_TYPES,
             IvyClasspathUtil.concat(setup.getAcceptedTypes()));
         prefStore.setValue(PreferenceConstants.ALPHABETICAL_ORDER, setup.isAlphaOrder());

@@ -33,6 +33,8 @@ public class ClasspathSetup {
 
     private RetrieveSetup retrieveSetup = new RetrieveSetup();
 
+    private boolean readOSGiMetadata;
+
     /**
      * Default constructor
      */
@@ -46,6 +48,7 @@ public class ClasspathSetup {
         this.alphaOrder = setup.alphaOrder;
         this.retrievedClasspath = setup.retrievedClasspath;
         this.retrieveSetup.set(setup.retrieveSetup);
+        this.readOSGiMetadata = setup.readOSGiMetadata;
     }
 
     public boolean isResolveInWorkspace() {
@@ -88,4 +91,11 @@ public class ClasspathSetup {
         this.retrieveSetup = retrieveSetup;
     }
 
+    public boolean isReadOSGiMetadata() {
+        return readOSGiMetadata;
+    }
+
+    public void setReadOSGiMetadata(boolean readOSGiMetadata) {
+        this.readOSGiMetadata = readOSGiMetadata;
+    }
 }

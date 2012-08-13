@@ -17,6 +17,11 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Constant definitions for plug-in preferences
  */
@@ -65,6 +70,8 @@ public final class PreferenceConstants {
     public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
     public static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
+
+    public static final String READ_OSGI_METADATA = "readOSGIMetadata";
 
     public static final String RESOLVE_BEFORE_LAUNCH = "resolveBeforeLaunch";
 
@@ -118,4 +125,20 @@ public final class PreferenceConstants {
 
     public static final String ERROR_POPUP = "error.popup";
 
+    public static final Set/*<String>*/ ALL = new HashSet();
+
+    static {
+        Field[] fields = PreferenceConstants.class.getFields();
+        for (int i = 0; i < fields.length; i++) {
+            if (Modifier.isStatic(fields[i].getModifiers())) {
+                try {
+                    ALL.add(fields[i].get(null));
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException(e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 }

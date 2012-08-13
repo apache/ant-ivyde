@@ -97,6 +97,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IvyMarkerManager ivyMarkerManager;
 
+    private boolean osgiAvailable;
+
     /**
      * The constructor.
      */
@@ -131,26 +133,9 @@ public class IvyPlugin extends AbstractUIPlugin {
         propertyListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 try {
-                    // CheckStyle:LineLength| OFF
-                    if (event.getProperty() == PreferenceConstants.IVYSETTINGS_PATH
-                            || event.getProperty() == PreferenceConstants.IVY_USER_DIR
-                            || event.getProperty() == PreferenceConstants.ACCEPTED_TYPES
-                            || event.getProperty() == PreferenceConstants.SOURCES_TYPES
-                            || event.getProperty() == PreferenceConstants.JAVADOC_TYPES
-                            || event.getProperty() == PreferenceConstants.SOURCES_SUFFIXES
-                            || event.getProperty() == PreferenceConstants.JAVADOC_SUFFIXES
-                            || event.getProperty() == PreferenceConstants.DO_RETRIEVE_DEPRECATED
-                            || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN_DEPRECATED
-                            || event.getProperty() == PreferenceConstants.DO_RETRIEVE
-                            || event.getProperty() == PreferenceConstants.RETRIEVE_PATTERN
-                            || event.getProperty() == PreferenceConstants.RETRIEVE_SYNC
-                            || event.getProperty() == PreferenceConstants.ALPHABETICAL_ORDER
-                            || event.getProperty() == PreferenceConstants.RESOLVE_IN_WORKSPACE
-                            || event.getProperty() == PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS
-                            || event.getProperty() == PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS) {
+                    if (PreferenceConstants.ALL.contains(event.getProperty())) {
                         prefStoreChanged();
                     }
-                    // CheckStyle:LineLength| ON
                 } catch (JavaModelException e) {
                     MessageDialog.openError(IvyPlugin.getDefault().getWorkbench()
                             .getActiveWorkbenchWindow().getShell(),
@@ -177,6 +162,13 @@ public class IvyPlugin extends AbstractUIPlugin {
         ivyMarkerManager = new IvyMarkerManager();
 
         log(IStatus.INFO, "IvyDE plugin started", null);
+
+        try {
+            Class.forName("org.apache.ivy.osgi.core.ManifestParser");
+            osgiAvailable = true;
+        } catch (Exception e) {
+            osgiAvailable = false;
+        }
     }
 
     /**
@@ -250,6 +242,10 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public static IvyPlugin getDefault() {
         return plugin;
+    }
+
+    public boolean isOsgiAvailable() {
+        return osgiAvailable;
     }
 
     /**

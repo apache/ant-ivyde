@@ -17,8 +17,11 @@
  */
 package org.apache.ivyde.eclipse.cpcontainer;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,6 +35,10 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
+import org.apache.ivy.osgi.core.BundleInfo;
+import org.apache.ivy.osgi.core.ExportPackage;
+import org.apache.ivy.osgi.core.ManifestParser;
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.resolve.ResolveResult;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
@@ -39,6 +46,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -73,6 +81,8 @@ public class IvyClasspathContainerMapper {
 
     private MappingSetup mapping;
 
+    private boolean osgiAvailable;
+
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,
             IvyClasspathContainerConfiguration conf, ResolveResult resolveResult) {
         this.monitor = monitor;
@@ -83,6 +93,7 @@ public class IvyClasspathContainerMapper {
         this.all = resolveResult.getArtifactReports();
         this.artifactsByDependency = resolveResult.getArtifactsByDependency();
         this.retrievedArtifacts = resolveResult.getRetrievedArtifacts();
+        this.osgiAvailable = IvyPlugin.getDefault().isOsgiAvailable();
     }
 
     public IClasspathEntry[] map() {
@@ -97,7 +108,9 @@ public class IvyClasspathContainerMapper {
                 // but only add it if it is not a self dependency
                 if (javaProject == null
                         || !artifact.getName().equals(javaProject.getPath().toString())) {
-                    paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), true));
+                    IAccessRule[] rules = getAccessRules(javaProject);
+                    paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), rules, true,
+                        null, true));
                 }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
                 Path classpathArtifact = getArtifactPath(artifact);
@@ -105,9 +118,10 @@ public class IvyClasspathContainerMapper {
                     mapping.isMapIfOnlyOneSource());
                 Path javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
                     mapping.isMapIfOnlyOneJavadoc());
+                IAccessRule[] rules = getAccessRules(classpathArtifact);
                 paths.add(JavaCore.newLibraryEntry(classpathArtifact,
                     getSourceAttachment(classpathArtifact, sourcesArtifact),
-                    getSourceAttachmentRoot(classpathArtifact, sourcesArtifact), null,
+                    getSourceAttachmentRoot(classpathArtifact, sourcesArtifact), rules,
                     getExtraAttribute(classpathArtifact, javadocArtifact), false));
             }
 
@@ -115,6 +129,56 @@ public class IvyClasspathContainerMapper {
         classpathEntries = (IClasspathEntry[]) paths.toArray(new IClasspathEntry[paths.size()]);
 
         return classpathEntries;
+    }
+
+    private IAccessRule[] getAccessRules(IJavaProject javaProject) {
+        if (!osgiAvailable || !classpathSetup.isReadOSGiMetadata()) {
+            return null;
+        }
+        // TODO
+        // Nicolas: AFAIU, the access rules seems to have to be set on the imported project itself
+        // rather than filtering here, afterwards
+        return null;
+    }
+
+    private IAccessRule[] getAccessRules(Path artifact) {
+        if (!osgiAvailable || !classpathSetup.isReadOSGiMetadata()) {
+            return null;
+        }
+        BundleInfo bundleInfo;
+        FileInputStream jar = null;
+        try {
+            jar = new FileInputStream(artifact.toFile());
+            bundleInfo = ManifestParser.parseJarManifest(jar);
+        } catch (IOException e) {
+            Message.warn("OSGi metadata could not be extracted from " + artifact + ": "
+                    + e.getMessage() + " (" + e.getClass().getName() + ")");
+            return null;
+        } catch (ParseException e) {
+            Message.warn("OSGi metadata could not be extracted from " + artifact + ": "
+                    + e.getMessage() + " (" + e.getClass().getName() + ")");
+            return null;
+        } finally {
+            if (jar != null) {
+                try {
+                    jar.close();
+                } catch (IOException e) {
+                    // don't care
+                }
+            }
+        }
+        IAccessRule[] rules = new IAccessRule[bundleInfo.getExports().size() + 1];
+        int i = 0;
+        Iterator itExports = bundleInfo.getExports().iterator();
+        while (itExports.hasNext()) {
+            ExportPackage exportPackage = (ExportPackage) itExports.next();
+            rules[i++] = JavaCore.newAccessRule(
+                new Path(exportPackage.getName().replace('.', IPath.SEPARATOR) + "/*"),
+                IAccessRule.K_ACCESSIBLE);
+        }
+        rules[i++] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE
+                | IAccessRule.IGNORE_IF_BETTER);
+        return rules;
     }
 
     private Path getArtifactPath(ArtifactDownloadReport artifact) {

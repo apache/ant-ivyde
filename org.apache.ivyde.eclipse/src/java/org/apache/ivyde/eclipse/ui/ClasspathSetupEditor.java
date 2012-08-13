@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
+import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.swt.SWT;
@@ -36,7 +37,8 @@ public class ClasspathSetupEditor extends Composite {
 
     private static final int INDENT_RETRIEVE = 60;
 
-    public static final String TOOLTIP_ACCEPTED_TYPES = "Comma separated list of artifact types to add to the classpath.\n" + "Example: jar, zip";
+    public static final String TOOLTIP_ACCEPTED_TYPES = "Comma separated list of artifact types to add to the classpath.\n"
+            + "Example: jar, zip";
 
     private Button resolveInWorkspaceCheck;
 
@@ -54,9 +56,15 @@ public class ClasspathSetupEditor extends Composite {
 
     private Text acceptedTypesText;
 
+    private Button readOSGiMetadataCheck;
+
+    private boolean osgiAvailable;
+
     public ClasspathSetupEditor(Composite parent, int style) {
         super(parent, style);
         setLayout(new GridLayout(2, false));
+
+        osgiAvailable = IvyPlugin.getDefault().isOsgiAvailable();
 
         resolveInWorkspaceCheck = new Button(this, SWT.CHECK);
         resolveInWorkspaceCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
@@ -64,6 +72,14 @@ public class ClasspathSetupEditor extends Composite {
         resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
         resolveInWorkspaceCheck
                 .setToolTipText("Will replace jars on the classpath with workspace projects");
+
+        readOSGiMetadataCheck = new Button(this, SWT.CHECK);
+        readOSGiMetadataCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
+                2, 1));
+        readOSGiMetadataCheck.setText("Read OSGi metadata");
+        readOSGiMetadataCheck
+                .setToolTipText("Will setup access rules regarding OSGi metadata like Export-Package");
+        readOSGiMetadataCheck.setEnabled(osgiAvailable);
 
         acceptedTypesLabel = new Label(this, SWT.NONE);
         acceptedTypesLabel.setText("Accepted types:");
@@ -111,6 +127,7 @@ public class ClasspathSetupEditor extends Composite {
 
     public void init(ClasspathSetup setup) {
         resolveInWorkspaceCheck.setSelection(setup.isResolveInWorkspace());
+        readOSGiMetadataCheck.setSelection(setup.isReadOSGiMetadata());
         acceptedTypesText.setText(IvyClasspathUtil.concat(setup.getAcceptedTypes()));
         alphaOrderCheck.select(setup.isAlphaOrder() ? 1 : 0);
         selectCache.setSelection(!setup.isRetrievedClasspath());
@@ -122,6 +139,7 @@ public class ClasspathSetupEditor extends Composite {
     public ClasspathSetup getClasspathSetup() {
         ClasspathSetup setup = new ClasspathSetup();
         setup.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
+        setup.setReadOSGiMetadata(readOSGiMetadataCheck.getSelection());
         setup.setAcceptedTypes(IvyClasspathUtil.split(acceptedTypesText.getText()));
         setup.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
         setup.setRetrievedClasspath(selectRetrieve.getSelection());
@@ -133,6 +151,7 @@ public class ClasspathSetupEditor extends Composite {
 
     public void setEnabled(boolean enabled) {
         resolveInWorkspaceCheck.setEnabled(enabled);
+        readOSGiMetadataCheck.setEnabled(osgiAvailable && enabled);
         acceptedTypesLabel.setEnabled(enabled);
         acceptedTypesText.setEnabled(enabled);
         alphaOrderLabel.setEnabled(enabled);
