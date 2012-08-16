@@ -142,15 +142,24 @@ public class SettingsSetupEditor extends Composite {
             }
 
             protected void textUpdated() {
-                settingsPathUpdated();
+                settingsUpdated();
             }
         };
         settingsEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
-        ivyUserDirEditor = new PathEditor(this, SWT.NONE, "Ivy user dir:", project, null);
+        ivyUserDirEditor = new PathEditor(this, SWT.NONE, "Ivy user dir:", project, null) {
+            protected void textUpdated() {
+                settingsUpdated();
+            }
+        };
         ivyUserDirEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-        
-        propFilesEditor = new FileListEditor(this, SWT.NONE, "Property files:", "Property file:", project, "*.properties");
+
+        propFilesEditor = new FileListEditor(this, SWT.NONE, "Property files:", "Property file:",
+                project, "*.properties") {
+            protected void fileListUpdated() {
+                settingsUpdated();
+            }
+        };
         propFilesEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
     }
 
@@ -179,7 +188,7 @@ public class SettingsSetupEditor extends Composite {
         }
     }
 
-    void settingsPathUpdated() {
+    void settingsUpdated() {
         synchronized (listeners) {
             SettingsSetup setup = getIvySettingsSetup();
             Iterator it = listeners.iterator();

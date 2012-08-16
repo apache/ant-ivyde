@@ -91,6 +91,7 @@ public class FileListEditor extends Composite {
                     if (!files.contains(dialog.getFile())) {
                         files.add(dialog.getFile());
                         filelist.refresh();
+                        fileListUpdated();
                     }
                 }
             }
@@ -104,6 +105,7 @@ public class FileListEditor extends Composite {
                 List selection = ((IStructuredSelection) filelist.getSelection()).toList();
                 files.removeAll(selection);
                 filelist.refresh();
+                fileListUpdated();
                 remove.setEnabled(false);
             }
         });
@@ -118,6 +120,7 @@ public class FileListEditor extends Composite {
                 files.set(i, files.get(i - 1));
                 files.set(i - 1, f);
                 filelist.refresh();
+                fileListUpdated();
                 updateUpDownEnableButtons(true);
             }
         });
@@ -132,6 +135,7 @@ public class FileListEditor extends Composite {
                 files.set(i, files.get(i + 1));
                 files.set(i + 1, f);
                 filelist.refresh();
+                fileListUpdated();
                 updateUpDownEnableButtons(true);
             }
         });
@@ -161,27 +165,12 @@ public class FileListEditor extends Composite {
         remove.setEnabled(false);
     }
 
+    protected void fileListUpdated() {
+        // to be override to listen to changes
+    }
+
     public List getFiles() {
         return files;
-    }
-
-    protected void addVariable(String variable) {
-        // TODO Auto-generated method stub
-        filelist.refresh();
-    }
-
-    protected void setFile(String file) {
-        if (!files.contains(file)) {
-            files.add(file);
-            filelist.refresh();
-        }
-    }
-
-    protected void setWorkspaceLoc(String workspaceLoc) {
-        if (!files.contains(workspaceLoc)) {
-            files.add(workspaceLoc);
-            filelist.refresh();
-        }
     }
 
     public void setEnabled(boolean enabled) {
