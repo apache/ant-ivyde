@@ -43,6 +43,8 @@ public class FileListEditor extends Composite {
 
     private List/* <String> */files = new ArrayList();
 
+    private Button edit;
+
     private Button add;
 
     private Button remove;
@@ -66,6 +68,7 @@ public class FileListEditor extends Composite {
         filelist.setLabelProvider(new LabelProvider());
         filelist.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
+                edit.setEnabled(!event.getSelection().isEmpty());
                 remove.setEnabled(!event.getSelection().isEmpty());
                 updateUpDownEnableButtons(true);
             }
@@ -80,6 +83,24 @@ public class FileListEditor extends Composite {
         layout.marginWidth = 0;
         buttons.setLayout(layout);
 
+        edit = new Button(buttons, SWT.PUSH);
+        edit.setText("Edit");
+        edit.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+        edit.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                PathEditorDialog dialog = new PathEditorDialog(getShell(), labelPopup, project,
+                        defaultExtension);
+                String selection = (String) ((IStructuredSelection) filelist.getSelection()).getFirstElement();
+                dialog.init(selection);
+                if (dialog.open() == Window.OK) {
+                    int i = getSelectedConfigurationIndex(selection);
+                    files.set(i, dialog.getFile());
+                    filelist.refresh();
+                    fileListUpdated();
+                }
+            }
+        });
+
         add = new Button(buttons, SWT.PUSH);
         add.setText("Add");
         add.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
@@ -88,11 +109,9 @@ public class FileListEditor extends Composite {
                 PathEditorDialog dialog = new PathEditorDialog(getShell(), labelPopup, project,
                         defaultExtension);
                 if (dialog.open() == Window.OK) {
-                    if (!files.contains(dialog.getFile())) {
-                        files.add(dialog.getFile());
-                        filelist.refresh();
-                        fileListUpdated();
-                    }
+                    files.add(dialog.getFile());
+                    filelist.refresh();
+                    fileListUpdated();
                 }
             }
         });
@@ -107,6 +126,7 @@ public class FileListEditor extends Composite {
                 filelist.refresh();
                 fileListUpdated();
                 remove.setEnabled(false);
+                edit.setEnabled(false);
             }
         });
 
@@ -144,6 +164,10 @@ public class FileListEditor extends Composite {
     private int getSelectedConfigurationIndex() {
         IStructuredSelection selection = (IStructuredSelection) filelist.getSelection();
         String file = (String) selection.getFirstElement();
+        return getSelectedConfigurationIndex(file);
+    }
+
+    private int getSelectedConfigurationIndex(String file) {
         for (int i = 0; i < files.size(); i++) {
             if (files.get(i) == file) {
                 return i;
@@ -163,6 +187,7 @@ public class FileListEditor extends Composite {
         this.files = files;
         filelist.setInput(files);
         remove.setEnabled(false);
+        edit.setEnabled(false);
     }
 
     protected void fileListUpdated() {
@@ -176,6 +201,7 @@ public class FileListEditor extends Composite {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         filelist.getList().setEnabled(enabled);
+        edit.setEnabled(enabled && !filelist.getSelection().isEmpty());
         remove.setEnabled(enabled && !filelist.getSelection().isEmpty());
         add.setEnabled(enabled);
         updateUpDownEnableButtons(enabled);

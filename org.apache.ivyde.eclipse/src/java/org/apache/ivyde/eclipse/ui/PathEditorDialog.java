@@ -37,6 +37,8 @@ public class PathEditorDialog extends Dialog {
 
     private String file;
 
+    private String path;
+
     protected PathEditorDialog(Shell parentShell, String label, IProject project,
             String defaultExtension) {
         super(parentShell);
@@ -49,6 +51,9 @@ public class PathEditorDialog extends Dialog {
     protected Control createDialogArea(Composite parent) {
         Control dialogArea = super.createDialogArea(parent);
         editor = new PathEditor((Composite) dialogArea, SWT.NONE, label, project, defaultExtension);
+        if (path != null) {
+            editor.getText().setText(path);
+        }
         GridData layoutData = new GridData(GridData.FILL, GridData.FILL, true, true);
         layoutData.widthHint = 500;
         editor.setLayoutData(layoutData);
@@ -59,7 +64,11 @@ public class PathEditorDialog extends Dialog {
         file = editor.getText().getText();
         super.okPressed();
     }
-    
+
+    public void init(String path) {
+        this.path = path;
+    }
+
     public String getFile() {
         return file;
     }
