@@ -103,7 +103,7 @@ public class ClasspathSetupEditor extends Composite {
 
         Composite buttons = new Composite(this, SWT.NONE);
         buttons.setLayout(new GridLayout(1, false));
-        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
         gridData.horizontalIndent = INDENT_BUTTONS;
         buttons.setLayoutData(gridData);
 
@@ -158,7 +158,7 @@ public class ClasspathSetupEditor extends Composite {
         alphaOrderCheck.setEnabled(enabled);
         selectCache.setEnabled(enabled);
         selectRetrieve.setEnabled(enabled);
-        retrieveComposite.setEnabled(enabled);
+        retrieveComposite.setEnabled(selectRetrieve.getSelection() && enabled);
         super.setEnabled(enabled);
     }
 }
