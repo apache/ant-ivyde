@@ -97,7 +97,7 @@ public class IvyResolveJob extends Job {
         Map/* <ResolveRequest, Ivy> */ivys = new HashMap();
         Map/* <ResolveRequest, ModuleDescriptor> */mds = new HashMap();
 
-        MultiStatus errorsStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
+        final MultiStatus errorsStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                 "Some projects fail to be resolved", null);
 
         int step = IVY_LOAD_LENGTH / toResolve.size();
@@ -206,14 +206,6 @@ public class IvyResolveJob extends Job {
             }
         }
 
-        if (errorsStatus.getChildren().length != 0) {
-            // some errors happend, stop here
-            if (forceFailOnError || IvyPlugin.getPreferenceStoreHelper().isErrorPopup()) {
-                return errorsStatus;
-            }
-            return Status.OK_STATUS;
-        }
-
         step = POST_RESOLVE_LENGTH / toResolve.size();
 
         monitor.setTaskName("Post resolve");
@@ -222,9 +214,19 @@ public class IvyResolveJob extends Job {
         Iterator itRequests = toResolve.iterator();
         while (itRequests.hasNext()) {
             ResolveRequest request = (ResolveRequest) itRequests.next();
-            monitor.setTaskName(request.getResolver().toString());
-            request.getResolver().postBatchResolve();
+            if (!request.isResolveFailed()) {
+                monitor.setTaskName(request.getResolver().toString());
+                request.getResolver().postBatchResolve();
+            }
             monitor.worked(step);
+        }
+
+        if (errorsStatus.getChildren().length != 0) {
+            // some errors happend, stop here
+            if (forceFailOnError || IvyPlugin.getPreferenceStoreHelper().isErrorPopup()) {
+                return errorsStatus;
+            }
+            return Status.OK_STATUS;
         }
 
         return Status.OK_STATUS;
@@ -258,6 +260,7 @@ public class IvyResolveJob extends Job {
             case IStatus.INFO:
                 break;
             case IStatus.ERROR:
+                request.setResolveFailed(true);
                 errorsStatus.add(status[0]);
                 break;
             default:

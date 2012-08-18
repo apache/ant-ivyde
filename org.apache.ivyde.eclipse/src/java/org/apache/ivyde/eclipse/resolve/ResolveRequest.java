@@ -29,6 +29,8 @@ public class ResolveRequest {
 
     private boolean forceFailOnError = false;
 
+    private boolean resolveFailed = false;
+
     public ResolveRequest(IvyResolver resolver, CachedIvy cachedIvy) {
         this.resolver = resolver;
         this.cachedIvy = cachedIvy;
@@ -51,11 +53,19 @@ public class ResolveRequest {
     }
 
     public void setInWorkspace(boolean inWorkspace) {
-        this.inWorkspace  = inWorkspace;
+        this.inWorkspace = inWorkspace;
     }
 
     public boolean isInWorkspace() {
         return inWorkspace;
+    }
+
+    public void setResolveFailed(boolean resolveFailed) {
+        this.resolveFailed = resolveFailed;
+    }
+
+    public boolean isResolveFailed() {
+        return resolveFailed;
     }
 
     public String toString() {
