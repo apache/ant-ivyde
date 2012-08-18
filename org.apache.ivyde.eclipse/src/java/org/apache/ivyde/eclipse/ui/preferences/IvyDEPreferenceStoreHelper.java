@@ -86,6 +86,7 @@ public class IvyDEPreferenceStoreHelper {
                 .getBoolean(PreferenceConstants.RETRIEVED_CLASSPATH_SYNC));
         retrieveSetup.setRetrieveTypes(prefStore
                 .getString(PreferenceConstants.RETRIEVED_CLASSPATH_TYPES));
+        setup.setRetrieveSetup(retrieveSetup);
         return setup;
     }
 
