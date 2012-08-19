@@ -170,6 +170,8 @@ public class IvyClasspathContainer implements IClasspathContainer {
             // unless there are some issues with the JDT, this should never happen
             IvyPlugin.log(e);
         }
+        IvyClasspathContainerSerializer serializer = IvyPlugin.getDefault().getIvyClasspathContainerSerializer();
+        serializer.save(conf.getJavaProject());
     }
 
     public URL getReportUrl() {

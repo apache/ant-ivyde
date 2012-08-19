@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.ResourceBundle;
 
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerSerializer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
 import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
@@ -99,6 +101,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private boolean osgiAvailable;
 
+    private IvyClasspathContainerSerializer ivyCpcSerializer;
+
     /**
      * The constructor.
      */
@@ -161,6 +165,13 @@ public class IvyPlugin extends AbstractUIPlugin {
 
         ivyMarkerManager = new IvyMarkerManager();
 
+        File stateLocation = getStateLocation().toFile();
+        File containersStateDir = new File(stateLocation, "cpstates");
+        if (!containersStateDir.exists()) {
+            containersStateDir.mkdirs();
+        }
+        ivyCpcSerializer = new IvyClasspathContainerSerializer(containersStateDir);
+
         log(IStatus.INFO, "IvyDE plugin started", null);
 
         try {
@@ -176,6 +187,7 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
+        ivyCpcSerializer = null;
         resourceBundle = null;
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         workspace.removeSaveParticipant(this);
@@ -386,6 +398,10 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public IvyMarkerManager getIvyMarkerManager() {
         return ivyMarkerManager;
+    }
+
+    public IvyClasspathContainerSerializer getIvyClasspathContainerSerializer() {
+        return ivyCpcSerializer;
     }
 
     public IvyResolveJob getIvyResolveJob() {

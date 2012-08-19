@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
+
     private static final String SRC_SUFFIX = "-src";
 
     private static final String SRCROOT_SUFFIX = "-srcroot";
@@ -39,7 +40,7 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
         this.preferenceStore = preferenceStore;
     }
 
-    public IPath getSourceAttachment(Path path) {
+    public IPath getSourceAttachment(IPath path) {
         String srcPath = preferenceStore.getString(path.toPortableString() + SRC_SUFFIX);
         if (!"".equals(srcPath)) {
             return new Path(srcPath);
@@ -47,7 +48,7 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
         return null;
     }
 
-    public IPath getSourceAttachmentRoot(Path path) {
+    public IPath getSourceAttachmentRoot(IPath path) {
         String srcPath = preferenceStore.getString(path.toPortableString() + SRCROOT_SUFFIX);
         if (!"".equals(srcPath)) {
             return new Path(srcPath);
@@ -55,7 +56,7 @@ public class PreferenceStoreInfo implements IPackageFragmentExtraInfo {
         return null;
     }
 
-    public URL getDocAttachment(Path path) {
+    public URL getDocAttachment(IPath path) {
         String srcPath = preferenceStore.getString(path.toPortableString() + DOC_SUFFIX);
         if (!"".equals(srcPath)) {
             try {

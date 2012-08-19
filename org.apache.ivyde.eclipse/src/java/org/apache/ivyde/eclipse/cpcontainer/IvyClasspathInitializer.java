@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.cpcontainer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -66,7 +67,8 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
             }
 
             try {
-                IvyClasspathContainer ivycp;
+                boolean refresh = false;
+                IvyClasspathContainer ivycp = null;
                 IClasspathEntry entry = IvyClasspathUtil.getIvyClasspathEntry(containerPath,
                     project);
                 IClasspathAttribute[] attributes;
@@ -83,8 +85,19 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     ivycp = (IvyClasspathContainer) container;
                 } else {
                     if (container == null) {
-                        ivycp = new IvyClasspathContainer(project, containerPath,
-                                new IClasspathEntry[0], attributes);
+                        // try what the IvyDE plugin saved
+                        IvyClasspathContainerSerializer serializer = IvyPlugin.getDefault().getIvyClasspathContainerSerializer();
+                        Map ivycps = serializer.read(project);
+                        if (ivycps != null) {
+                            ivycp = (IvyClasspathContainer) ivycps.get(containerPath);
+                        }
+                        if (ivycp == null) {
+                            // still bad luck or just a new classpath container
+                            ivycp = new IvyClasspathContainer(project, containerPath,
+                                    new IClasspathEntry[0], attributes);
+                            // empty, so force refresh at least
+                            refresh = true;
+                        }
                     } else {
                         // this might be the persisted one : reuse the persisted entries
                         ivycp = new IvyClasspathContainer(project, containerPath,
@@ -104,9 +117,13 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
 
                 int startupMode = IvyPlugin.getPreferenceStoreHelper().getResolveOnStartup();
                 if (startupMode == ON_STARTUP_NOTHING) {
-                    return;
+                    if (!refresh) {
+                        // unless we force a refresh, actually do nothing
+                        return;
+                    }
+                } else {
+                    refresh = startupMode == ON_STARTUP_REFRESH;
                 }
-                boolean refresh = startupMode == ON_STARTUP_REFRESH;
 
                 // now refresh the container to be synchronized with the ivy.xml
                 ivycp.launchResolve(refresh, null);

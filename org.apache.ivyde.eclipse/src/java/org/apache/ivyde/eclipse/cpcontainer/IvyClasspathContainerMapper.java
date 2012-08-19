@@ -301,7 +301,7 @@ public class IvyClasspathContainerMapper {
         return false;
     }
 
-    private IPath getSourceAttachment(Path classpathArtifact, Path sourcesArtifact) {
+    static IPath getSourceAttachment(IPath classpathArtifact, IPath sourcesArtifact) {
         IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
                 .getSourceAttachment(classpathArtifact);
         if (sourceAttachment == null) {
@@ -310,7 +310,7 @@ public class IvyClasspathContainerMapper {
         return sourceAttachment;
     }
 
-    private IPath getSourceAttachmentRoot(Path classpathArtifact, Path sourcesArtifact) {
+    static IPath getSourceAttachmentRoot(IPath classpathArtifact, IPath sourcesArtifact) {
         IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
                 .getSourceAttachmentRoot(classpathArtifact);
         if (sourceAttachment == null && sourcesArtifact != null) {
@@ -319,13 +319,13 @@ public class IvyClasspathContainerMapper {
         return sourceAttachment;
     }
 
-    private IClasspathAttribute[] getExtraAttribute(Path classpathArtifact, Path javadocArtifact) {
+    private IClasspathAttribute[] getExtraAttribute(IPath classpathArtifact, IPath javadocArtifact) {
         List result = new ArrayList();
         URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
                 .getDocAttachment(classpathArtifact);
 
         if (url == null) {
-            Path path = javadocArtifact;
+            IPath path = javadocArtifact;
             if (path != null) {
                 String u;
                 try {
