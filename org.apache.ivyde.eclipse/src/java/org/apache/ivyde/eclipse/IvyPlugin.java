@@ -26,11 +26,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
+import org.apache.ivyde.eclipse.cpcontainer.IvyAttachementManager;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerSerializer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.IPackageFragmentExtraInfo;
-import org.apache.ivyde.eclipse.cpcontainer.fragmentinfo.PreferenceStoreInfo;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
@@ -103,6 +102,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IvyClasspathContainerSerializer ivyCpcSerializer;
 
+    private IvyAttachementManager ivyAttachementManager;
+
     /**
      * The constructor.
      */
@@ -166,11 +167,14 @@ public class IvyPlugin extends AbstractUIPlugin {
         ivyMarkerManager = new IvyMarkerManager();
 
         File stateLocation = getStateLocation().toFile();
+        ivyAttachementManager = new IvyAttachementManager(new File(stateLocation,
+                "attachements.properties"));
         File containersStateDir = new File(stateLocation, "cpstates");
         if (!containersStateDir.exists()) {
             containersStateDir.mkdirs();
         }
-        ivyCpcSerializer = new IvyClasspathContainerSerializer(containersStateDir);
+        ivyCpcSerializer = new IvyClasspathContainerSerializer(containersStateDir,
+                ivyAttachementManager);
 
         log(IStatus.INFO, "IvyDE plugin started", null);
 
@@ -188,6 +192,7 @@ public class IvyPlugin extends AbstractUIPlugin {
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
         ivyCpcSerializer = null;
+        ivyAttachementManager = null;
         resourceBundle = null;
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         workspace.removeSaveParticipant(this);
@@ -368,8 +373,6 @@ public class IvyPlugin extends AbstractUIPlugin {
         return AbstractUIPlugin.imageDescriptorFromPlugin(ID, path);
     }
 
-    private PreferenceStoreInfo packageExtraInfo;
-
     /**
      * @return the helper around the plugin preference store
      */
@@ -379,13 +382,6 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public IvyConsole getConsole() {
         return console;
-    }
-
-    public IPackageFragmentExtraInfo getPackageFragmentExtraInfo() {
-        if (packageExtraInfo == null) {
-            packageExtraInfo = new PreferenceStoreInfo(getPreferenceStore());
-        }
-        return packageExtraInfo;
     }
 
     public BundleContext getBundleContext() {
@@ -402,6 +398,10 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public IvyClasspathContainerSerializer getIvyClasspathContainerSerializer() {
         return ivyCpcSerializer;
+    }
+
+    public IvyAttachementManager getIvyAttachementManager() {
+        return ivyAttachementManager;
     }
 
     public IvyResolveJob getIvyResolveJob() {

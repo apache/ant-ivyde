@@ -25,8 +25,10 @@ import java.util.Map;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -86,7 +88,8 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 } else {
                     if (container == null) {
                         // try what the IvyDE plugin saved
-                        IvyClasspathContainerSerializer serializer = IvyPlugin.getDefault().getIvyClasspathContainerSerializer();
+                        IvyClasspathContainerSerializer serializer = IvyPlugin.getDefault()
+                                .getIvyClasspathContainerSerializer();
                         Map ivycps = serializer.read(project);
                         if (ivycps != null) {
                             ivycp = (IvyClasspathContainer) ivycps.get(containerPath);
@@ -164,7 +167,19 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     }
 
     public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
-        return false;
+        return true;
+    }
+
+    public void requestClasspathContainerUpdate(final IPath containerPath,
+            final IJavaProject project, final IClasspathContainer containerSuggestion)
+            throws CoreException {
+        new Job("IvyDE attachement updater") {
+            protected IStatus run(IProgressMonitor monitor) {
+                IvyPlugin.getDefault().getIvyAttachementManager()
+                        .updateAttchements(project, containerPath, containerSuggestion);
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
     public Object getComparisonID(IPath containerPath, IJavaProject project) {

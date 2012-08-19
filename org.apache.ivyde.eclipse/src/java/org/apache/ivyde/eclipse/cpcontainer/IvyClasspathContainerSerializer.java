@@ -92,8 +92,11 @@ public class IvyClasspathContainerSerializer {
 
     private File containersStateDir;
 
-    public IvyClasspathContainerSerializer(File containersStateDir) {
+    private IvyAttachementManager ivyAttachementManager;
+
+    public IvyClasspathContainerSerializer(File containersStateDir, IvyAttachementManager ivyAttachementManager) {
         this.containersStateDir = containersStateDir;
+        this.ivyAttachementManager = ivyAttachementManager;
     }
 
     public void save(IJavaProject project) {
@@ -371,11 +374,10 @@ public class IvyClasspathContainerSerializer {
                 entry = JavaCore.newProjectEntry(path, accessRules, true, cpAttrs, true);
                 break;
             case IClasspathEntry.CPE_LIBRARY:
-                sourcePath = IvyClasspathContainerMapper.getSourceAttachment(path, sourcePath);
-                IPath sourceRootPath = IvyClasspathContainerMapper.getSourceAttachmentRoot(path,
-                    sourcePath);
-                entry = JavaCore.newLibraryEntry(path, sourcePath, sourceRootPath, accessRules,
-                    cpAttrs, false);
+                IPath sources = ivyAttachementManager.getSourceAttachment(path, sourcePath);
+                IPath sourcesRoot = ivyAttachementManager.getSourceAttachmentRoot(path, sourcePath);
+                entry = JavaCore.newLibraryEntry(path, sources, sourcesRoot, accessRules, cpAttrs,
+                    false);
                 break;
             default:
                 return null;

@@ -279,6 +279,23 @@ public final class IvyClasspathUtil {
         return null;
     }
 
+    public static IvyClasspathContainer getIvyClasspathContainer(IPath containerPath,
+            IJavaProject javaProject) {
+        IClasspathContainer cp;
+        try {
+            cp = JavaCore.getClasspathContainer(containerPath, javaProject);
+        } catch (JavaModelException e) {
+            IvyPlugin.log(e);
+            return null;
+        }
+        if (!(cp instanceof IvyClasspathContainer)) {
+            IvyPlugin.log(IStatus.ERROR, "Expected an Ivy container but was "
+                    + cp.getClass().getName() + " for path " + containerPath, null);
+            return null;
+        }
+        return (IvyClasspathContainer) cp;
+    }
+
     /**
      * Search the Ivy classpath entry within the specified Java project with the specific path
      * 

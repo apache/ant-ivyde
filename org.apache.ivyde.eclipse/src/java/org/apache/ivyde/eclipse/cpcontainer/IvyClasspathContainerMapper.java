@@ -83,6 +83,9 @@ public class IvyClasspathContainerMapper {
 
     private boolean osgiAvailable;
 
+    private IvyAttachementManager attachementManager = IvyPlugin.getDefault()
+            .getIvyAttachementManager();
+
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,
             IvyClasspathContainerConfiguration conf, ResolveResult resolveResult) {
         this.monitor = monitor;
@@ -113,16 +116,20 @@ public class IvyClasspathContainerMapper {
                         null, true));
                 }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
-                Path classpathArtifact = getArtifactPath(artifact);
-                Path sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
+                IPath classpathArtifact = getArtifactPath(artifact);
+                IPath sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
                     mapping.isMapIfOnlyOneSource());
-                Path javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
+                IPath javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
                     mapping.isMapIfOnlyOneJavadoc());
                 IAccessRule[] rules = getAccessRules(classpathArtifact);
-                paths.add(JavaCore.newLibraryEntry(classpathArtifact,
-                    getSourceAttachment(classpathArtifact, sourcesArtifact),
-                    getSourceAttachmentRoot(classpathArtifact, sourcesArtifact), rules,
-                    getExtraAttribute(classpathArtifact, javadocArtifact), false));
+                IPath sources = attachementManager.getSourceAttachment(classpathArtifact,
+                    sourcesArtifact);
+                IPath sourcesRoot = attachementManager.getSourceAttachmentRoot(classpathArtifact,
+                    sourcesArtifact);
+                IClasspathAttribute[] att = getExtraAttribute(classpathArtifact, javadocArtifact);
+
+                paths.add(JavaCore.newLibraryEntry(classpathArtifact, sources, sourcesRoot, rules,
+                    att, false));
             }
 
         }
@@ -141,7 +148,7 @@ public class IvyClasspathContainerMapper {
         return null;
     }
 
-    private IAccessRule[] getAccessRules(Path artifact) {
+    private IAccessRule[] getAccessRules(IPath artifact) {
         if (!osgiAvailable || !classpathSetup.isReadOSGiMetadata()) {
             return null;
         }
@@ -301,28 +308,9 @@ public class IvyClasspathContainerMapper {
         return false;
     }
 
-    static IPath getSourceAttachment(IPath classpathArtifact, IPath sourcesArtifact) {
-        IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
-                .getSourceAttachment(classpathArtifact);
-        if (sourceAttachment == null) {
-            sourceAttachment = sourcesArtifact;
-        }
-        return sourceAttachment;
-    }
-
-    static IPath getSourceAttachmentRoot(IPath classpathArtifact, IPath sourcesArtifact) {
-        IPath sourceAttachment = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
-                .getSourceAttachmentRoot(classpathArtifact);
-        if (sourceAttachment == null && sourcesArtifact != null) {
-            sourceAttachment = sourcesArtifact;
-        }
-        return sourceAttachment;
-    }
-
     private IClasspathAttribute[] getExtraAttribute(IPath classpathArtifact, IPath javadocArtifact) {
         List result = new ArrayList();
-        URL url = IvyPlugin.getDefault().getPackageFragmentExtraInfo()
-                .getDocAttachment(classpathArtifact);
+        URL url = attachementManager.getDocAttachment(classpathArtifact);
 
         if (url == null) {
             IPath path = javadocArtifact;
