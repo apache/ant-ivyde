@@ -71,7 +71,7 @@ public class IvyClasspathContainerMapper {
 
     private final Collection/* <ArtifactDownloadReport> */all;
 
-    private final Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency;
+    private final Map/* <ModuleRevisionId, List<Artifact>> */artifactsByDependency;
 
     private final Map/*
                       * <ArtifactDownloadReport , Set<String>>
@@ -215,12 +215,12 @@ public class IvyClasspathContainerMapper {
         // we haven't found source artifact in resolved artifacts,
         // let's look in the module declaring the artifact
         ModuleRevisionId mrid = artifact.getId().getModuleRevisionId();
-        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(mrid);
+        List artifacts = (List/*<Artifact>*/) artifactsByDependency.get(mrid);
         if (artifacts != null) {
             Artifact foundArtifact = null;
             int nbFound = 0;
-            for (int i = 0; i < artifacts.length; i++) {
-                Artifact metaArtifact = artifacts[i];
+            for (int i = 0; i < artifacts.size(); i++) {
+                Artifact metaArtifact = (Artifact) artifacts.get(i);
                 if (matcher.match(metaArtifact)) {
                     if (matcher.matchName(artifact, metaArtifact.getName())) {
                         // we've found a matching artifact, let's provision it

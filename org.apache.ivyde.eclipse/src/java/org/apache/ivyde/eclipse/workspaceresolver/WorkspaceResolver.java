@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.workspaceresolver;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,11 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.License;
+import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -100,6 +103,10 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public static final String CACHE_NAME = "__ivyde-workspace-resolver-cache";
 
+    public static final String IVYDE_WORKSPACE_ARTIFACTS = "IvyDEWorkspaceArtifacts";
+
+    public static final String IVYDE_WORKSPACE_ARTIFACT_REPORTS = "IvyDEWorkspaceArtifactReports";
+
     private IProject[] projects;
 
     private boolean ignoreBranchOnWorkspaceProjects;
@@ -122,21 +129,39 @@ public class WorkspaceResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
+        IvyContext context = IvyContext.getContext();
+        Map/* <Artifact, Artifact> */workspaceArtifacts = (Map) context
+                .get(IVYDE_WORKSPACE_ARTIFACTS);
+        Map/* <String, ArtifactDownloadReport> */workspaceReports = null;
+        if (workspaceArtifacts != null) {
+            workspaceReports = new HashMap();
+            context.set(IVYDE_WORKSPACE_ARTIFACT_REPORTS, workspaceReports);
+        }
+
         // Not much to do here - downloads are not required for workspace projects.
         DownloadReport dr = new DownloadReport();
         for (int i = 0; i < artifacts.length; i++) {
-            final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
+            ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
             dr.addArtifactReport(adr);
-
             // Only report java projects as downloaded
             if (artifacts[i].getType().equals(ECLIPSE_PROJECT_TYPE)) {
-                Message.verbose("\t[IN WORKSPACE] " + artifacts[i]);
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
+                Message.verbose("\t[IN WORKSPACE] " + artifacts[i]);
+            } else if (workspaceArtifacts != null && workspaceArtifacts.containsKey(artifacts[i])) {
+                adr.setDownloadStatus(DownloadStatus.NO);
+                adr.setSize(0);
+                // there is some 'forced' artifact by the dependency descriptor
+                Artifact eclipseArtifact = (Artifact) workspaceArtifacts.get(artifacts[i]);
+                ArtifactDownloadReport eclipseAdr = new ArtifactDownloadReport(eclipseArtifact);
+                eclipseAdr.setDownloadStatus(DownloadStatus.NO);
+                eclipseAdr.setSize(0);
+                workspaceReports.put(artifacts[i], eclipseAdr);
+                Message.verbose("\t[IN WORKSPACE] " + eclipseArtifact);
             } else {
+                adr.setDownloadStatus(DownloadStatus.FAILED);
                 Message.verbose("\t[Eclipse Workspace resolver] "
                         + "cannot download non-project artifact: " + artifacts[i]);
-                adr.setDownloadStatus(DownloadStatus.FAILED);
             }
         }
         return dr;
@@ -144,14 +169,16 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
+        IvyContext context = IvyContext.getContext();
+
         String contextId = "ivyde.workspaceresolver." + getName() + "." + dd.getDependencyRevisionId().toString();
-        DependencyDescriptor parentDD = (DependencyDescriptor) IvyContext.getContext().get(contextId);
+        DependencyDescriptor parentDD = (DependencyDescriptor) context.get(contextId);
         if (parentDD != null && parentDD.getDependencyRevisionId().equals(dd.getDependencyRevisionId())) {
             // this very workspace resolver has been already called for the same dependency
             // we are going into a circular dependency, let's return 'not found'
             return null;
         }
-        IvyContext.getContext().set(contextId, dd);
+        context.set(contextId, dd);
 
         ModuleRevisionId dependencyMrid = dd.getDependencyRevisionId();
 
@@ -213,6 +240,35 @@ public class WorkspaceResolver extends AbstractResolver {
                     Artifact af = new DefaultArtifact(md.getModuleRevisionId(),
                             md.getPublicationDate(), p.getFullPath().toString(),
                             ECLIPSE_PROJECT_TYPE, ECLIPSE_PROJECT_EXTENSION);
+
+                    DependencyArtifactDescriptor[] dArtifacts = dd.getAllDependencyArtifacts();
+                    if (dArtifacts != null) {
+                        // the dependency is declaring explicitely some artifacts to download
+                        // we need to trick to and map these requested artifact by the Eclipse
+                        // project
+
+                        // we need the context which is used when downloading data, which is the
+                        // parent
+                        // of the current one
+                        // so let's hack: popContext (the child), getContext (the parent), setVar,
+                        // pushContext (child)
+                        IvyContext currentContext = IvyContext.popContext();
+                        IvyContext parentContext = IvyContext.getContext();
+                        Map/* <Artifact, Artifact> */workspaceArtifacts = (Map) parentContext
+                                .get(IVYDE_WORKSPACE_ARTIFACTS);
+                        if (workspaceArtifacts == null) {
+                            workspaceArtifacts = new HashMap();
+                            parentContext.set(IVYDE_WORKSPACE_ARTIFACTS, workspaceArtifacts);
+                        }
+                        for (int j = 0; j < dArtifacts.length; j++) {
+                            Artifact artifact = new MDArtifact(md, dArtifacts[j].getName(),
+                                    dArtifacts[j].getType(), dArtifacts[j].getExt(),
+                                    dArtifacts[j].getUrl(),
+                                    dArtifacts[j].getQualifiedExtraAttributes());
+                            workspaceArtifacts.put(artifact, af);
+                        }
+                        IvyContext.pushContext(currentContext);
+                    }
 
                     DefaultModuleDescriptor workspaceMd = cloneMd(md, af);
 

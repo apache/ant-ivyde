@@ -27,23 +27,27 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.event.download.PrepareDownloadEvent;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.report.ConfigurationResolveReport;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
-import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
+import org.apache.ivy.util.filter.Filter;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -167,6 +171,8 @@ public class IvyResolver {
         } catch (Throwable e) {
             return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, "The resolve job of "
                     + toString() + " has unexpectedly stopped", e);
+        } finally {
+            ivy.popContext();
         }
     }
 
@@ -200,7 +206,6 @@ public class IvyResolver {
                     XmlReportParser parser = new XmlReportParser();
                     parser.parse(report);
                     result.addArtifactReports(parser.getArtifactReports());
-                    findAllArtifactOnRefresh(ivy, parser, result);
                 } catch (ParseException e) {
                     Message.info("\n\nIVYDE: Error while parsing the report " + report
                             + ". Falling back by doing a resolve again.");
@@ -220,60 +225,29 @@ public class IvyResolver {
         resolveOption.setValidate(ivy.getSettings().doValidate());
         resolveOption.setUseCacheOnly(useCacheOnly);
         resolveOption.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
-        ResolveReport report = ivy.resolve(md, resolveOption);
+        ResolveReport report = ivy.getResolveEngine().resolve(md, resolveOption);
 
         ResolveResult result = new ResolveResult(report);
 
-        for (int i = 0; i < confs.length; i++) {
-            ConfigurationResolveReport configurationReport = report
-                    .getConfigurationReport(confs[i]);
-            Set revisions = configurationReport.getModuleRevisionIds();
-            for (Iterator it = revisions.iterator(); it.hasNext();) {
-                ModuleRevisionId revId = (ModuleRevisionId) it.next();
-                result.addArtifactReports(configurationReport.getDownloadReports(revId));
+        ArtifactDownloadReport[] artifactReports = report.getArtifactsReports(null, false);
+
+        Map/* <Artifact, ArtifactDownloadReport> */workspaceArtifacts = (Map) IvyContext
+                .getContext().get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
+        if (workspaceArtifacts != null) {
+            // some artifact were 'forced' by the dependency declaration, whereas they should be
+            // switch by the eclipse project reference
+            for (int i = 0; i < artifactReports.length; i++) {
+                ArtifactDownloadReport eclipseArtifactReport = (ArtifactDownloadReport) workspaceArtifacts
+                        .get(artifactReports[i].getArtifact());
+                if (eclipseArtifactReport != null) {
+                    // let's switch.
+                    artifactReports[i] = eclipseArtifactReport;
+                }
             }
         }
-
-        confs = report.getConfigurations();
-        collectArtifactsByDependency(report, result);
+        result.addArtifactReports(artifactReports);
 
         return result;
-    }
-
-    /**
-     * Populate the map of artifact. The map should be populated by metadata in cache as this is
-     * called in the refresh process.
-     * 
-     * @param parser
-     * @throws ParseException
-     */
-    private void findAllArtifactOnRefresh(Ivy ivy, XmlReportParser parser, ResolveResult result)
-            throws ParseException {
-        ModuleRevisionId[] dependencyMrdis = parser.getDependencyRevisionIds();
-        for (int iDep = 0; iDep < dependencyMrdis.length; iDep++) {
-            DependencyResolver depResolver = ivy.getSettings().getResolver(dependencyMrdis[iDep]);
-            DefaultDependencyDescriptor depDescriptor = new DefaultDependencyDescriptor(
-                    dependencyMrdis[iDep], false);
-            ResolveOptions options = new ResolveOptions();
-            options.setRefresh(true);
-            options.setUseCacheOnly(true);
-            ResolvedModuleRevision dependency = depResolver.getDependency(depDescriptor,
-                new ResolveData(ivy.getResolveEngine(), options));
-            if (dependency != null) {
-                result.putArtifactsForDep(dependencyMrdis[iDep], dependency.getDescriptor()
-                        .getAllArtifacts());
-            }
-        }
-    }
-
-    private void collectArtifactsByDependency(ResolveReport r, ResolveResult result) {
-        for (Iterator it = r.getDependencies().iterator(); it.hasNext();) {
-            IvyNode node = (IvyNode) it.next();
-            if (node.getDescriptor() != null) {
-                result.putArtifactsForDep(node.getResolvedId(), node.getDescriptor()
-                        .getAllArtifacts());
-            }
-        }
     }
 
     private IStatus maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
