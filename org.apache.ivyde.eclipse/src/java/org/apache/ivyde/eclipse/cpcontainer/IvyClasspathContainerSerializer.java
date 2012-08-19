@@ -112,7 +112,7 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         } catch (IOException ioe) {
-            IvyPlugin.log(IStatus.ERROR, "IvyDE container states of the project "
+            IvyPlugin.log(IStatus.WARNING, "IvyDE container states of the project "
                     + project.getProject().getName() + " cound not be saved", ioe);
         }
     }
@@ -131,7 +131,7 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         } catch (IOException ioe) {
-            IvyPlugin.log(IStatus.ERROR, "IvyDE container states of the project "
+            IvyPlugin.log(IStatus.WARNING, "IvyDE container states of the project "
                     + project.getProject().getName() + " cound not be read", ioe);
             return null;
         }
