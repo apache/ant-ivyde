@@ -82,7 +82,7 @@ public class IvyClasspathContainerSerializer {
 
     private static final String KIND = "kind";
 
-    private static final String SOURCE = "kind";
+    private static final String SOURCE = "source";
 
     private static final String ACCESS_RULES = "accessRules";
 
@@ -114,7 +114,7 @@ public class IvyClasspathContainerSerializer {
                     // don't care
                 }
             }
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             IvyPlugin.log(IStatus.WARNING, "IvyDE container states of the project "
                     + project.getProject().getName() + " cound not be saved", ioe);
         }
@@ -133,7 +133,7 @@ public class IvyClasspathContainerSerializer {
                     // don't care
                 }
             }
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             IvyPlugin.log(IStatus.WARNING, "IvyDE container states of the project "
                     + project.getProject().getName() + " cound not be read", ioe);
             return null;
