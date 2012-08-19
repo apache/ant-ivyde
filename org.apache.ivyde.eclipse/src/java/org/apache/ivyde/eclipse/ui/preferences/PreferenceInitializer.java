@@ -21,6 +21,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
 import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
@@ -127,7 +128,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         DEFAULT_ADVANCED_SETUP.setUseExtendedResolveId(DEFAULT_USE_EXTENDED_RESOLVE_ID);
     }
 
-    public static final int DEFAULT_RESOLVE_ON_STARTUP = 1;
+    public static final int DEFAULT_RESOLVE_ON_STARTUP = IvyClasspathInitializer.ON_STARTUP_NOTHING;
 
     public static final boolean DEFAULT_AUTO_RESOLVE_ON_CLOSE = true;
 
