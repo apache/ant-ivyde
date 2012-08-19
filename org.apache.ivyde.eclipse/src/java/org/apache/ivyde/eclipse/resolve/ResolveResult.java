@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
@@ -45,7 +46,7 @@ public class ResolveResult {
 
     private final ResolveReport report;
 
-    private Map/* <ModuleRevisionId, List<Artifact>> */artifactsByDependency = new HashMap();
+    private Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency = new HashMap();
 
     /**
      * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no
@@ -100,18 +101,10 @@ public class ResolveResult {
 
     void addArtifactReports(ArtifactDownloadReport[] reports) {
         artifactReports.addAll(Arrays.asList(reports));
-        for (int i = 0; i < reports.length; i++) {
-            if (reports[i].getDownloadStatus() != DownloadStatus.FAILED) {
-                Artifact a = reports[i].getArtifact();
-                List/* <Artifact> */artifacts = (List) artifactsByDependency.get(a
-                        .getModuleRevisionId());
-                if (artifacts == null) {
-                    artifacts = new ArrayList();
-                    artifactsByDependency.put(a.getModuleRevisionId(), artifacts);
-                }
-                artifacts.add(a);
-            }
-        }
+    }
+
+    void putArtifactsForDep(ModuleRevisionId resolvedId, Artifact[] allArtifacts) {
+        artifactsByDependency.put(resolvedId, allArtifacts);
     }
 
     /**
@@ -126,7 +119,7 @@ public class ResolveResult {
      * 
      * @return the reports of the artifacts by dependency
      */
-    public Map /* <ModuleRevisionId, List<Artifact>> */getArtifactsByDependency() {
+    public Map /* <ModuleRevisionId, Artifact[]> */getArtifactsByDependency() {
         return artifactsByDependency;
     }
 
