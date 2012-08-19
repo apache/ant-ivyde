@@ -168,6 +168,6 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     }
 
     public Object getComparisonID(IPath containerPath, IJavaProject project) {
-        return project.getProject().getName() + "/" + containerPath;
+        return containerPath;
     }
 }
