@@ -137,7 +137,7 @@ public class IvyAttachementManager {
 
     public IPath getSourceAttachment(IPath path) {
         String srcPath = prop.getProperty(path.toPortableString() + SRC_SUFFIX);
-        if (!"".equals(srcPath)) {
+        if (srcPath != null && srcPath.length() != 0) {
             return new Path(srcPath);
         }
         return null;
@@ -145,7 +145,7 @@ public class IvyAttachementManager {
 
     public IPath getSourceAttachmentRoot(IPath path) {
         String srcPath = prop.getProperty(path.toPortableString() + SRCROOT_SUFFIX);
-        if (!"".equals(srcPath)) {
+        if (srcPath != null && srcPath.length() != 0) {
             return new Path(srcPath);
         }
         return null;
@@ -153,7 +153,7 @@ public class IvyAttachementManager {
 
     public URL getDocAttachment(IPath path) {
         String srcPath = prop.getProperty(path.toPortableString() + DOC_SUFFIX);
-        if (!"".equals(srcPath)) {
+        if (srcPath != null && srcPath.length() != 0) {
             try {
                 return new URL(srcPath);
             } catch (MalformedURLException e) {
