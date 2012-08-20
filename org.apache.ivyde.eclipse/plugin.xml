@@ -64,10 +64,13 @@
       <editor
             class="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditor"
             contributorClass="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
-            filenames="ivy.xml,ivy-dev.xml,ivy-snapshot.xml"
+            filenames="ivy.xml"
             icon="icons/logo16x16.gif"
             id="org.apache.ivyde.editors.IvyEditor"
             name="Ivy Editor">
+         <contentTypeBinding
+               contentTypeId="org.apache.ivyde.eclipse.contentType.ivyfile">
+         </contentTypeBinding>
       </editor>
       <editor
             class="org.apache.ivyde.eclipse.ui.editors.IvySettingsEditor"
@@ -76,6 +79,9 @@
             icon="icons/logo16x16.gif"
             id="org.apache.ivyde.editors.IvySettingsEditor"
             name="Ivy Settings Editor">
+         <contentTypeBinding
+               contentTypeId="org.apache.ivyde.eclipse.contentType.ivysettings">
+         </contentTypeBinding>
       </editor>
    </extension>
    <extension
@@ -470,6 +476,30 @@
             objectClass="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"
             state="true">
       </decorator>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="xml"
+            file-names="ivy.xml"
+            id="org.apache.ivyde.eclipse.contentType.ivyfile"
+            name="Ivy File"
+            priority="normal">
+         <describer
+               class="org.apache.ivyde.eclipse.ui.editors.IvyFileContentDescriber">
+         </describer>
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="xml"
+            id="org.apache.ivyde.eclipse.contentType.ivysettings"
+            name="Ivy Settings"
+            priority="normal">
+         <describer
+               class="org.apache.ivyde.eclipse.ui.editors.IvySettingsContentDescriber">
+         </describer>
+      </content-type>
    </extension>
 
 </plugin>
