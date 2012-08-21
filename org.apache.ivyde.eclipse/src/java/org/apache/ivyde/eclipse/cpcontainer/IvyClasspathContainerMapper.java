@@ -317,7 +317,7 @@ public class IvyClasspathContainerMapper {
             if (path != null) {
                 String u;
                 try {
-                    u = "jar:" + path.toFile().toURL().toExternalForm() + "!/";
+                    u = "jar:" + path.toFile().toURI().toURL().toExternalForm() + "!/";
                     try {
                         url = new URL(u);
                     } catch (MalformedURLException e) {

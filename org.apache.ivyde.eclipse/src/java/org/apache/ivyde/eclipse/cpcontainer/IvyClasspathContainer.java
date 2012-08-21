@@ -189,7 +189,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
             return ivy
                     .getResolutionCacheManager()
                     .getConfigurationResolveReportInCache(resolveId, md.getConfigurationsNames()[0])
-                    .toURL();
+                    .toURI().toURL();
         } catch (MalformedURLException e) {
             // should never happen
             throw new RuntimeException(e);

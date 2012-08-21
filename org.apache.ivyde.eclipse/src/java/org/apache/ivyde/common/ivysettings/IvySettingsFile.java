@@ -69,7 +69,7 @@ public class IvySettingsFile extends IvyFile {
                 urls.add(new URL(substitute(m.group(1))));
             } catch (MalformedURLException e) {
                 try {
-                    urls.add(new File(substitute(m.group(1))).toURL());
+                    urls.add(new File(substitute(m.group(1))).toURI().toURL());
                 } catch (MalformedURLException e1) {
                     // ignored
                 }
