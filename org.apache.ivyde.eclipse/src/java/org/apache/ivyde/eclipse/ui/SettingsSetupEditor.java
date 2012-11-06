@@ -136,8 +136,8 @@ public class SettingsSetupEditor extends Composite {
                     textUpdated();
                 } catch (MalformedURLException ex) {
                     // this cannot happen
-                    IvyPlugin.log(IStatus.ERROR,
-                        "The file got from the file browser has not a valid URL", ex);
+                    IvyPlugin
+                            .logError("The file got from the file browser has not a valid URL", ex);
                 }
             }
 

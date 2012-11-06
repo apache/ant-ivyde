@@ -105,7 +105,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
             setPageText(index, "Information");
         } catch (PartInitException e) {
             // Should not happen
-            IvyPlugin.log(IStatus.ERROR, "The overview page could not be created", e);
+            IvyPlugin.logError("The overview page could not be created", e);
         }
 
     }
@@ -121,8 +121,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
             MessageDialog.openError(IvyPlugin.getActiveWorkbenchShell(),
                 "Fail to create the preview", "The page preview could not be created :"
                         + e.getMessage());
-            IvyPlugin.log(IStatus.ERROR,
-                "The preview page in the ivy.xml editor could not be created", e);
+            IvyPlugin.logError("The preview page in the ivy.xml editor could not be created", e);
         }
     }
 

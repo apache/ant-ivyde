@@ -90,7 +90,7 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
             return true;
         } catch (BadLocationException x) {
             // FIXME hu ? needs some comment
-            IvyPlugin.log(IStatus.WARNING, "Something bad happened", x);
+            IvyPlugin.logWarn("Something bad happened", x);
         }
 
         return false;
@@ -133,7 +133,7 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
         } catch (BadLocationException x) {
             // FIXME hu ? needs some comment
-            IvyPlugin.log(IStatus.WARNING, "Something bad happened", x);
+            IvyPlugin.logWarn("Something bad happened", x);
         }
 
         return false;

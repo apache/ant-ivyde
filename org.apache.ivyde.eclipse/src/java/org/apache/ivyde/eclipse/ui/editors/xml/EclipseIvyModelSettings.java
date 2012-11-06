@@ -67,7 +67,7 @@ public class EclipseIvyModelSettings implements IvyModelSettings {
     }
 
     public void logError(String message, Exception e) {
-        IvyPlugin.log(IStatus.ERROR, message, e);
+        IvyPlugin.logError(message, e);
     }
 
 }

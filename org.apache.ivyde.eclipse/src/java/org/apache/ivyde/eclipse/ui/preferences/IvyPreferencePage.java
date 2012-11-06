@@ -171,8 +171,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
             default:
-                IvyPlugin.log(IStatus.WARNING, "Unkwnon resolve-on-startup mode: "
-                        + helper.getResolveOnStartup(), null);
+                IvyPlugin.logWarn("Unkwnon resolve-on-startup mode: "
+                        + helper.getResolveOnStartup());
         }
 
         if (helper.getAutoResolveOnChange()) {
@@ -225,8 +225,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
             default:
-                IvyPlugin.log(IStatus.WARNING, "Unkwnon resolve-on-startup mode: "
-                        + PreferenceInitializer.DEFAULT_RESOLVE_ON_STARTUP, null);
+                IvyPlugin.logWarn("Unkwnon resolve-on-startup mode: "
+                        + PreferenceInitializer.DEFAULT_RESOLVE_ON_STARTUP);
         }
 
         if (PreferenceInitializer.DEFAULT_AUTO_RESOLVE_ON_CHANGE) {

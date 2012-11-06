@@ -209,9 +209,8 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
         try {
             retrieveSetupManager.save(project, retrieveSetups);
         } catch (Exception e) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Enable to write the retrieve setup into the project preference of "
-                        + project.getName(), e);
+            IvyPlugin.logError("Enable to write the retrieve setup into the project preference of "
+                    + project.getName(), e);
             return false;
         }
 

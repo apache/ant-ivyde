@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -57,14 +58,15 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
         if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
 
+            Message.info("[IvyDE] Initializing container " + containerPath);
+
             // try to get an existing one
             IClasspathContainer container = null;
             try {
                 container = JavaCore.getClasspathContainer(containerPath, project);
             } catch (JavaModelException ex) {
                 // unless there are issues with the JDT, this should never happen
-                IvyPlugin.log(IStatus.ERROR,
-                    "Unable to get container for " + containerPath.toString(), ex);
+                IvyPlugin.logError("Unable to get container for " + containerPath.toString(), ex);
                 return;
             }
 
@@ -84,17 +86,21 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 }
 
                 if (container instanceof IvyClasspathContainer) {
+                    Message.debug("[IvyDE] Container already configured");
                     ivycp = (IvyClasspathContainer) container;
                 } else {
                     if (container == null) {
+                        Message.debug("[IvyDE] No saved container");
                         // try what the IvyDE plugin saved
                         IvyClasspathContainerSerializer serializer = IvyPlugin.getDefault()
                                 .getIvyClasspathContainerSerializer();
                         Map ivycps = serializer.read(project);
                         if (ivycps != null) {
+                            Message.debug("[IvyDE] Found serialized containers");
                             ivycp = (IvyClasspathContainer) ivycps.get(containerPath);
                         }
                         if (ivycp == null) {
+                            Message.debug("[IvyDE] No serialized containers match the expected container path");
                             // still bad luck or just a new classpath container
                             ivycp = new IvyClasspathContainer(project, containerPath,
                                     new IClasspathEntry[0], attributes);
@@ -102,6 +108,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                             refresh = true;
                         }
                     } else {
+                        Message.debug("[IvyDE] Loading from a saved container");
                         // this might be the persisted one : reuse the persisted entries
                         ivycp = new IvyClasspathContainer(project, containerPath,
                                 container.getClasspathEntries(), attributes);
@@ -111,9 +118,12 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 // recompute the path as it may have been "upgraded"
                 IPath updatedPath = IvyClasspathContainerConfAdapter.getPath(ivycp.getConf());
                 if (!updatedPath.equals(containerPath)) {
+                    Message.verbose("[IvyDE] Upgrading container path from " + containerPath + " to " + updatedPath);
                     updateIvyDEContainerPath(project, entry, attributes, exported, updatedPath);
                     return;
                 }
+
+                Message.verbose("[IvyDE] Setting container in JDT model");
 
                 JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project},
                     new IClasspathContainer[] {ivycp}, null);
@@ -121,6 +131,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 int startupMode = IvyPlugin.getPreferenceStoreHelper().getResolveOnStartup();
                 if (startupMode == ON_STARTUP_NOTHING) {
                     if (!refresh) {
+                        Message.verbose("[IvyDE] Doing nothing on startup");
                         // unless we force a refresh, actually do nothing
                         return;
                     }
@@ -128,6 +139,11 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     refresh = startupMode == ON_STARTUP_REFRESH;
                 }
 
+                if (refresh) {
+                    Message.info("[IvyDE] Scheduling a refresh of the container");
+                } else {
+                    Message.info("[IvyDE] Scheduling a resolve of the container");       
+                }
                 // now refresh the container to be synchronized with the ivy.xml
                 ivycp.launchResolve(refresh, null);
             } catch (Exception ex) {
@@ -160,7 +176,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                             .size()]);
                     project.setRawClasspath(entries, project.getOutputLocation(), null);
                 } catch (JavaModelException e) {
-                    IvyPlugin.log(IStatus.ERROR, "Unale to update the container path", e);
+                    IvyPlugin.logError("Unable to update the container path", e);
                 }
             }
         });

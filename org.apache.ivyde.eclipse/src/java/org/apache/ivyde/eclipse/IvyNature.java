@@ -77,8 +77,8 @@ public class IvyNature implements IProjectNature {
         try {
             return project.hasNature(IVY_NATURE);
         } catch (CoreException e) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Unable to get the Ivy nature of the project " + project.getName(), e);
+            IvyPlugin.logError("Unable to get the Ivy nature of the project " + project.getName(),
+                e);
             return false;
         }
     }
@@ -92,8 +92,7 @@ public class IvyNature implements IProjectNature {
         try {
             description = project.getDescription();
         } catch (CoreException e) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Failed to add Ivy dependency management on " + project.getName(), e);
+            IvyPlugin.logError("Failed to add Ivy dependency management on " + project.getName(), e);
             return;
         }
         final String[] ids = description.getNatureIds();
@@ -110,8 +109,8 @@ public class IvyNature implements IProjectNature {
                 try {
                     project.setDescription(description, null);
                 } catch (CoreException e) {
-                    IvyPlugin.log(IStatus.ERROR, "Failed to add Ivy dependency management on "
-                            + project.getName(), e);
+                    IvyPlugin.logError(
+                        "Failed to add Ivy dependency management on " + project.getName(), e);
                 }
             }
         });
@@ -152,7 +151,7 @@ public class IvyNature implements IProjectNature {
             description.setNatureIds(newIds);
             project.setDescription(description, null);
         } catch (Exception e) {
-            IvyPlugin.log(IStatus.ERROR,
+            IvyPlugin.logError(
                 "Failed to remove Ivy dependency management on " + project.getName(), e);
         }
     }

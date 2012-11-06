@@ -91,8 +91,7 @@ public class IvyMarkerManager {
                 marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
                 break;
             default:
-                IvyPlugin.log(IStatus.WARNING,
-                    "Unsupported resolve status: " + status.getSeverity(), null);
+                IvyPlugin.logWarn("Unsupported resolve status: " + status.getSeverity());
         }
     }
 

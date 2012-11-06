@@ -208,6 +208,9 @@ public class WorkspaceResolver extends AbstractResolver {
                     continue;
                 }
 
+                Message.verbose("[IvyDE] Workspace resolver found potential matching project " + p
+                        + " with module " + candidateMrid + " for module " + dependencyMrid);
+
                 if (!ignoreBranchOnWorkspaceProjects) {
                     ModuleId mid = dependencyMrid.getModuleId();
                     String defaultBranch = getSettings().getDefaultBranch(mid);
@@ -222,11 +225,11 @@ public class WorkspaceResolver extends AbstractResolver {
                     if (dependencyBranch != candidateBranch) {
                         // Both cannot be null
                         if (dependencyBranch == null || candidateBranch == null) {
-                            // One set, the other isn't, so no match
+                            Message.verbose("[IvyDE] \t\trejected since branches doesn't match (one is set, the other isn't)");
                             continue;
                         }
                         if (!dependencyBranch.equals(candidateBranch)) {
-                            // Both set but to different branches, so no match
+                            Message.verbose("[IvyDE] \t\trejected since branches doesn't match");
                             continue;
                         }
                     }
@@ -236,6 +239,12 @@ public class WorkspaceResolver extends AbstractResolver {
                 if (ignoreVersionOnWorkspaceProjects
                         || md.getModuleRevisionId().getRevision().equals(Ivy.getWorkingRevision())
                         || versionMatcher.accept(dd.getDependencyRevisionId(), md)) {
+
+                    if (ignoreVersionOnWorkspaceProjects) {
+                        Message.verbose("[IvyDE] \t\tmatched (version are ignored)");
+                    } else {
+                        Message.verbose("[IvyDE] \t\tversion matched");
+                    }
 
                     Artifact af = new DefaultArtifact(md.getModuleRevisionId(),
                             md.getPublicationDate(), p.getFullPath().toString(),
@@ -277,6 +286,8 @@ public class WorkspaceResolver extends AbstractResolver {
                     madr.setSearched(true);
 
                     return new ResolvedModuleRevision(this, this, workspaceMd, madr);
+                } else {
+                    Message.verbose("[IvyDE] \t\treject as version didn't match");
                 }
             }
         }

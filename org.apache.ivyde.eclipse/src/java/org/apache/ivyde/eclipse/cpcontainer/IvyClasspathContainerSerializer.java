@@ -39,6 +39,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -94,12 +95,14 @@ public class IvyClasspathContainerSerializer {
 
     private IvyAttachementManager ivyAttachementManager;
 
-    public IvyClasspathContainerSerializer(File containersStateDir, IvyAttachementManager ivyAttachementManager) {
+    public IvyClasspathContainerSerializer(File containersStateDir,
+            IvyAttachementManager ivyAttachementManager) {
         this.containersStateDir = containersStateDir;
         this.ivyAttachementManager = ivyAttachementManager;
     }
 
     public void save(IJavaProject project) {
+        Message.verbose("[IvyDE] Saving the state of the containers of the project " + project);
         List/* <IvyClasspathContainer> */ivycps = IvyClasspathUtil
                 .getIvyClasspathContainers(project);
         try {
@@ -115,15 +118,21 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         } catch (Exception ioe) {
-            IvyPlugin.log(IStatus.WARNING, "IvyDE container states of the project "
+            IvyPlugin.logWarn("IvyDE container states of the project "
                     + project.getProject().getName() + " cound not be saved", ioe);
         }
     }
 
     public Map/* <IPath, IvyClasspathContainer> */read(IJavaProject project) {
+        Message.verbose("[IvyDE] Loading the state of the containers of the project " + project);
+        File file = new File(containersStateDir, project.getProject().getName() + ".xml");
+        if (!file.exists()) {
+            IvyPlugin.logWarn("IvyDE container states of the project "
+                    + project.getProject().getName() + " doesn't exist.");
+            return null;
+        }
         try {
-            FileInputStream in = new FileInputStream(new File(containersStateDir, project
-                    .getProject().getName() + ".xml"));
+            FileInputStream in = new FileInputStream(file);
             try {
                 return read(in);
             } finally {
@@ -134,7 +143,7 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         } catch (Exception ioe) {
-            IvyPlugin.log(IStatus.WARNING, "IvyDE container states of the project "
+            IvyPlugin.logWarn("IvyDE container states of the project "
                     + project.getProject().getName() + " cound not be read", ioe);
             return null;
         }

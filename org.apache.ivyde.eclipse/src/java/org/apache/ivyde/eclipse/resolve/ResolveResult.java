@@ -17,19 +17,16 @@
  */
 package org.apache.ivyde.eclipse.resolve;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
-import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.eclipse.core.runtime.MultiStatus;
 

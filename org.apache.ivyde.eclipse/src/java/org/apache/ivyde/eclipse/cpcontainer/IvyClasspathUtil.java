@@ -289,8 +289,8 @@ public final class IvyClasspathUtil {
             return null;
         }
         if (!(cp instanceof IvyClasspathContainer)) {
-            IvyPlugin.log(IStatus.ERROR, "Expected an Ivy container but was "
-                    + cp.getClass().getName() + " for path " + containerPath, null);
+            IvyPlugin.logError("Expected an Ivy container but was " + cp.getClass().getName()
+                    + " for path " + containerPath);
             return null;
         }
         return (IvyClasspathContainer) cp;

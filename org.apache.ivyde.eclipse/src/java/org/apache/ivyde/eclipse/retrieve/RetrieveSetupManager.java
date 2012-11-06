@@ -117,7 +117,7 @@ public class RetrieveSetupManager implements ISaveParticipant {
             try {
                 ((IEclipsePreferences) entry.getValue()).flush();
             } catch (BackingStoreException e) {
-                IvyPlugin.log(IStatus.ERROR, "Failed to save the state of the Ivy preferences of "
+                IvyPlugin.logError("Failed to save the state of the Ivy preferences of "
                         + ((IProject) entry.getKey()).getName(), e);
             }
         }

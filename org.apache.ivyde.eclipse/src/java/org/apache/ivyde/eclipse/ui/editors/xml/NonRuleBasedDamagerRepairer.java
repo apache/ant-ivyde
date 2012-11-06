@@ -108,7 +108,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
             } catch (BadLocationException x) {
                 // FIXME hu ? needs some comment
-                IvyPlugin.log(IStatus.WARNING, "Something bad happened", x);
+                IvyPlugin.logWarn("Something bad happened", x);
             }
         }
 

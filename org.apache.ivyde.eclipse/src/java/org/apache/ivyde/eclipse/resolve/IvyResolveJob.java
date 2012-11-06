@@ -264,7 +264,7 @@ public class IvyResolveJob extends Job {
                 errorsStatus.add(status[0]);
                 break;
             default:
-                IvyPlugin.log(IStatus.WARNING, "Unknown IStatus: " + status[0].getCode(), null);
+                IvyPlugin.logWarn("Unknown IStatus: " + status[0].getCode());
         }
 
         return false;

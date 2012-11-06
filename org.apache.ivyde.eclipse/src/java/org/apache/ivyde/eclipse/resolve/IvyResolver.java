@@ -116,6 +116,9 @@ public class IvyResolver {
         computeConfs(confInput, md);
         try {
             ivy.pushContext();
+
+            Message.info("[IvyDE] Resolving " + toString());
+
             IvyResolveJobListener ivyResolveJobListener = new IvyResolveJobListener(monitor, step);
             ivy.getEventManager().addIvyListener(ivyResolveJobListener);
 
@@ -192,10 +195,14 @@ public class IvyResolver {
 
     private ResolveResult resolveWithPrevious(Ivy ivy, ModuleDescriptor md) throws ParseException,
             IOException {
+        Message.verbose("[IvyDE] Trying to read previous resolve report");
+
         ResolveResult result = new ResolveResult();
 
         // we check if all required configurations have been resolved
         for (int i = 0; i < confs.length; i++) {
+            Message.verbose("[IvyDE] Fetching the resolve report for configuration " + confs[i]);
+
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
                 IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), confs[i]);
             if (report.exists()) {
@@ -206,7 +213,7 @@ public class IvyResolver {
                     result.addArtifactReports(parser.getArtifactReports());
                     findAllArtifactOnRefresh(ivy, parser, result);
                 } catch (ParseException e) {
-                    Message.info("\n\nIVYDE: Error while parsing the report " + report
+                    Message.info("[IvyDE] Error while parsing the report " + report
                             + ". Falling back by doing a resolve again.");
                     // it fails, so let's try resolving for all configuration
                     return doResolve(ivy, md);
@@ -294,6 +301,9 @@ public class IvyResolver {
         }
 
         String pattern = project.getLocation().toPortableString() + "/" + retrievePattern;
+
+        Message.info("[IvyDE] Retrieving files into " + pattern);
+
         monitor.setTaskName("retrieving dependencies in " + pattern);
         RetrieveOptions options = new RetrieveOptions();
         options.setSync(retrieveSync);

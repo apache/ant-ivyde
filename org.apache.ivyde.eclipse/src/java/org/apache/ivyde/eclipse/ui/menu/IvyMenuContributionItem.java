@@ -227,8 +227,8 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         try {
             setupList = manager.getSetup(project);
         } catch (IOException e) {
-            IvyPlugin.log(IStatus.WARNING, "Unable to get the retrieve setup for project "
-                    + project.getName(), e);
+            IvyPlugin.logWarn("Unable to get the retrieve setup for project " + project.getName(),
+                e);
             return;
         }
         if (!setupList.isEmpty()) {

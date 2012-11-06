@@ -61,8 +61,8 @@ public abstract class IvyContentAssistProcessor implements IContentAssistProcess
             ivyFileString = doc.get(0, doc.getLength());
         } catch (BadLocationException e) {
             // Unless there is a bug in JFace, this should never never happen
-            IvyPlugin.log(IStatus.ERROR, "Getting the content of the document " + doc.toString()
-                    + " failed", e);
+            IvyPlugin.logError("Getting the content of the document " + doc.toString() + " failed",
+                e);
             return null;
         }
         IProject project = getProject();

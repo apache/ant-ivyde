@@ -123,7 +123,7 @@ public final class IvyClasspathContainerConfAdapter {
                 value = parameter.length > 1 ? URLDecoder.decode(parameter[1], "UTF-8") : "";
             } catch (UnsupportedEncodingException e) {
                 // this should never never happen
-                IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
+                IvyPlugin.logError(UTF8_ERROR, e);
                 throw new RuntimeException(UTF8_ERROR, e);
             }
             if (parameter[0].equals("project")) {
@@ -411,7 +411,7 @@ public final class IvyClasspathContainerConfAdapter {
                 append(path, "useExtendedResolveId", setup.isUseExtendedResolveId());
             }
         } catch (UnsupportedEncodingException e) {
-            IvyPlugin.log(IStatus.ERROR, UTF8_ERROR, e);
+            IvyPlugin.logError(UTF8_ERROR, e);
             throw new RuntimeException(UTF8_ERROR, e);
         }
         return new Path(IvyClasspathContainer.CONTAINER_ID).append(path.toString());

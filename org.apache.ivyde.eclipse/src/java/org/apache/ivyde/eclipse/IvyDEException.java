@@ -89,8 +89,7 @@ public class IvyDEException extends Exception {
                             msg);
                         return;
                     default:
-                        IvyPlugin.log(IStatus.WARNING, "Unsupported IvyDE error status: " + status,
-                            null);
+                        IvyPlugin.logWarn("Unsupported IvyDE error status: " + status);
                 }
             }
         });
@@ -135,16 +134,18 @@ public class IvyDEException extends Exception {
         String msg = (preMsg == null ? "" : preMsg) + getMessage();
         switch (status) {
             case IStatus.ERROR:
-                Message.error("IVYDE: " + msg);
+                Message.error("[IvyDE] " + msg);
                 return;
+            case IStatus.CANCEL:
             case IStatus.WARNING:
-                Message.warn("IVYDE: " + msg);
+                Message.warn("[IvyDE] " + msg);
                 return;
+            case IStatus.OK:
             case IStatus.INFO:
-                Message.info("IVYDE: " + msg);
+                Message.info("[IvyDE] " + msg);
                 return;
             default:
-                IvyPlugin.log(IStatus.WARNING, "Unsupported IvyDE error status: " + status, null);
+                IvyPlugin.logWarn("Unsupported IvyDE error status: " + status);
         }
     }
 }

@@ -161,7 +161,7 @@ public class IvyNewWizard extends Wizard implements INewWizard {
                     // IDE.openEditor(page, file, IvyEditor.ID, true);
                 } catch (PartInitException e) {
                     // this should not happen
-                    IvyPlugin.log(IStatus.ERROR, "The editor could not be opened", e);
+                    IvyPlugin.logError("The editor could not be opened", e);
                 }
             }
         });

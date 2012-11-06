@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
 import org.apache.ivyde.eclipse.cpcontainer.IvyAttachementManager;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -118,7 +119,7 @@ public class IvyPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         this.bundleContext = context;
-        log(IStatus.INFO, "starting IvyDE plugin", null);
+        logInfo("starting IvyDE plugin");
         ivyResolveJob = new IvyResolveJob();
 
         retrieveSetupManager = new RetrieveSetupManager();
@@ -155,7 +156,7 @@ public class IvyPlugin extends AbstractUIPlugin {
             console = new IvyConsole();
         } catch (RuntimeException e) {
             // Don't let the console bring down the IvyDE UI
-            log(IStatus.ERROR, "Errors occurred starting the Ivy console", e);
+            logError("Errors occurred starting the Ivy console", e);
         }
 
         // Listen for project open/close events to auto-update inter-project dependencies
@@ -176,14 +177,14 @@ public class IvyPlugin extends AbstractUIPlugin {
         ivyCpcSerializer = new IvyClasspathContainerSerializer(containersStateDir,
                 ivyAttachementManager);
 
-        log(IStatus.INFO, "IvyDE plugin started", null);
-
         try {
             Class.forName("org.apache.ivy.osgi.core.ManifestParser");
             osgiAvailable = true;
         } catch (Exception e) {
             osgiAvailable = false;
         }
+
+        logInfo("IvyDE plugin started");
     }
 
     /**
@@ -239,6 +240,19 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public static void log(IStatus status) {
         getDefault().getLog().log(status);
+        switch (status.getCode()) {
+            case IStatus.ERROR:
+                Message.error("[IvyDE] " + status.getMessage());
+                break;
+            case IStatus.CANCEL:
+            case IStatus.WARNING:
+                Message.warn("[IvyDE] "  + status.getMessage());
+                break;
+            case IStatus.OK:
+            case IStatus.INFO:
+                Message.info("[IvyDE] "  + status.getMessage());
+                break;
+        }
     }
 
     public static void log(CoreException e) {
@@ -250,6 +264,26 @@ public class IvyPlugin extends AbstractUIPlugin {
      */
     public static void log(int severity, String message, Throwable e) {
         log(new Status(severity, ID, 0, message, e));
+    }
+
+    public static void logInfo(String message) {
+        log(new Status(IStatus.INFO, ID, 0, message, null));
+    }
+
+    public static void logWarn(String message) {
+        logWarn(message, null);
+    }
+
+    public static void logWarn(String message, Throwable e) {
+        log(new Status(IStatus.WARNING, ID, 0, message, e));
+    }
+
+    public static void logError(String message) {
+        logError(message, null);
+    }
+
+    public static void logError(String message, Throwable e) {
+        log(new Status(IStatus.ERROR, ID, 0, message, e));
     }
 
     /**

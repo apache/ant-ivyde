@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorerView;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
@@ -38,7 +37,7 @@ public class ViewReverseDependenciesHandler extends AbstractIvyDEHandler {
             page.showView("org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorer");
             ReverseDependencyExplorerView.refresh(true);
         } catch (PartInitException e) {
-            IvyPlugin.log(IStatus.ERROR, "Error creating Reverse Dependency Explorer", e);
+            IvyPlugin.logError("Error creating Reverse Dependency Explorer", e);
         }
     }
 }

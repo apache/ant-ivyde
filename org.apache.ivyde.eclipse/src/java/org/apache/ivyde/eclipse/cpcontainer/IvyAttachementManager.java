@@ -25,9 +25,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -48,6 +48,11 @@ public class IvyAttachementManager {
 
     public IvyAttachementManager(File containersAttachementFile) {
         this.containersAttachementFile = containersAttachementFile;
+        if (!containersAttachementFile.exists()) {
+            Message.verbose("[IvyDE] Attachement properties file not found: nothing to load");
+            return;
+        }
+        Message.verbose("[IvyDE] Reading attachement properties");
         try {
             FileInputStream in = new FileInputStream(containersAttachementFile);
             try {
@@ -60,12 +65,14 @@ public class IvyAttachementManager {
                 }
             }
         } catch (IOException ioe) {
-            IvyPlugin.log(IStatus.WARNING, "IvyDE attachement properties could not be loaded", ioe);
+            IvyPlugin.logWarn("IvyDE attachement properties could not be loaded", ioe);
         }
     }
 
     public void updateAttchements(IJavaProject project, IPath containerPath,
             IClasspathContainer containerSuggestion) {
+        Message.verbose("[IvyDE] Updating attachements on the container " + containerPath);
+        
         Properties newProps = new Properties();
 
         IClasspathEntry[] newEntries = containerSuggestion.getClasspathEntries();
@@ -91,6 +98,7 @@ public class IvyAttachementManager {
         IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(containerPath,
             project);
         if (ivycp == null) {
+            Message.error("[IvyDE] The IvyDE container could not be found. Aborting updating attachements.");
             // something wrong happened, give up
             return;
         }
@@ -119,6 +127,7 @@ public class IvyAttachementManager {
         ivycp.updateClasspathEntries(newEntries);
 
         // store the global result
+        Message.verbose("[IvyDE] Saving attachement properties");
         try {
             FileOutputStream out = new FileOutputStream(containersAttachementFile);
             try {
@@ -131,7 +140,7 @@ public class IvyAttachementManager {
                 }
             }
         } catch (IOException ioe) {
-            IvyPlugin.log(IStatus.WARNING, "IvyDE attachement properties could not be saved", ioe);
+            IvyPlugin.logWarn("IvyDE attachement properties could not be saved", ioe);
         }
     }
 
@@ -157,8 +166,7 @@ public class IvyAttachementManager {
             try {
                 return new URL(srcPath);
             } catch (MalformedURLException e) {
-                IvyPlugin.log(IStatus.WARNING,
-                    "The path for the doc attachement is not a valid URL", e);
+                IvyPlugin.logWarn("The path for the doc attachement is not a valid URL", e);
                 return null;
             }
         }

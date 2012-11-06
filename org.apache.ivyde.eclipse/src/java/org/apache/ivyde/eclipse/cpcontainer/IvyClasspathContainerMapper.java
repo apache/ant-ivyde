@@ -103,10 +103,13 @@ public class IvyClasspathContainerMapper {
         IClasspathEntry[] classpathEntries;
         Collection paths = new LinkedHashSet();
 
+        Message.verbose("[IvyDE] Building classpath...");
+
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
 
             if (artifact.getType().equals(WorkspaceResolver.ECLIPSE_PROJECT_TYPE)) {
+                Message.verbose("[IvyDE] Found an workspace dependency on project " + artifact.getName());
                 // This is a java project in the workspace, add project path
                 // but only add it if it is not a self dependency
                 if (javaProject == null
@@ -114,8 +117,12 @@ public class IvyClasspathContainerMapper {
                     IAccessRule[] rules = getAccessRules(javaProject);
                     paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), rules, true,
                         null, true));
+                } else {
+                    Message.verbose("[IvyDE] Skipping self dependency on project " + artifact.getName());
                 }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
+                Message.verbose("[IvyDE] Adding " + artifact.getName() + " to the classpath");
+
                 IPath classpathArtifact = getArtifactPath(artifact);
                 IPath sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
                     mapping.isMapIfOnlyOneSource());
@@ -128,6 +135,15 @@ public class IvyClasspathContainerMapper {
                     sourcesArtifact);
                 IClasspathAttribute[] att = getExtraAttribute(classpathArtifact, javadocArtifact);
 
+                if (sources != null) {
+                    Message.debug("[IvyDE] Attaching sources " + sources + " to " + classpathArtifact);
+                }
+                if (javadocArtifact != null) {
+                    Message.debug("[IvyDE] Attaching javadoc " + javadocArtifact + " to " + classpathArtifact);
+                }
+                if (rules != null) {
+                    Message.debug("[IvyDE] Setting OSGi access rules on  " + classpathArtifact);
+                }
                 paths.add(JavaCore.newLibraryEntry(classpathArtifact, sources, sourcesRoot, rules,
                     att, false));
             }
@@ -322,12 +338,12 @@ public class IvyClasspathContainerMapper {
                         url = new URL(u);
                     } catch (MalformedURLException e) {
                         // this should not happen
-                        IvyPlugin.log(IStatus.ERROR,
-                            "The jar URL for the javadoc is not formed correctly " + u, e);
+                        IvyPlugin.logError("The jar URL for the javadoc is not formed correctly "
+                                + u, e);
                     }
                 } catch (MalformedURLException e) {
                     // this should not happen
-                    IvyPlugin.log(IStatus.ERROR, "The path has not a correct URL: " + path, e);
+                    IvyPlugin.logError("The path has not a correct URL: " + path, e);
                 }
             }
         }
