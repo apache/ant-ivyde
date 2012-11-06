@@ -93,6 +93,8 @@ public final class PreferenceConstants {
 
     public static final String IVY_CONSOLE_LOG_LEVEL = "ivyConsole.logLevel";
 
+    public static final String OPEN_IVY_CONSOLE_ON_STARTUP = "ivyConsole.openOnStartup";
+
     public static final String IGNORE_BRANCH_ON_WORKSPACE_PROJECTS
         = "workspaceResolver.ignoreBranch";
 

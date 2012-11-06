@@ -34,6 +34,7 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
+import org.apache.ivyde.eclipse.ui.console.IvyConsoleFactory;
 import org.apache.ivyde.eclipse.ui.editors.xml.ColorManager;
 import org.apache.ivyde.eclipse.ui.preferences.IvyDEPreferenceStoreHelper;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
@@ -154,6 +155,9 @@ public class IvyPlugin extends AbstractUIPlugin {
 
         try {
             console = new IvyConsole();
+            if (prefStoreHelper.isOpenIvyConsoleOnStartup()) {
+                IvyConsoleFactory.showConsole();
+            }
         } catch (RuntimeException e) {
             // Don't let the console bring down the IvyDE UI
             logError("Errors occurred starting the Ivy console", e);

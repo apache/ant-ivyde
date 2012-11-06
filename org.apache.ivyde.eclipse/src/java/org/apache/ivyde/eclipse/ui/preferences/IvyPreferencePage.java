@@ -20,7 +20,6 @@ package org.apache.ivyde.eclipse.ui.preferences;
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -61,6 +60,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private Button doNothingOnStartupButton;
 
+    private Button openIvyConsoleOnStartupButton;
+
     private Button resolveOnChangeButton;
 
     private Button doNothingOnChangeButton;
@@ -94,6 +95,11 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         offlineButton = new Button(composite, SWT.CHECK);
         offlineButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
         offlineButton.setText("Offline (use only the caches)");
+
+        openIvyConsoleOnStartupButton = new Button(composite, SWT.CHECK);
+        openIvyConsoleOnStartupButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false));
+        openIvyConsoleOnStartupButton.setText("Open the Ivy console on startup");
 
         Group startupGroup = new Group(composite, SWT.NONE);
         startupGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -181,6 +187,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
             doNothingOnChangeButton.setSelection(true);
         }
 
+        openIvyConsoleOnStartupButton.setSelection(helper.isOpenIvyConsoleOnStartup());
+        
         organizationText.setText(helper.getIvyOrg());
         organizationUrlText.setText(helper.getIvyOrgUrl());
 
@@ -204,6 +212,8 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         } else {
             helper.setAutoResolveOnChange(false);
         }
+
+        helper.setOpenIvyConsoleOnStartup(openIvyConsoleOnStartupButton.getSelection());
 
         helper.setOrganization(organizationText.getText());
         helper.setOrganizationUrl(organizationUrlText.getText());
@@ -234,6 +244,9 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         } else {
             doNothingOnChangeButton.setSelection(true);
         }
+
+        openIvyConsoleOnStartupButton
+                .setSelection(PreferenceInitializer.DEFAULT_OPEN_IVY_CONSOLE_ON_STARTUP);
 
         organizationText.setText(PreferenceInitializer.DEFAULT_ORGANISATION);
         organizationUrlText.setText(PreferenceInitializer.DEFAULT_ORGANISATION_URL);

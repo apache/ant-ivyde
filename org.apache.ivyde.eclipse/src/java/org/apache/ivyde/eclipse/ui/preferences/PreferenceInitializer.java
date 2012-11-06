@@ -106,6 +106,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final int DEFAULT_IVY_CONSOLE_LOG_MESSAGE = Message.MSG_INFO;
 
+    public static final boolean DEFAULT_OPEN_IVY_CONSOLE_ON_STARTUP = false;
+
     public static final MappingSetup DEFAULT_MAPPING_SETUP = new MappingSetup();
 
     static {
@@ -177,6 +179,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.AUTO_RESOLVE_ON_CHANGE, DEFAULT_AUTO_RESOLVE_ON_CHANGE);
 
         store.setDefault(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, DEFAULT_IVY_CONSOLE_LOG_MESSAGE);
+        store.setDefault(PreferenceConstants.OPEN_IVY_CONSOLE_ON_STARTUP, DEFAULT_OPEN_IVY_CONSOLE_ON_STARTUP);
 
         store.setDefault(PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS,
             DEFAULT_IGNORE_BRANCH_ON_WORKSPACE_PROJECTS);

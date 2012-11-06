@@ -210,6 +210,14 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, logLevel);
     }
 
+    public boolean isOpenIvyConsoleOnStartup() {
+        return prefStore.getBoolean(PreferenceConstants.OPEN_IVY_CONSOLE_ON_STARTUP);
+    }
+
+    public void setOpenIvyConsoleOnStartup(boolean openOnStartup) {
+        prefStore.setValue(PreferenceConstants.OPEN_IVY_CONSOLE_ON_STARTUP, openOnStartup);
+    }
+
     public boolean getIgnoreBranchOnWorkspaceProjects() {
         return prefStore.getBoolean(PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS);
     }
