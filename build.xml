@@ -533,6 +533,8 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="hudson-unzip-eclipse" depends="hudson-check-unzip-eclipse" unless="hudson.eclipse.unzipped">
+        <delete dir="${basedir}/dependencies/eclipse" failonerror="false" />
+        <delete dir="${basedir}/dependencies/${hudson.download.sdk.name}" failonerror="false" />
         <unzip src="${basedir}/dependencies/${hudson.download.sdk.name}.zip" dest="${basedir}/dependencies/" />
         <unzip src="${basedir}/dependencies/${hudson.download.wtp.name}.zip" dest="${basedir}/dependencies/" />
         <unzip src="${basedir}/dependencies/${hudson.download.emf.name}.zip" dest="${basedir}/dependencies/" />
