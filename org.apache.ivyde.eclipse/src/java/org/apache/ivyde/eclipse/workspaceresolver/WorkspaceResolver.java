@@ -208,8 +208,9 @@ public class WorkspaceResolver extends AbstractResolver {
                     continue;
                 }
 
-                Message.verbose("[IvyDE] Workspace resolver found potential matching project " + p
-                        + " with module " + candidateMrid + " for module " + dependencyMrid);
+                Message.verbose("[IvyDE] Workspace resolver found potential matching project "
+                        + p.getName() + " with module " + candidateMrid + " for module "
+                        + dependencyMrid);
 
                 if (!ignoreBranchOnWorkspaceProjects) {
                     ModuleId mid = dependencyMrid.getModuleId();

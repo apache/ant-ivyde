@@ -44,7 +44,6 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -102,7 +101,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     public void save(IJavaProject project) {
-        Message.verbose("[IvyDE] Saving the state of the containers of the project " + project);
+        Message.verbose("[IvyDE] Saving the state of the containers of the project " + project.getProject().getName());
         List/* <IvyClasspathContainer> */ivycps = IvyClasspathUtil
                 .getIvyClasspathContainers(project);
         try {
@@ -124,7 +123,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     public Map/* <IPath, IvyClasspathContainer> */read(IJavaProject project) {
-        Message.verbose("[IvyDE] Loading the state of the containers of the project " + project);
+        Message.verbose("[IvyDE] Loading the state of the containers of the project " + project.getProject().getName());
         File file = new File(containersStateDir, project.getProject().getName() + ".xml");
         if (!file.exists()) {
             IvyPlugin.logWarn("IvyDE container states of the project "
