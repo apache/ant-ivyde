@@ -115,13 +115,17 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     }
                 }
 
+                // FIXME : container path upgrade removed since it seems to make some trouble:
+                // containers get either uninitialized or initialized twice...
+
                 // recompute the path as it may have been "upgraded"
-                IPath updatedPath = IvyClasspathContainerConfAdapter.getPath(ivycp.getConf());
-                if (!updatedPath.equals(containerPath)) {
-                    IvyDEMessage.verbose("Upgrading container path from " + containerPath + " to " + updatedPath);
-                    updateIvyDEContainerPath(project, entry, attributes, exported, updatedPath);
-                    return;
-                }
+                // IPath updatedPath = IvyClasspathContainerConfAdapter.getPath(ivycp.getConf());
+                // if (!updatedPath.equals(containerPath)) {
+                // IvyDEMessage.verbose("Upgrading container path from " + containerPath + " to " +
+                // updatedPath);
+                // updateIvyDEContainerPath(project, entry, attributes, exported, updatedPath);
+                // return;
+                // }
 
                 IvyDEMessage.verbose("Setting container in JDT model");
 
