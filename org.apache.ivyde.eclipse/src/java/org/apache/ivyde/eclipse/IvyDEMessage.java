@@ -17,11 +17,12 @@
  */
 package org.apache.ivyde.eclipse;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLogger;
-import org.apache.ivy.util.StringUtils;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 
 public class IvyDEMessage {
@@ -162,7 +163,17 @@ public class IvyDEMessage {
     }
 
     public static void debug(Throwable t) {
-        debug(StringUtils.getStackTrace(t));
+        debug(getStackTrace(t));
+    }
+
+    private static String getStackTrace(Throwable e) {
+        if (e == null) {
+            return "";
+        }
+        StringWriter sw = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(sw, true);
+        e.printStackTrace(printWriter);
+        return sw.getBuffer().toString();
     }
 
 }
