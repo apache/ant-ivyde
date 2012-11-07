@@ -101,12 +101,13 @@ public class IvyClasspathContainerSerializer {
     }
 
     public void save(IJavaProject project) {
-        IvyDEMessage.verbose("Saving the state of the containers of the project " + project.getProject().getName());
         List/* <IvyClasspathContainer> */ivycps = IvyClasspathUtil
                 .getIvyClasspathContainers(project);
         try {
-            FileOutputStream out = new FileOutputStream(new File(containersStateDir, project
-                    .getProject().getName() + ".xml"));
+            File file = new File(containersStateDir, project.getProject().getName() + ".xml");
+            IvyDEMessage.verbose("Saving the state of the containers of the project "
+                    + project.getProject().getName() + " into " + file);
+            FileOutputStream out = new FileOutputStream(file);
             try {
                 write(out, ivycps);
             } finally {
@@ -123,8 +124,9 @@ public class IvyClasspathContainerSerializer {
     }
 
     public Map/* <IPath, IvyClasspathContainer> */read(IJavaProject project) {
-        IvyDEMessage.verbose("Loading the state of the containers of the project " + project.getProject().getName());
         File file = new File(containersStateDir, project.getProject().getName() + ".xml");
+        IvyDEMessage.verbose("Loading the state of the containers of the project "
+                + project.getProject().getName() + " from " + file);
         if (!file.exists()) {
             IvyPlugin.logWarn("IvyDE container states of the project "
                     + project.getProject().getName() + " doesn't exist.");
