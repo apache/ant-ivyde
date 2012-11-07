@@ -245,15 +245,15 @@ public class IvyPlugin extends AbstractUIPlugin {
         getDefault().getLog().log(status);
         switch (status.getCode()) {
             case IStatus.ERROR:
-                IvyDEMessage.error(status.getMessage());
+                IvyDEMessage.error(status.getMessage(), status.getException());
                 break;
             case IStatus.CANCEL:
             case IStatus.WARNING:
-                IvyDEMessage.warn(status.getMessage());
+                IvyDEMessage.warn(status.getMessage(), status.getException());
                 break;
             case IStatus.OK:
             case IStatus.INFO:
-                IvyDEMessage.info(status.getMessage());
+                IvyDEMessage.info(status.getMessage(), status.getException());
                 break;
         }
     }
