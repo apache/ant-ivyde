@@ -39,7 +39,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -101,7 +101,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     public void save(IJavaProject project) {
-        Message.verbose("[IvyDE] Saving the state of the containers of the project " + project.getProject().getName());
+        IvyDEMessage.verbose("Saving the state of the containers of the project " + project.getProject().getName());
         List/* <IvyClasspathContainer> */ivycps = IvyClasspathUtil
                 .getIvyClasspathContainers(project);
         try {
@@ -123,7 +123,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     public Map/* <IPath, IvyClasspathContainer> */read(IJavaProject project) {
-        Message.verbose("[IvyDE] Loading the state of the containers of the project " + project.getProject().getName());
+        IvyDEMessage.verbose("Loading the state of the containers of the project " + project.getProject().getName());
         File file = new File(containersStateDir, project.getProject().getName() + ".xml");
         if (!file.exists()) {
             IvyPlugin.logWarn("IvyDE container states of the project "

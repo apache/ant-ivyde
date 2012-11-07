@@ -27,7 +27,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.resolve.IvyResolver;
 import org.apache.ivyde.eclipse.resolve.ResolveResult;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
@@ -124,7 +124,7 @@ public class ClasspathEntriesResolver extends IvyResolver {
                 buffer.append("\n  - ");
             }
         }
-        ivy.getLoggerEngine().log(buffer.toString(), Message.MSG_WARN);
+        IvyDEMessage.warn(buffer.toString());
     }
 
 }

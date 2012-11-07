@@ -41,8 +41,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.ArtifactTypeFilter;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
@@ -117,7 +117,7 @@ public class IvyResolver {
         try {
             ivy.pushContext();
 
-            Message.info("[IvyDE] Resolving " + toString());
+            IvyDEMessage.info("Resolving " + toString());
 
             IvyResolveJobListener ivyResolveJobListener = new IvyResolveJobListener(monitor, step);
             ivy.getEventManager().addIvyListener(ivyResolveJobListener);
@@ -146,12 +146,12 @@ public class IvyResolver {
             } catch (ParseException e) {
                 String errorMsg = "Error while parsing the ivy file from " + this.toString() + "\n"
                         + e.getMessage();
-                Message.error(errorMsg);
+                IvyDEMessage.error(errorMsg);
                 return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
             } catch (Exception e) {
                 String errorMsg = "Error while resolving dependencies for " + this.toString()
                         + "\n" + e.getMessage();
-                Message.error(errorMsg);
+                IvyDEMessage.error(errorMsg);
                 return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
@@ -195,13 +195,13 @@ public class IvyResolver {
 
     private ResolveResult resolveWithPrevious(Ivy ivy, ModuleDescriptor md) throws ParseException,
             IOException {
-        Message.verbose("[IvyDE] Trying to read previous resolve report");
+        IvyDEMessage.verbose("Trying to read previous resolve report");
 
         ResolveResult result = new ResolveResult();
 
         // we check if all required configurations have been resolved
         for (int i = 0; i < confs.length; i++) {
-            Message.verbose("[IvyDE] Fetching the resolve report for configuration " + confs[i]);
+            IvyDEMessage.verbose("Fetching the resolve report for configuration " + confs[i]);
 
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
                 IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), confs[i]);
@@ -213,7 +213,7 @@ public class IvyResolver {
                     result.addArtifactReports(parser.getArtifactReports());
                     findAllArtifactOnRefresh(ivy, parser, result);
                 } catch (ParseException e) {
-                    Message.info("[IvyDE] Error while parsing the report " + report
+                    IvyDEMessage.info("Error while parsing the report " + report
                             + ". Falling back by doing a resolve again.");
                     // it fails, so let's try resolving for all configuration
                     return doResolve(ivy, md);
@@ -302,7 +302,7 @@ public class IvyResolver {
 
         String pattern = project.getLocation().toPortableString() + "/" + retrievePattern;
 
-        Message.info("[IvyDE] Retrieving files into " + pattern);
+        IvyDEMessage.info("Retrieving files into " + pattern);
 
         monitor.setTaskName("retrieving dependencies in " + pattern);
         RetrieveOptions options = new RetrieveOptions();

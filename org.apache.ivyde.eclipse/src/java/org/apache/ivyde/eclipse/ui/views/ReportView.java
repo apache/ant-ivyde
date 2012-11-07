@@ -19,7 +19,7 @@ package org.apache.ivyde.eclipse.ui.views;
 
 import java.net.URL;
 
-import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.jface.viewers.ISelection;
@@ -62,7 +62,7 @@ public class ReportView extends ViewPart implements ISelectionListener {
                 URL report = ivycp.getReportUrl();
                 if (report == null || !browser.setUrl(report.toExternalForm())) {
                     browser.setText("<html></html>");
-                    Message.warn("impossible to set report view url to " + report.toExternalForm());
+                    IvyDEMessage.warn("Impossible to set report view url to " + report.toExternalForm());
                 }
             }
         }

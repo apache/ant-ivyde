@@ -33,7 +33,6 @@ import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceIvySettings;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IProject;
@@ -133,7 +132,7 @@ public abstract class CachedIvy {
                             + settingsPath.getError().getMessage(), settingsPath.getError());
         }
         if (!settingsPath.isSet()) {
-            Message.debug("[IvyDE] No settings specified, so take the default one");
+            IvyDEMessage.debug("No settings specified, so take the default one");
             if (ivy == null) {
                 IvySettings ivySettings = createIvySettings();
                 ivy = Ivy.newInstance(ivySettings);
@@ -184,7 +183,7 @@ public abstract class CachedIvy {
 
     private Ivy getIvyFromFile(ResolvedPath ivySettingsPath) throws IvyDEException {
         File file = ivySettingsPath.getFile();
-        Message.debug("[IvyDE] Loading settings from local file " + file);
+        IvyDEMessage.debug("Loading settings from local file " + file);
         if (!file.exists()) {
             throw new IvyDEException("Ivy settings file not found", "The Ivy settings file '"
                     + ivySettingsPath.getResolvedPath() + "' cannot be found", null);
@@ -193,7 +192,7 @@ public abstract class CachedIvy {
         if (file.lastModified() != ivySettingsLastModified || !isLoadSettingsOnDemandPath()) {
             IvySettings ivySettings = createIvySettings();
             if (ivySettingsLastModified != -1) {
-                Message.info("[IvyDE] Settings has changed, configuring Ivy again");
+                IvyDEMessage.info("Settings has changed, configuring Ivy again");
             }
             ivy = Ivy.newInstance(ivySettings);
             try {
@@ -211,7 +210,7 @@ public abstract class CachedIvy {
             }
             ivySettingsLastModified = file.lastModified();
         } else {
-            Message.verbose("[IvyDE] No change detected: using cached version of the settings");
+            IvyDEMessage.verbose("No change detected: using cached version of the settings");
         }
         return ivy;
     }
@@ -219,7 +218,7 @@ public abstract class CachedIvy {
     private IvySettings createIvySettings() throws IvyDEException {
         IvySettings ivySettings;
         if (isResolveInWorkspace()) {
-            Message.verbose("[IvyDE] Adding the workspace resolver to the settings");
+            IvyDEMessage.verbose("Adding the workspace resolver to the settings");
             ivySettings = new WorkspaceIvySettings(getProject());
             DefaultRepositoryCacheManager cacheManager = new DefaultRepositoryCacheManager();
             BundleContext bundleContext = IvyPlugin.getDefault().getBundleContext();
@@ -248,13 +247,13 @@ public abstract class CachedIvy {
         }
         Collection propFiles = getPropertyFiles();
         if (propFiles != null) {
-            Message.verbose("[IvyDE] Loading property files");
+            IvyDEMessage.verbose("Loading property files");
             Iterator iter = propFiles.iterator();
             while (iter.hasNext()) {
                 String file = (String) iter.next();
                 InputStream is;
                 Path p = new Path(file);
-                Message.debug("[IvyDE] Loading property file " + p);
+                IvyDEMessage.debug("Loading property file " + p);
                 if (getProject() != null && !p.isAbsolute()) {
                     try {
                         is = new FileInputStream(getProject().getLocation().append(file).toFile());

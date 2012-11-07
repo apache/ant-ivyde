@@ -33,6 +33,7 @@ import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyMarkerManager;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IProject;
@@ -80,6 +81,14 @@ public class IvyResolveJob extends Job {
     }
 
     protected IStatus run(IProgressMonitor monitor) {
+        try {
+            return doRun(monitor);
+        } finally {
+            IvyDEMessage.sumupProblems();
+        }
+    }
+
+    private IStatus doRun(IProgressMonitor monitor) {
         List toResolve;
         synchronized (resolveQueue) {
             toResolve = new ArrayList(resolveQueue);
@@ -120,12 +129,14 @@ public class IvyResolveJob extends Job {
                     monitor.worked(step);
                     continue;
                 }
+                IvyDEMessage.verbose("Loading ivysettings for " + request.toString());
                 CachedIvy cachedIvy = request.getCachedIvy();
                 Ivy ivy;
                 try {
                     ivy = cachedIvy.getIvy();
                 } catch (IvyDEException e) {
                     cachedIvy.setErrorMarker(e);
+                    IvyDEMessage.error("Failed to configure Ivy for " + request + ": " + e.getMessage());
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to configure Ivy for "
                             + request));
                     monitor.worked(step);
@@ -141,6 +152,7 @@ public class IvyResolveJob extends Job {
                     md = cachedIvy.getModuleDescriptor(ivy);
                 } catch (IvyDEException e) {
                     cachedIvy.setErrorMarker(e);
+                    IvyDEMessage.error("Failed to load the descriptor for " + request + ": " + e.getMessage());
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to load the descriptor for "
                             + request));
                     monitor.worked(step);
@@ -187,6 +199,7 @@ public class IvyResolveJob extends Job {
                 boolean canceled = launchResolveThread(request, monitor, step, errorsStatus, ivy,
                     md);
                 if (canceled) {
+                    IvyDEMessage.warn("Resolve job canceled");
                     return Status.CANCEL_STATUS;
                 }
             }
@@ -201,6 +214,7 @@ public class IvyResolveJob extends Job {
                 boolean canceled = launchResolveThread(request, monitor, step, errorsStatus, ivy,
                     md);
                 if (canceled) {
+                    IvyDEMessage.warn("Resolve job canceled");
                     return Status.CANCEL_STATUS;
                 }
             }
@@ -258,8 +272,11 @@ public class IvyResolveJob extends Job {
                 return true;
             case IStatus.OK:
             case IStatus.INFO:
+                IvyDEMessage.info("Successuful resolve of " + request);
                 break;
             case IStatus.ERROR:
+                IvyDEMessage.warn("Error on resolve of " + request + ": "
+                        + status[0].getMessage());
                 request.setResolveFailed(true);
                 errorsStatus.add(status[0]);
                 break;

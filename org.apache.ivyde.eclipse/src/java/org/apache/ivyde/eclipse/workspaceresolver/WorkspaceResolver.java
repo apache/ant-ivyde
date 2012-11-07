@@ -52,6 +52,7 @@ import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
@@ -208,7 +209,7 @@ public class WorkspaceResolver extends AbstractResolver {
                     continue;
                 }
 
-                Message.verbose("[IvyDE] Workspace resolver found potential matching project "
+                IvyDEMessage.verbose("Workspace resolver found potential matching project "
                         + p.getName() + " with module " + candidateMrid + " for module "
                         + dependencyMrid);
 
@@ -226,11 +227,11 @@ public class WorkspaceResolver extends AbstractResolver {
                     if (dependencyBranch != candidateBranch) {
                         // Both cannot be null
                         if (dependencyBranch == null || candidateBranch == null) {
-                            Message.verbose("[IvyDE] \t\trejected since branches doesn't match (one is set, the other isn't)");
+                            IvyDEMessage.verbose("\t\trejected since branches doesn't match (one is set, the other isn't)");
                             continue;
                         }
                         if (!dependencyBranch.equals(candidateBranch)) {
-                            Message.verbose("[IvyDE] \t\trejected since branches doesn't match");
+                            IvyDEMessage.verbose("\t\trejected since branches doesn't match");
                             continue;
                         }
                     }
@@ -242,9 +243,9 @@ public class WorkspaceResolver extends AbstractResolver {
                         || versionMatcher.accept(dd.getDependencyRevisionId(), md)) {
 
                     if (ignoreVersionOnWorkspaceProjects) {
-                        Message.verbose("[IvyDE] \t\tmatched (version are ignored)");
+                        IvyDEMessage.verbose("\t\tmatched (version are ignored)");
                     } else {
-                        Message.verbose("[IvyDE] \t\tversion matched");
+                        IvyDEMessage.verbose("\t\tversion matched");
                     }
 
                     Artifact af = new DefaultArtifact(md.getModuleRevisionId(),
@@ -288,7 +289,7 @@ public class WorkspaceResolver extends AbstractResolver {
 
                     return new ResolvedModuleRevision(this, this, workspaceMd, madr);
                 } else {
-                    Message.verbose("[IvyDE] \t\treject as version didn't match");
+                    IvyDEMessage.verbose("\t\treject as version didn't match");
                 }
             }
         }

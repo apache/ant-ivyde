@@ -38,13 +38,12 @@ import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExportPackage;
 import org.apache.ivy.osgi.core.ManifestParser;
-import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.resolve.ResolveResult;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -103,13 +102,13 @@ public class IvyClasspathContainerMapper {
         IClasspathEntry[] classpathEntries;
         Collection paths = new LinkedHashSet();
 
-        Message.verbose("[IvyDE] Building classpath...");
+        IvyDEMessage.verbose("Building classpath...");
 
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
 
             if (artifact.getType().equals(WorkspaceResolver.ECLIPSE_PROJECT_TYPE)) {
-                Message.verbose("[IvyDE] Found an workspace dependency on project " + artifact.getName());
+                IvyDEMessage.verbose("Found an workspace dependency on project " + artifact.getName());
                 // This is a java project in the workspace, add project path
                 // but only add it if it is not a self dependency
                 if (javaProject == null
@@ -118,10 +117,10 @@ public class IvyClasspathContainerMapper {
                     paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), rules, true,
                         null, true));
                 } else {
-                    Message.verbose("[IvyDE] Skipping self dependency on project " + artifact.getName());
+                    IvyDEMessage.verbose("Skipping self dependency on project " + artifact.getName());
                 }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
-                Message.verbose("[IvyDE] Adding " + artifact.getName() + " to the classpath");
+                IvyDEMessage.verbose("Adding " + artifact.getName() + " to the classpath");
 
                 IPath classpathArtifact = getArtifactPath(artifact);
                 IPath sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
@@ -136,13 +135,13 @@ public class IvyClasspathContainerMapper {
                 IClasspathAttribute[] att = getExtraAttribute(classpathArtifact, javadocArtifact);
 
                 if (sources != null) {
-                    Message.debug("[IvyDE] Attaching sources " + sources + " to " + classpathArtifact);
+                    IvyDEMessage.debug("Attaching sources " + sources + " to " + classpathArtifact);
                 }
                 if (javadocArtifact != null) {
-                    Message.debug("[IvyDE] Attaching javadoc " + javadocArtifact + " to " + classpathArtifact);
+                    IvyDEMessage.debug("Attaching javadoc " + javadocArtifact + " to " + classpathArtifact);
                 }
                 if (rules != null) {
-                    Message.debug("[IvyDE] Setting OSGi access rules on  " + classpathArtifact);
+                    IvyDEMessage.debug("Setting OSGi access rules on  " + classpathArtifact);
                 }
                 paths.add(JavaCore.newLibraryEntry(classpathArtifact, sources, sourcesRoot, rules,
                     att, false));
@@ -174,11 +173,11 @@ public class IvyClasspathContainerMapper {
             jar = new FileInputStream(artifact.toFile());
             bundleInfo = ManifestParser.parseJarManifest(jar);
         } catch (IOException e) {
-            Message.warn("OSGi metadata could not be extracted from " + artifact + ": "
+            IvyDEMessage.warn("OSGi metadata could not be extracted from " + artifact + ": "
                     + e.getMessage() + " (" + e.getClass().getName() + ")");
             return null;
         } catch (ParseException e) {
-            Message.warn("OSGi metadata could not be extracted from " + artifact + ": "
+            IvyDEMessage.warn("OSGi metadata could not be extracted from " + artifact + ": "
                     + e.getMessage() + " (" + e.getClass().getName() + ")");
             return null;
         } finally {

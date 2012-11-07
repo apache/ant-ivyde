@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.eclipse;
 
-import org.apache.ivy.util.Message;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -134,15 +133,15 @@ public class IvyDEException extends Exception {
         String msg = (preMsg == null ? "" : preMsg) + getMessage();
         switch (status) {
             case IStatus.ERROR:
-                Message.error("[IvyDE] " + msg);
+                IvyDEMessage.error(msg);
                 return;
             case IStatus.CANCEL:
             case IStatus.WARNING:
-                Message.warn("[IvyDE] " + msg);
+                IvyDEMessage.warn(msg);
                 return;
             case IStatus.OK:
             case IStatus.INFO:
-                Message.info("[IvyDE] " + msg);
+                IvyDEMessage.info(msg);
                 return;
             default:
                 IvyPlugin.logWarn("Unsupported IvyDE error status: " + status);

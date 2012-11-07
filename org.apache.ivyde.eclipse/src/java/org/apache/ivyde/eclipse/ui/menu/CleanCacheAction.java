@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
-import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -108,7 +108,7 @@ public class CleanCacheAction extends Action {
             while (itCleanable.hasNext()) {
                 Cleanable cleanable = (Cleanable) itCleanable.next();
                 cleanable.launchClean();
-                Message.info("Ivy cache cleaned: " + cleanable.getName());
+                IvyDEMessage.info("Ivy cache cleaned: " + cleanable.getName());
             }
         }
     }

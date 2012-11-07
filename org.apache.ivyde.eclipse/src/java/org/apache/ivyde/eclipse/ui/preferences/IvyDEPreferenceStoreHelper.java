@@ -210,6 +210,14 @@ public class IvyDEPreferenceStoreHelper {
         prefStore.setValue(PreferenceConstants.IVY_CONSOLE_LOG_LEVEL, logLevel);
     }
 
+    public int getIvyConsoleIvyDELogLevel() {
+        return prefStore.getInt(PreferenceConstants.IVY_CONSOLE_IVYDE_LOG_LEVEL);
+    }
+
+    public void setIvyConsoleIvyDELogLevel(int ivyDElogLevel) {
+        prefStore.setValue(PreferenceConstants.IVY_CONSOLE_IVYDE_LOG_LEVEL, ivyDElogLevel);
+    }
+
     public boolean isOpenIvyConsoleOnStartup() {
         return prefStore.getBoolean(PreferenceConstants.OPEN_IVY_CONSOLE_ON_STARTUP);
     }

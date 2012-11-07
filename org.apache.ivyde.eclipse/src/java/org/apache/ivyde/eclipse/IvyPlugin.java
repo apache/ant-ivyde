@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.ivy.util.Message;
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
 import org.apache.ivyde.eclipse.cpcontainer.IvyAttachementManager;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
@@ -246,15 +245,15 @@ public class IvyPlugin extends AbstractUIPlugin {
         getDefault().getLog().log(status);
         switch (status.getCode()) {
             case IStatus.ERROR:
-                Message.error("[IvyDE] " + status.getMessage());
+                IvyDEMessage.error(status.getMessage());
                 break;
             case IStatus.CANCEL:
             case IStatus.WARNING:
-                Message.warn("[IvyDE] "  + status.getMessage());
+                IvyDEMessage.warn(status.getMessage());
                 break;
             case IStatus.OK:
             case IStatus.INFO:
-                Message.info("[IvyDE] "  + status.getMessage());
+                IvyDEMessage.info(status.getMessage());
                 break;
         }
     }

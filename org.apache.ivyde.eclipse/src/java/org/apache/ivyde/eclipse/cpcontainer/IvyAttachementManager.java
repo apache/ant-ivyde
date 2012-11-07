@@ -25,7 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -49,10 +49,10 @@ public class IvyAttachementManager {
     public IvyAttachementManager(File containersAttachementFile) {
         this.containersAttachementFile = containersAttachementFile;
         if (!containersAttachementFile.exists()) {
-            Message.verbose("[IvyDE] Attachement properties file not found: nothing to load");
+            IvyDEMessage.verbose("Attachement properties file not found: nothing to load");
             return;
         }
-        Message.verbose("[IvyDE] Reading attachement properties");
+        IvyDEMessage.verbose("Reading attachement properties");
         try {
             FileInputStream in = new FileInputStream(containersAttachementFile);
             try {
@@ -71,7 +71,7 @@ public class IvyAttachementManager {
 
     public void updateAttchements(IJavaProject project, IPath containerPath,
             IClasspathContainer containerSuggestion) {
-        Message.verbose("[IvyDE] Updating attachements on the container " + containerPath);
+        IvyDEMessage.verbose("Updating attachements on the container " + containerPath);
         
         Properties newProps = new Properties();
 
@@ -98,7 +98,7 @@ public class IvyAttachementManager {
         IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(containerPath,
             project);
         if (ivycp == null) {
-            Message.error("[IvyDE] The IvyDE container could not be found. Aborting updating attachements.");
+            IvyDEMessage.error("The IvyDE container could not be found. Aborting updating attachements.");
             // something wrong happened, give up
             return;
         }
@@ -127,7 +127,7 @@ public class IvyAttachementManager {
         ivycp.updateClasspathEntries(newEntries);
 
         // store the global result
-        Message.verbose("[IvyDE] Saving attachement properties");
+        IvyDEMessage.verbose("Saving attachement properties");
         try {
             FileOutputStream out = new FileOutputStream(containersAttachementFile);
             try {

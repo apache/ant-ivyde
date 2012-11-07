@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLogger;
 import org.apache.ivy.util.MessageLoggerHelper;
+import org.apache.ivyde.eclipse.IvyDEMessageLogger;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
@@ -52,6 +53,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     // CheckStyle:MagicNumber| OFF
     private MessageConsoleStream[] streams = new MessageConsoleStream[5];
+
     // CheckStyle:MagicNumber| ON
 
     private ConsoleDocument document;
@@ -66,12 +68,15 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     private int logLevel;
 
+    private IvyDEMessageLogger ivyDEMessageLogger;
+
     public IvyConsole() {
         super("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$
         consoleManager = ConsolePlugin.getDefault().getConsoleManager();
         document = new ConsoleDocument();
         Message.setDefaultLogger(this);
         logLevel = IvyPlugin.getPreferenceStoreHelper().getIvyConsoleLogLevel();
+        ivyDEMessageLogger = new IvyDEMessageLogger(this);
     }
 
     public void setLogLevel(int logLevel) {
@@ -81,6 +86,10 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     public int getLogLevel() {
         return logLevel;
+    }
+
+    public IvyDEMessageLogger getIvyDEMessageLogger() {
+        return ivyDEMessageLogger;
     }
 
     public void endProgress(String msg) {
@@ -184,6 +193,10 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             // log message filtered by its level
             return;
         }
+        doAppendLine(level, line);
+    }
+
+    public void doAppendLine(int level, String line) {
         showConsole();
         synchronized (document) {
             if (visible) {
@@ -325,4 +338,5 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     public void setShowProgress(boolean progress) {
         showProgress = progress;
     }
+
 }

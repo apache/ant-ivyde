@@ -21,6 +21,7 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
@@ -65,6 +66,17 @@ public class IvyConsoleFilterAction extends Action implements IMenuCreator {
                 }
             };
             action.setChecked(console.getLogLevel() == i);
+            addActionToMenu(fMenu, action);
+        }
+        new Separator().fill(fMenu, -1);
+        for (int i = 0; i < LOG_LEVEL_MESSAGES.length; i++) {
+            final int logLevel = i;
+            Action action = new Action("IvyDE " + LOG_LEVEL_MESSAGES[i]) {
+                public void run() {
+                    console.getIvyDEMessageLogger().setLogLevel(logLevel);
+                }
+            };
+            action.setChecked(console.getIvyDEMessageLogger().getLogLevel() == i);
             addActionToMenu(fMenu, action);
         }
         return fMenu;

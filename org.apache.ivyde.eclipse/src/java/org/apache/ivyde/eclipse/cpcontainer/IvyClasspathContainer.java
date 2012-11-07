@@ -26,6 +26,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.IvyDEMessage;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.resolve.ResolveRequest;
@@ -133,7 +134,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
     }
 
     void updateClasspathEntries(final IClasspathEntry[] newEntries) {
-        Message.verbose("[IvyDE] Updating the classpath container " + toString());
+        IvyDEMessage.verbose("Updating the classpath container " + toString());
         IClasspathEntry[] entries;
         if (newEntries != null) {
             entries = newEntries;
@@ -154,7 +155,9 @@ public class IvyClasspathContainer implements IClasspathContainer {
                         }
                     });
                 }
-                Message.debug("[IvyDE] Setting the classpath container " + toString() + " with " + Arrays.toString(entries));
+                IvyDEMessage.debug("Setting the classpath container "
+                        + IvyClasspathContainer.this.toString() + " with "
+                        + Arrays.toString(entries));
                 classpathEntries = entries;
                 notifyUpdateClasspathEntries();
             }
