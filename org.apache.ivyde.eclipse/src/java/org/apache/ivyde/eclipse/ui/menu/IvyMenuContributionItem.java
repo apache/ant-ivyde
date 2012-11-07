@@ -49,7 +49,6 @@ import org.apache.ivyde.eclipse.ui.menu.CleanCacheAction.RepositoryCacheCleanabl
 import org.apache.ivyde.eclipse.ui.menu.CleanCacheAction.ResolutionCacheCleanable;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.action.ActionContributionItem;

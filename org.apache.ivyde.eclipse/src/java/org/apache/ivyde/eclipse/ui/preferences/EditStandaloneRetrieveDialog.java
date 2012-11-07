@@ -19,8 +19,8 @@ package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.ui.IvyFilePathText;
-import org.apache.ivyde.eclipse.ui.SettingsSetupTab;
 import org.apache.ivyde.eclipse.ui.RetrieveComposite;
+import org.apache.ivyde.eclipse.ui.SettingsSetupTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;

@@ -25,7 +25,6 @@ import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
