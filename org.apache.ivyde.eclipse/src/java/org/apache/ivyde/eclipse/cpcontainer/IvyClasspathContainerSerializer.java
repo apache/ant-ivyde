@@ -283,7 +283,8 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    public Map/* <IPath, IvyClasspathContainer> */read(InputStream in) throws IOException {
+    public Map/* <IPath, IvyClasspathContainer> */read(InputStream in) throws IOException,
+            SAXException {
         try {
             InputSource source = new InputSource(in);
 
@@ -300,10 +301,10 @@ public class IvyClasspathContainerSerializer {
                 Node node = elements.item(i);
 
                 NamedNodeMap attributes = node.getAttributes();
-                IPath path = new Path(getAttribute(attributes, PATH));
+                IPath path = new Path(getMandatoryAttribute(attributes, PATH, IVYCP));
 
                 IProject p = ResourcesPlugin.getWorkspace().getRoot()
-                        .getProject(getAttribute(attributes, PROJECT));
+                        .getProject(getMandatoryAttribute(attributes, PROJECT, IVYCP));
                 IJavaProject project = JavaCore.create(p);
 
                 IClasspathEntry[] cpEntries = new IClasspathEntry[0];
@@ -326,22 +327,11 @@ public class IvyClasspathContainerSerializer {
             return ivycps;
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e.getMessage(), e);
-        } catch (SAXException e) {
-            Throwable t = e.getCause();
-            if (t instanceof IOException) {
-                throw (IOException) t;
-            }
-            if (t == null) {
-                t = e;
-            }
-            IOException ioe = new IOException(t.getMessage());
-            ioe.initCause(t);
-            throw ioe;
         }
 
     }
 
-    private IClasspathEntry[] readCpEntries(Node cpEntries) throws SAXException {
+    private IClasspathEntry[] readCpEntries(Node cpEntries) throws IOException {
         List/* <IClasspathEntry> */entries = new ArrayList();
         NodeList children = cpEntries.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -356,10 +346,10 @@ public class IvyClasspathContainerSerializer {
         return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
     }
 
-    private IClasspathEntry readCpEntry(Node cpEntryNode) throws SAXException {
+    private IClasspathEntry readCpEntry(Node cpEntryNode) throws IOException {
         NamedNodeMap attributes = cpEntryNode.getAttributes();
-        int kind = Integer.parseInt(getAttribute(attributes, KIND));
-        IPath path = new Path(getAttribute(attributes, PATH));
+        int kind = Integer.parseInt(getMandatoryAttribute(attributes, KIND, CPENTRY));
+        IPath path = new Path(getMandatoryAttribute(attributes, PATH, CPENTRY));
         String source = getAttribute(attributes, SOURCE);
         IPath sourcePath = null;
         if (source != null) {
@@ -396,7 +386,7 @@ public class IvyClasspathContainerSerializer {
         return entry;
     }
 
-    private IAccessRule[] readAccessRules(Node accessRulesNode) throws SAXException {
+    private IAccessRule[] readAccessRules(Node accessRulesNode) throws IOException {
         List/* <IAccessRule> */rules = new ArrayList();
         NodeList children = accessRulesNode.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -411,14 +401,14 @@ public class IvyClasspathContainerSerializer {
         return (IAccessRule[]) rules.toArray(new IAccessRule[rules.size()]);
     }
 
-    private IAccessRule readAccessRule(Node ruleNode) throws SAXException {
+    private IAccessRule readAccessRule(Node ruleNode) throws IOException {
         NamedNodeMap attributes = ruleNode.getAttributes();
-        int kind = Integer.parseInt(getAttribute(attributes, KIND));
-        IPath pattern = new Path(getAttribute(attributes, PATTERN));
+        int kind = Integer.parseInt(getMandatoryAttribute(attributes, KIND, RULE));
+        IPath pattern = new Path(getMandatoryAttribute(attributes, PATTERN, RULE));
         return JavaCore.newAccessRule(pattern, kind);
     }
 
-    private IClasspathAttribute[] readCpAttr(Node cpAttrsNode) throws SAXException {
+    private IClasspathAttribute[] readCpAttr(Node cpAttrsNode) throws IOException {
         List/* <IClasspathAttribute> */attrs = new ArrayList();
         NodeList children = cpAttrsNode.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -433,17 +423,27 @@ public class IvyClasspathContainerSerializer {
         return (IClasspathAttribute[]) attrs.toArray(new IClasspathAttribute[attrs.size()]);
     }
 
-    private IClasspathAttribute readAttr(Node attrNode) throws SAXException {
+    private IClasspathAttribute readAttr(Node attrNode) throws IOException {
         NamedNodeMap attributes = attrNode.getAttributes();
-        String name = getAttribute(attributes, NAME);
-        String value = getAttribute(attributes, VALUE);
+        String name = getMandatoryAttribute(attributes, NAME, ATTR);
+        String value = getMandatoryAttribute(attributes, VALUE, ATTR);
         return JavaCore.newClasspathAttribute(name, value);
     }
 
-    private String getAttribute(NamedNodeMap attributes, String name) throws SAXException {
+    private String getMandatoryAttribute(NamedNodeMap attributes, String name, String owner)
+            throws IOException {
+        String att = getAttribute(attributes, name);
+        if (att == null) {
+            throw new IOException("Incorrect saved classpath: no '" + name + "' attribute on '"
+                    + name + "'");
+        }
+        return att;
+    }
+
+    private String getAttribute(NamedNodeMap attributes, String name) throws IOException {
         Node node = attributes.getNamedItem(name);
         if (node == null) {
-            throw new SAXException("Attribute '" + name + "' not found");
+            return null;
         }
         return node.getNodeValue();
     }
