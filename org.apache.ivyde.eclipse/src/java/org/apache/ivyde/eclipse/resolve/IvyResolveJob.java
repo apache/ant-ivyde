@@ -83,12 +83,15 @@ public class IvyResolveJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
         try {
             return doRun(monitor);
-        } finally {
-            IvyDEMessage.sumupProblems();
+        } catch (RuntimeException e) {
+            IvyDEMessage.error("Resolve job failed with an unexpected exception", e);
+            throw e;
         }
     }
 
     private IStatus doRun(IProgressMonitor monitor) {
+        IvyDEMessage.info("Resolve job starting...");
+
         List toResolve;
         synchronized (resolveQueue) {
             toResolve = new ArrayList(resolveQueue);
@@ -96,8 +99,11 @@ public class IvyResolveJob extends Job {
         }
 
         if (toResolve.isEmpty()) {
+            IvyDEMessage.info("Nothing to resolve");
             return Status.OK_STATUS;
         }
+
+        IvyDEMessage.verbose(toResolve.size() + " container(s) to resolve");
 
         monitor.beginTask("Loading ivy descriptors", MONITOR_LENGTH);
 
@@ -136,7 +142,8 @@ public class IvyResolveJob extends Job {
                     ivy = cachedIvy.getIvy();
                 } catch (IvyDEException e) {
                     cachedIvy.setErrorMarker(e);
-                    IvyDEMessage.error("Failed to configure Ivy for " + request + ": " + e.getMessage());
+                    IvyDEMessage.error("Failed to configure Ivy for " + request + ": "
+                            + e.getMessage());
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to configure Ivy for "
                             + request));
                     monitor.worked(step);
@@ -152,7 +159,8 @@ public class IvyResolveJob extends Job {
                     md = cachedIvy.getModuleDescriptor(ivy);
                 } catch (IvyDEException e) {
                     cachedIvy.setErrorMarker(e);
-                    IvyDEMessage.error("Failed to load the descriptor for " + request + ": " + e.getMessage());
+                    IvyDEMessage.error("Failed to load the descriptor for " + request + ": "
+                            + e.getMessage());
                     errorsStatus.add(e.asStatus(IStatus.ERROR, "Failed to load the descriptor for "
                             + request));
                     monitor.worked(step);
@@ -175,7 +183,10 @@ public class IvyResolveJob extends Job {
 
         step = (MONITOR_LENGTH - IVY_LOAD_LENGTH - POST_RESOLVE_LENGTH) / toResolve.size();
 
-        if (!inworkspaceModules.isEmpty()) {
+        if (inworkspaceModules.isEmpty()) {
+            IvyDEMessage.verbose("No modules to resolve in workspace");
+        } else {
+            IvyDEMessage.info(inworkspaceModules.size() + " modules to resolve in workspace");
             // for the modules which are using the workspace resolver, make sure
             // we resolve them in the correct order
 
@@ -205,7 +216,11 @@ public class IvyResolveJob extends Job {
             }
         }
 
-        if (!otherModules.isEmpty()) {
+        if (otherModules.isEmpty()) {
+            IvyDEMessage.verbose("No modules to resolve outside the workspace");
+        } else {
+            IvyDEMessage.info(otherModules.size() + " modules to resolve outside the workspace");
+
             Iterator it = otherModules.iterator();
             while (it.hasNext()) {
                 ResolveRequest request = (ResolveRequest) it.next();
@@ -275,8 +290,7 @@ public class IvyResolveJob extends Job {
                 IvyDEMessage.info("Successuful resolve of " + request);
                 break;
             case IStatus.ERROR:
-                IvyDEMessage.warn("Error on resolve of " + request + ": "
-                        + status[0].getMessage());
+                IvyDEMessage.warn("Error on resolve of " + request + ": " + status[0].getMessage());
                 request.setResolveFailed(true);
                 errorsStatus.add(status[0]);
                 break;

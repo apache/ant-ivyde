@@ -137,12 +137,16 @@ public class IvyResolver {
                     result = doResolve(ivy, md);
                 }
 
-                IStatus retrieveStatus = maybeRetrieve(ivy, md, result, monitor);
-                if (!retrieveStatus.isOK()) {
-                    return retrieveStatus;
-                }
+                if (result.getProblemMessages().isEmpty()) {
+                    // only continue if we resolved correctly
 
-                postResolveOrRefresh(ivy, md, result, monitor);
+                    IStatus retrieveStatus = maybeRetrieve(ivy, md, result, monitor);
+                    if (!retrieveStatus.isOK()) {
+                        return retrieveStatus;
+                    }
+    
+                    postResolveOrRefresh(ivy, md, result, monitor);
+                }
             } catch (ParseException e) {
                 String errorMsg = "Error while parsing the ivy file from " + this.toString() + "\n"
                         + e.getMessage();
@@ -226,12 +230,19 @@ public class IvyResolver {
 
     private ResolveResult doResolve(Ivy ivy, ModuleDescriptor md) throws ParseException,
             IOException {
+        IvyDEMessage.debug("Doing a full resolve...");
         ResolveOptions resolveOption = new ResolveOptions();
         resolveOption.setConfs(confs);
         resolveOption.setValidate(ivy.getSettings().doValidate());
         resolveOption.setUseCacheOnly(useCacheOnly);
         resolveOption.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
         ResolveReport report = ivy.getResolveEngine().resolve(md, resolveOption);
+
+        if (report.hasError()) {
+            IvyDEMessage.verbose("Resolve ended with errors");
+        } else {
+            IvyDEMessage.verbose("Resolve successfull");
+        }
 
         ResolveResult result = new ResolveResult(report);
 
@@ -297,6 +308,7 @@ public class IvyResolver {
     private IStatus maybeRetrieve(Ivy ivy, ModuleDescriptor md, ResolveResult result,
             IProgressMonitor monitor) throws IOException {
         if (retrievePattern == null || project == null) {
+            IvyDEMessage.debug("No file retrieving configured");
             return Status.OK_STATUS;
         }
 
@@ -331,9 +343,13 @@ public class IvyResolver {
         // FIXME here we will parse a report we already have
         // with a better Java API, we could do probably better
         int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+
+        IvyDEMessage.info(numberOfItemsRetrieved + " retrieved file(s)");
+
         if (numberOfItemsRetrieved > 0) {
             // Only refresh if we actually retrieved a file.
             IFolder retrieveFolder = project.getFolder(refreshPath);
+            IvyDEMessage.verbose("Refreshing Eclipse folder " + retrieveFolder);
             RefreshFolderJob refreshFolderJob = new RefreshFolderJob(retrieveFolder);
             refreshFolderJob.schedule();
         }
