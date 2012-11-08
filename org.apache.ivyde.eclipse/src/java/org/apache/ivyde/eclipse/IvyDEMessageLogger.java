@@ -17,10 +17,14 @@
  */
 package org.apache.ivyde.eclipse;
 
-import org.apache.ivy.util.AbstractMessageLogger;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MessageLogger;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 
-public class IvyDEMessageLogger extends AbstractMessageLogger {
+public class IvyDEMessageLogger implements MessageLogger {
 
     private IvyConsole console;
 
@@ -50,12 +54,72 @@ public class IvyDEMessageLogger extends AbstractMessageLogger {
         log(msg, level);
     }
 
-    public void doProgress() {
-        // nothing
+    public void debug(String msg) {
+        log(msg, Message.MSG_DEBUG);
     }
 
-    public void doEndProgress(String msg) {
-        // nothing
+    public void verbose(String msg) {
+        log(msg, Message.MSG_VERBOSE);
+    }
+
+    public void deprecated(String msg) {
+        log("DEPRECATED: " + msg, Message.MSG_WARN);
+    }
+
+    public void info(String msg) {
+        log(msg, Message.MSG_INFO);
+    }
+
+    public void rawinfo(String msg) {
+        rawlog(msg, Message.MSG_INFO);
+    }
+
+    public void warn(String msg) {
+        log(msg, Message.MSG_WARN);
+    }
+
+    public void error(String msg) {
+        log(msg, Message.MSG_ERR);
+    }
+
+    public void sumupProblems() {
+        // we don't buffer anything, nothing to sumup
+    }
+
+    public void clearProblems() {
+        // do nothing
+    }
+
+    public List getProblems() {
+        return Collections.emptyList();
+    }
+
+    public List getErrors() {
+        return Collections.emptyList();
+    }
+
+    public List getWarns() {
+        return Collections.emptyList();
+    }
+
+    public void progress() {
+        // do nothing
+    }
+
+    public void endProgress() {
+        // do nothing
+    }
+
+    public void endProgress(String msg) {
+        // do nothing
+    }
+
+    public boolean isShowProgress() {
+        return false;
+    }
+
+    public void setShowProgress(boolean progress) {
+        // do nothing
     }
 
 }
