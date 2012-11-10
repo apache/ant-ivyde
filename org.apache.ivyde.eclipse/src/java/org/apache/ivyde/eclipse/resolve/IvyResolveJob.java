@@ -107,7 +107,7 @@ public class IvyResolveJob extends Job {
 
         monitor.beginTask("Loading ivy descriptors", MONITOR_LENGTH);
 
-        Map/* <ModuleDescriptor, ResolveRequest> */inworkspaceModules = new LinkedHashMap();
+        Map/* <ModuleDescriptor, List<ResolveRequest>> */inworkspaceModules = new LinkedHashMap();
         List/* <ResolveRequest> */otherModules = new ArrayList();
         Map/* <ResolveRequest, Ivy> */ivys = new HashMap();
         Map/* <ResolveRequest, ModuleDescriptor> */mds = new HashMap();
@@ -174,7 +174,12 @@ public class IvyResolveJob extends Job {
                 cachedIvy.setErrorMarker(null);
                 mds.put(request, md);
                 if (request.isInWorkspace()) {
-                    inworkspaceModules.put(md, request);
+                    List requests = (List) inworkspaceModules.get(md);
+                    if (requests == null) {
+                        requests = new ArrayList();
+                        inworkspaceModules.put(md, requests);
+                    }
+                    requests.add(request);
                 } else {
                     otherModules.add(request);
                 }
@@ -194,7 +199,8 @@ public class IvyResolveJob extends Job {
             // we resolve them in the correct order
 
             // The version matcher used will be the one configured for the first project
-            ResolveRequest request = (ResolveRequest) inworkspaceModules.values().iterator().next();
+            ResolveRequest request = (ResolveRequest) ((List) inworkspaceModules.values()
+                    .iterator().next()).get(0);
             VersionMatcher versionMatcher = ((Ivy) ivys.get(request)).getSettings()
                     .getVersionMatcher();
 
@@ -207,14 +213,20 @@ public class IvyResolveJob extends Job {
 
             Iterator it = sortedModuleDescriptors.iterator();
             while (it.hasNext()) {
-                request = (ResolveRequest) inworkspaceModules.get(it.next());
-                Ivy ivy = (Ivy) ivys.get(request);
-                ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
-                boolean canceled = launchResolveThread(request, monitor, step, errorsStatus, ivy,
-                    md);
-                if (canceled) {
-                    IvyDEMessage.warn("Resolve job canceled");
-                    return Status.CANCEL_STATUS;
+                ModuleDescriptor module = (ModuleDescriptor) it.next();
+                List requests = (List) inworkspaceModules.get(module);
+                IvyDEMessage.info(requests.size() + " container(s) of module " + module
+                        + " to resolve in workspace");
+                for (int i = 0; i < requests.size(); i++) {
+                    request = (ResolveRequest) requests.get(i);
+                    Ivy ivy = (Ivy) ivys.get(request);
+                    ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
+                    boolean canceled = launchResolveThread(request, monitor, step, errorsStatus,
+                        ivy, md);
+                    if (canceled) {
+                        IvyDEMessage.warn("Resolve job canceled");
+                        return Status.CANCEL_STATUS;
+                    }
                 }
             }
         }
