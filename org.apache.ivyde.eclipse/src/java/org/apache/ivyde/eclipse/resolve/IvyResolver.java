@@ -210,7 +210,13 @@ public class IvyResolver {
 
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
                 IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), confs[i]);
-            if (report.exists()) {
+            IvyDEMessage.debug("Cheking resolve report at " + report);
+            if (!report.exists()) {
+                IvyDEMessage.info("The resolve report for the configuration " + confs[i]
+                        + " was not found. Falling back by doing a resolve again.");
+                return doResolve(ivy, md);
+            } else {
+                IvyDEMessage.verbose("Resolve report found, parsing it");
                 // found a report, try to parse it.
                 try {
                     XmlReportParser parser = new XmlReportParser();
