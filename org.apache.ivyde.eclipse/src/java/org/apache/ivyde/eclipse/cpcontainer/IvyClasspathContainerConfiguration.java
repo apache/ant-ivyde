@@ -80,7 +80,7 @@ public class IvyClasspathContainerConfiguration {
      * Constructor
      * 
      * @param javaProject
-     *            the classpath container's Java project, <code>null</code> is not bind to a project
+     *            the classpath container's Java project, <code>null</code> if not bind to a project
      * @param path
      *            the path of the classpath container
      * @param editing
