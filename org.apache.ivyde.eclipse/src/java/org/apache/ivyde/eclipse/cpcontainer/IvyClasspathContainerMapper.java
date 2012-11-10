@@ -102,7 +102,7 @@ public class IvyClasspathContainerMapper {
         IClasspathEntry[] classpathEntries;
         Collection paths = new LinkedHashSet();
 
-        IvyDEMessage.verbose("Building classpath from " + all.size() + " resolved artifacts");
+        IvyDEMessage.verbose("Building classpath from " + all.size() + " resolved artifact(s)");
 
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();

@@ -127,11 +127,14 @@ public class IvyResolveJob extends Job {
             Iterator itRequests = toResolve.iterator();
             while (itRequests.hasNext()) {
                 ResolveRequest request = (ResolveRequest) itRequests.next();
+
+                IvyDEMessage.info("Processing resolve request " + request.toString());
+
                 forceFailOnError = forceFailOnError || request.isForceFailOnError();
                 monitor.subTask("loading " + request.getResolver().toString());
                 IProject project = request.getResolver().getProject();
                 if (project != null && !project.isAccessible()) {
-                    // closed project, skip it
+                    IvyDEMessage.warn("Skipping resolve on closed project " + project.getName());
                     monitor.worked(step);
                     continue;
                 }
@@ -184,9 +187,9 @@ public class IvyResolveJob extends Job {
         step = (MONITOR_LENGTH - IVY_LOAD_LENGTH - POST_RESOLVE_LENGTH) / toResolve.size();
 
         if (inworkspaceModules.isEmpty()) {
-            IvyDEMessage.verbose("No modules to resolve in workspace");
+            IvyDEMessage.verbose("No module to resolve in workspace");
         } else {
-            IvyDEMessage.info(inworkspaceModules.size() + " modules to resolve in workspace");
+            IvyDEMessage.info(inworkspaceModules.size() + " module(s) to resolve in workspace");
             // for the modules which are using the workspace resolver, make sure
             // we resolve them in the correct order
 
@@ -217,9 +220,9 @@ public class IvyResolveJob extends Job {
         }
 
         if (otherModules.isEmpty()) {
-            IvyDEMessage.verbose("No modules to resolve outside the workspace");
+            IvyDEMessage.verbose("No module to resolve outside the workspace");
         } else {
-            IvyDEMessage.info(otherModules.size() + " modules to resolve outside the workspace");
+            IvyDEMessage.info(otherModules.size() + " module(s) to resolve outside the workspace");
 
             Iterator it = otherModules.iterator();
             while (it.hasNext()) {

@@ -190,10 +190,10 @@ public abstract class CachedIvy {
         }
 
         if (file.lastModified() != ivySettingsLastModified || !isLoadSettingsOnDemandPath()) {
-            IvySettings ivySettings = createIvySettings();
             if (ivySettingsLastModified != -1) {
                 IvyDEMessage.info("Settings has changed, configuring Ivy again");
             }
+            IvySettings ivySettings = createIvySettings();
             ivy = Ivy.newInstance(ivySettings);
             try {
                 ivy.configure(file);

@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -144,7 +145,7 @@ public class IvyResolver {
                     if (!retrieveStatus.isOK()) {
                         return retrieveStatus;
                     }
-    
+
                     postResolveOrRefresh(ivy, md, result, monitor);
                 }
             } catch (ParseException e) {
@@ -219,7 +220,6 @@ public class IvyResolver {
                 } catch (ParseException e) {
                     IvyDEMessage.info("Error while parsing the report " + report
                             + ". Falling back by doing a resolve again.");
-                    // it fails, so let's try resolving for all configuration
                     return doResolve(ivy, md);
                 }
             }
@@ -279,6 +279,8 @@ public class IvyResolver {
     private void findAllArtifactOnRefresh(Ivy ivy, XmlReportParser parser, ResolveResult result)
             throws ParseException {
         ModuleRevisionId[] dependencyMrdis = parser.getDependencyRevisionIds();
+        IvyDEMessage.verbose("Resolve report parsed. Fetching artifacts of "
+                + dependencyMrdis.length + " dependencie(s)");
         for (int iDep = 0; iDep < dependencyMrdis.length; iDep++) {
             DependencyResolver depResolver = ivy.getSettings().getResolver(dependencyMrdis[iDep]);
             DefaultDependencyDescriptor depDescriptor = new DefaultDependencyDescriptor(
@@ -286,11 +288,16 @@ public class IvyResolver {
             ResolveOptions options = new ResolveOptions();
             options.setRefresh(true);
             options.setUseCacheOnly(true);
+            IvyDEMessage.debug("Fetching dependency " + dependencyMrdis[iDep]);
             ResolvedModuleRevision dependency = depResolver.getDependency(depDescriptor,
                 new ResolveData(ivy.getResolveEngine(), options));
             if (dependency != null) {
-                result.putArtifactsForDep(dependencyMrdis[iDep], dependency.getDescriptor()
-                        .getAllArtifacts());
+                Artifact[] artifacts = dependency.getDescriptor().getAllArtifacts();
+                IvyDEMessage.debug("Dependency " + dependencyMrdis[iDep] + " found: "
+                        + artifacts.length + " artifact(s) found");
+                result.putArtifactsForDep(dependencyMrdis[iDep], artifacts);
+            } else {
+                IvyDEMessage.debug("Dependency " + dependencyMrdis[iDep] + " not found");
             }
         }
     }
