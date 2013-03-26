@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
@@ -57,9 +58,15 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
             return new IRuntimeClasspathEntry[0];
         }
 
+        IJavaProject project = entry.getJavaProject();
+
+        return computeDefaultContainerEntries(entry, project);
+    }
+
+    private IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry,
+            IJavaProject project) throws JavaModelException, CoreException {
         IvyClasspathContainer ivycp;
 
-        IJavaProject project = entry.getJavaProject();
         if (project == null) {
             ivycp = new IvyClasspathContainer(null, entry.getPath(), null, null);
         } else {
@@ -139,6 +146,9 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
     public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry,
             IJavaProject project) throws CoreException {
         if (!(entry instanceof IRuntimeClasspathEntry2)) {
+            if (entry.getType() == IRuntimeClasspathEntry.CONTAINER) {
+                return computeDefaultContainerEntries(entry, project);
+            }
             return new IRuntimeClasspathEntry[] {entry};
         }
 
