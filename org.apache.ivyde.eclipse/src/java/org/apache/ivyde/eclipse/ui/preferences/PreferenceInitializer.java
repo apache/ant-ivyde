@@ -30,6 +30,7 @@ import org.apache.ivyde.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Class used to initialize default preference values.
@@ -149,6 +150,14 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public static final boolean DEFAULT_ERROR_POPUP = true;
 
     public void initializeDefaultPreferences() {
+        Display.getDefault().syncExec(new Runnable() {
+            public void run() {
+                doInitializeDefaultPreferences();
+            }
+        });
+    }
+
+    private void doInitializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
         store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
