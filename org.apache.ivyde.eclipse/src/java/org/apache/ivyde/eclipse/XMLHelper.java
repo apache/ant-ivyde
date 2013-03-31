@@ -67,8 +67,8 @@ public class XMLHelper {
                 try {
                     parser.setProperty("http://xml.org/sax/properties/lexical-handler", lHandler);
                 } catch (SAXException ex) {
-                    Message.warn("problem while setting the lexical handler property on SAXParser",
-                        ex);
+                    Message.warn("problem while setting the lexical handler property on SAXParser ("
+                            + ex.getClass().getName() + ": " + ex.getMessage() + ")");
                     // continue without the lexical handler
                 }
             }
