@@ -23,7 +23,7 @@ import java.io.Reader;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.util.XMLHelper;
+import org.apache.ivyde.eclipse.XMLHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -67,7 +67,7 @@ public class IvyFileContentDescriber extends XMLContentDescriber implements IExe
     private int checkCriteria(InputSource contents) throws IOException {
         IvyFileHandler ivyFileHandler = new IvyFileHandler();
         try {
-            XMLHelper.parse(contents, null, ivyFileHandler, null);
+            XMLHelper.parse(contents, null, ivyFileHandler, null, false);
         } catch (SAXException e) {
             // we may be handed any kind of contents... it is normal we fail to parse
             return INDETERMINATE;
@@ -100,7 +100,7 @@ public class IvyFileContentDescriber extends XMLContentDescriber implements IExe
                 isIvyFile = true;
             }
 
-            root = true;
+            root = false;
         }
     }
 }
