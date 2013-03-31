@@ -101,7 +101,8 @@ public class XMLHelper {
                 parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
             } catch (SAXNotRecognizedException ex) {
                 Message.warn("problem while setting JAXP validating property on SAXParser... "
-                        + "XML validation will not be done", ex);
+                        + "XML validation will not be done (" + ex.getClass().getName() + ": "
+                        + ex.getMessage() + ")");
                 canUseSchemaValidation = false;
                 parserFactory.setValidating(false);
                 parser = parserFactory.newSAXParser();
