@@ -20,6 +20,7 @@ package org.apache.ivyde.eclipse.ui;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -60,7 +61,7 @@ public class ClasspathSetupEditor extends Composite {
 
     private boolean osgiAvailable;
 
-    public ClasspathSetupEditor(Composite parent, int style) {
+    public ClasspathSetupEditor(Composite parent, int style, IProject project) {
         super(parent, style);
         setLayout(new GridLayout(2, false));
 
@@ -113,7 +114,7 @@ public class ClasspathSetupEditor extends Composite {
         selectRetrieve = new Button(buttons, SWT.RADIO);
         selectRetrieve.setText("retrieved artifacts");
 
-        retrieveComposite = new RetrieveComposite(this, SWT.NONE, false);
+        retrieveComposite = new RetrieveComposite(this, SWT.NONE, false, project);
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
         gridData.horizontalIndent = INDENT_RETRIEVE;
         retrieveComposite.setLayoutData(gridData);

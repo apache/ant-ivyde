@@ -44,7 +44,7 @@ public class ClasspathSetupPreferencePage extends PreferencePage implements
     }
 
     protected Control createContents(Composite parent) {
-        classpathSetupComposite = new ClasspathSetupEditor(parent, SWT.NONE);
+        classpathSetupComposite = new ClasspathSetupEditor(parent, SWT.NONE, null);
         classpathSetupComposite
                 .setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 

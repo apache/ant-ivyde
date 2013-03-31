@@ -18,7 +18,10 @@
 package org.apache.ivyde.eclipse.ui;
 
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,7 +41,9 @@ public class RetrieveComposite extends Composite {
     public static final String TOOLTIP_RETRIEVE_TYPES = "Comma separated list of types to retrieve"
             + "\nExemple: '*' or 'jar,source'";
 
-    private Text retrievePatternText;
+    private static final String DEFAULT_PATTERN = "/[type]s/[artifact]-[revision](-[classifier]).[ext]";
+
+    private PathEditor retrievePatternText;
 
     private Button retrieveSyncButton;
 
@@ -46,18 +51,35 @@ public class RetrieveComposite extends Composite {
 
     private Text typesText;
 
-    public RetrieveComposite(Composite parent, int style, boolean withConf) {
+    public RetrieveComposite(Composite parent, int style, boolean withConf, IProject project) {
         super(parent, style);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         setLayout(layout);
 
-        Label label = new Label(this, SWT.NONE);
-        label.setText("Retrieve pattern:");
+        retrievePatternText = new PathEditor(this, SWT.NONE, "Retrieve pattern", project, null) {
+            private Button addPattern;
 
-        retrievePatternText = new Text(this, SWT.SINGLE | SWT.BORDER);
-        retrievePatternText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+            protected boolean addButtons(Composite buttons) {
+                addPattern = new Button(buttons, SWT.NONE);
+                addPattern.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
+                addPattern.setText("Add def. pattern");
+                addPattern.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e) {
+                        getText().setText(getText().getText() + DEFAULT_PATTERN);
+                    }
+                });
+                return true;
+            }
+
+            public void setEnabled(boolean enabled) {
+                super.setEnabled(enabled);
+                addPattern.setEnabled(enabled);
+            }
+        };
+        retrievePatternText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
+                2, 1));
         retrievePatternText.setToolTipText(TOOLTIP_RETRIEVE_PATTERN);
 
         retrieveSyncButton = new Button(this, SWT.CHECK);
@@ -66,7 +88,7 @@ public class RetrieveComposite extends Composite {
                 2, 1));
 
         if (withConf) {
-            label = new Label(this, SWT.NONE);
+            Label label = new Label(this, SWT.NONE);
             label.setText("Configurations:");
 
             confsText = new Text(this, SWT.SINGLE | SWT.BORDER);
@@ -74,7 +96,7 @@ public class RetrieveComposite extends Composite {
             confsText.setToolTipText(TOOLTIP_RETRIEVE_CONFS);
         }
 
-        label = new Label(this, SWT.NONE);
+        Label label = new Label(this, SWT.NONE);
         label.setText("Types:");
 
         typesText = new Text(this, SWT.SINGLE | SWT.BORDER);
@@ -86,7 +108,7 @@ public class RetrieveComposite extends Composite {
     public RetrieveSetup getRetrieveSetup() {
         RetrieveSetup setup = new RetrieveSetup();
         setup.setRetrieveSync(retrieveSyncButton.getSelection());
-        setup.setRetrievePattern(retrievePatternText.getText());
+        setup.setRetrievePattern(retrievePatternText.getText().getText());
         if (confsText != null) {
             setup.setRetrieveConfs(confsText.getText());
         }
@@ -95,7 +117,7 @@ public class RetrieveComposite extends Composite {
     }
 
     public void init(RetrieveSetup setup) {
-        retrievePatternText.setText(setup.getRetrievePattern());
+        retrievePatternText.getText().setText(setup.getRetrievePattern());
         retrieveSyncButton.setSelection(setup.isRetrieveSync());
         if (confsText != null) {
             confsText.setText(setup.getRetrieveConfs());

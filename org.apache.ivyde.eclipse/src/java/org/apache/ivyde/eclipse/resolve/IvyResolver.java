@@ -49,10 +49,13 @@ import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 
 /**
  * Eclipse classpath container that will contain the ivy resolved entries.
@@ -325,7 +328,21 @@ public class IvyResolver {
             return Status.OK_STATUS;
         }
 
-        String pattern = project.getLocation().toPortableString() + "/" + retrievePattern;
+        // Perform variable substition on the pattern.
+        IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
+        String pattern;
+        try {
+            pattern = varManager.performStringSubstitution(retrievePattern, false);
+        } catch (CoreException e) {
+            return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
+                    "Incorrect use of variables in retrievePattern '" + retrievePattern + "'."
+                            + e.getMessage(), e);
+        }
+        // For backwards compatibility we prepend the project location to the pattern,
+        // but we do it only in case the pattern does not start with a variable (i.e. ${xxx )
+        if (!retrievePattern.startsWith("${")) {
+            pattern = project.getLocation().toPortableString() + "/" + pattern;
+        }
 
         IvyDEMessage.info("Retrieving files into " + pattern);
 

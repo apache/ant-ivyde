@@ -35,7 +35,7 @@ public class ClasspathSetupTab extends AbstractSetupTab {
     }
 
     protected Composite createSetupEditor(Composite configComposite, IProject project) {
-        classpathSetupEditor = new ClasspathSetupEditor(configComposite, SWT.NONE);
+        classpathSetupEditor = new ClasspathSetupEditor(configComposite, SWT.NONE, project);
         classpathSetupEditor.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         return classpathSetupEditor;
     }

@@ -18,6 +18,7 @@
 package org.apache.ivyde.eclipse.ui;
 
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,7 +40,7 @@ public class ClasspathTypeComposite extends Composite {
 
     private Button selectCache;
 
-    public ClasspathTypeComposite(Composite parent, int style) {
+    public ClasspathTypeComposite(Composite parent, int style, IProject project) {
         super(parent, style);
         setLayout(new GridLayout(1, false));
 
@@ -58,7 +59,7 @@ public class ClasspathTypeComposite extends Composite {
         selectRetrieve = new Button(buttons, SWT.RADIO);
         selectRetrieve.setText("retrieved artifacts");
 
-        retrieveComposite = new RetrieveComposite(this, SWT.NONE, false);
+        retrieveComposite = new RetrieveComposite(this, SWT.NONE, false, project);
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.horizontalIndent = INDENT_RETRIEVE;
         retrieveComposite.setLayoutData(gridData);

@@ -111,7 +111,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
         resolveInWorkspaceCheck
                 .setToolTipText("Will replace jars on the classpath with workspace projects");
 
-        retrieveComposite = new RetrieveComposite(body, SWT.NONE, true);
+        retrieveComposite = new RetrieveComposite(body, SWT.NONE, true, project);
         retrieveComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 
         return body;
