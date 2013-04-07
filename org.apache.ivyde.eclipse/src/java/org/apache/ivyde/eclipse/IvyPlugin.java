@@ -152,15 +152,19 @@ public class IvyPlugin extends AbstractUIPlugin {
         };
         getPreferenceStore().addPropertyChangeListener(propertyListener);
 
-        try {
-            console = new IvyConsole();
-            if (prefStoreHelper.isOpenIvyConsoleOnStartup()) {
-                IvyConsoleFactory.showConsole();
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                try {
+                    console = new IvyConsole();
+                    if (prefStoreHelper.isOpenIvyConsoleOnStartup()) {
+                        IvyConsoleFactory.showConsole();
+                    }
+                } catch (RuntimeException e) {
+                    // Don't let the console bring down the IvyDE UI
+                    logError("Errors occurred starting the Ivy console", e);
+                }
             }
-        } catch (RuntimeException e) {
-            // Don't let the console bring down the IvyDE UI
-            logError("Errors occurred starting the Ivy console", e);
-        }
+        });
 
         // Listen for project open/close events to auto-update inter-project dependencies
         workspaceListener = new WorkspaceResourceChangeListener();

@@ -150,14 +150,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public static final boolean DEFAULT_ERROR_POPUP = true;
 
     public void initializeDefaultPreferences() {
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
-                doInitializeDefaultPreferences();
-            }
-        });
-    }
-
-    private void doInitializeDefaultPreferences() {
         IPreferenceStore store = IvyPlugin.getDefault().getPreferenceStore();
         store.setDefault(PreferenceConstants.P_BOOLEAN, true);
         store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
