@@ -34,6 +34,8 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h4>Offline</h4>
 <p>If checked, it will force Ivy to never check resources via any network and trust its cache</p>
+<h4>Open the Ivy console on startup</h4>
+<p>If checked, the Ivy console will be opened on startup so that every log from Ivy will be printed. This is especially usefull when looking for debug log from IvyDE starting up.</p>
 <h4>On Eclipse startup:</h4>
 <p>Specifies what Apache IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse&#153; is starting up.</p>
 <h4>On Ivy file change:</h4>
@@ -61,6 +63,8 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <h4>Resolve dependencies in workpace:</h4>
 <p>Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</p>
+<h4>Read OSGi metadata:</h4>
+<p>If your classpath is based on jars which are actually OSGi bundles, checking this option will make IvyDE read the jar manifests and setup the specific OSGi visibility constraints.</p>
 <h4>Accepted types:</h4>
 <p>A comma separated list of extensions which will make IvyDE add the artifact to the classpath. Setting <tt>*</tt> will make very kind of type accepted. Note that a type specified as a <a href="#mapping">source or javadoc type</a> won't be accepted in any manner.</p>
 <h4>Order of the classpath entries:</h4>
