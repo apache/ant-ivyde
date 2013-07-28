@@ -19,3 +19,4 @@ test/jetty-webapp/webapp/WEB-INF/classes
 doc/style/
 doc/xooki/
 doc/sample/webapp-js-repo/webapp/bin
+.DS_Store
