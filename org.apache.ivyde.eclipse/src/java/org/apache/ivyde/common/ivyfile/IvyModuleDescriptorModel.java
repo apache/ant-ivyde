@@ -93,6 +93,39 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         new IvyTagAttribute("revision", "the revision of this module."),
                         statusTagAttribute, pubTagAttribute});
         addTag(info);
+
+        // extends
+        IvyTag extend = new IvyTag("extends", "gives information about the parent module");
+        IvyTagAttribute parentOrgAtt = new IvyTagAttribute("organisation",
+                "the name of the organisation of the parent module.", false);
+        parentOrgAtt.setValueProvider(new IValueProvider() {
+            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                List ret = listDependencyTokenValues(att.getName(), ivyFile);
+                ret.add(getSettings().getDefaultOrganization());
+                String org = ((IvyModuleDescriptorFile) ivyFile).getOrganisation();
+                if (org != null) {
+                    ret.add(org);
+                }
+                return (String[]) ret.toArray(new String[ret.size()]);
+            }
+        });
+        extend.addAttribute(parentOrgAtt);
+        IvyTagAttribute parentModuleAtt = new IvyTagAttribute("module",
+                "the module name of the parent module", true);
+        parentModuleAtt.setValueProvider(new IValueProvider() {
+            public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
+                List ret = listDependencyTokenValues(att.getName(), ivyFile);
+                return (String[]) ret.toArray(new String[ret.size()]);
+            }
+        });
+        extend.addAttribute(parentModuleAtt);
+        IvyTagAttribute parentRevAtt = new IvyTagAttribute("revision",
+                "the revision of the parent module");
+        extend.addAttribute(parentRevAtt);
+        addTag(extend);
+        info.addChildIvyTag(extend);
+
+        // license
         IvyTag child = new IvyTag("license",
                 "gives information about the licenses of the described module");
         child.addAttribute(new IvyTagAttribute("name", "the name of the license. \n"

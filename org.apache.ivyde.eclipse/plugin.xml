@@ -19,6 +19,9 @@
    under the License.    
 -->
 <plugin>
+    <extension-point id="moduleDescriptorExtension" name="org.apache.ivyde.module.descriptor.extension" schema="schema/moduleDescriptorExtension.exsd"/>
+    <extension-point id="editorPage" name="org.apache.ivyde.editorPage" schema="schema/editorPage.exsd"/>
+
 	<extension point="org.eclipse.ui.console.consoleFactories">
 	  <consoleFactory 
 	     label="Ivy Console"

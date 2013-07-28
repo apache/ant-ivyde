@@ -26,6 +26,7 @@ import org.apache.ivy.util.MessageLoggerHelper;
 import org.apache.ivyde.eclipse.IvyDEMessageLogger;
 import org.apache.ivyde.eclipse.IvyPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -71,7 +72,11 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     private IvyDEMessageLogger ivyDEMessageLogger;
 
     public IvyConsole() {
-        super("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$
+        this("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$
+    }
+
+    public IvyConsole(String name, ImageDescriptor imageDescriptor) {
+        super(name, imageDescriptor);
         consoleManager = ConsolePlugin.getDefault().getConsoleManager();
         document = new ConsoleDocument();
         Message.setDefaultLogger(this);

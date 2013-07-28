@@ -81,7 +81,7 @@ public abstract class IvyModel {
         model.put(name, list);
     }
 
-    protected void addTag(IvyTag ivyTag) {
+    public void addTag(IvyTag ivyTag) {
         if (!model.containsKey(ivyTag.getName())) {
             model.put(ivyTag.getName(), ivyTag);
             for (Iterator it = ivyTag.getChilds().iterator(); it.hasNext();) {

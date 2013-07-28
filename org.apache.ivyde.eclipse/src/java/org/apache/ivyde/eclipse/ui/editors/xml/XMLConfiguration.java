@@ -113,7 +113,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
         // required to display additional info
         assistant.setInformationControlCreator(new IInformationControlCreator() {
             public IInformationControl createInformationControl(Shell parent) {
-                return new DefaultInformationControl(parent);
+                return new DefaultInformationControl(parent, true);
             }
         });
 
