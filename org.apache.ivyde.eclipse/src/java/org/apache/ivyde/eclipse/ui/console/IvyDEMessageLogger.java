@@ -15,14 +15,14 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.ui.console;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLogger;
-import org.apache.ivyde.eclipse.ui.console.IvyConsole;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 
 public class IvyDEMessageLogger implements MessageLogger {
 

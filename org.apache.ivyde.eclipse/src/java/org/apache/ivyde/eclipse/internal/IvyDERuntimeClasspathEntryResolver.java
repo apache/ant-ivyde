@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.internal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.cpcontainer.ClasspathEntriesResolver;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.resolve.ResolveRequest;
 import org.eclipse.core.resources.IProject;
@@ -65,10 +65,10 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
 
     private IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry,
             IJavaProject project) throws JavaModelException, CoreException {
-        IvyClasspathContainer ivycp;
+        IvyClasspathContainerImpl ivycp;
 
         if (project == null) {
-            ivycp = new IvyClasspathContainer(null, entry.getPath(), null, null);
+            ivycp = new IvyClasspathContainerImpl(null, entry.getPath(), null, null);
         } else {
             IClasspathContainer container = JavaCore
                     .getClasspathContainer(entry.getPath(), project);
@@ -79,14 +79,14 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
                         IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, null));
                 // execution will not reach here - exception will be thrown
             }
-            ivycp = (IvyClasspathContainer) container;
+            ivycp = (IvyClasspathContainerImpl) container;
         }
 
         return computeDefaultContainerEntries(ivycp, entry);
     }
 
     private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(
-            IvyClasspathContainer ivycp, IRuntimeClasspathEntry entry) throws CoreException {
+            IvyClasspathContainerImpl ivycp, IRuntimeClasspathEntry entry) throws CoreException {
         IClasspathEntry[] cpes;
         if (ivycp.getClasspathEntries() == null
                 || ivycp.getConf().getInheritedAdvancedSetup().isResolveBeforeLaunch()) {

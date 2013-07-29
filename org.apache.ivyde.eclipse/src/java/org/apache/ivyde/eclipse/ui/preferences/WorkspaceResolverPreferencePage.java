@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;

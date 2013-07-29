@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.editors.xml;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;

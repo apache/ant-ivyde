@@ -23,10 +23,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyNature;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -76,7 +76,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                         return;
                 }
                 try {
-                    if (project.hasNature(IvyNature.IVY_NATURE)) {
+                    if (IvyNatureHelper.hasNature(project)) {
                         projectClosed(project);
                     }
                 } catch (CoreException e) {
@@ -97,7 +97,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
     private void projectClosed(final IProject project) throws JavaModelException {
         // Check if one of Ivy projects is being removed
-        List containers = IvyClasspathUtil.getIvyClasspathContainers(project);
+        List containers = IvyClasspathContainerHelper.getContainers(project);
         if (containers.isEmpty()) {
             return;
         }
@@ -109,7 +109,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         Iterator it = affectedContainers.iterator();
         while (it.hasNext()) {
-            IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
+            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
             ivycp.launchResolve(false, null);
         }
     }
@@ -133,12 +133,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
             if (!(resource instanceof IProject)) {
                 continue;
             }
-            try {
-                if (((IProject) resource).hasNature(IvyNature.IVY_NATURE)) {
-                    projects.add(resource);
-                }
-            } catch (CoreException e) {
-                IvyPlugin.log(e);
+            if (IvyNatureHelper.hasNature((IProject) resource)) {
+                projects.add(resource);
             }
         }
 
@@ -152,7 +148,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         Iterator it = allContainers.iterator();
         while (it.hasNext()) {
-            IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
+            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
             ivycp.launchResolve(false, null);
         }
     }
@@ -175,11 +171,11 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         for (int i = 0; i < projects.length; i++) {
             IJavaProject javaProject = projects[i];
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(javaProject);
+            List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
+                    .getContainers(javaProject);
             Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
             while (itContainer.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
                 IClasspathEntry[] containerEntries = ivycp.getClasspathEntries();
                 for (int j = 0; j < containerEntries.length; j++) {
                     IClasspathEntry containerEntry = containerEntries[j];
@@ -212,7 +208,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         for (int i = 0; i < projects.length; i++) {
             if (!openedProjects.contains(projects[i].getProject())) {
-                allContainers.addAll(IvyClasspathUtil.getIvyClasspathContainers(projects[i]));
+                allContainers.addAll(IvyClasspathContainerHelper.getContainers(projects[i]));
             }
         }
 

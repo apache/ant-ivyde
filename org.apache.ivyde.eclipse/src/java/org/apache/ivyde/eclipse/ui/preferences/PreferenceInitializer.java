@@ -18,14 +18,14 @@
 package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivy.util.Message;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
-import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
+import org.apache.ivyde.eclipse.cp.AdvancedSetup;
+import org.apache.ivyde.eclipse.cp.ClasspathSetup;
+import org.apache.ivyde.eclipse.cp.MappingSetup;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
+import org.apache.ivyde.eclipse.cp.SettingsSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
-import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;

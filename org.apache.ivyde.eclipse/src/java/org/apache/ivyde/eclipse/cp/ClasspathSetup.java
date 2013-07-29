@@ -15,11 +15,10 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.cp;
 
 import java.util.List;
 
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 
 public class ClasspathSetup {
 

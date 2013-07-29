@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -31,7 +31,7 @@ public class IvyDEClasspathContainerDecorator implements ILabelDecorator {
     }
 
     public String decorateText(String text, Object element) {
-        IvyClasspathContainer ivycp = IvyClasspathUtil.jdt2IvyCPC((ClassPathContainer) element);
+        IvyClasspathContainerImpl ivycp = IvyClasspathUtil.jdt2IvyCPC((ClassPathContainer) element);
         if (ivycp == null) {
             return null;
         }

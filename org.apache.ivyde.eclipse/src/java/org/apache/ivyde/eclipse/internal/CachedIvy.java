@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +33,8 @@ import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.cp.ResolvedPath;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceIvySettings;
 import org.apache.ivyde.eclipse.workspaceresolver.WorkspaceResolver;
 import org.eclipse.core.resources.IProject;

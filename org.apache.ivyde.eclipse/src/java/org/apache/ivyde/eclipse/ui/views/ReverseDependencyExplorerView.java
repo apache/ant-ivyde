@@ -17,9 +17,9 @@
  */
 package org.apache.ivyde.eclipse.ui.views;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.handlers.OpenIvyFileHandler;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.revdepexplorer.IvyUtil;
 import org.apache.ivyde.eclipse.revdepexplorer.MultiRevDependencyDescriptor;
 import org.apache.ivyde.eclipse.revdepexplorer.SyncIvyFilesJob;
@@ -154,7 +154,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
                 IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
                 Object element = selection.getFirstElement();
                 if (element instanceof CPDependencyDescriptor) {
-                    IvyClasspathContainer cp = ((CPDependencyDescriptor) element).container;
+                    IvyClasspathContainerImpl cp = ((CPDependencyDescriptor) element).container;
                     OpenIvyFileHandler.open(cp);
                 }
             }
@@ -328,7 +328,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
         public Object[] getChildren(Object parent) {
             if (parent instanceof MultiRevDependencyDescriptor) {
                 MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) parent;
-                IvyClasspathContainer[] containers = mrdd.getIvyClasspathContainers();
+                IvyClasspathContainerImpl[] containers = mrdd.getIvyClasspathContainers();
 
                 Object[] wrappedProjects = new Object[containers.length];
                 for (int i = 0; i < containers.length; i++) {
@@ -359,11 +359,11 @@ public class ReverseDependencyExplorerView extends ViewPart {
     }
 
     class CPDependencyDescriptor {
-        private IvyClasspathContainer container;
+        private IvyClasspathContainerImpl container;
 
         private MultiRevDependencyDescriptor multiRevisionDescriptor;
 
-        public CPDependencyDescriptor(IvyClasspathContainer container,
+        public CPDependencyDescriptor(IvyClasspathContainerImpl container,
                 MultiRevDependencyDescriptor multiRevisionDescriptor) {
             this.container = container;
             this.multiRevisionDescriptor = multiRevisionDescriptor;
@@ -376,7 +376,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
             return multiRevisionDescriptor.getRevisions(container);
         }
 
-        public IvyClasspathContainer getIvyClasspathContainer() {
+        public IvyClasspathContainerImpl getIvyClasspathContainer() {
             return container;
         }
 

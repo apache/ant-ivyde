@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyNature;
+import org.apache.ivyde.eclipse.IvyNatureHelper;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -60,7 +60,7 @@ public class AddIvyNatureHandler extends AbstractHandler {
             Iterator itProject = projects.iterator();
             while (itProject.hasNext()) {
                 IProject project = (IProject) itProject.next();
-                IvyNature.addNature(project);
+                IvyNatureHelper.addNature(project);
             }
         }
 

@@ -4,31 +4,16 @@ Bundle-Name: Apache IvyDE
 Bundle-SymbolicName: org.apache.ivyde.eclipse; singleton:=true
 Bundle-Version: 2.2.0.qualifier
 Bundle-ClassPath: ivyde-eclipse.jar
-Bundle-Activator: org.apache.ivyde.eclipse.IvyPlugin
+Bundle-Activator: org.apache.ivyde.eclipse.internal.IvyPlugin
 Bundle-Vendor: Apache Software Foundation
 Export-Package: org.apache.ivyde.common.completion,
  org.apache.ivyde.common.ivyfile,
  org.apache.ivyde.common.ivysettings,
  org.apache.ivyde.common.model,
  org.apache.ivyde.eclipse,
- org.apache.ivyde.eclipse.conditions,
- org.apache.ivyde.eclipse.cpcontainer,
+ org.apache.ivyde.eclipse.cp,
  org.apache.ivyde.eclipse.extension,
- org.apache.ivyde.eclipse.handlers,
- org.apache.ivyde.eclipse.resolve,
- org.apache.ivyde.eclipse.retrieve,
- org.apache.ivyde.eclipse.revdepexplorer,
- org.apache.ivyde.eclipse.ui,
- org.apache.ivyde.eclipse.ui.console,
- org.apache.ivyde.eclipse.ui.core,
- org.apache.ivyde.eclipse.ui.editors,
- org.apache.ivyde.eclipse.ui.editors.pages,
- org.apache.ivyde.eclipse.ui.editors.xml,
- org.apache.ivyde.eclipse.ui.menu,
- org.apache.ivyde.eclipse.ui.preferences,
- org.apache.ivyde.eclipse.ui.views,
- org.apache.ivyde.eclipse.ui.wizards,
- org.apache.ivyde.eclipse.workspaceresolver
+ org.apache.ivyde.eclipse.ui.console
 Require-Bundle: org.apache.xerces;bundle-version="[2.9.0,3.0.0)";resolution:=optional,
  org.eclipse.ui;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)",

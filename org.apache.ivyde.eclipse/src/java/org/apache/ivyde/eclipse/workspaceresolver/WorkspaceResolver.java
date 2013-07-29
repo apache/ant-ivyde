@@ -52,10 +52,10 @@ import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
-import org.apache.ivyde.eclipse.IvyDEMessage;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -192,11 +192,11 @@ public class WorkspaceResolver extends AbstractResolver {
             if (!p.exists()) {
                 continue;
             }
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(p);
+            List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
+                    .getContainers(p);
             Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
             while (itContainer.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
                 ModuleDescriptor md = ivycp.getState().getCachedModuleDescriptor();
                 if (md == null) {
                     continue;

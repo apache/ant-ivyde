@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.editors.xml.ColorManager;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;

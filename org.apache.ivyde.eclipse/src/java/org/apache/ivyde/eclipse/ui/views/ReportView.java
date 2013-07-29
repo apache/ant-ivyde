@@ -19,9 +19,9 @@ package org.apache.ivyde.eclipse.ui.views;
 
 import java.net.URL;
 
-import org.apache.ivyde.eclipse.IvyDEMessage;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -55,8 +55,8 @@ public class ReportView extends ViewPart implements ISelectionListener {
 
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         if (sel instanceof IStructuredSelection) {
-            IvyClasspathContainer ivycp = IvyClasspathUtil
-                    .getIvyClasspathContainer((IStructuredSelection) sel);
+            IvyClasspathContainer ivycp = IvyClasspathContainerHelper
+                    .getContainer((IStructuredSelection) sel);
             if (ivycp != null) {
                 browser.setText("<html></html>");
                 URL report = ivycp.getReportUrl();

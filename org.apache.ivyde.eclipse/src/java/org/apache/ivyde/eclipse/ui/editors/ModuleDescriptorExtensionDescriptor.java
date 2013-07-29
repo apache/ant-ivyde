@@ -15,37 +15,38 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.extension;
+package org.apache.ivyde.eclipse.ui.editors;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.extension.ModuleDescriptorExtension;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * A factory proxy for creating a IFormPage contributed to Ivy module descriptor editor.
+ * A factory proxy for creating a ModuleDescriptorExtension.
  */
-public class IvyEditorPageDescriptor {
-
+public class ModuleDescriptorExtensionDescriptor {
     private static final String ID_ATTRIBUTE = "id";
 
-    private static final String CLASS_ATTRIBUTE = "pageClass";
+    public static final String MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE = "modelContributorClass";
 
     private IConfigurationElement element;
 
-    public IvyEditorPageDescriptor(final IConfigurationElement element) {
+    public ModuleDescriptorExtensionDescriptor(final IConfigurationElement element) {
         this.element = element;
     }
 
-    public IvyEditorPage createPage() {
+    public ModuleDescriptorExtension createModuleDescriptorExtension() {
         try {
-            return (IvyEditorPage) element.createExecutableExtension(CLASS_ATTRIBUTE);
+            return (ModuleDescriptorExtension) element
+                    .createExecutableExtension(MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE);
         } catch (final CoreException e) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Impossible to create the page " + element.getAttribute(CLASS_ATTRIBUTE), e);
+            IvyPlugin.log(IStatus.ERROR, "Impossible to create the module descriptor extension "
+                    + element.getAttribute(MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE), e);
         } catch (final ClassCastException e) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Impossible to create the page " + element.getAttribute(CLASS_ATTRIBUTE), e);
+            IvyPlugin.log(IStatus.ERROR, "Impossible to create the module descriptor extension "
+                    + element.getAttribute(MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE), e);
         }
         return null;
     }

@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

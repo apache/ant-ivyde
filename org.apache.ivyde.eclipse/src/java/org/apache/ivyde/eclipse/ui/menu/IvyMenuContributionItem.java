@@ -32,9 +32,9 @@ import java.util.Set;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
-import org.apache.ivyde.eclipse.IvyNature;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.handlers.OpenIvyFileHandler;
 import org.apache.ivyde.eclipse.handlers.RefreshHandler;
@@ -42,6 +42,7 @@ import org.apache.ivyde.eclipse.handlers.ReloadSettingsHandler;
 import org.apache.ivyde.eclipse.handlers.RemoveIvyNatureHandler;
 import org.apache.ivyde.eclipse.handlers.ResolveHandler;
 import org.apache.ivyde.eclipse.handlers.ViewReverseDependenciesHandler;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.ui.menu.CleanCacheAction.Cleanable;
@@ -165,7 +166,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             if (totalSelected == 1 && containers.size() == 1
                     && ((Set) containers.values().iterator().next()).size() == 1) {
                 // only one container
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) ((Set) containers.values()
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) ((Set) containers.values()
                         .iterator().next()).iterator().next();
                 Ivy ivy = ivycp.getState().getCachedIvy();
                 if (ivy != null) {
@@ -208,7 +209,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
     private boolean collectProject(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
             Map/* <IProject, Set<StandaloneRetrieveSetup>> */retrieveSetups, Object element) {
         IProject project = (IProject) IvyPlugin.adapt(element, IProject.class);
-        if (project != null && project.isOpen() && IvyNature.hasNature(project)) {
+        if (project != null && project.isOpen() && IvyNatureHelper.hasNature(project)) {
             doCollectProject(containers, retrieveSetups, project);
             return true;
         }
@@ -217,7 +218,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
 
     private void doCollectProject(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
             Map/* <IProject, Set<StandaloneRetrieveSetup>> */retrieveSetups, IProject project) {
-        List ivycps = IvyClasspathUtil.getIvyClasspathContainers(project);
+        List ivycps = IvyClasspathContainerHelper.getContainers(project);
         if (!ivycps.isEmpty()) {
             containers.put(project, new HashSet(ivycps));
         }
@@ -237,7 +238,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
 
     private boolean collectContainer(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
             ClassPathContainer element) {
-        IvyClasspathContainer ivycp = IvyClasspathUtil.jdt2IvyCPC(element);
+        IvyClasspathContainerImpl ivycp = IvyClasspathUtil.jdt2IvyCPC(element);
         if (ivycp == null) {
             return false;
         }
@@ -246,7 +247,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
     }
 
     private void doCollectContainer(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
-            IvyClasspathContainer ivycp) {
+            IvyClasspathContainerImpl ivycp) {
         IJavaProject javaProject = ivycp.getConf().getJavaProject();
         if (javaProject == null) {
             return;
@@ -295,7 +296,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             Set set = (Set) itSet.next();
             Iterator itContainer = set.iterator();
             while (itContainer.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainer.next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
                 Ivy ivy = ivycp.getState().getCachedIvy();
                 if (ivy != null) {
                     addResolutionCleanable(allCleanables, ivy);

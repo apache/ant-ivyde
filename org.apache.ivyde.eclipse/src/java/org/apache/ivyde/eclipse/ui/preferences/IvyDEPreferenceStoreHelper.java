@@ -17,12 +17,12 @@
  */
 package org.apache.ivyde.eclipse.ui.preferences;
 
-import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
-import org.apache.ivyde.eclipse.cpcontainer.ClasspathSetup;
+import org.apache.ivyde.eclipse.cp.AdvancedSetup;
+import org.apache.ivyde.eclipse.cp.ClasspathSetup;
+import org.apache.ivyde.eclipse.cp.MappingSetup;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
+import org.apache.ivyde.eclipse.cp.SettingsSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
-import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;

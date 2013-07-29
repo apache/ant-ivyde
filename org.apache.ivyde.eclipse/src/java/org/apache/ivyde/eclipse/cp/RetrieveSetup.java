@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.retrieve;
+package org.apache.ivyde.eclipse.cp;
 
 /**
  * This class is just a simple bean defining the properties which configure an IvyDE classpath

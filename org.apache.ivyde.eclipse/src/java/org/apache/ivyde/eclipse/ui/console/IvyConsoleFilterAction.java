@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui.console;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;

@@ -24,9 +24,15 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyNature;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
+import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.cp.AdvancedSetup;
+import org.apache.ivyde.eclipse.cp.ClasspathSetup;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cp.MappingSetup;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
+import org.apache.ivyde.eclipse.cp.SettingsSetup;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.retrieve.StandaloneRetrieveSetup;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
@@ -68,7 +74,7 @@ public final class IvyClasspathContainerConfAdapter {
 
         if (conf.getJavaProject() != null) {
             // ensure that the project has the Ivy nature
-            IvyNature.addNature(conf.getJavaProject().getProject());
+            IvyNatureHelper.addNature(conf.getJavaProject().getProject());
         }
     }
 
@@ -434,7 +440,7 @@ public final class IvyClasspathContainerConfAdapter {
             IvyPlugin.logError(UTF8_ERROR, e);
             throw new RuntimeException(UTF8_ERROR, e);
         }
-        return new Path(IvyClasspathContainer.CONTAINER_ID).append(path.toString());
+        return new Path(IvyClasspathContainer.ID).append(path.toString());
     }
 
     private static void append(StringBuffer path, String name, String value)

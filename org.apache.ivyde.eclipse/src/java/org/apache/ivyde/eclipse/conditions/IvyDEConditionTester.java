@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.conditions;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
@@ -31,10 +31,10 @@ public class IvyDEConditionTester extends PropertyTester {
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         if (property.equals(PROPERTY_IVYPROJECT)) {
             IProject project = (IProject) receiver;
-            return !IvyClasspathUtil.getIvyClasspathContainers(project).isEmpty();
+            return !IvyClasspathContainerHelper.getContainers(project).isEmpty();
         } else if (property.equals(PROPERTY_IVYCP)) {
             ClassPathContainer cp = (ClassPathContainer) receiver;
-            return IvyClasspathUtil.isIvyClasspathContainer(cp.getClasspathEntry().getPath());
+            return IvyClasspathContainerHelper.isIvyClasspathContainer(cp.getClasspathEntry().getPath());
         }
         return false;
     }

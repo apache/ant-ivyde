@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 
 public class MultiRevDependencyDescriptor {
     private final ModuleId moduleId;
@@ -71,7 +71,7 @@ public class MultiRevDependencyDescriptor {
      * @param dependencyDescriptor
      *            current descriptor
      */
-    public void addDependencyDescriptor(IvyClasspathContainer container,
+    public void addDependencyDescriptor(IvyClasspathContainerImpl container,
             DependencyDescriptor dependencyDescriptor) {
         Collection/* <DependencyDescriptor> */dependencies = (Collection) dependenciesByContainer
                 .get(container);
@@ -149,9 +149,9 @@ public class MultiRevDependencyDescriptor {
     /**
      * @return all projects
      */
-    public IvyClasspathContainer[] getIvyClasspathContainers() {
+    public IvyClasspathContainerImpl[] getIvyClasspathContainers() {
         Collection containers = dependenciesByContainer.keySet();
-        return (IvyClasspathContainer[]) containers.toArray(new IvyClasspathContainer[containers
+        return (IvyClasspathContainerImpl[]) containers.toArray(new IvyClasspathContainerImpl[containers
                 .size()]);
     }
 
@@ -160,10 +160,10 @@ public class MultiRevDependencyDescriptor {
      *            project
      * @return true if there is a project match
      */
-    public boolean isForContainer(IvyClasspathContainer container) {
-        IvyClasspathContainer[] containers = getIvyClasspathContainers();
+    public boolean isForContainer(IvyClasspathContainerImpl container) {
+        IvyClasspathContainerImpl[] containers = getIvyClasspathContainers();
         for (int i = 0; i < containers.length; i++) {
-            IvyClasspathContainer currentContainer = containers[i];
+            IvyClasspathContainerImpl currentContainer = containers[i];
             if (currentContainer.equals(container)) {
                 return true;
             }
@@ -186,7 +186,7 @@ public class MultiRevDependencyDescriptor {
      *            project
      * @return revision
      */
-    public String[] getRevisions(IvyClasspathContainer container) {
+    public String[] getRevisions(IvyClasspathContainerImpl container) {
         /* Collection<DependencyDescriptor> */
         Collection containerDependencyDescriptors = (Collection) dependenciesByContainer
                 .get(container);

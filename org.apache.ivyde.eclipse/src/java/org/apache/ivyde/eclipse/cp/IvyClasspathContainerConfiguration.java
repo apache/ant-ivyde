@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.cp;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfAdapter;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -92,6 +93,10 @@ public class IvyClasspathContainerConfiguration {
             boolean editing, IClasspathAttribute[] attributes) {
         this.javaProject = javaProject;
         IvyClasspathContainerConfAdapter.load(this, path, attributes);
+    }
+
+    public IPath getPath() {
+        return IvyClasspathContainerConfAdapter.getPath(this);
     }
 
     // ///////////////////////////

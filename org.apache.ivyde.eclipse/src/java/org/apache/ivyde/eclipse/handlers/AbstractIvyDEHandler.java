@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -70,7 +71,7 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
                     addElement(projects, elements[i]);
                 }
             } else if (element instanceof ClassPathContainer) {
-                IvyClasspathContainer ivycp = IvyClasspathUtil
+                IvyClasspathContainerImpl ivycp = IvyClasspathUtil
                         .jdt2IvyCPC(((ClassPathContainer) element));
                 IJavaProject javaProject = ivycp.getConf().getJavaProject();
                 if (javaProject != null) {
@@ -100,7 +101,7 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
         }
         if (project != null) {
             // check that there is an IvyDE container
-            List containers = IvyClasspathUtil.getIvyClasspathContainers(project);
+            List containers = IvyClasspathContainerHelper.getContainers(project);
             if (!containers.isEmpty()) {
                 projects.put(project, new HashSet(containers));
             }
@@ -114,12 +115,12 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
             Iterator itContainers = ((Set) entry.getValue()).iterator();
             while (itContainers.hasNext()) {
                 handleContainer((IProject) entry.getKey(),
-                    (IvyClasspathContainer) itContainers.next());
+                    (IvyClasspathContainerImpl) itContainers.next());
             }
         }
     }
 
-    protected void handleContainer(IProject project, IvyClasspathContainer cp) {
+    protected void handleContainer(IProject project, IvyClasspathContainerImpl cp) {
         throw new UnsupportedOperationException();
     }
 

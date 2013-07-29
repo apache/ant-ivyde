@@ -27,10 +27,11 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivyde.eclipse.IvyDEMessage;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
 import org.apache.ivyde.eclipse.resolve.IvyResolver;
 import org.apache.ivyde.eclipse.resolve.ResolveResult;
-import org.apache.ivyde.eclipse.retrieve.RetrieveSetup;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 
@@ -45,7 +46,7 @@ public class ClasspathEntriesResolver extends IvyResolver {
 
     private ResolveReport resolveReport;
 
-    public ClasspathEntriesResolver(IvyClasspathContainer ivycp, boolean usePreviousResolveIfExist) {
+    public ClasspathEntriesResolver(IvyClasspathContainerImpl ivycp, boolean usePreviousResolveIfExist) {
         super(ivycp.getConf().getIvyXmlPath(), ivycp.getConf().getConfs(), ivycp.getConf()
                 .getJavaProject() == null ? null : ivycp.getConf().getJavaProject().getProject());
         this.conf = ivycp.getConf();

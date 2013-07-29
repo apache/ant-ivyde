@@ -34,7 +34,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
+import org.apache.ivyde.eclipse.cp.SettingsSetup;
 import org.eclipse.core.resources.IProject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;

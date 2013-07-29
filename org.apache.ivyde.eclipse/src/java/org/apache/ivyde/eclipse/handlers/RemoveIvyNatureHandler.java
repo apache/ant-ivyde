@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyNature;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -52,7 +52,7 @@ public class RemoveIvyNatureHandler extends AbstractHandler {
             if (object instanceof IAdaptable) {
                 IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
                 if (project != null) {
-                    if (IvyNature.hasNature(project)) {
+                    if (IvyNatureHelper.hasNature(project)) {
                         projects.add(project);
                     }
                 } else {
@@ -74,7 +74,7 @@ public class RemoveIvyNatureHandler extends AbstractHandler {
                 Iterator itProject = projects.iterator();
                 while (itProject.hasNext()) {
                     IProject project = (IProject) itProject.next();
-                    IvyNature.removeNature(project);
+                    IvyNatureHelper.removeNature(project);
                 }
             }
         }

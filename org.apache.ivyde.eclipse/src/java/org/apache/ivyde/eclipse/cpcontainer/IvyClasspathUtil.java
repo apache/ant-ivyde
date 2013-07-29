@@ -23,8 +23,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,55 +30,22 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivyde.eclipse.IvyDEException;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.ResolvedPath;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 public final class IvyClasspathUtil {
 
     private IvyClasspathUtil() {
         // utility class
-    }
-
-    /**
-     * Get the Ivy classpath container from the selection in the Java package view
-     * 
-     * @param selection
-     *            the selection
-     * @return
-     * @throws JavaModelException
-     */
-    public static IvyClasspathContainer getIvyClasspathContainer(IStructuredSelection selection) {
-        if (selection == null) {
-            return null;
-        }
-        for (Iterator it = selection.iterator(); it.hasNext();) {
-            Object element = it.next();
-            IvyClasspathContainer cp = (IvyClasspathContainer) IvyPlugin.adapt(element,
-                IvyClasspathContainer.class);
-            if (cp != null) {
-                return cp;
-            }
-            if (element instanceof ClassPathContainer) {
-                // FIXME: we shouldn't check against internal JDT API but there are not adaptable to
-                // useful class
-                return jdt2IvyCPC((ClassPathContainer) element);
-            }
-        }
-        return null;
     }
 
     /**
@@ -90,128 +55,19 @@ public final class IvyClasspathUtil {
      *            the container to transform into an IvyClasspathContainer
      * @return the IvyClasspathContainer is such, null, if not
      */
-    public static IvyClasspathContainer jdt2IvyCPC(ClassPathContainer cpc) {
+    public static IvyClasspathContainerImpl jdt2IvyCPC(ClassPathContainer cpc) {
         IClasspathEntry entry = cpc.getClasspathEntry();
         try {
             IClasspathContainer icp = JavaCore.getClasspathContainer(entry.getPath(),
                 cpc.getJavaProject());
-            if (icp instanceof IvyClasspathContainer) {
-                return (IvyClasspathContainer) icp;
+            if (icp instanceof IvyClasspathContainerImpl) {
+                return (IvyClasspathContainerImpl) icp;
             }
         } catch (JavaModelException e) {
             // unless there are issues with the JDT, this should never happen
             IvyPlugin.log(e);
         }
         return null;
-    }
-
-    public static boolean isIvyClasspathContainer(IPath containerPath) {
-        return containerPath.segment(0).equals(IvyClasspathContainer.CONTAINER_ID);
-    }
-
-    /**
-     * Search the Ivy classpath containers within the specified Java project
-     * 
-     * @param javaProject
-     *            the project to search into
-     * @return the Ivy classpath container if found
-     */
-    public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(
-            IJavaProject javaProject) {
-        List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (javaProject == null || !javaProject.exists()) {
-            return containers;
-        }
-        try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
-                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-                    IPath path = entry.getPath();
-                    if (isIvyClasspathContainer(path)) {
-                        IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
-                        if (cp instanceof IvyClasspathContainer) {
-                            containers.add(cp);
-                        }
-                    }
-                }
-            }
-        } catch (JavaModelException e) {
-            // unless there are issues with the JDT, this should never happen
-            IvyPlugin.log(e);
-        }
-        return containers;
-    }
-
-    public static List/* <IvyClasspathContainer> */getIvyFileClasspathContainers(IFile ivyfile) {
-        IJavaProject javaProject = JavaCore.create(ivyfile.getProject());
-        List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (javaProject == null || !javaProject.exists()) {
-            return containers;
-        }
-        try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
-                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-                    IPath path = entry.getPath();
-                    if (isIvyClasspathContainer(path)) {
-                        IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
-                        if (cp instanceof IvyClasspathContainer) {
-                            IvyClasspathContainer ivycp = (IvyClasspathContainer) cp;
-                            if (ivycp.getConf().getIvyXmlPath()
-                                    .equals(ivyfile.getProjectRelativePath().toString())) {
-                                containers.add(ivycp);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (JavaModelException e) {
-            // unless there are issues with the JDT, this should never happen
-            IvyPlugin.log(e);
-        }
-        return containers;
-    }
-
-    public static List/* <IvyClasspathContainer> */getIvySettingsClasspathContainers(
-            IFile ivySettings) {
-        IJavaProject javaProject = JavaCore.create(ivySettings.getProject());
-        List/* <IvyClasspathContainer> */containers = new ArrayList();
-        if (javaProject == null || !javaProject.exists()) {
-            return containers;
-        }
-        try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
-                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-                    IPath path = entry.getPath();
-                    if (isIvyClasspathContainer(path)) {
-                        IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
-                        if (cp instanceof IvyClasspathContainer) {
-                            IvyClasspathContainer ivycp = (IvyClasspathContainer) cp;
-                            ResolvedPath settingsPath;
-                            try {
-                                settingsPath = ivycp.getConf().getInheritedSettingsSetup()
-                                        .getResolvedIvySettingsPath(ivycp.getConf().getProject());
-                            } catch (IvyDEException e) {
-                                // cannot resolve the ivy settings so just ignore
-                                continue;
-                            }
-                            if (settingsPath.getResolvedPath().equals(
-                                ivySettings.getProjectRelativePath().toString())) {
-                                containers.add(ivycp);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (JavaModelException e) {
-            // unless there are issues with the JDT, this should never happen
-            IvyPlugin.log(e);
-        }
-        return containers;
     }
 
     public static List split(String str) {
@@ -274,61 +130,6 @@ public final class IvyClasspathUtil {
         return null;
     }
 
-    public static IvyClasspathContainer getIvyClasspathContainer(IPath containerPath,
-            IJavaProject javaProject) {
-        IClasspathContainer cp;
-        try {
-            cp = JavaCore.getClasspathContainer(containerPath, javaProject);
-        } catch (JavaModelException e) {
-            IvyPlugin.log(e);
-            return null;
-        }
-        if (!(cp instanceof IvyClasspathContainer)) {
-            IvyPlugin.logError("Expected an Ivy container but was " + cp.getClass().getName()
-                    + " for path " + containerPath);
-            return null;
-        }
-        return (IvyClasspathContainer) cp;
-    }
-
-    /**
-     * Search the Ivy classpath entry within the specified Java project with the specific path
-     * 
-     * @param containerPath
-     *            the path of the container
-     * @param javaProject
-     *            the project to search into
-     * @return the Ivy classpath container if found, otherwise return <code>null</code>
-     */
-    public static IClasspathEntry getIvyClasspathEntry(IPath containerPath, IJavaProject javaProject) {
-        if (javaProject == null || !javaProject.exists()) {
-            return null;
-        }
-        try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
-                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-                    if (containerPath.equals(entry.getPath())) {
-                        return entry;
-                    }
-                }
-            }
-        } catch (JavaModelException e) {
-            // unless there are issues with the JDT, this should never happen
-            IvyPlugin.log(e);
-        }
-        return null;
-    }
-
-    public static List/* <IvyClasspathContainer> */getIvyClasspathContainers(IProject project) {
-        IJavaProject javaProject = JavaCore.create(project);
-        if (javaProject != null && javaProject.exists()) {
-            return getIvyClasspathContainers(javaProject);
-        }
-        return Collections.EMPTY_LIST;
-    }
-
     /**
      * Rewrites the module descriptor back to project's ivy file.
      * 
@@ -336,7 +137,7 @@ public final class IvyClasspathUtil {
      * @throws ParseException
      * @throws IvyDEException
      */
-    public static void toIvyFile(ModuleDescriptor descriptor, IvyClasspathContainer container)
+    public static void toIvyFile(ModuleDescriptor descriptor, IvyClasspathContainerImpl container)
             throws ParseException, IOException, IvyDEException {
         IvyClasspathContainerConfiguration conf = container.getConf();
         // TODO the ivy file might not be in the workspace or may be an absolute path
@@ -380,25 +181,6 @@ public final class IvyClasspathUtil {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * This will return all ivy projects in the workspace <br>
-     * 
-     * @return collection of ivy projects
-     */
-    public static IProject[] getIvyProjectsInWorkspace() {
-        Collection/* <IProject> */ivyProjects = new HashSet();
-
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen() && getIvyClasspathContainers(projects[i]).size() > 0) {
-                ivyProjects.add(projects[i]);
-            }
-        }
-
-        return (IProject[]) ivyProjects.toArray(new IProject[ivyProjects.size()]);
     }
 
 }

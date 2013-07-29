@@ -187,7 +187,7 @@
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
       <classpathVariableInitializer
-            class="org.apache.ivyde.eclipse.IvyDEClasspathVariableInitializer"
+            class="org.apache.ivyde.eclipse.internal.IvyDEClasspathVariableInitializer"
             variable="IVY_HOME">
       </classpathVariableInitializer>
    </extension>
@@ -216,7 +216,7 @@
    <extension
          point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
       <runtimeClasspathEntryResolver
-            class="org.apache.ivyde.eclipse.IvyDERuntimeClasspathEntryResolver"
+            class="org.apache.ivyde.eclipse.internal.IvyDERuntimeClasspathEntryResolver"
             container="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER"
             id="org.apache.ivyde.eclipse.runtimeClasspathEntryResolver"
             variable="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">
@@ -450,7 +450,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.apache.ivyde.eclipse.IvyNature">
+               class="org.apache.ivyde.eclipse.internal.IvyNature">
          </run>
       </runtime>
    </extension>

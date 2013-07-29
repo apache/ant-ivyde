@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.internal;
 
 import java.io.File;
 import java.util.Collections;
@@ -26,10 +26,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.eclipse.cpcontainer.IvyAttachementManager;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerSerializer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.retrieve.RetrieveSetupManager;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
@@ -227,11 +227,11 @@ public class IvyPlugin extends AbstractUIPlugin {
         IJavaModel javaModel = JavaCore.create(workspace.getRoot());
         IJavaProject[] projects = javaModel.getJavaProjects();
         for (int i = 0; i < projects.length; i++) {
-            List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                    .getIvyClasspathContainers(projects[i]);
+            List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
+                    .getContainers(projects[i]);
             Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
             while (itContainers.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainers.next();
                 if (!ivycp.getConf().isSettingsProjectSpecific()) {
                     ivycp.launchResolve(false, null);
                 }

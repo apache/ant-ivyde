@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;

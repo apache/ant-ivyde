@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.cpcontainer;
+package org.apache.ivyde.eclipse.cp;
 
 public class AdvancedSetup {
 

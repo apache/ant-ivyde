@@ -27,8 +27,8 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.eclipse.core.resources.IProject;
 
 public final class IvyUtil {
@@ -43,11 +43,11 @@ public final class IvyUtil {
         Map/* <ModuleId, MultiRevisionDependencyDescriptor> */mdMap = new HashMap();
 
         for (int i = 0; i < projects.length; i++) {
-            List containers = IvyClasspathUtil.getIvyClasspathContainers(projects[i]);
+            List containers = IvyClasspathContainerHelper.getContainers(projects[i]);
             Iterator containerIter = containers.iterator();
 
             while (containerIter.hasNext()) {
-                IvyClasspathContainer container = (IvyClasspathContainer) containerIter.next();
+                IvyClasspathContainerImpl container = (IvyClasspathContainerImpl) containerIter.next();
                 ModuleDescriptor md = container.getState().getCachedModuleDescriptor();
                 if (md == null) {
                     continue;
@@ -99,6 +99,6 @@ public final class IvyUtil {
      * @return multi-revision dependency descriptors
      */
     public static MultiRevDependencyDescriptor[] getAllDependencyDescriptorsInWorkspace() {
-        return getDependencyDescriptorsByProjects(IvyClasspathUtil.getIvyProjectsInWorkspace());
+        return getDependencyDescriptorsByProjects(IvyClasspathContainerHelper.getIvyProjectsInWorkspace());
     }
 }

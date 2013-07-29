@@ -25,8 +25,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.ivyde.eclipse.IvyDEMessage;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -72,7 +73,7 @@ public class IvyAttachementManager {
     public void updateAttchements(IJavaProject project, IPath containerPath,
             IClasspathContainer containerSuggestion) {
         IvyDEMessage.verbose("Updating attachements on the container " + containerPath);
-        
+
         Properties newProps = new Properties();
 
         IClasspathEntry[] newEntries = containerSuggestion.getClasspathEntries();
@@ -95,10 +96,11 @@ public class IvyAttachementManager {
             }
         }
 
-        IvyClasspathContainer ivycp = IvyClasspathUtil.getIvyClasspathContainer(containerPath,
-            project);
+        IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) IvyClasspathContainerHelper
+                .getContainer(containerPath, project);
         if (ivycp == null) {
-            IvyDEMessage.error("The IvyDE container could not be found. Aborting updating attachements.");
+            IvyDEMessage
+                    .error("The IvyDE container could not be found. Aborting updating attachements.");
             // something wrong happened, give up
             return;
         }

@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.resolve;
 
-import org.apache.ivyde.eclipse.CachedIvy;
+import org.apache.ivyde.eclipse.internal.CachedIvy;
 
 public class ResolveRequest {
 

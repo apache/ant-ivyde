@@ -17,8 +17,8 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
+import org.apache.ivyde.eclipse.cp.AdvancedSetup;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;

@@ -17,6 +17,8 @@
  */
 package org.apache.ivyde.eclipse;
 
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;

@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.internal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLogger;
+import org.apache.ivyde.eclipse.NopMessageLogger;
 import org.apache.ivyde.eclipse.ui.console.IvyConsole;
 
 public class IvyDEMessage {

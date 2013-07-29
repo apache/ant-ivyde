@@ -18,8 +18,8 @@
 package org.apache.ivyde.eclipse.ui.preferences;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

@@ -22,8 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivyde.eclipse.IvyDEMessage;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,7 +57,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
      * refresh
      */
     public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
-        if (IvyClasspathUtil.isIvyClasspathContainer(containerPath)) {
+        if (IvyClasspathContainerHelper.isIvyClasspathContainer(containerPath)) {
 
             IvyDEMessage.info("Initializing container " + containerPath);
 
@@ -72,8 +73,8 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
 
             try {
                 boolean refresh = false;
-                IvyClasspathContainer ivycp = null;
-                IClasspathEntry entry = IvyClasspathUtil.getIvyClasspathEntry(containerPath,
+                IvyClasspathContainerImpl ivycp = null;
+                IClasspathEntry entry = IvyClasspathContainerHelper.getEntry(containerPath,
                     project);
                 IClasspathAttribute[] attributes;
                 boolean exported;
@@ -85,9 +86,9 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     attributes = new IClasspathAttribute[0];
                 }
 
-                if (container instanceof IvyClasspathContainer) {
+                if (container instanceof IvyClasspathContainerImpl) {
                     IvyDEMessage.debug("Container already configured");
-                    ivycp = (IvyClasspathContainer) container;
+                    ivycp = (IvyClasspathContainerImpl) container;
                 } else {
                     if (container == null) {
                         IvyDEMessage.debug("No saved container");
@@ -97,12 +98,12 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                         Map ivycps = serializer.read(project);
                         if (ivycps != null) {
                             IvyDEMessage.debug("Found serialized containers");
-                            ivycp = (IvyClasspathContainer) ivycps.get(containerPath);
+                            ivycp = (IvyClasspathContainerImpl) ivycps.get(containerPath);
                         }
                         if (ivycp == null) {
                             IvyDEMessage.debug("No serialized containers match the expected container path");
                             // still bad luck or just a new classpath container
-                            ivycp = new IvyClasspathContainer(project, containerPath,
+                            ivycp = new IvyClasspathContainerImpl(project, containerPath,
                                     new IClasspathEntry[0], attributes);
                             // empty, so force refresh at least
                             refresh = true;
@@ -110,7 +111,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     } else {
                         IvyDEMessage.debug("Loading from a saved container");
                         // this might be the persisted one : reuse the persisted entries
-                        ivycp = new IvyClasspathContainer(project, containerPath,
+                        ivycp = new IvyClasspathContainerImpl(project, containerPath,
                                 container.getClasspathEntries(), attributes);
                     }
                 }

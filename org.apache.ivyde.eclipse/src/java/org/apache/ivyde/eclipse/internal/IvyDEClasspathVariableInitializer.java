@@ -15,17 +15,24 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse.handlers;
+package org.apache.ivyde.eclipse.internal;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.ClasspathVariableInitializer;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
-public class ReloadSettingsHandler extends AbstractIvyDEHandler {
+public class IvyDEClasspathVariableInitializer extends ClasspathVariableInitializer {
 
-    public static final String COMMAND_ID = "org.apache.ivyde.commands.reloadsettings";
+    public static final String IVY_HOME_VARIABLE = "IVY_HOME";
 
-    protected void handleContainer(IProject project, IvyClasspathContainerImpl cp) {
-        cp.reloadSettings();
+    public void initialize(String variable) {
+        try {
+            JavaCore.setClasspathVariable(IVY_HOME_VARIABLE, new Path(System
+                    .getProperty("user.home")).append(".ivy2"), null);
+        } catch (JavaModelException e) {
+            IvyPlugin.log(e);
+        }
     }
 
 }

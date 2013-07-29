@@ -19,8 +19,8 @@ package org.apache.ivyde.eclipse.handlers;
 
 import java.util.Iterator;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -43,9 +43,9 @@ public class ResolveAllHandler extends AbstractHandler {
         }
 
         for (int i = 0; i < projects.length; i++) {
-            Iterator it = IvyClasspathUtil.getIvyClasspathContainers(projects[i]).iterator();
+            Iterator it = IvyClasspathContainerHelper.getContainers(projects[i]).iterator();
             while (it.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
                 ivycp.launchResolve(false, null);
             }
         }

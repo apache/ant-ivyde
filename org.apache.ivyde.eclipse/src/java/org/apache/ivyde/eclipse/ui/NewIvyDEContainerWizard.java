@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.eclipse.cpcontainer.IvydeContainerPage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -54,7 +54,7 @@ public class NewIvyDEContainerWizard extends Wizard {
         IPath path = newEntry.getPath();
         IJavaProject project = containerPage.getProject();
         try {
-            IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
+            IvyClasspathContainerImpl ivycp = new IvyClasspathContainerImpl(project, path,
                     new IClasspathEntry[0], new IClasspathAttribute[0]);
             JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
                 new IClasspathContainer[] {ivycp}, null);

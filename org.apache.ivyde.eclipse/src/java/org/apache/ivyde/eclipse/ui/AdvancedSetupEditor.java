@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.cpcontainer.AdvancedSetup;
+import org.apache.ivyde.eclipse.cp.AdvancedSetup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

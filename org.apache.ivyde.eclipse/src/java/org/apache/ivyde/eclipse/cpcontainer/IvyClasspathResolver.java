@@ -22,9 +22,9 @@ package org.apache.ivyde.eclipse.cpcontainer;
  */
 public class IvyClasspathResolver extends ClasspathEntriesResolver {
 
-    private final IvyClasspathContainer ivycp;
+    private final IvyClasspathContainerImpl ivycp;
 
-    public IvyClasspathResolver(IvyClasspathContainer ivycp, boolean usePreviousResolveIfExist) {
+    public IvyClasspathResolver(IvyClasspathContainerImpl ivycp, boolean usePreviousResolveIfExist) {
         super(ivycp, usePreviousResolveIfExist);
         this.ivycp = ivycp;
     }

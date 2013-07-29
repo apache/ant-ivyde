@@ -21,30 +21,30 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.common.model.IvyModelSettings;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.IJavaProject;
 
 public class EclipseIvyModelSettings implements IvyModelSettings {
 
-    private final IvyClasspathContainer ivycp;
+    private final IvyClasspathContainerImpl ivycp;
 
     public EclipseIvyModelSettings(IJavaProject javaProject) {
-        this(IvyClasspathUtil.getIvyClasspathContainers(javaProject));
+        this(IvyClasspathContainerHelper.getContainers(javaProject));
     }
 
     public EclipseIvyModelSettings(IFile ivyfile) {
-        this(IvyClasspathUtil.getIvyFileClasspathContainers(ivyfile));
+        this(IvyClasspathContainerHelper.getContainersFromIvyFile(ivyfile));
     }
 
     private EclipseIvyModelSettings(List/* <IvyClasspathContainer> */containers) {
-        this(containers.isEmpty() ? null : (IvyClasspathContainer) containers.iterator().next());
+        this(containers.isEmpty() ? null : (IvyClasspathContainerImpl) containers.iterator().next());
     }
 
-    private EclipseIvyModelSettings(IvyClasspathContainer ivycp) {
+    private EclipseIvyModelSettings(IvyClasspathContainerImpl ivycp) {
         this.ivycp = ivycp;
     }
 

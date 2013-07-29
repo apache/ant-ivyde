@@ -38,9 +38,9 @@ import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivyde.eclipse.IvyDEException;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -106,9 +106,9 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         MultiStatus errorStatuses = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                 "Failed to update one or more Ivy files.  See details.", null);
 
-        IvyClasspathContainer[] containers = getIvyClasspathContainers();
+        IvyClasspathContainerImpl[] containers = getIvyClasspathContainers();
         for (int i = 0; i < containers.length; i++) {
-            IvyClasspathContainer container = containers[i];
+            IvyClasspathContainerImpl container = containers[i];
 
             ModuleDescriptor md = container.getState().getCachedModuleDescriptor();
             if (md == null) {
@@ -183,7 +183,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         return status;
     }
 
-    private IvyClasspathContainer[] getIvyClasspathContainers() {
+    private IvyClasspathContainerImpl[] getIvyClasspathContainers() {
         Collection/* <IvyClasspathContainer> */containers = new HashSet();
 
         for (int i = 0; i < multiRevisionDependencies.length; i++) {
@@ -193,11 +193,11 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             }
         }
 
-        return (IvyClasspathContainer[]) containers.toArray(new IvyClasspathContainer[containers
+        return (IvyClasspathContainerImpl[]) containers.toArray(new IvyClasspathContainerImpl[containers
                 .size()]);
     }
 
-    private void saveChanges(IvyClasspathContainer container, File permanentSaveTarget,
+    private void saveChanges(IvyClasspathContainerImpl container, File permanentSaveTarget,
             File temporaryChanges) throws IOException {
         IvyClasspathContainerConfiguration conf = container.getConf();
         IFile virtualIvyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());

@@ -17,64 +17,23 @@
  */
 package org.apache.ivyde.eclipse;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
 
-public class IvyNature implements IProjectNature {
+public class IvyNatureHelper {
 
-    public static final String IVY_NATURE = "org.apache.ivyde.eclipse.ivynature";
+    public static final String IVY_NATURE_ID = "org.apache.ivyde.eclipse.ivynature";
 
-    private IProject project;
-
-    public IProject getProject() {
-        return project;
-    }
-
-    public void setProject(IProject project) {
-        this.project = project;
-    }
-
-    public void configure() throws CoreException {
-        // nothing to do
-    }
-
-    public void deconfigure() throws CoreException {
-        IJavaProject javaProject = JavaCore.create(project);
-        if (!javaProject.exists()) {
-            return;
-        }
-        IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
-        List newEntries = new ArrayList();
-
-        for (int i = 0; i < classpathEntries.length; i++) {
-            if (!IvyClasspathUtil.isIvyClasspathContainer(classpathEntries[i].getPath())) {
-                newEntries.add(classpathEntries[i]);
-            }
-        }
-
-        if (newEntries.size() != classpathEntries.length) {
-            IClasspathEntry[] newClasspathEntries = (IClasspathEntry[]) newEntries
-                    .toArray(new IClasspathEntry[newEntries.size()]);
-            javaProject.setRawClasspath(newClasspathEntries, null);
-        }
-
-        IvyMarkerManager ivyMarkerManager = IvyPlugin.getDefault().getIvyMarkerManager();
-        ivyMarkerManager.removeMarkers(project);
+    private IvyNatureHelper() {
+        // utility class
     }
 
     public static boolean hasNature(IProject project) {
         try {
-            return project.hasNature(IVY_NATURE);
+            return project.hasNature(IVY_NATURE_ID);
         } catch (CoreException e) {
             IvyPlugin.logError("Unable to get the Ivy nature of the project " + project.getName(),
                 e);
@@ -100,7 +59,7 @@ public class IvyNature implements IProjectNature {
         if (ids != null) {
             System.arraycopy(ids, 0, newIds, 0, ids.length);
         }
-        newIds[ids == null ? 0 : ids.length] = IVY_NATURE;
+        newIds[ids == null ? 0 : ids.length] = IVY_NATURE_ID;
 
         description.setNatureIds(newIds);
         Display.getDefault().asyncExec(new Runnable() {
@@ -130,7 +89,7 @@ public class IvyNature implements IProjectNature {
 
             int i;
             for (i = 0; i < ids.length; i++) {
-                if (IVY_NATURE.equals(ids[i])) {
+                if (IVY_NATURE_ID.equals(ids[i])) {
                     break;
                 }
             }

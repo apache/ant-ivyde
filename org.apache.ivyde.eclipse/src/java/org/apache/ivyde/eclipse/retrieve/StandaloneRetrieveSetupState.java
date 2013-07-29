@@ -19,9 +19,9 @@ package org.apache.ivyde.eclipse.retrieve;
 
 import java.util.Collection;
 
-import org.apache.ivyde.eclipse.CachedIvy;
 import org.apache.ivyde.eclipse.IvyDEException;
-import org.apache.ivyde.eclipse.ResolvedPath;
+import org.apache.ivyde.eclipse.cp.ResolvedPath;
+import org.apache.ivyde.eclipse.internal.CachedIvy;
 import org.eclipse.core.resources.IProject;
 
 public class StandaloneRetrieveSetupState extends CachedIvy {

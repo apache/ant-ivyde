@@ -17,14 +17,14 @@
  */
 package org.apache.ivyde.eclipse.handlers;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.eclipse.core.resources.IProject;
 
 public class RefreshHandler extends AbstractIvyDEHandler {
 
     public static final String COMMAND_ID = "org.apache.ivyde.commands.refresh";
 
-    protected void handleContainer(IProject project, IvyClasspathContainer ivycp) {
+    protected void handleContainer(IProject project, IvyClasspathContainerImpl ivycp) {
         ivycp.launchResolve(true, null);
     }
 

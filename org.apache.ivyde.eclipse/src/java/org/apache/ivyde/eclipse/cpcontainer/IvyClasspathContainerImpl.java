@@ -25,8 +25,10 @@ import java.util.Comparator;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivyde.eclipse.IvyDEMessage;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.eclipse.resolve.ResolveRequest;
 import org.eclipse.core.runtime.IPath;
@@ -44,9 +46,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Eclipse classpath container that will contain the ivy resolved entries.
  */
-public class IvyClasspathContainer implements IClasspathContainer {
-
-    public static final String CONTAINER_ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+public class IvyClasspathContainerImpl implements IClasspathContainer, IvyClasspathContainer {
 
     private IClasspathEntry[] classpathEntries;
 
@@ -75,7 +75,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
      * @param classpathEntries
      *            the entries to start with
      */
-    public IvyClasspathContainer(IJavaProject javaProject, IPath path,
+    public IvyClasspathContainerImpl(IJavaProject javaProject, IPath path,
             IClasspathEntry[] classpathEntries, IClasspathAttribute[] attributes) {
         this.path = path;
         conf = new IvyClasspathContainerConfiguration(javaProject, path, false, attributes);
@@ -83,7 +83,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         this.classpathEntries = classpathEntries;
     }
 
-    public IvyClasspathContainer(IvyClasspathContainer cp) {
+    public IvyClasspathContainerImpl(IvyClasspathContainerImpl cp) {
         path = cp.path;
         conf = cp.conf;
         classpathEntries = cp.classpathEntries;
@@ -155,7 +155,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
                     });
                 }
                 IvyDEMessage.debug("Setting the classpath container "
-                        + IvyClasspathContainer.this.toString() + " with "
+                        + IvyClasspathContainerImpl.this.toString() + " with "
                         + Arrays.toString(entries));
                 classpathEntries = entries;
                 notifyUpdateClasspathEntries();
@@ -169,7 +169,7 @@ public class IvyClasspathContainer implements IClasspathContainer {
         }
         try {
             JavaCore.setClasspathContainer(path, new IJavaProject[] {conf.getJavaProject()},
-                new IClasspathContainer[] {new IvyClasspathContainer(IvyClasspathContainer.this)},
+                new IClasspathContainer[] {new IvyClasspathContainerImpl(IvyClasspathContainerImpl.this)},
                 null);
         } catch (JavaModelException e) {
             // unless there are some issues with the JDT, this should never happen

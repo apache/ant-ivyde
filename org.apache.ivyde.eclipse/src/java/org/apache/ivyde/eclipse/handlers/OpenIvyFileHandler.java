@@ -17,8 +17,8 @@
  */
 package org.apache.ivyde.eclipse.handlers;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -36,11 +36,11 @@ public class OpenIvyFileHandler extends AbstractIvyDEHandler {
 
     public static final String COMMAND_ID = "org.apache.ivyde.commands.openivyfile";
 
-    protected void handleContainer(IProject project, IvyClasspathContainer cp) {
+    protected void handleContainer(IProject project, IvyClasspathContainerImpl cp) {
         open(cp);
     }
 
-    public static void open(IvyClasspathContainer cp) {
+    public static void open(IvyClasspathContainerImpl cp) {
         IvyClasspathContainerConfiguration conf = cp.getConf();
         if (conf.getJavaProject() == null) {
             return;

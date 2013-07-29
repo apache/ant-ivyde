@@ -19,7 +19,7 @@ package org.apache.ivyde.eclipse.handlers;
 
 import java.util.Map;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorerView;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchPage;

@@ -21,7 +21,7 @@ import org.apache.ivyde.common.completion.CodeCompletionProposal;
 import org.apache.ivyde.common.completion.IvyCodeCompletionProcessor;
 import org.apache.ivyde.common.model.IvyFile;
 import org.apache.ivyde.common.model.IvyModel;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;

@@ -17,8 +17,8 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
+import org.apache.ivyde.eclipse.cp.MappingSetup;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.preferences.MappingSetupPreferencePage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;

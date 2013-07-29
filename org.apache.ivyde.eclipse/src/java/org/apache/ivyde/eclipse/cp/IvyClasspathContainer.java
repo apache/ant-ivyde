@@ -15,24 +15,27 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.cp;
 
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.ClasspathVariableInitializer;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import java.net.URL;
 
-public class IvyDEClasspathVariableInitializer extends ClasspathVariableInitializer {
+import org.apache.ivy.core.report.ResolveReport;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
-    public static final String IVY_HOME_VARIABLE = "IVY_HOME";
+public interface IvyClasspathContainer {
 
-    public void initialize(String variable) {
-        try {
-            JavaCore.setClasspathVariable(IVY_HOME_VARIABLE, new Path(System
-                    .getProperty("user.home")).append(".ivy2"), null);
-        } catch (JavaModelException e) {
-            IvyPlugin.log(e);
-        }
-    }
+    public static final String ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
+    public IvyClasspathContainerConfiguration getConf();
+
+    public void setConf(IvyClasspathContainerConfiguration conf);
+
+    public IStatus launchResolve(boolean usePreviousResolveIfExist, IProgressMonitor monitor);
+
+    public URL getReportUrl();
+
+    public void reloadSettings();
+
+    public ResolveReport getResolveReport();
 }

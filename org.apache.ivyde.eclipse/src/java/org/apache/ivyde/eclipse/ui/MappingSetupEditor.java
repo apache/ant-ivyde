@@ -17,8 +17,8 @@
  */
 package org.apache.ivyde.eclipse.ui;
 
+import org.apache.ivyde.eclipse.cp.MappingSetup;
 import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.cpcontainer.MappingSetup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

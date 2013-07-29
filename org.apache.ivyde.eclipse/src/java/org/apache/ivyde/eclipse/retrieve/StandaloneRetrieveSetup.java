@@ -17,8 +17,9 @@
  */
 package org.apache.ivyde.eclipse.retrieve;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.SettingsSetup;
+import org.apache.ivyde.eclipse.cp.RetrieveSetup;
+import org.apache.ivyde.eclipse.cp.SettingsSetup;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 
 public class StandaloneRetrieveSetup {

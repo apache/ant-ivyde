@@ -39,8 +39,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.ivyde.eclipse.IvyDEMessage;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.internal.IvyDEMessage;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -101,8 +102,8 @@ public class IvyClasspathContainerSerializer {
     }
 
     public void save(IJavaProject project) {
-        List/* <IvyClasspathContainer> */ivycps = IvyClasspathUtil
-                .getIvyClasspathContainers(project);
+        List/* <IvyClasspathContainer> */ivycps = IvyClasspathContainerHelper
+                .getContainers(project);
         try {
             File file = new File(containersStateDir, project.getProject().getName() + ".xml");
             IvyDEMessage.verbose("Saving the state of the containers of the project "
@@ -163,7 +164,7 @@ public class IvyClasspathContainerSerializer {
 
             Iterator it = containers.iterator();
             while (it.hasNext()) {
-                IvyClasspathContainer ivycp = (IvyClasspathContainer) it.next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
 
                 Node node = document.createElement(IVYCP);
                 root.appendChild(node);
@@ -200,7 +201,7 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    private void writeCpEntries(IvyClasspathContainer ivycp, Document document, Node node,
+    private void writeCpEntries(IvyClasspathContainerImpl ivycp, Document document, Node node,
             IClasspathEntry[] classpathEntries) {
         if (classpathEntries == null) {
             return;
@@ -236,7 +237,7 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    private void writeAccessRules(IvyClasspathContainer ivycp, Document document, Node cpEntryNode,
+    private void writeAccessRules(IvyClasspathContainerImpl ivycp, Document document, Node cpEntryNode,
             IAccessRule[] accessRules) {
         if (accessRules == null) {
             return;
@@ -260,7 +261,7 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    private void writeCpAttr(IvyClasspathContainer ivycp, Document document, Node node,
+    private void writeCpAttr(IvyClasspathContainerImpl ivycp, Document document, Node node,
             IClasspathAttribute[] attrs) {
         if (attrs == null) {
             return;
@@ -320,7 +321,7 @@ public class IvyClasspathContainerSerializer {
                     }
                 }
 
-                IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path, cpEntries,
+                IvyClasspathContainerImpl ivycp = new IvyClasspathContainerImpl(project, path, cpEntries,
                         cpAttributes);
                 ivycps.put(path, ivycp);
             }

@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivyde.eclipse;
+package org.apache.ivyde.eclipse.cp;
 
 import java.io.File;
 import java.net.MalformedURLException;

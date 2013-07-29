@@ -23,7 +23,7 @@ import java.io.Reader;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivyde.eclipse.XMLHelper;
+import org.apache.ivyde.eclipse.internal.XMLHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;

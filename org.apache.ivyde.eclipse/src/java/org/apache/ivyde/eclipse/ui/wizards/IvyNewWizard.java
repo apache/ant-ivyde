@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.core.IvyFileEditorInput;
 import org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditor;
 import org.eclipse.core.resources.IContainer;

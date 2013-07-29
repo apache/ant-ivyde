@@ -24,8 +24,11 @@ import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
-import org.apache.ivyde.eclipse.IvyMarkerManager;
-import org.apache.ivyde.eclipse.IvyPlugin;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
+import org.apache.ivyde.eclipse.cp.SettingsSetup;
+import org.apache.ivyde.eclipse.internal.IvyMarkerManager;
+import org.apache.ivyde.eclipse.internal.IvyPlugin;
 import org.apache.ivyde.eclipse.ui.AdvancedSetupTab;
 import org.apache.ivyde.eclipse.ui.ClasspathSetupTab;
 import org.apache.ivyde.eclipse.ui.ConfTableViewer;
@@ -130,15 +133,15 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         String ivyFilePath = ivyFilePathText.getIvyFilePath();
         List selectedConfigurations = confTableViewer.getSelectedConfigurations();
 
-        List/* <IvyClasspathContainer> */containers = IvyClasspathUtil
-                .getIvyClasspathContainers(project);
+        List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
+                .getContainers(project);
         if (containers == null) {
             return null;
         }
 
         Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
         while (error == null && itContainers.hasNext()) {
-            IvyClasspathContainer ivycp = (IvyClasspathContainer) itContainers.next();
+            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainers.next();
             IvyClasspathContainerConfiguration cpc = ivycp.getConf();
 
             // first check that this is not the one we are editing
@@ -222,7 +225,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
         if (project != null) {
             try {
-                IvyClasspathContainer ivycp = new IvyClasspathContainer(project, path,
+                IvyClasspathContainerImpl ivycp = new IvyClasspathContainerImpl(project, path,
                         new IClasspathEntry[0], atts);
                 JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
                     new IClasspathContainer[] {ivycp}, null);
