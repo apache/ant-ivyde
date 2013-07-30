@@ -20,8 +20,8 @@ package org.apache.ivyde.eclipse.resolvevisualizer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -39,10 +39,10 @@ public class ClasspathContainerSelectionDialog extends ElementListSelectionDialo
         setTitle("Ivy Classpath Containers");
         setMessage("Select a container to view in the resolve visualizer.");
 
-        List/* <IvyClasspathContainer> */classpathContainers = new ArrayList/* <IvyClasspathContainer> */();
-        IProject[] ivyProjects = IvyClasspathUtil.getIvyProjectsInWorkspace();
+        List/* <IvyClasspathContainer> */classpathContainers = new ArrayList();
+        IProject[] ivyProjects = IvyClasspathContainerHelper.getIvyProjectsInWorkspace();
         for (int i = 0; i < ivyProjects.length; i++) {
-            classpathContainers.addAll(IvyClasspathUtil.getIvyClasspathContainers(ivyProjects[i]));
+            classpathContainers.addAll(IvyClasspathContainerHelper.getContainers(ivyProjects[i]));
         }
 
         setElements(classpathContainers.toArray());

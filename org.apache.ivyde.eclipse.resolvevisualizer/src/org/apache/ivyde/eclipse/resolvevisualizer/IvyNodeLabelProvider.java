@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.ivyde.eclipse.IvyPlugin;
 import org.apache.ivyde.eclipse.resolvevisualizer.label.ConfigurationConflictAlgorithm;
 import org.apache.ivyde.eclipse.resolvevisualizer.label.ConnectionStyle;
 import org.apache.ivyde.eclipse.resolvevisualizer.label.DirectDependenciesAlgorithm;

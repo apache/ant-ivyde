@@ -27,8 +27,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivyde.eclipse.IvyPlugin;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainer;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.resolvevisualizer.label.ILabelDecoratorAlgorithm;
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElementAdapter;
@@ -255,7 +254,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
         };
         refreshAction.setText("Resolve");
         refreshAction.setEnabled(true);
-        refreshAction.setImageDescriptor(IvyPlugin.getImageDescriptor("icons/refresh.gif"));
+        refreshAction.setImageDescriptor(Plugin.getImageDescriptor("icons/refresh.gif"));
 
         focusDialogAction = new Action() {
             public void run() {

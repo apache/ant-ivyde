@@ -38,4 +38,6 @@ public interface IvyClasspathContainer {
     public void reloadSettings();
 
     public ResolveReport getResolveReport();
+
+    public String getDescription();
 }
