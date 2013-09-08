@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
-import org.apache.ivyde.eclipse.internal.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;

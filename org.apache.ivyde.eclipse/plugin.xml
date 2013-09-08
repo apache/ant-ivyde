@@ -25,18 +25,18 @@
 	<extension point="org.eclipse.ui.console.consoleFactories">
 	  <consoleFactory 
 	     label="Ivy Console"
-	     class="org.apache.ivyde.eclipse.ui.console.IvyConsoleFactory"
+	     class="org.apache.ivyde.internal.eclipse.ui.console.IvyConsoleFactory"
 	     icon="icons/logo16x16.gif">
 	  </consoleFactory>
 	</extension>
  <extension
        point="org.eclipse.ui.console.consolePageParticipants">
     <consolePageParticipant
-          class="org.apache.ivyde.eclipse.ui.console.IvyConsolePageParticipant"
+          class="org.apache.ivyde.internal.eclipse.ui.console.IvyConsolePageParticipant"
           id="org.apache.ivyde.eclipse.ivyConsolePageParticipant">
        <enablement>
           <instanceof
-                value="org.apache.ivyde.eclipse.ui.console.IvyConsole">
+                value="org.apache.ivyde.internal.eclipse.ui.console.IvyConsole">
           </instanceof></enablement>
     </consolePageParticipant>
  </extension>
@@ -46,7 +46,7 @@
       <classpathContainerPage
       		id="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER"
       		name="IvyDE Managed Dependencies"
-            class="org.apache.ivyde.eclipse.cpcontainer.IvydeContainerPage"
+            class="org.apache.ivyde.internal.eclipse.cpcontainer.IvydeContainerPage"
             >
       </classpathContainerPage>
    </extension>
@@ -56,7 +56,7 @@
           name="IvyDE Classpath Container"
           point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer
-            class="org.apache.ivyde.eclipse.cpcontainer.IvyClasspathInitializer"
+            class="org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathInitializer"
             id="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">
       </classpathContainerInitializer>
    </extension>
@@ -65,8 +65,8 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditor"
-            contributorClass="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
+            class="org.apache.ivyde.internal.eclipse.ui.editors.IvyModuleDescriptorEditor"
+            contributorClass="org.apache.ivyde.internal.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
             filenames="ivy.xml"
             icon="icons/logo16x16.gif"
             id="org.apache.ivyde.editors.IvyEditor"
@@ -76,8 +76,8 @@
          </contentTypeBinding>
       </editor>
       <editor
-            class="org.apache.ivyde.eclipse.ui.editors.IvySettingsEditor"
-            contributorClass="org.apache.ivyde.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
+            class="org.apache.ivyde.internal.eclipse.ui.editors.IvySettingsEditor"
+            contributorClass="org.apache.ivyde.internal.eclipse.ui.editors.IvyModuleDescriptorEditorContributor"
             filenames="ivysettings.xml"
             icon="icons/logo16x16.gif"
             id="org.apache.ivyde.editors.IvySettingsEditor"
@@ -94,7 +94,7 @@
 		   name="IvyDE">
 		</category>
       <wizard
-            class="org.apache.ivyde.eclipse.ui.wizards.IvyNewWizard"
+            class="org.apache.ivyde.internal.eclipse.ui.wizards.IvyNewWizard"
             icon="icons/logo16x16.gif"
             id="org.apache.ivyde.eclipse.ui.wizards.IvyNewWizard"
             category="org.apache.ivyde.eclipse.ui.new"
@@ -105,42 +105,42 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="Ivy"
-            class="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.IvyPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage">
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.SettingsSetupPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage"
             name="Settings">
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.ClasspathSetupPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage"
             name="Classpath Container">
       </page>
       <page
             name="Workspace Resolver"
-            class="org.apache.ivyde.eclipse.ui.preferences.WorkspaceResolverPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.WorkspaceResolverPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.WorkspaceResolverPreferencePage"
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage">
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.MappingSetupPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.MappingSetupPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.MappingSetupPreferencePage"
             name="Source/Javadoc Mapping">
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.XMLEditorPreferencesPage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.XMLEditorPreferencesPage"
             id="org.apache.ivyde.eclipse.ui.preferences.XMLEditorPreferencesPage"
             name="XML Editor">
       </page>
       <page
             category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
-            class="org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.AdvancedSetupPreferencePage"
             id="org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage"
             name="Advanced">
       </page>
@@ -148,7 +148,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.apache.ivyde.eclipse.ui.preferences.PreferenceInitializer">
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    
@@ -164,11 +164,11 @@
 		   name="Ivy Report"
 		   icon="icons/logo16x16.gif"
 		   category="org.apache.ivyde.eclipse.ui.views"
-		   class="org.apache.ivyde.eclipse.ui.views.ReportView">
+		   class="org.apache.ivyde.internal.eclipse.ui.views.ReportView">
 		</view>
   <view
         category="org.apache.ivyde.eclipse.ui.views"
-        class="org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorerView"
+        class="org.apache.ivyde.internal.eclipse.ui.views.ReverseDependencyExplorerView"
         icon="icons/logo16x16.gif"
         id="org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorer"
         name="Reverse Dependency Explorer"
@@ -187,7 +187,7 @@
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
       <classpathVariableInitializer
-            class="org.apache.ivyde.eclipse.internal.IvyDEClasspathVariableInitializer"
+            class="org.apache.ivyde.internal.eclipse.IvyDEClasspathVariableInitializer"
             variable="IVY_HOME">
       </classpathVariableInitializer>
    </extension>
@@ -216,7 +216,7 @@
    <extension
          point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
       <runtimeClasspathEntryResolver
-            class="org.apache.ivyde.eclipse.internal.IvyDERuntimeClasspathEntryResolver"
+            class="org.apache.ivyde.internal.eclipse.IvyDERuntimeClasspathEntryResolver"
             container="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER"
             id="org.apache.ivyde.eclipse.runtimeClasspathEntryResolver"
             variable="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER">
@@ -277,39 +277,39 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.apache.ivyde.eclipse.handlers.ResolveHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.ResolveHandler"
             commandId="org.apache.ivyde.commands.resolve">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.RefreshHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.RefreshHandler"
             commandId="org.apache.ivyde.commands.refresh">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.ReloadSettingsHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.ReloadSettingsHandler"
             commandId="org.apache.ivyde.commands.reloadsettings">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.ResolveAllHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.ResolveAllHandler"
             commandId="org.apache.ivyde.commands.resolveall">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.OpenIvyFileHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.OpenIvyFileHandler"
             commandId="org.apache.ivyde.commands.openivyfile">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.ViewReverseDependenciesHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.ViewReverseDependenciesHandler"
             commandId="org.apache.ivyde.commands.revdepexplorer">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.CreateContainerHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.CreateContainerHandler"
             commandId="org.apache.ivyde.commands.createcontainer">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.AddIvyNatureHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.AddIvyNatureHandler"
             commandId="org.apache.ivyde.commands.addivynature">
       </handler>
       <handler
-            class="org.apache.ivyde.eclipse.handlers.RemoveIvyNatureHandler"
+            class="org.apache.ivyde.internal.eclipse.handlers.RemoveIvyNatureHandler"
             commandId="org.apache.ivyde.commands.removeivynature">
       </handler>
    </extension>
@@ -399,7 +399,7 @@
             </visibleWhen>
          </command>
          <dynamic
-               class="org.apache.ivyde.eclipse.ui.menu.IvyMenuContributionItem"
+               class="org.apache.ivyde.internal.eclipse.ui.menu.IvyMenuContributionItem"
                id="org.apache.ivyde.eclipse.ivymenu">
             <visibleWhen
                   checkEnabled="false">
@@ -450,7 +450,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.apache.ivyde.eclipse.internal.IvyNature">
+               class="org.apache.ivyde.internal.eclipse.IvyNature">
          </run>
       </runtime>
    </extension>
@@ -458,7 +458,7 @@
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"
-            class="org.apache.ivyde.eclipse.ui.preferences.IvyDEProjectPreferences"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.IvyDEProjectPreferences"
             id="org.apache.ivyde.eclipse.projectpreferences"
             name="Ivy"
             objectClass="org.eclipse.core.resources.IProject">
@@ -472,7 +472,7 @@
          point="org.eclipse.ui.decorators">
       <decorator
             adaptable="false"
-            class="org.apache.ivyde.eclipse.ui.IvyDEClasspathContainerDecorator"
+            class="org.apache.ivyde.internal.eclipse.ui.IvyDEClasspathContainerDecorator"
             id="org.apache.ivyde.eclipse.decorator"
             label="IvyDE decorator"
             lightweight="false"
@@ -490,7 +490,7 @@
             name="Ivy File"
             priority="normal">
          <describer
-               class="org.apache.ivyde.eclipse.ui.editors.IvyFileContentDescriber">
+               class="org.apache.ivyde.internal.eclipse.ui.editors.IvyFileContentDescriber">
          </describer>
       </content-type>
       <content-type
@@ -500,7 +500,7 @@
             name="Ivy Settings"
             priority="normal">
          <describer
-               class="org.apache.ivyde.eclipse.ui.editors.IvySettingsContentDescriber">
+               class="org.apache.ivyde.internal.eclipse.ui.editors.IvySettingsContentDescriber">
          </describer>
       </content-type>
    </extension>

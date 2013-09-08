@@ -25,9 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerImpl;
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathUtil;
-import org.apache.ivyde.eclipse.internal.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

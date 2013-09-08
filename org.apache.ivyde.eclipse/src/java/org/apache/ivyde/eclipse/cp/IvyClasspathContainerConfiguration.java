@@ -20,8 +20,8 @@ package org.apache.ivyde.eclipse.cp;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.cpcontainer.IvyClasspathContainerConfAdapter;
-import org.apache.ivyde.eclipse.internal.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerConfAdapter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;

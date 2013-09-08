@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse;
 
-import org.apache.ivyde.eclipse.internal.IvyPlugin;
+import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;

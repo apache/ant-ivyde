@@ -4,7 +4,7 @@ Bundle-Name: Apache IvyDE
 Bundle-SymbolicName: org.apache.ivyde.eclipse; singleton:=true
 Bundle-Version: 2.2.0.qualifier
 Bundle-ClassPath: ivyde-eclipse.jar
-Bundle-Activator: org.apache.ivyde.eclipse.internal.IvyPlugin
+Bundle-Activator: org.apache.ivyde.internal.eclipse.IvyPlugin
 Bundle-Vendor: Apache Software Foundation
 Export-Package: org.apache.ivyde.common.completion,
  org.apache.ivyde.common.ivyfile,
@@ -13,7 +13,7 @@ Export-Package: org.apache.ivyde.common.completion,
  org.apache.ivyde.eclipse,
  org.apache.ivyde.eclipse.cp,
  org.apache.ivyde.eclipse.extension,
- org.apache.ivyde.eclipse.ui.console
+ org.apache.ivyde.internal.eclipse.ui.console
 Require-Bundle: org.apache.xerces;bundle-version="[2.9.0,3.0.0)";resolution:=optional,
  org.eclipse.ui;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)",
