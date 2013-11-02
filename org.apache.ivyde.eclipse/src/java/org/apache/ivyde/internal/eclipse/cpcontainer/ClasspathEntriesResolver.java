@@ -52,6 +52,7 @@ public class ClasspathEntriesResolver extends IvyResolver {
         this.conf = ivycp.getConf();
         setUsePreviousResolveIfExist(ivycp.getConf().getInheritedAdvancedSetup().isUseExtendedResolveId());
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
+        setTransitiveResolve(conf.getInheritedClasspathSetup().isTransitiveResolve());
         if (conf.getInheritedClasspathSetup().isRetrievedClasspath()) {
             RetrieveSetup setup = conf.getInheritedClasspathSetup().getRetrieveSetup();
             setRetrievePattern(setup.getRetrievePattern());

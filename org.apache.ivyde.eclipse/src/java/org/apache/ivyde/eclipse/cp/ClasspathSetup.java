@@ -34,6 +34,8 @@ public class ClasspathSetup {
 
     private boolean readOSGiMetadata;
 
+    private boolean transitiveResolve = true;
+
     /**
      * Default constructor
      */
@@ -48,6 +50,7 @@ public class ClasspathSetup {
         this.retrievedClasspath = setup.retrievedClasspath;
         this.retrieveSetup.set(setup.retrieveSetup);
         this.readOSGiMetadata = setup.readOSGiMetadata;
+        this.transitiveResolve = setup.transitiveResolve;
     }
 
     public boolean isResolveInWorkspace() {
@@ -96,5 +99,13 @@ public class ClasspathSetup {
 
     public void setReadOSGiMetadata(boolean readOSGiMetadata) {
         this.readOSGiMetadata = readOSGiMetadata;
+    }
+
+    public boolean isTransitiveResolve() {
+        return transitiveResolve;
+    }
+
+    public void setTransitiveResolve(boolean transitiveResolve) {
+        this.transitiveResolve = transitiveResolve;
     }
 }

@@ -94,7 +94,9 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
             ResolveRequest request = new ResolveRequest(resolver, ivycp.getState());
             request.setForceFailOnError(true);
             request.setInWorkspace(ivycp.getConf().getInheritedClasspathSetup()
-                    .isResolveInWorkspace());
+                .isResolveInWorkspace());
+            request.setTransitive(ivycp.getConf().getInheritedClasspathSetup()
+                    .isTransitiveResolve());
             IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
             IStatus status = resolveJob.launchRequest(request, new NullProgressMonitor());
             if (status.getCode() != IStatus.OK) {

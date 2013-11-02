@@ -61,8 +61,10 @@ The global configuration can be found in the preferences of Eclipse (menu Window
 
 <center><img src="images/pref_classpath.jpg"/></center>
 
-<h4>Resolve dependencies in workpace:</h4>
+<h4>Resolve dependencies in workspace:</h4>
 <p>Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the <a href="cpc/workspace.html">documentation</a> for further information on this feature.</p>
+<h4>Resolve dependencies transitively</h4>
+<p>If unchecked, the dependencies will be resolved with transitivity disabled regardless to the settings in ivy.xml</p>
 <h4>Read OSGi metadata:</h4>
 <p>If your classpath is based on jars which are actually OSGi bundles, checking this option will make IvyDE read the jar manifests and setup the specific OSGi visibility constraints.</p>
 <h4>Accepted types:</h4>

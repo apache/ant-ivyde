@@ -92,6 +92,8 @@ public abstract class CachedIvy {
 
     protected abstract boolean isResolveInWorkspace();
 
+    protected abstract boolean isTransitiveResolve();
+
     public Ivy getCachedIvy() {
         if (ivy != null) {
             return ivy;

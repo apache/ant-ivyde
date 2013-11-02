@@ -42,6 +42,8 @@ public class ClasspathSetupEditor extends Composite {
             + "Example: jar, zip";
 
     private Button resolveInWorkspaceCheck;
+    
+    private Button transitiveResolveCheck;
 
     private Label alphaOrderLabel;
 
@@ -73,6 +75,13 @@ public class ClasspathSetupEditor extends Composite {
         resolveInWorkspaceCheck.setText("Resolve dependencies in workspace");
         resolveInWorkspaceCheck
                 .setToolTipText("Will replace jars on the classpath with workspace projects");
+
+        transitiveResolveCheck = new Button(this, SWT.CHECK);
+        transitiveResolveCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+                false, 2, 1));
+        transitiveResolveCheck.setText("Resolve dependencies transitively");
+        transitiveResolveCheck
+                .setToolTipText("If uncheck, will resolve dependency with transitivity disabled regardless to the settings in ivy.xml");        
 
         readOSGiMetadataCheck = new Button(this, SWT.CHECK);
         readOSGiMetadataCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
@@ -128,6 +137,7 @@ public class ClasspathSetupEditor extends Composite {
 
     public void init(ClasspathSetup setup) {
         resolveInWorkspaceCheck.setSelection(setup.isResolveInWorkspace());
+        transitiveResolveCheck.setSelection(setup.isTransitiveResolve());
         readOSGiMetadataCheck.setSelection(setup.isReadOSGiMetadata());
         acceptedTypesText.setText(IvyClasspathUtil.concat(setup.getAcceptedTypes()));
         alphaOrderCheck.select(setup.isAlphaOrder() ? 1 : 0);
@@ -140,6 +150,7 @@ public class ClasspathSetupEditor extends Composite {
     public ClasspathSetup getClasspathSetup() {
         ClasspathSetup setup = new ClasspathSetup();
         setup.setResolveInWorkspace(resolveInWorkspaceCheck.getSelection());
+        setup.setTransitiveResolve(transitiveResolveCheck.getSelection());
         setup.setReadOSGiMetadata(readOSGiMetadataCheck.getSelection());
         setup.setAcceptedTypes(IvyClasspathUtil.split(acceptedTypesText.getText()));
         setup.setAlphaOrder(alphaOrderCheck.getSelectionIndex() == 1);
@@ -152,6 +163,7 @@ public class ClasspathSetupEditor extends Composite {
 
     public void setEnabled(boolean enabled) {
         resolveInWorkspaceCheck.setEnabled(enabled);
+        transitiveResolveCheck.setEnabled(enabled);
         readOSGiMetadataCheck.setEnabled(osgiAvailable && enabled);
         acceptedTypesLabel.setEnabled(enabled);
         acceptedTypesText.setEnabled(enabled);

@@ -124,6 +124,7 @@ public class IvyClasspathContainerImpl implements IClasspathContainer, IvyClassp
         ResolveRequest request = new ResolveRequest(new IvyClasspathResolver(this,
                 usePreviousResolveIfExist), getState());
         request.setInWorkspace(getConf().getInheritedClasspathSetup().isResolveInWorkspace());
+        request.setTransitive(getConf().getInheritedClasspathSetup().isTransitiveResolve());
         IvyResolveJob resolveJob = IvyPlugin.getDefault().getIvyResolveJob();
         if (monitor != null) {
             return resolveJob.launchRequest(request, monitor);

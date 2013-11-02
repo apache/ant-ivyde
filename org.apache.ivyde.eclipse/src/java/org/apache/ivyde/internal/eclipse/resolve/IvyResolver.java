@@ -81,6 +81,8 @@ public class IvyResolver {
     private boolean useCacheOnly = IvyPlugin.getPreferenceStoreHelper().isOffline();
 
     private boolean useExtendedResolveId = false;
+    
+    private boolean transitiveResolve = true;
 
     public IvyResolver(String ivyXmlPath, List confInput, IProject project) {
         this.ivyXmlPath = ivyXmlPath;
@@ -106,6 +108,10 @@ public class IvyResolver {
 
     public void setUseCacheOnly(boolean useCacheOnly) {
         this.useCacheOnly = useCacheOnly;
+    }
+
+    public void setTransitiveResolve(boolean transitiveResolve) {
+        this.transitiveResolve = transitiveResolve;
     }
 
     public String getIvyXmlPath() {
@@ -245,6 +251,7 @@ public class IvyResolver {
         resolveOption.setValidate(ivy.getSettings().doValidate());
         resolveOption.setUseCacheOnly(useCacheOnly);
         resolveOption.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
+        resolveOption.setTransitive(transitiveResolve);
         ResolveReport report = ivy.getResolveEngine().resolve(md, resolveOption);
 
         if (report.hasError()) {

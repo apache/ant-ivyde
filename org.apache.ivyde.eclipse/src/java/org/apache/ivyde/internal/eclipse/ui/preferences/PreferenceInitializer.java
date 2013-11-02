@@ -64,6 +64,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     public static final boolean DEFAULT_RESOLVE_IN_WORKSPACE = false;
 
+    public static final boolean DEFAULT_TRANSITIVE_RESOLVE = true;
+
     private static final boolean DEFAULT_READ_OSGI_METADATA = false;
 
     public static final boolean DEFAULT_RETRIEVED_CLASSPATH = false;
@@ -88,6 +90,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         DEFAULT_CLASSPATH_SETUP.setAcceptedTypes(IvyClasspathUtil.split(DEFAULT_ACCEPTED_TYPES));
         DEFAULT_CLASSPATH_SETUP.setAlphaOrder(DEFAULT_ALPHABETICAL_ORDER);
         DEFAULT_CLASSPATH_SETUP.setResolveInWorkspace(DEFAULT_RESOLVE_IN_WORKSPACE);
+        DEFAULT_CLASSPATH_SETUP.setTransitiveResolve(DEFAULT_TRANSITIVE_RESOLVE);
         DEFAULT_CLASSPATH_SETUP.setReadOSGiMetadata(DEFAULT_READ_OSGI_METADATA);
         DEFAULT_CLASSPATH_SETUP.setRetrievedClasspath(DEFAULT_RETRIEVED_CLASSPATH);
         DEFAULT_CLASSPATH_SETUP.setRetrieveSetup(DEFAULT_RETRIEVED_CLASSPATH_SETUP);
@@ -170,6 +173,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.ALPHABETICAL_ORDER, DEFAULT_ALPHABETICAL_ORDER);
         store.setDefault(PreferenceConstants.RESOLVE_IN_WORKSPACE, DEFAULT_RESOLVE_IN_WORKSPACE);
+        store.setDefault(PreferenceConstants.TRANSITIVE_RESOLVE, DEFAULT_TRANSITIVE_RESOLVE);
         store.setDefault(PreferenceConstants.READ_OSGI_METADATA, DEFAULT_READ_OSGI_METADATA);
         store.setDefault(PreferenceConstants.RESOLVE_BEFORE_LAUNCH, DEFAULT_RESOLVE_BEFORE_LAUNCH);
         store.setDefault(PreferenceConstants.PROPERTY_FILES, DEFAULT_PROPERTY_FILES);

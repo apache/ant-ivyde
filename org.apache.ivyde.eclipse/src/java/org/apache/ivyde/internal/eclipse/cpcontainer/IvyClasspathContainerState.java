@@ -70,6 +70,10 @@ public class IvyClasspathContainerState extends CachedIvy {
         return conf.getInheritedClasspathSetup().isResolveInWorkspace();
     }
 
+    protected boolean isTransitiveResolve() {
+        return conf.getInheritedClasspathSetup().isTransitiveResolve();
+    }
+
     public String toString() {
         return conf.toString();
     }

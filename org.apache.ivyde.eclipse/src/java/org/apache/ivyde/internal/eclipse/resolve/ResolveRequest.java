@@ -27,6 +27,8 @@ public class ResolveRequest {
 
     private boolean inWorkspace = false;
 
+    private boolean transitive = true;
+
     private boolean forceFailOnError = false;
 
     private boolean resolveFailed = false;
@@ -58,6 +60,14 @@ public class ResolveRequest {
 
     public boolean isInWorkspace() {
         return inWorkspace;
+    }
+
+    public void setTransitive(boolean transitive) {
+        this.transitive = transitive;
+    }
+
+    public boolean isTransitive() {
+        return transitive;
     }
 
     public void setResolveFailed(boolean resolveFailed) {
