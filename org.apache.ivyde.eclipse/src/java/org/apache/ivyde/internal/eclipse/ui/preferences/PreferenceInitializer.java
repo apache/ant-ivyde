@@ -29,8 +29,8 @@ import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.internal.eclipse.ui.editors.xml.IXMLColorConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.swt.graphics.RGB;
 
 /**
  * Class used to initialize default preference values.
@@ -191,16 +191,15 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.IGNORE_VERSION_ON_WORKSPACE_PROJECTS,
             DEFAULT_IGNORE_VERSION_ON_WORKSPACE_PROJECTS);
 
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_XML_COMMENT,
-            IXMLColorConstants.XML_COMMENT);
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_PROC_INSTR,
-            IXMLColorConstants.PROC_INSTR);
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_STRING,
-            IXMLColorConstants.STRING);
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_DEFAULT,
-            IXMLColorConstants.DEFAULT);
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_COLOR_TAG,
-            IXMLColorConstants.TAG);
+        store.setDefault(PreferenceConstants.EDITOR_COLOR_XML_COMMENT,
+            asString(IXMLColorConstants.XML_COMMENT));
+        store.setDefault(PreferenceConstants.EDITOR_COLOR_PROC_INSTR,
+            asString(IXMLColorConstants.PROC_INSTR));
+        store.setDefault(PreferenceConstants.EDITOR_COLOR_STRING,
+            asString(IXMLColorConstants.STRING));
+        store.setDefault(PreferenceConstants.EDITOR_COLOR_DEFAULT,
+            asString(IXMLColorConstants.DEFAULT));
+        store.setDefault(PreferenceConstants.EDITOR_COLOR_TAG, asString(IXMLColorConstants.TAG));
 
         store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH, DEFAULT_RETRIEVED_CLASSPATH);
         store.setDefault(PreferenceConstants.RETRIEVED_CLASSPATH_PATTERN,
@@ -214,4 +213,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.ERROR_POPUP, DEFAULT_ERROR_POPUP);
     }
 
+    private String asString(RGB value) {
+        return StringConverter.asString(value);
+    }
 }
