@@ -47,8 +47,8 @@ import org.apache.ivyde.internal.eclipse.IvyDEMessage;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathUtil;
 import org.apache.ivyde.internal.eclipse.workspaceresolver.WorkspaceResolver;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -250,7 +250,7 @@ public class IvyResolver {
         if (report.hasError()) {
             IvyDEMessage.verbose("Resolve ended with errors");
         } else {
-            IvyDEMessage.verbose("Resolve successfull");
+            IvyDEMessage.verbose("Resolve successful");
         }
 
         ResolveResult result = new ResolveResult(report);
@@ -378,8 +378,14 @@ public class IvyResolver {
 
         if (numberOfItemsRetrieved > 0) {
             // Only refresh if we actually retrieved a file.
-            IFolder retrieveFolder = project.getFolder(refreshPath);
-            IvyDEMessage.verbose("Refreshing Eclipse folder " + retrieveFolder);
+            IResource retrieveFolder;
+            if (refreshPath.length() == 0) {
+                retrieveFolder = project;
+                IvyDEMessage.verbose("Refreshing Eclipse project " + project.getName());
+            } else {
+                retrieveFolder = project.getFolder(refreshPath);
+                IvyDEMessage.verbose("Refreshing Eclipse folder " + retrieveFolder);
+            }
             RefreshFolderJob refreshFolderJob = new RefreshFolderJob(retrieveFolder);
             refreshFolderJob.schedule();
         }
