@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.internal.eclipse.resolve;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -27,9 +26,9 @@ import org.eclipse.core.runtime.Status;
 
 public class RefreshFolderJob extends WorkspaceJob {
 
-    private final IFolder folder;
+    private final IResource folder;
 
-    public RefreshFolderJob(IFolder folder) {
+    public RefreshFolderJob(IResource folder) {
         super("IvyDE refresh " + folder);
         this.folder = folder;
     }
