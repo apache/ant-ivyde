@@ -36,18 +36,21 @@
 <h1><a name="annoucement"></a>Release Annoucement</h1>
 
 <tt>
-The Apache IvyDE project is pleased to announce its 2.2.0 beta2 release.
+The Apache IvyDE project is pleased to announce its 2.2.0 release.
 
 The Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
 
 Major changes in this release:
-
-!!!!!!! TODO !!!!!!!!!
+* the API of IvyDE has been stabilized so that third party plugins can rely on it,
+* while still not complete, and still not advertised as stable in Ivy, support of OSGi has been added,
+* javadoc and source attachement can be edited now one by one,
+* improved stability of the resolve process,
+* improved logging for easier debugging.
 
 Compatibility:
-* this release is expected to work with every version of Ivy 2.1 or superior
+* this release is expected to work with every version of Ivy 2.1 or superior. The OSGi features require Ivy 2.3.0 or superior though.
 
-This release is considered as beta since the important changes in IvyDE resolve feature. We encourage our early users to test it and report us any issue they found.
+This release is considered as stable. The beta of 2.2.0 has been out for a (too) long time.
 
 A more detailed release notes can be read there:
 http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
@@ -55,7 +58,7 @@ http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
 Issues should be reported to:
 https://issues.apache.org/jira/browse/IVYDE
 
-Download the 2.2.0 beta2 release at:
+Download the 2.2.0 release at:
 http://ant.apache.org/ivy/ivyde/download.cgi
 
 Or use directly the Apache IvyDE's updatesite:
@@ -73,18 +76,19 @@ Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Ja
 
 <h1><a name="status"></a>Status of this release</h1>
 
-This release contains sevral major improvements along with some bug fixes. The major improvements are about the resolve scheduler and how retrieved artifact are handled.
-Thus this release is considered as a beta one.
+This release is considered as stable. The beta of 2.2.0 has been out for a (too) long time.
 
 <h1><a name="majorchanges"></a>Major Changes in this Release</h1>
 
-As for this release and the next ones, Apache IvyDE now expects to be installed in Eclipse 3.4 or superior.
+The API of IvyDE has been stabilized so that third party plugins can rely on it. The developper community will now ensure that the non "internal" package will be kept backward compatible.
 
-Apache IvyDE has now a synchronous job to launch resolve of dependencies on the projets. So IvyDE will be able to order the resolve of the projects in the correct order regarding their inter dependencies. And the immediate effect is that Eclipse get notified only one time of a classpath change, and thus triggerin only one wrokspace build.
+While it is still not advertised as stable in Ivy, some support of OSGi has been added. IvyDE can now read the OSGi metadata on the dependencies being resolved and setup the proper access rules. It doesn't work with the workspace resolver yet (see IVYDE-350).
 
-Apache IvyDE is now capable of having a classpath based on retrieved artifact rather than on the cached ones.
+IvyDE is automatically mapping sources and javadocs to resolved jars. But now for edge cases, it is possible to override the default mapping and edit the javadoc and source attachement jar by jar.
 
-The existing retrieve configuration are now considered "standonale" ones, as they are independant of the classpath container. They can even now be part of non Java project.
+The resolve process, the heart of IvyDE features, has been even more stabalized and improved. For instance, now at Eclipse startups IvyDE is far less required to launch a resolve of the classpath; the privious state of the classpath containers are saved between Eclipse sessions.
+
+IvyDE now have it own logging channel. In the Ivy console, different levels can be choosed on how IvyDE itself is logging about the resolve processes.
 
 <h1><a name="contrib"></a>Committers and Contributors</h1>
 
