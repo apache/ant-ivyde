@@ -80,15 +80,15 @@ This release is considered as stable. The beta of 2.2.0 has been out for a (too)
 
 <h1><a name="majorchanges"></a>Major Changes in this Release</h1>
 
-The API of IvyDE has been stabilized so that third party plugins can rely on it. The developper community will now ensure that the non "internal" package will be kept backward compatible.
+The API of IvyDE has been stabilized so that third party plugins can rely on it. The developper community will now ensure that the non "internal" packages will be kept backward compatible.
 
 While it is still not advertised as stable in Ivy, some support of OSGi has been added. IvyDE can now read the OSGi metadata on the dependencies being resolved and setup the proper access rules. It doesn't work with the workspace resolver yet (see IVYDE-350).
 
 IvyDE is automatically mapping sources and javadocs to resolved jars. But now for edge cases, it is possible to override the default mapping and edit the javadoc and source attachement jar by jar.
 
-The resolve process, the heart of IvyDE features, has been even more stabalized and improved. For instance, now at Eclipse startups IvyDE is far less required to launch a resolve of the classpath; the privious state of the classpath containers are saved between Eclipse sessions.
+The resolve process, the heart of IvyDE features, has been even more stabilized and improved. For instance, now at Eclipse startups IvyDE is far less required to launch a resolve of the classpaths; the previous state of the classpath containers are saved between Eclipse sessions.
 
-IvyDE now have it own logging channel. In the Ivy console, different levels can be choosed on how IvyDE itself is logging about the resolve processes.
+IvyDE now have its own logging channel. In the Ivy console, different levels can be chosen on how IvyDE itself is logging about the resolve processes.
 
 <h1><a name="contrib"></a>Committers and Contributors</h1>
 
