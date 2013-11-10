@@ -1,8 +1,4 @@
 /*
- * $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/java/org/apache/commons/httpclient/HttpStatus.java,v 1.18 2004/05/02 11:21:13 olegk Exp $
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  *  Copyright 1999-2004 The Apache Software Foundation
@@ -40,8 +36,6 @@ package org.apache.commons.httpclient;
  * @author <a href="mailto:jsdever@apache.org">Jeff Dever</a>
  * 
  * TODO: Internationalization of reason phrases 
- * 
- * @version $Id$
  */
 public class HttpStatus {
 
