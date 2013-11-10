@@ -38,6 +38,14 @@ First in <a href="https://issues.apache.org/jira/browse/IVYDE">Jira</a> make sur
 
 Make sure the release notes and the annoucement are up to date. Look at doc/release-notes.html. Remove there anything which refers to a draft status.
 
+<h2>Last checks</h2>
+
+Make sure that there is no missing ASL header in the source files. The build of IvyDE generate a report there: https://builds.apache.org/job/IvyDE/lastSuccessfulBuild/artifact/trunk/work/rat/report.txt
+
+Make sure the copyright year in the NOTICE file is the current year.
+
+Make sure the copyright year in the html template is the current year; the 3 template files to check are: <tt>template.html</tt>, <tt>template-eclipse.html</tt> and <tt>printTemplate.html</tt>.
+
 <h2>Release branch</h2>
 
 Some modifications of the branch are need to do the release. So a new branch is needed:
