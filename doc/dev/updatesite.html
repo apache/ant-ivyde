@@ -78,13 +78,13 @@ To remove the data:
 <pre>svn rm https://dist.apache.org/repos/dist/release/ant/ivyde/updatesite/ivyde-$OLD_VERSION -m 'Remove old version'
 </pre>
 
-Then the version listed in the updatesite are maintained in 
+Then the version listed in the updatesite are maintained in <tt>https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk/versions.xml</tt>
 
 Then you have to decide if the version you removed should be still listed in the Eclipse updatesite or not.
 
 <ul>To remove a version from the listed one, edit the file <tt>versions.xml</tt>
 <li>If the version should no appear anymore, just delete the line about the deleted version.</li>
-<li>If the version should still be listed, prepend the reference to the old version by <tt>http://archive.apache.org/dist/ant/ivy/updatesite/ </tt></li>
+<li>If the version should still be listed, prepend the reference to the old version by <tt>http://archive.apache.org/dist/ant/ivy/updatesite/</tt></li>
 </ul>
 
 NB: adding or removing lines in <tt>versions.xml</tt> infer that you should edit the <tt>size</tt> attribute in the <tt>versions.xml</tt>, it should correspond to the number of "child".
@@ -92,8 +92,7 @@ NB: adding or removing lines in <tt>versions.xml</tt> infer that you should edit
 <h2>Publish the p2 repository data</h2>
 
 It is just about moving data (svn rm is not allowed, the two steps are required): 
-<pre>svn cp https://dist.apache.org/repos/dist/dev/ant/eclipse-updatesite/ivyde-$VERSION https://dist.apache.org/repos/dist/release/ant/ivyde/updatesite/ivyde-$VERSION -m 'publishing the p2 repo of the release of IvyDE $VERSION'
-svn rm https://dist.apache.org/repos/dist/dev/ant/eclipse-updatesite/ivyde-$VERSION -m 'Remove accepted release'
+<pre>svn mv https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSION https://dist.apache.org/repos/dist/release/ant/ivyde/updatesite/ -m 'publishing the p2 repo of the release of IvyDE $VERSION'
 </pre>
 
 <h2>Regenerate the main repo</h2>
