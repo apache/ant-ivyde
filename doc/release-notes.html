@@ -36,26 +36,23 @@
 <h1><a name="annoucement"></a>Release Annoucement</h1>
 
 <tt>
-The Apache IvyDE project is pleased to announce its 2.2.0 release.
+The Apache IvyDE project is pleased to announce its 2.3.0 release.
 
 The Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
 
 Major changes in this release:
-* the API of IvyDE has been stabilized so that third party plugins can rely on it,
-* while still not complete, and still not advertised as stable in Ivy, support of OSGi has been added,
-* javadoc and source attachement can be edited now one by one,
-* improved stability of the resolve process,
-* improved logging for easier debugging.
+
+!!!! TODO !!!!
 
 Compatibility:
-* this release is expected to work with every version of Ivy 2.1 or superior. The OSGi features require Ivy 2.3.0 or superior though.
+!!!! TODO !!!!
 
-This release is considered as stable. The beta of 2.2.0 has been out for a (too) long time.
+!!!! TODO !!!! status of the release: stable or beta ?
 
 A more detailed release notes can be read there:
 http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
 
-Download the 2.2.0 release at:
+Download the 2.3.0 release at:
 http://ant.apache.org/ivy/ivyde/download.cgi
 
 Or use directly the Apache IvyDE's updatesite:
@@ -76,19 +73,11 @@ Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Ja
 
 <h1><a name="status"></a>Status of this release</h1>
 
-This release is considered as stable. The beta of 2.2.0 has been out for a (too) long time.
+!!!! TODO !!!!
 
 <h1><a name="majorchanges"></a>Major Changes in this Release</h1>
 
-The API of IvyDE has been stabilized so that third party plugins can rely on it. The developper community will now ensure that the non "internal" packages will be kept backward compatible.
-
-While it is still not advertised as stable in Ivy, some support of OSGi has been added. IvyDE can now read the OSGi metadata on the dependencies being resolved and setup the proper access rules. It doesn't work with the workspace resolver yet (see IVYDE-350).
-
-IvyDE is automatically mapping sources and javadocs to resolved jars. But now for edge cases, it is possible to override the default mapping and edit the javadoc and source attachement jar by jar.
-
-The resolve process, the heart of IvyDE features, has been even more stabilized and improved. For instance, now at Eclipse startups IvyDE is far less required to launch a resolve of the classpaths; the previous state of the classpath containers are saved between Eclipse sessions.
-
-IvyDE now have its own logging channel. In the Ivy console, different levels can be chosen on how IvyDE itself is logging about the resolve processes.
+!!!! TODO !!!!
 
 <h1><a name="contrib"></a>Committers and Contributors</h1>
 
@@ -131,42 +120,7 @@ Here is the list of people who have contributed source code and documentation up
 
 <h1><a name="changes"></a>List of Changes in this Release</h1>
 
-List of changes since <a href="/ivy/ivyde/history/2.2.0.beta1/release-notes.html">Apache IvyDE 2.2.0 beta1</a>:
-<ul>
-    <li>NEW: The API of IvyDE is now stabilized so it can be used by third party plugins</li>
-    <li>NEW: Support for variables in the retrieve pattern (IVYDE-326) (thanks to Carsten Pfeiffer)</li>
-    <li>NEW: Support Accepted Types: * (IVYDE-306)</li>
-    <li>NEW: Support Workspace/Filesystem/Variables for "Ivy File" setting (IVYDE-304)</li>
-    <li>NEW: Retrieve list does not resolve workspace projects (IVYDE-308) (thanks to Peter Oxenham)</li>
-    <li>NEW: Allow to set the Ivy user directory globally or project by project (IVYDE-311)</li>
-    <li>NEW: Add support for the OSGi access rules</li>
-    <li>NEW: Source and Javadoc attachements can now be edited jar by jar</li>
-    <li>NEW: Support of global transitivity disabling for resolving dependency (IVYDE-334) (thanks to Anton Zagorulko)</li>
-</ul>
-<ul>
-    <li>IMPROVE: The properties file paths can now be edited</li>
-    <li>IMPROVE: ivy.xml and ivysettings.xml files are not better detected as such, so they can be open with the Ivy editors</li>
-</ul>
-<ul>
-    <li>FIX: Wrong size of an icon in "about eclipse platform" (IVYDE-338)</li>
-    <li>FIX: Disable DTD external fetching (IVYDE-329) (thanks to Stephen Haberman)</li>
-    <li>FIX: IvyDERuntimeClasspathResolver does not resolve entries that don't implement IRuntimeClasspathEntry2 (IVYDE-335) (thanks to Nathan Summers)</li>
-    <li>FIX: IvyDE can corrupt the workspace (IVYDE-341) (thanks to Bernd Kurz)</li>
-    <li>FIX: org.eclipse.swt.SWTException: Invalid thread access with Eclipse Juno (IVYDE-313)</li>
-    <li>FIX: Divide by zero during IvyDE resolve (IVYDE-312) (thanks to Joe Sortelli)</li>
-    <li>FIX: Ivy report view stopped working on Linux (IVYDE-292)</li>
-    <li>FIX: Ivy settings URL is constructed incorrectly from environment variable (IVYDE-314)</li>
-    <li>FIX: Incomplete variable substitution for ivysettings.xml (IVYDE-318)</li>
-    <li>FIX: In case of a multi-resolve, one fail make them all fail (IVYDE-316)</li>
-    <li>FIX: Cannot change retrieve pattern at the workspace level (IVYDE-301)</li>
-    <li>FIX: Resolution failure when workspace has project &amp; artifact sub-element exists (IVYDE-296, IVYDE-319)</li>
-    <li>FIX: IvyDE classpath containers become empty on eclipse/MyEclipse startup (IVYDE-317)</li>
-    <li>FIX: IvyDE doesn't update .classpath anymore; sometimes some containers could not get initialized (IVYDE-299)</li>
-	<li>FIX: Only one resolve is done when several are sharing the same ivy.xml and the workspace resolver is enabled (IVYDE-293)</li>
-	<li>FIX: Problem when exporting the eclipse-plugins (compiler target 1.2) (IVYDE-293) (thanks to Carsten Pfeiffer)</li>
-	<li>FIX: SWTException in PreferenceInitializer (IVYDE-351) (thanks to Carsten Pfeiffer)</li>
-	<li>FIX: Error on retrieving artitfacts to project root (IVYDE-348)</li>
-</ul>
+List of changes since <a href="/ivy/ivyde/history/2.2.0.final/release-notes.html">Apache IvyDE 2.2.0 final</a>:
     <!-- samples
 <ul>
     <li>NEW: new new new (IVYDE-XXX) (thanks to XXX)</li>
