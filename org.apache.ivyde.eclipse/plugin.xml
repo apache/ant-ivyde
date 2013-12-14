@@ -490,7 +490,8 @@
             name="Ivy File"
             priority="normal">
          <describer
-               class="org.apache.ivyde.internal.eclipse.ui.editors.IvyFileContentDescriber">
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
+               <parameter name="element" value="ivy-module" />
          </describer>
       </content-type>
       <content-type
@@ -500,7 +501,8 @@
             name="Ivy Settings"
             priority="normal">
          <describer
-               class="org.apache.ivyde.internal.eclipse.ui.editors.IvySettingsContentDescriber">
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
+               <parameter name="element" value="ivy-settings" />
          </describer>
       </content-type>
    </extension>
