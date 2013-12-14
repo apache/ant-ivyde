@@ -502,7 +502,7 @@
             priority="normal">
          <describer
                class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
-               <parameter name="element" value="ivy-settings" />
+               <parameter name="element" value="ivysettings" />
          </describer>
       </content-type>
    </extension>
