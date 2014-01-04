@@ -86,7 +86,7 @@ public class ClasspathSetupEditor extends Composite {
         readOSGiMetadataCheck = new Button(this, SWT.CHECK);
         readOSGiMetadataCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,
                 2, 1));
-        readOSGiMetadataCheck.setText("Read OSGi metadata");
+        readOSGiMetadataCheck.setText("Read and setup OSGi visibility metadata");
         readOSGiMetadataCheck
                 .setToolTipText("Will setup access rules regarding OSGi metadata like Export-Package");
         readOSGiMetadataCheck.setEnabled(osgiAvailable);
