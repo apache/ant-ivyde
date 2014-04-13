@@ -21,13 +21,13 @@ import java.util.List;
 
 public class MappingSetup {
 
-    private List/* <String> */sourceTypes;
+    private List<String> sourceTypes;
 
-    private List/* <String> */javadocTypes;
+    private List<String> javadocTypes;
 
-    private List/* <String> */sourceSuffixes;
+    private List<String> sourceSuffixes;
 
-    private List/* <String> */javadocSuffixes;
+    private List<String> javadocSuffixes;
 
     private boolean mapIfOnlyOneSource = false;
 
@@ -49,35 +49,35 @@ public class MappingSetup {
         this.mapIfOnlyOneJavadoc = setup.mapIfOnlyOneJavadoc;
     }
 
-    public List getSourceTypes() {
+    public List<String> getSourceTypes() {
         return sourceTypes;
     }
 
-    public void setSourceTypes(List sourceTypes) {
+    public void setSourceTypes(List<String> sourceTypes) {
         this.sourceTypes = sourceTypes;
     }
 
-    public List getJavadocTypes() {
+    public List<String> getJavadocTypes() {
         return javadocTypes;
     }
 
-    public void setJavadocTypes(List javadocTypes) {
+    public void setJavadocTypes(List<String> javadocTypes) {
         this.javadocTypes = javadocTypes;
     }
 
-    public List getSourceSuffixes() {
+    public List<String> getSourceSuffixes() {
         return sourceSuffixes;
     }
 
-    public void setSourceSuffixes(List sourceSuffixes) {
+    public void setSourceSuffixes(List<String> sourceSuffixes) {
         this.sourceSuffixes = sourceSuffixes;
     }
 
-    public List getJavadocSuffixes() {
+    public List<String> getJavadocSuffixes() {
         return javadocSuffixes;
     }
 
-    public void setJavadocSuffixes(List javadocSuffixes) {
+    public void setJavadocSuffixes(List<String> javadocSuffixes) {
         this.javadocSuffixes = javadocSuffixes;
     }
 

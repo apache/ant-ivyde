@@ -37,13 +37,13 @@ public class ResolveResult {
 
     private final boolean previousUsed;
 
-    private Set/* <ArtifactDownloadReport> */artifactReports = new LinkedHashSet();
+    private Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<ArtifactDownloadReport> ();
 
-    private Set problemMessages = new HashSet();
+    private Set<String> problemMessages = new HashSet<String> ();
 
     private final ResolveReport report;
 
-    private Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency = new HashMap();
+    private Map<ModuleRevisionId, Artifact[]> artifactsByDependency = new HashMap<ModuleRevisionId, Artifact[]>();
 
     /**
      * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no
@@ -52,7 +52,7 @@ public class ResolveResult {
      * The paths may be relative It shouldn't be an issue has every relative path should be relative
      * to the eclipse project FIXME: not sure why the Ivy API is returning a set of paths...
      */
-    private Map/* <ArtifactDownloadReport, Set<String>> */retrievedArtifacts;
+    private Map <ArtifactDownloadReport, Set<String>> retrievedArtifacts;
 
     /**
      * Constructor to be used when the resolve have been refreshed
@@ -68,7 +68,7 @@ public class ResolveResult {
     ResolveResult(ResolveReport report) {
         this.report = report;
         previousUsed = false;
-        problemMessages = new HashSet(report.getAllProblemMessages());
+        problemMessages = new HashSet<String>(report.getAllProblemMessages());
     }
 
     /**
@@ -92,7 +92,7 @@ public class ResolveResult {
      * 
      * @return the list of error message
      */
-    public Set/* <String> */getProblemMessages() {
+    public Set<String> getProblemMessages() {
         return problemMessages;
     }
 
@@ -108,7 +108,7 @@ public class ResolveResult {
      * 
      * @return the reports of the artifacts resolved
      */
-    public Set/* <ArtifactDownloadReport> */getArtifactReports() {
+    public Set <ArtifactDownloadReport> getArtifactReports() {
         return artifactReports;
     }
 
@@ -116,11 +116,11 @@ public class ResolveResult {
      * 
      * @return the reports of the artifacts by dependency
      */
-    public Map /* <ModuleRevisionId, Artifact[]> */getArtifactsByDependency() {
+    public Map  <ModuleRevisionId, Artifact[]> getArtifactsByDependency() {
         return artifactsByDependency;
     }
 
-    void setRetrievedArtifacts(Map retrievedArtifacts) {
+    void setRetrievedArtifacts(Map<ArtifactDownloadReport, Set<String>> retrievedArtifacts) {
         this.retrievedArtifacts = retrievedArtifacts;
     }
 
@@ -128,7 +128,7 @@ public class ResolveResult {
      * 
      * @return the path(s) of the retrieved artifacts
      */
-    public Map/* <ArtifactDownloadReport, Set<String>> */getRetrievedArtifacts() {
+    public Map<ArtifactDownloadReport, Set<String>> getRetrievedArtifacts() {
         return retrievedArtifacts;
     }
 }

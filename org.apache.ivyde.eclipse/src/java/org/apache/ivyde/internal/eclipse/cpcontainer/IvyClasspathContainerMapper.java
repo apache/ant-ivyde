@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.internal.eclipse.cpcontainer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,7 +25,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -71,13 +71,11 @@ public class IvyClasspathContainerMapper {
 
     private final IJavaProject javaProject;
 
-    private final Collection/* <ArtifactDownloadReport> */all;
+    private final Collection<ArtifactDownloadReport> all;
 
-    private final Map/* <ModuleRevisionId, Artifact[]> */artifactsByDependency;
+    private final Map<ModuleRevisionId, Artifact[]> artifactsByDependency;
 
-    private final Map/*
-                      * <ArtifactDownloadReport , Set<String>>
-                      */retrievedArtifacts;
+    private final Map<ArtifactDownloadReport, Set<String>> retrievedArtifacts;
 
     private ClasspathSetup classpathSetup;
 
@@ -103,15 +101,14 @@ public class IvyClasspathContainerMapper {
 
     public IClasspathEntry[] map() {
         IClasspathEntry[] classpathEntries;
-        Collection paths = new LinkedHashSet();
+        Collection<IClasspathEntry> paths = new LinkedHashSet<IClasspathEntry>();
 
         IvyDEMessage.verbose("Building classpath from " + all.size() + " resolved artifact(s)");
 
-        for (Iterator iter = all.iterator(); iter.hasNext();) {
-            ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
-
+        for (ArtifactDownloadReport artifact : all) {
             if (artifact.getType().equals(WorkspaceResolver.ECLIPSE_PROJECT_TYPE)) {
-                IvyDEMessage.verbose("Found an workspace dependency on project " + artifact.getName());
+                IvyDEMessage.verbose("Found an workspace dependency on project "
+                        + artifact.getName());
                 // This is a java project in the workspace, add project path
                 // but only add it if it is not a self dependency
                 if (javaProject == null
@@ -120,40 +117,72 @@ public class IvyClasspathContainerMapper {
                     paths.add(JavaCore.newProjectEntry(new Path(artifact.getName()), rules, true,
                         null, true));
                 } else {
-                    IvyDEMessage.verbose("Skipping self dependency on project " + artifact.getName());
+                    IvyDEMessage.verbose("Skipping self dependency on project "
+                            + artifact.getName());
                 }
             } else if (artifact.getLocalFile() != null && accept(artifact.getArtifact())) {
                 IvyDEMessage.verbose("Adding " + artifact.getName() + " to the classpath");
 
-                IPath classpathArtifact = getArtifactPath(artifact);
-                IPath sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
-                    mapping.isMapIfOnlyOneSource());
-                IPath javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
-                    mapping.isMapIfOnlyOneJavadoc());
-                IAccessRule[] rules = getAccessRules(classpathArtifact);
-                IPath sources = attachementManager.getSourceAttachment(classpathArtifact,
-                    sourcesArtifact);
-                IPath sourcesRoot = attachementManager.getSourceAttachmentRoot(classpathArtifact,
-                    sourcesArtifact);
-                IClasspathAttribute[] att = getExtraAttribute(classpathArtifact, javadocArtifact);
-
-                if (sources != null) {
-                    IvyDEMessage.debug("Attaching sources " + sources + " to " + classpathArtifact);
+                // handle unzipped jar with 'Bundle-Classpath'
+                if (artifact.getLocalFile().isDirectory() && classpathSetup.isReadOSGiMetadata()) {
+                    File manifestFile = new File(artifact.getLocalFile(), "META-INF/MANIFEST.MF");
+                    if (!manifestFile.exists()) {
+                        // no manifest : back to simple classpath
+                        paths.add(buildEntry(artifact, ""));
+                    } else {
+                        try {
+                            BundleInfo bundleInfo = ManifestParser.parseManifest(manifestFile);
+                            if (bundleInfo.hasInnerClasspath()) {
+                                for (String innerPath : bundleInfo.getClasspath()) {
+                                    paths.add(buildEntry(artifact, "/" + innerPath));
+                                }
+                            }
+                        } catch (IOException e) {
+                            IvyDEMessage.error(
+                                "Unreadable MANIFEST.MF for artifact " + artifact.getName() + ": "
+                                        + manifestFile.getAbsolutePath() + " (" + e.getMessage()
+                                        + ")", e);
+                        } catch (ParseException e) {
+                            IvyDEMessage.error(
+                                "Malformed MANIFEST.MF for artifact " + artifact.getName() + ": "
+                                        + manifestFile.getAbsolutePath() + " (" + e.getMessage()
+                                        + ")", e);
+                        }
+                    }
+                } else {
+                    // simple entry
+                    paths.add(buildEntry(artifact, ""));
                 }
-                if (javadocArtifact != null) {
-                    IvyDEMessage.debug("Attaching javadoc " + javadocArtifact + " to " + classpathArtifact);
-                }
-                if (rules != null) {
-                    IvyDEMessage.debug("Setting OSGi access rules on  " + classpathArtifact);
-                }
-                paths.add(JavaCore.newLibraryEntry(classpathArtifact, sources, sourcesRoot, rules,
-                    att, false));
             }
 
         }
         classpathEntries = (IClasspathEntry[]) paths.toArray(new IClasspathEntry[paths.size()]);
 
         return classpathEntries;
+    }
+
+    private IClasspathEntry buildEntry(ArtifactDownloadReport artifact, String innerPath) {
+        IPath classpathArtifact = getArtifactPath(artifact, innerPath);
+        IPath sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
+            mapping.isMapIfOnlyOneSource(), "");
+        IPath javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
+            mapping.isMapIfOnlyOneJavadoc(), "");
+        IAccessRule[] rules = getAccessRules(classpathArtifact);
+        IPath sources = attachementManager.getSourceAttachment(classpathArtifact, sourcesArtifact);
+        IPath sourcesRoot = attachementManager.getSourceAttachmentRoot(classpathArtifact,
+            sourcesArtifact);
+        IClasspathAttribute[] att = getExtraAttribute(classpathArtifact, javadocArtifact);
+
+        if (sources != null) {
+            IvyDEMessage.debug("Attaching sources " + sources + " to " + classpathArtifact);
+        }
+        if (javadocArtifact != null) {
+            IvyDEMessage.debug("Attaching javadoc " + javadocArtifact + " to " + classpathArtifact);
+        }
+        if (rules != null) {
+            IvyDEMessage.debug("Setting OSGi access rules on  " + classpathArtifact);
+        }
+        return JavaCore.newLibraryEntry(classpathArtifact, sources, sourcesRoot, rules, att, false);
     }
 
     private IAccessRule[] getAccessRules(IJavaProject javaProject) {
@@ -194,9 +223,7 @@ public class IvyClasspathContainerMapper {
         }
         IAccessRule[] rules = new IAccessRule[bundleInfo.getExports().size() + 1];
         int i = 0;
-        Iterator itExports = bundleInfo.getExports().iterator();
-        while (itExports.hasNext()) {
-            ExportPackage exportPackage = (ExportPackage) itExports.next();
+        for (ExportPackage exportPackage : bundleInfo.getExports()) {
             rules[i++] = JavaCore.newAccessRule(
                 new Path(exportPackage.getName().replace('.', IPath.SEPARATOR) + "/*"),
                 IAccessRule.K_ACCESSIBLE);
@@ -206,14 +233,14 @@ public class IvyClasspathContainerMapper {
         return rules;
     }
 
-    private Path getArtifactPath(ArtifactDownloadReport artifact) {
+    private Path getArtifactPath(ArtifactDownloadReport artifact, String innerPath) {
         if (retrievedArtifacts != null) {
-            Set pathSet = (Set) retrievedArtifacts.get(artifact);
+            Set<String> pathSet = retrievedArtifacts.get(artifact);
             if (pathSet != null && !pathSet.isEmpty()) {
-                return new Path((String) pathSet.iterator().next());
+                return new Path((String) pathSet.iterator().next() + innerPath);
             }
         }
-        return new Path(artifact.getLocalFile().getAbsolutePath());
+        return new Path(artifact.getLocalFile().getAbsolutePath() + innerPath);
     }
 
     interface ArtifactMatcher {
@@ -225,16 +252,15 @@ public class IvyClasspathContainerMapper {
     }
 
     private Path getArtifactPath(ArtifactDownloadReport adr, ArtifactMatcher matcher,
-            boolean mapIfOnlyOne) {
+            boolean mapIfOnlyOne, String innerPath) {
         Artifact artifact = adr.getArtifact();
         monitor.subTask("searching " + matcher.getName() + " for " + artifact);
-        for (Iterator iter = all.iterator(); iter.hasNext();) {
-            ArtifactDownloadReport otherAdr = (ArtifactDownloadReport) iter.next();
+        for (ArtifactDownloadReport otherAdr : all) {
             Artifact a = otherAdr.getArtifact();
             if (otherAdr.getLocalFile() != null && matcher.matchName(artifact, a.getName())
                     && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
                     && matcher.match(a)) {
-                return getArtifactPath(otherAdr);
+                return getArtifactPath(otherAdr, innerPath);
             }
         }
         // we haven't found source artifact in resolved artifacts,
@@ -252,7 +278,7 @@ public class IvyClasspathContainerMapper {
                         ArtifactDownloadReport metaAdr = ivy.getResolveEngine().download(
                             metaArtifact, new DownloadOptions());
                         if (metaAdr.getLocalFile() != null && metaAdr.getLocalFile().exists()) {
-                            return getArtifactPath(metaAdr);
+                            return getArtifactPath(metaAdr, innerPath);
                         }
                     }
                     // keep a reference to the artifact so we could fall back
@@ -306,8 +332,8 @@ public class IvyClasspathContainerMapper {
         }
     };
 
-    private boolean isArtifactName(Artifact artifact, String name,
-            Collection/* <String> */suffixes, String type) {
+    private boolean isArtifactName(Artifact artifact, String name, Collection<String> suffixes,
+            String type) {
         String artifactNameToMatch = (String) artifact.getExtraAttribute(IVYDE_NS_PREFIX + type);
         if (artifactNameToMatch != null) {
             // some name is specified, it overrides suffix matching
@@ -317,9 +343,8 @@ public class IvyClasspathContainerMapper {
         if (name.equals(jar)) {
             return true;
         }
-        Iterator it = suffixes.iterator();
-        while (it.hasNext()) {
-            if (name.equals(jar + it.next())) {
+        for (String suffix : suffixes) {
+            if (name.equals(jar + suffix)) {
                 return true;
             }
         }
@@ -327,7 +352,7 @@ public class IvyClasspathContainerMapper {
     }
 
     private IClasspathAttribute[] getExtraAttribute(IPath classpathArtifact, IPath javadocArtifact) {
-        List result = new ArrayList();
+        List<IClasspathAttribute> result = new ArrayList<IClasspathAttribute>();
         URL url = attachementManager.getDocAttachment(classpathArtifact);
 
         if (url == null) {
@@ -354,7 +379,7 @@ public class IvyClasspathContainerMapper {
             result.add(JavaCore.newClasspathAttribute(
                 IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, url.toExternalForm()));
         }
-        return (IClasspathAttribute[]) result.toArray(new IClasspathAttribute[result.size()]);
+        return result.toArray(new IClasspathAttribute[result.size()]);
     }
 
     /**
