@@ -83,6 +83,8 @@ public class IvyClasspathContainerMapper {
 
     private boolean osgiAvailable;
 
+    private boolean osgiClasspathAvailable;
+
     private IvyAttachementManager attachementManager = IvyPlugin.getDefault()
             .getIvyAttachementManager();
 
@@ -97,6 +99,7 @@ public class IvyClasspathContainerMapper {
         this.artifactsByDependency = resolveResult.getArtifactsByDependency();
         this.retrievedArtifacts = resolveResult.getRetrievedArtifacts();
         this.osgiAvailable = IvyPlugin.getDefault().isOsgiAvailable();
+        this.osgiClasspathAvailable = IvyPlugin.getDefault().isOsgiClasspathAvailable();
     }
 
     public IClasspathEntry[] map() {
@@ -124,7 +127,7 @@ public class IvyClasspathContainerMapper {
                 IvyDEMessage.verbose("Adding " + artifact.getName() + " to the classpath");
 
                 // handle unzipped jar with 'Bundle-Classpath'
-                if (artifact.getLocalFile().isDirectory() && classpathSetup.isReadOSGiMetadata()) {
+                if (osgiClasspathAvailable && artifact.getLocalFile().isDirectory() && classpathSetup.isReadOSGiMetadata()) {
                     File manifestFile = new File(artifact.getLocalFile(), "META-INF/MANIFEST.MF");
                     if (!manifestFile.exists()) {
                         // no manifest : back to simple classpath

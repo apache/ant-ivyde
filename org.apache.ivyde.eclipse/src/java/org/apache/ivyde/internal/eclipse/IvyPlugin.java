@@ -101,6 +101,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private boolean osgiAvailable;
 
+    private boolean osgiClasspathAvailable;
+
     private IvyClasspathContainerSerializer ivyCpcSerializer;
 
     private IvyAttachementManager ivyAttachementManager;
@@ -187,8 +189,15 @@ public class IvyPlugin extends AbstractUIPlugin {
         try {
             Class.forName("org.apache.ivy.osgi.core.ManifestParser");
             osgiAvailable = true;
+            try {
+                Class.forName("org.apache.ivy.osgi.core.BundleInfo").getDeclaredMethod("getClasspath");
+                osgiClasspathAvailable = true;
+            } catch (Exception e) {
+                osgiClasspathAvailable = false;
+            }
         } catch (Exception e) {
             osgiAvailable = false;
+            osgiClasspathAvailable = false;
         }
 
         logInfo("IvyDE plugin started");
@@ -304,6 +313,10 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public boolean isOsgiAvailable() {
         return osgiAvailable;
+    }
+
+    public boolean isOsgiClasspathAvailable() {
+        return osgiClasspathAvailable;
     }
 
     /**
