@@ -132,7 +132,10 @@ public class IvyClasspathContainerMapper {
                     } else {
                         try {
                             BundleInfo bundleInfo = ManifestParser.parseManifest(manifestFile);
-                            if (bundleInfo.hasInnerClasspath()) {
+                            if (bundleInfo.getClasspath() == null) {
+                                // no inner classpath : a simple entry
+                                paths.add(buildEntry(artifact, ""));
+                            } else {
                                 for (String innerPath : bundleInfo.getClasspath()) {
                                     paths.add(buildEntry(artifact, "/" + innerPath));
                                 }
