@@ -145,7 +145,8 @@ public class IvyClasspathContainerImpl implements IClasspathContainer, IvyClassp
     }
 
     private void setClasspathEntries(final IClasspathEntry[] entries) {
-        Display.getDefault().syncExec(new Runnable() {
+        // this need to be async to avoid dead locks, cf IVYDE-361
+        Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 if (conf.getInheritedClasspathSetup().isAlphaOrder()) {
                     Arrays.sort(entries, new Comparator() {
