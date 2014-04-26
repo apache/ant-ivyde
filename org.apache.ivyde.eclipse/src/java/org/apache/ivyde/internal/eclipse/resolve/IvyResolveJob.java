@@ -302,7 +302,7 @@ public class IvyResolveJob extends Job {
                 return true;
             case IStatus.OK:
             case IStatus.INFO:
-                IvyDEMessage.info("Successuful resolve of " + request);
+                IvyDEMessage.info("Successful resolve of " + request);
                 break;
             case IStatus.ERROR:
                 IvyDEMessage.warn("Error on resolve of " + request + ": " + status[0].getMessage());
