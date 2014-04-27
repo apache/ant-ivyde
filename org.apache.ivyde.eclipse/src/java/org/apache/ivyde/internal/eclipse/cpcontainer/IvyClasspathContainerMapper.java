@@ -18,7 +18,6 @@
 package org.apache.ivyde.internal.eclipse.cpcontainer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -127,20 +126,26 @@ public class IvyClasspathContainerMapper {
                 IvyDEMessage.verbose("Adding " + artifact.getName() + " to the classpath");
 
                 // handle unzipped jar with 'Bundle-Classpath'
-                if (osgiClasspathAvailable && artifact.getLocalFile().isDirectory() && classpathSetup.isReadOSGiMetadata()) {
+                if (osgiClasspathAvailable && artifact.getLocalFile().isDirectory()
+                        && classpathSetup.isReadOSGiMetadata()) {
                     File manifestFile = new File(artifact.getLocalFile(), "META-INF/MANIFEST.MF");
                     if (!manifestFile.exists()) {
                         // no manifest : back to simple classpath
-                        paths.add(buildEntry(artifact, ""));
+                        paths.add(buildEntry(artifact));
                     } else {
                         try {
                             BundleInfo bundleInfo = ManifestParser.parseManifest(manifestFile);
                             if (bundleInfo.getClasspath() == null) {
                                 // no inner classpath : a simple entry
-                                paths.add(buildEntry(artifact, ""));
+                                paths.add(buildEntry(artifact));
                             } else {
+                                IAccessRule[] rules = getAccessRules(bundleInfo);
                                 for (String innerPath : bundleInfo.getClasspath()) {
-                                    paths.add(buildEntry(artifact, "/" + innerPath));
+                                    IClasspathEntry buildEntry = buildEntry(artifact, rules,
+                                        manifestFile, innerPath);
+                                    if (buildEntry != null) {
+                                        paths.add(buildEntry);
+                                    }
                                 }
                             }
                         } catch (IOException e) {
@@ -157,7 +162,7 @@ public class IvyClasspathContainerMapper {
                     }
                 } else {
                     // simple entry
-                    paths.add(buildEntry(artifact, ""));
+                    paths.add(buildEntry(artifact));
                 }
             }
 
@@ -167,13 +172,30 @@ public class IvyClasspathContainerMapper {
         return classpathEntries;
     }
 
-    private IClasspathEntry buildEntry(ArtifactDownloadReport artifact, String innerPath) {
-        IPath classpathArtifact = getArtifactPath(artifact, innerPath);
+    private IClasspathEntry buildEntry(ArtifactDownloadReport artifact, IAccessRule[] rules,
+            File manifestFile, String innerPath) {
+        IPath classpathArtifact = getArtifactPath(artifact, "/" + innerPath);
+        if (!classpathArtifact.toFile().exists()) {
+            // an non existing inner jar is 'just' a broken MANIFEST.MF, which happens sometimes
+            // with Eclipse bundles
+            IvyDEMessage.warn("The MANIFEST of " + artifact + " (" + manifestFile
+                    + ") is referencing a non exitant jar " + classpathArtifact + ". Ignoring it");
+            return null;
+        }
+        return doBuildEntry(artifact, classpathArtifact, rules);
+    }
+
+    private IClasspathEntry buildEntry(ArtifactDownloadReport artifact) {
+        IPath classpathArtifact = getArtifactPath(artifact, "");
+        return doBuildEntry(artifact, classpathArtifact, null);
+    }
+
+    private IClasspathEntry doBuildEntry(ArtifactDownloadReport artifact, IPath classpathArtifact,
+            IAccessRule[] rules) {
         IPath sourcesArtifact = getArtifactPath(artifact, sourceArtifactMatcher,
             mapping.isMapIfOnlyOneSource(), "");
         IPath javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
             mapping.isMapIfOnlyOneJavadoc(), "");
-        IAccessRule[] rules = getAccessRules(classpathArtifact);
         IPath sources = attachementManager.getSourceAttachment(classpathArtifact, sourcesArtifact);
         IPath sourcesRoot = attachementManager.getSourceAttachmentRoot(classpathArtifact,
             sourcesArtifact);
@@ -201,31 +223,9 @@ public class IvyClasspathContainerMapper {
         return null;
     }
 
-    private IAccessRule[] getAccessRules(IPath artifact) {
-        if (!osgiAvailable || !classpathSetup.isReadOSGiMetadata()) {
+    private IAccessRule[] getAccessRules(BundleInfo bundleInfo) {
+        if (bundleInfo == null || !classpathSetup.isReadOSGiMetadata()) {
             return null;
-        }
-        BundleInfo bundleInfo;
-        FileInputStream jar = null;
-        try {
-            jar = new FileInputStream(artifact.toFile());
-            bundleInfo = ManifestParser.parseJarManifest(jar);
-        } catch (IOException e) {
-            IvyDEMessage.warn("OSGi metadata could not be extracted from " + artifact + ": "
-                    + e.getMessage() + " (" + e.getClass().getName() + ")");
-            return null;
-        } catch (ParseException e) {
-            IvyDEMessage.warn("OSGi metadata could not be extracted from " + artifact + ": "
-                    + e.getMessage() + " (" + e.getClass().getName() + ")");
-            return null;
-        } finally {
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (IOException e) {
-                    // don't care
-                }
-            }
         }
         IAccessRule[] rules = new IAccessRule[bundleInfo.getExports().size() + 1];
         int i = 0;
