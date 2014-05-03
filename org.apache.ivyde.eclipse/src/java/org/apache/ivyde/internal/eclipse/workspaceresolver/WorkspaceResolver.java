@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -48,10 +47,14 @@ import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.osgi.core.BundleInfo;
+import org.apache.ivy.osgi.core.ManifestHeaderElement;
+import org.apache.ivy.osgi.core.ManifestHeaderValue;
 import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.IvyDEMessage;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
@@ -131,11 +134,12 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         IvyContext context = IvyContext.getContext();
-        Map/* <Artifact, Artifact> */workspaceArtifacts = (Map) context
+        @SuppressWarnings("unchecked")
+        Map<Artifact, Artifact> workspaceArtifacts = (Map<Artifact, Artifact>) context
                 .get(IVYDE_WORKSPACE_ARTIFACTS);
-        Map/* <String, ArtifactDownloadReport> */workspaceReports = null;
+        Map<Artifact, ArtifactDownloadReport> workspaceReports = null;
         if (workspaceArtifacts != null) {
-            workspaceReports = new HashMap();
+            workspaceReports = new HashMap<Artifact, ArtifactDownloadReport>();
             context.set(IVYDE_WORKSPACE_ARTIFACT_REPORTS, workspaceReports);
         }
 
@@ -172,9 +176,11 @@ public class WorkspaceResolver extends AbstractResolver {
             throws ParseException {
         IvyContext context = IvyContext.getContext();
 
-        String contextId = "ivyde.workspaceresolver." + getName() + "." + dd.getDependencyRevisionId().toString();
+        String contextId = "ivyde.workspaceresolver." + getName() + "."
+                + dd.getDependencyRevisionId().toString();
         DependencyDescriptor parentDD = (DependencyDescriptor) context.get(contextId);
-        if (parentDD != null && parentDD.getDependencyRevisionId().equals(dd.getDependencyRevisionId())) {
+        if (parentDD != null
+                && parentDD.getDependencyRevisionId().equals(dd.getDependencyRevisionId())) {
             // this very workspace resolver has been already called for the same dependency
             // we are going into a circular dependency, let's return 'not found'
             return null;
@@ -182,6 +188,8 @@ public class WorkspaceResolver extends AbstractResolver {
         context.set(contextId, dd);
 
         ModuleRevisionId dependencyMrid = dd.getDependencyRevisionId();
+        String org = dependencyMrid.getModuleId().getOrganisation();
+        String module = dependencyMrid.getModuleId().getName();
 
         VersionMatcher versionMatcher = getSettings().getVersionMatcher();
 
@@ -192,21 +200,57 @@ public class WorkspaceResolver extends AbstractResolver {
             if (!p.exists()) {
                 continue;
             }
-            List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
-                    .getContainers(p);
-            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
+            List<IvyClasspathContainer> containers = IvyClasspathContainerHelper.getContainers(p);
+            Iterator<IvyClasspathContainer> itContainer = containers.iterator();
             while (itContainer.hasNext()) {
                 IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
                 ModuleDescriptor md = ivycp.getState().getCachedModuleDescriptor();
                 if (md == null) {
                     continue;
                 }
-
                 ModuleRevisionId candidateMrid = md.getModuleRevisionId();
 
-                if (!candidateMrid.getModuleId().equals(dependencyMrid.getModuleId())) {
-                    // it doesn't match org#module
-                    continue;
+                // search a match on the organization and the module name
+                
+                if (org.equals(BundleInfo.BUNDLE_TYPE)) {
+                    // looking for an OSGi bundle via its symbolic name
+                    String sn = (String) md.getExtraInfo().get("Bundle-SymbolicName");
+                    if (sn == null || !module.equals(sn)) {
+                        // not found, skip to next
+                        continue;
+                    }
+                } else if (org.equals(BundleInfo.PACKAGE_TYPE)) {
+                    // looking for an OSGi bundle via its exported package
+                    String exportedPackages = (String) md.getExtraInfo().get("Export-Package");
+                    if (exportedPackages == null) {
+                        // not found, skip to next
+                        continue;
+                    }
+                    boolean found = false;
+                    String version = null;
+                    ManifestHeaderValue exportElements = new ManifestHeaderValue(exportedPackages);
+                    for (ManifestHeaderElement exportElement : exportElements.getElements()) {
+                        if (exportElement.getValues().contains(module)) {
+                            found = true;
+                            version = exportElement.getAttributes().get("version");
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        // not found, skip to next
+                        continue;
+                    }
+                    if (version == null) {
+                        // no version means anything can match. Let's trick the version matcher by
+                        // setting the exact expected version
+                        version = dependencyMrid.getRevision();
+                    }
+                    md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(org, module, version));
+                } else {
+                    if (!candidateMrid.getModuleId().equals(dependencyMrid.getModuleId())) {
+                        // it doesn't match org#module, skip to next
+                        continue;
+                    }
                 }
 
                 IvyDEMessage.verbose("Workspace resolver found potential matching project "
@@ -227,7 +271,8 @@ public class WorkspaceResolver extends AbstractResolver {
                     if (dependencyBranch != candidateBranch) {
                         // Both cannot be null
                         if (dependencyBranch == null || candidateBranch == null) {
-                            IvyDEMessage.verbose("\t\trejected since branches doesn't match (one is set, the other isn't)");
+                            IvyDEMessage
+                                    .verbose("\t\trejected since branches doesn't match (one is set, the other isn't)");
                             continue;
                         }
                         if (!dependencyBranch.equals(candidateBranch)) {
@@ -265,10 +310,11 @@ public class WorkspaceResolver extends AbstractResolver {
                         // pushContext (child)
                         IvyContext currentContext = IvyContext.popContext();
                         IvyContext parentContext = IvyContext.getContext();
-                        Map/* <Artifact, Artifact> */workspaceArtifacts = (Map) parentContext
+                        @SuppressWarnings("unchecked")
+                        Map<Artifact, Artifact> workspaceArtifacts = (Map<Artifact, Artifact>) parentContext
                                 .get(IVYDE_WORKSPACE_ARTIFACTS);
                         if (workspaceArtifacts == null) {
-                            workspaceArtifacts = new HashMap();
+                            workspaceArtifacts = new HashMap<Artifact, Artifact>();
                             parentContext.set(IVYDE_WORKSPACE_ARTIFACTS, workspaceArtifacts);
                         }
                         for (int j = 0; j < dArtifacts.length; j++) {
@@ -332,12 +378,7 @@ public class WorkspaceResolver extends AbstractResolver {
             newMd.addExcludeRule(allExcludeRules[k]);
         }
 
-        Map extraInfo = md.getExtraInfo();
-        Iterator it = extraInfo.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry entry = (Entry) it.next();
-            newMd.addExtraInfo((String) entry.getKey(), (String) entry.getValue());
-        }
+        newMd.getExtraInfo().putAll(md.getExtraInfo());
 
         License[] licenses = md.getLicenses();
         for (int k = 0; k < licenses.length; k++) {
