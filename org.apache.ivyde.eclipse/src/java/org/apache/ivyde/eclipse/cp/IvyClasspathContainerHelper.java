@@ -58,7 +58,8 @@ public final class IvyClasspathContainerHelper {
         if (selection == null) {
             return null;
         }
-        for (Iterator it = selection.iterator(); it.hasNext();) {
+        for (@SuppressWarnings("unchecked")
+        Iterator<Object> it = selection.iterator(); it.hasNext();) {
             Object element = it.next();
             IvyClasspathContainerImpl cp = (IvyClasspathContainerImpl) IvyPlugin.adapt(element,
                 IvyClasspathContainerImpl.class);
@@ -66,7 +67,7 @@ public final class IvyClasspathContainerHelper {
                 return cp;
             }
             if (element instanceof ClassPathContainer) {
-                // FIXME: we shouldn't check against internal JDT API but there are not adaptable to
+                // FIXME: we shouldn't check against internal JDT API but they are not adaptable to
                 // useful class
                 return IvyClasspathUtil.jdt2IvyCPC((ClassPathContainer) element);
             }
@@ -85,8 +86,8 @@ public final class IvyClasspathContainerHelper {
      *            the project to search into
      * @return the Ivy classpath container if found
      */
-    public static List/* <IvyClasspathContainer> */getContainers(IJavaProject javaProject) {
-        List/* <IvyClasspathContainer> */containers = new ArrayList();
+    public static List<IvyClasspathContainer> getContainers(IJavaProject javaProject) {
+        List<IvyClasspathContainer> containers = new ArrayList<IvyClasspathContainer>();
         if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
@@ -98,8 +99,8 @@ public final class IvyClasspathContainerHelper {
                     IPath path = entry.getPath();
                     if (isIvyClasspathContainer(path)) {
                         IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
-                        if (cp instanceof IvyClasspathContainerImpl) {
-                            containers.add(cp);
+                        if (cp instanceof IvyClasspathContainer) {
+                            containers.add((IvyClasspathContainer) cp);
                         }
                     }
                 }
@@ -111,9 +112,9 @@ public final class IvyClasspathContainerHelper {
         return containers;
     }
 
-    public static List/* <IvyClasspathContainer> */getContainersFromIvyFile(IFile ivyfile) {
+    public static List<IvyClasspathContainer> getContainersFromIvyFile(IFile ivyfile) {
         IJavaProject javaProject = JavaCore.create(ivyfile.getProject());
-        List/* <IvyClasspathContainer> */containers = new ArrayList();
+        List<IvyClasspathContainer> containers = new ArrayList<IvyClasspathContainer>();
         if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
@@ -142,9 +143,9 @@ public final class IvyClasspathContainerHelper {
         return containers;
     }
 
-    public static List/* <IvyClasspathContainer> */getContainersFromIvySettings(IFile ivySettings) {
+    public static List<IvyClasspathContainer> getContainersFromIvySettings(IFile ivySettings) {
         IJavaProject javaProject = JavaCore.create(ivySettings.getProject());
-        List/* <IvyClasspathContainer> */containers = new ArrayList();
+        List<IvyClasspathContainer> containers = new ArrayList<IvyClasspathContainer>();
         if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
@@ -227,12 +228,12 @@ public final class IvyClasspathContainerHelper {
         return null;
     }
 
-    public static List/* <IvyClasspathContainer> */getContainers(IProject project) {
+    public static List<IvyClasspathContainer> getContainers(IProject project) {
         IJavaProject javaProject = JavaCore.create(project);
         if (javaProject != null && javaProject.exists()) {
             return getContainers(javaProject);
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
@@ -241,7 +242,7 @@ public final class IvyClasspathContainerHelper {
      * @return collection of ivy projects
      */
     public static IProject[] getIvyProjectsInWorkspace() {
-        Collection/* <IProject> */ivyProjects = new HashSet();
+        Collection<IProject> ivyProjects = new HashSet<IProject>();
 
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
