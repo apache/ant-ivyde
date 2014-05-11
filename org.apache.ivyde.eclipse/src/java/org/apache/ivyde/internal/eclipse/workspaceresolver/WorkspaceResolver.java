@@ -117,6 +117,8 @@ public class WorkspaceResolver extends AbstractResolver {
 
     private boolean ignoreVersionOnWorkspaceProjects;
 
+    private boolean osgiResolveInWorkspaceAvailable;
+
     public WorkspaceResolver(IProject project, IvySettings ivySettings) {
         String projectName = project == null ? "<null>" : project.getName();
         setName(projectName + "-ivyde-workspace-resolver");
@@ -130,6 +132,9 @@ public class WorkspaceResolver extends AbstractResolver {
 
         ignoreVersionOnWorkspaceProjects = IvyPlugin.getPreferenceStoreHelper()
                 .getIgnoreVersionOnWorkspaceProjects();
+
+        osgiResolveInWorkspaceAvailable = IvyPlugin.getDefault()
+                .isIvyVersionGreaterOrEqual(2, 4, 0);
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
@@ -211,17 +216,17 @@ public class WorkspaceResolver extends AbstractResolver {
                 ModuleRevisionId candidateMrid = md.getModuleRevisionId();
 
                 // search a match on the organization and the module name
-                
-                if (org.equals(BundleInfo.BUNDLE_TYPE)) {
+
+                if (osgiResolveInWorkspaceAvailable && org.equals(BundleInfo.BUNDLE_TYPE)) {
                     // looking for an OSGi bundle via its symbolic name
-                    String sn = (String) md.getExtraInfo().get("Bundle-SymbolicName");
+                    String sn = md.getExtraInfoContentByTagName("Bundle-SymbolicName");
                     if (sn == null || !module.equals(sn)) {
                         // not found, skip to next
                         continue;
                     }
-                } else if (org.equals(BundleInfo.PACKAGE_TYPE)) {
+                } else if (osgiResolveInWorkspaceAvailable && org.equals(BundleInfo.PACKAGE_TYPE)) {
                     // looking for an OSGi bundle via its exported package
-                    String exportedPackages = (String) md.getExtraInfo().get("Export-Package");
+                    String exportedPackages = md.getExtraInfoContentByTagName("Export-Package");
                     if (exportedPackages == null) {
                         // not found, skip to next
                         continue;
@@ -245,7 +250,8 @@ public class WorkspaceResolver extends AbstractResolver {
                         // setting the exact expected version
                         version = dependencyMrid.getRevision();
                     }
-                    md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(org, module, version));
+                    md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(org, module,
+                        version));
                 } else {
                     if (!candidateMrid.getModuleId().equals(dependencyMrid.getModuleId())) {
                         // it doesn't match org#module, skip to next
@@ -378,7 +384,7 @@ public class WorkspaceResolver extends AbstractResolver {
             newMd.addExcludeRule(allExcludeRules[k]);
         }
 
-        newMd.getExtraInfo().putAll(md.getExtraInfo());
+        newMd.getExtraInfos().addAll(md.getExtraInfos());
 
         License[] licenses = md.getLicenses();
         for (int k = 0; k < licenses.length; k++) {

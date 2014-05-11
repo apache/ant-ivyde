@@ -24,8 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyAttachementManager;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
@@ -67,6 +71,9 @@ import org.osgi.framework.BundleContext;
  */
 public class IvyPlugin extends AbstractUIPlugin {
 
+    private static final Pattern IVY_VERSION_PATTERN = Pattern
+            .compile("([0-9]+)\\.([0-9]+)\\.([0-9]+).*");
+
     /** The ID of IvyDE plugin */
     public static final String ID = "org.apache.ivyde.eclipse";
 
@@ -107,6 +114,12 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IvyAttachementManager ivyAttachementManager;
 
+    private int ivyVersionMajor = 0;
+
+    private int ivyVersionMinor = 0;
+
+    private int ivyVersionPatch = 0;
+
     /**
      * The constructor.
      */
@@ -122,6 +135,14 @@ public class IvyPlugin extends AbstractUIPlugin {
         super.start(context);
         this.bundleContext = context;
         logInfo("starting IvyDE plugin");
+
+        Matcher matcher = IVY_VERSION_PATTERN.matcher(Ivy.getIvyVersion());
+        if (matcher.matches()) {
+            ivyVersionMajor = Integer.parseInt(matcher.group(1));
+            ivyVersionMinor = Integer.parseInt(matcher.group(2));
+            ivyVersionPatch = Integer.parseInt(matcher.group(3));
+        }
+
         ivyResolveJob = new IvyResolveJob();
 
         retrieveSetupManager = new RetrieveSetupManager();
@@ -147,8 +168,8 @@ public class IvyPlugin extends AbstractUIPlugin {
                 } catch (JavaModelException e) {
                     MessageDialog.openError(IvyPlugin.getDefault().getWorkbench()
                             .getActiveWorkbenchWindow().getShell(),
-                        "Unable to trigger the update the IvyDE classpath containers", e
-                                .getMessage());
+                        "Unable to trigger the update the IvyDE classpath containers",
+                        e.getMessage());
                 }
             }
         };
@@ -190,7 +211,8 @@ public class IvyPlugin extends AbstractUIPlugin {
             Class.forName("org.apache.ivy.osgi.core.ManifestParser");
             osgiAvailable = true;
             try {
-                Class.forName("org.apache.ivy.osgi.core.BundleInfo").getDeclaredMethod("getClasspath");
+                Class.forName("org.apache.ivy.osgi.core.BundleInfo").getDeclaredMethod(
+                    "getClasspath");
                 osgiClasspathAvailable = true;
             } catch (Exception e) {
                 osgiClasspathAvailable = false;
@@ -236,9 +258,9 @@ public class IvyPlugin extends AbstractUIPlugin {
         IJavaModel javaModel = JavaCore.create(workspace.getRoot());
         IJavaProject[] projects = javaModel.getJavaProjects();
         for (int i = 0; i < projects.length; i++) {
-            List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
+            List<IvyClasspathContainer> containers = IvyClasspathContainerHelper
                     .getContainers(projects[i]);
-            Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
+            Iterator<IvyClasspathContainer> itContainers = containers.iterator();
             while (itContainers.hasNext()) {
                 IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainers.next();
                 if (!ivycp.getConf().isSettingsProjectSpecific()) {
@@ -464,5 +486,25 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     public RetrieveSetupManager getRetrieveSetupManager() {
         return retrieveSetupManager;
+    }
+
+    public boolean isIvyVersionGreaterOrEqual(int major, int minor, int patch) {
+        if (ivyVersionMajor > major) {
+            return true;
+        } else if (ivyVersionMajor < major) {
+            return false;
+        }
+        // ivyVersionMajor == major
+        if (ivyVersionMinor > minor) {
+            return true;
+        } else if (ivyVersionMinor < minor) {
+            return false;
+        }
+        // ivyVersionMinor == minor
+        if (ivyVersionPatch >= patch) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
