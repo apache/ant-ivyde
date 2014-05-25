@@ -20,3 +20,5 @@ doc/style/
 doc/xooki/
 doc/sample/webapp-js-repo/webapp/bin
 .DS_Store
+.idea
+*.iml
