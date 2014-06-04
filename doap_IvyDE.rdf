@@ -67,10 +67,10 @@
       </Version>
     </release>
     <repository>
-      <SVNRepository>
-        <location rdf:resource="https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk/"/>
-        <browse rdf:resource="http://svn.apache.org/viewvc/ant/ivy/ivyde/trunk/"/>
-      </SVNRepository>
+      <GitRepository>
+        <location rdf:resource="https://git-wip-us.apache.org/repos/asf/ant-ivyde.git"/>
+        <browse rdf:resource="https://git-wip-us.apache.org/repos/asf?p=ant-ivyde.git"/>
+      </GitRepository>
     </repository>
   </Project>
 </rdf:RDF>
