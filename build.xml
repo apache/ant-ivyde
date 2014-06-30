@@ -557,12 +557,21 @@ forceContextQualifier=${hudson.version.qualifier}
 </echo>
     </target>
 
-    <target name="hudson-install-ivy">
+    <target name="hudson-install-ivy-jar" if="hudson.ivy.jar.url">
+        <ant antfile="build.xml" target="install-ivy">
+            <property name="ivy.jar.url" value="${hudson.ivy.jar.url}" />
+            <property name="baseLocation" location="${basedir}/dependencies/${hudson.download.sdk.name}" />
+        </ant>
+    </target>
+
+    <target name="hudson-install-ivy-release" unless="hudson.ivy.jar.url">
         <ant antfile="build.xml" target="install-ivy">
             <property name="ivy.version" value="${hudson.ivy.version}" />
             <property name="baseLocation" location="${basedir}/dependencies/${hudson.download.sdk.name}" />
         </ant>
     </target>
+
+    <target name="hudson-install-ivy" depends="hudson-install-ivy-jar,hudson-install-ivy-release" />
 
     <!--
         ======================================================================================
