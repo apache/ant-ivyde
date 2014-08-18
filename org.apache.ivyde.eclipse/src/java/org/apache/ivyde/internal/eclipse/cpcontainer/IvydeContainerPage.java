@@ -383,9 +383,9 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private void loadFromConf() {
         ivyFilePathText.init(conf.getIvyXmlPath());
-        confTableViewer.init(conf.getConfs());
 
         settingsSetupTab.init(conf.isSettingsProjectSpecific(), conf.getIvySettingsSetup());
+        confTableViewer.init(conf.getConfs()); // *after* settingsSetupTab.init()!
         classpathSetupTab.init(conf.isClassthProjectSpecific(), conf.getClasspathSetup());
         mappingSetupTab.init(conf.isMappingProjectSpecific(), conf.getMappingSetup());
         // project == null <==> container in a launch config: always resolve before launch
