@@ -36,32 +36,32 @@
     <category rdf:resource="http://projects.apache.org/category/build-management" />
     <release>
       <Version>
-        <name>Apache IvyDE 2.2.0.final</name>
+        <name>Apache IvyDE</name>
         <created>2013-11-22</created>
         <revision>2.2.0.final</revision>
       </Version>
       <Version>
-        <name>Apache IvyDE 2.2.0.beta1</name>
+        <name>Apache IvyDE</name>
         <created>2012-04-05</created>
         <revision>2.2.0.beta1</revision>
       </Version>
       <Version>
-        <name>Apache IvyDE 2.1.0</name>
+        <name>Apache IvyDE</name>
         <created>2010-08-18</created>
         <revision>2.1.0</revision>
       </Version>
       <Version>
-        <name>Apache IvyDE 2.0.0-final</name>
+        <name>Apache IvyDE</name>
         <created>2009-07-09</created>
         <revision>2.0.0-final</revision>
       </Version>
       <Version>
-        <name>Apache IvyDE 2.0.0-beta1</name>
+        <name>Apache IvyDE</name>
         <created>2008-12-08</created>
         <revision>2.0.0-beta1</revision>
       </Version>
       <Version>
-        <name>Apache IvyDE 2.0.0-alpha1</name>
+        <name>Apache IvyDE</name>
         <created>2008-06-30</created>
         <revision>2.0.0-alpha1</revision>
       </Version>
