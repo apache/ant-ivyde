@@ -40,26 +40,36 @@
         <created>2013-11-22</created>
         <revision>2.2.0.final</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache IvyDE</name>
         <created>2012-04-05</created>
         <revision>2.2.0.beta1</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache IvyDE</name>
         <created>2010-08-18</created>
         <revision>2.1.0</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache IvyDE</name>
         <created>2009-07-09</created>
         <revision>2.0.0-final</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache IvyDE</name>
         <created>2008-12-08</created>
         <revision>2.0.0-beta1</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache IvyDE</name>
         <created>2008-06-30</created>
