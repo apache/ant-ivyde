@@ -1,4 +1,4 @@
-            Apache IvyDE v2.2.0
+            Apache IvyDE v2.4.0
            ---------------------
 
 
