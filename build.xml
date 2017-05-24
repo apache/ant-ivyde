@@ -49,7 +49,7 @@
     <property name="rat.dir" value="${work.dir}/rat" />
 
     <target name="init-ivy">
-        <property name="ivy.version"  value="2.2.0-rc1"/>
+        <property name="ivy.version"  value="2.4.0"/>
         <property name="ivy.jar.url"  value="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
         <property name="ivy.jar.dir"  value="${work.dir}"/>
         <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
@@ -342,7 +342,7 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="check-ivy-installed" depends="list-installed-ivy">
-        <fail message="No Ivy is installed. Please run 'ant install-ivy first'." unless="ivy.installed" />
+        <fail message="No Ivy is installed. Please run 'ant install-ivy' first." unless="ivy.installed" />
     </target>
 
     <!-- 
