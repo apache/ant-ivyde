@@ -141,7 +141,7 @@
      -->
 
     <target name="build" depends="check-ivy-installed,eclipse-classpath,compute-version" description="Build the plugin distribution binaries">
-        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
+        <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true" taskname="pde-build">
             <arg value="-clean" />
             <arg line="-application org.eclipse.pde.build.Build" />
             <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
@@ -158,7 +158,7 @@
         </java>
     </target>
 
-    <target name="generate-dist-doc-files">
+    <target name="generate-dist-doc-files" depends="compute-version">
         <property name="checkUpToDate" value="true" />
         <condition property="overwrite">
             <isfalse value="${checkUpToDate}" />
@@ -173,8 +173,19 @@
         </copy>
     </target>
 
-    <target name="generate-dist-doc-html" unless="skip.doc">
-        <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
+    <target name="init-xooki">
+        <property name="xooki.antlib" value="${basedir}/doc/xooki/antlib.xml" />
+        <fail message="Xooki AntLib not available at ${xooki.antlib}">
+            <condition>
+                <not>
+                    <available file="${xooki.antlib}" />
+                </not>
+            </condition>
+        </fail>
+        <taskdef uri="antlib:xooki" file="${xooki.antlib}" />
+    </target>
+
+    <target name="generate-dist-doc-html" unless="skip.doc" depends="compute-version,init-xooki">
         <property name="checkUpToDate" value="true" />
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
         <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}/doc" checkUpToDate="${checkUpToDate}" xookidir="${basedir}/doc/xooki">
@@ -272,11 +283,10 @@ ivyde.build.version=${build.version}
      -->
 
     <!-- Get the OSGi version of Ivy in the manifest in the jar -->
-    <target name="compute-ivy-bundle-version" unless="ivy.bundle.version">
+    <target name="compute-ivy-bundle-version" unless="ivy.bundle.version" depends="init-ivy">
         <mkdir dir="${ivy.work.dir}/jar" />
-        <get src="${ivy.jar.url}" dest="${ivy.work.dir}/ivy.jar" />
-        <unzip overwrite="true" src="${ivy.work.dir}/ivy.jar" dest="${ivy.work.dir}/jar" />
-        <loadfile property="ivy.bundle.version" srcFile="${ivy.work.dir}/jar/META-INF/MANIFEST.MF">
+        <loadresource property="ivy.bundle.version">
+            <zipentry zipfile="${ivy.work.dir}/ivy.jar" name="META-INF/MANIFEST.MF"/>
             <filterchain>
                 <linecontains>
                     <contains value="Bundle-Version:" />
@@ -286,7 +296,8 @@ ivyde.build.version=${build.version}
                 </tokenfilter>
                 <striplinebreaks />
             </filterchain>
-        </loadfile>
+        </loadresource>
+        <echo message="Ivy Bundle-Version: ${ivy.bundle.version}" />
     </target>
 
     <!-- clean up every installed ivy and install the specified one -->
@@ -315,6 +326,7 @@ You have to specify the Ivy to install with one of the following property:
             </condition>
         </fail>
         <mkdir dir="${ivy.work.dir}/distrib" />
+        <mkdir dir="${basedir}/dependencies" />
         <property name="ivy.zip.url" value="${mirror.url}/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
         <get src="${ivy.zip.url}" usetimestamp="true" dest="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" verbose="true" />
         <unzip overwrite="true" src="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" dest="${ivy.work.dir}/distrib" />
@@ -324,7 +336,7 @@ You have to specify the Ivy to install with one of the following property:
             </first>
         </path>
         <makeurl property="ivy.jar.url" file="${toString:ivy.jar.path}" />
-        <echo message="${ivy.jar.url}" />
+        <echo message="ivy.jar.url: ${ivy.jar.url}" />
     </target>
 
     <target name="install-ivy" depends="check-baseLocation,get-ivy-jar,install-ivy-jar" description="Install an Ivy bundle into the eclipse install">
@@ -669,7 +681,14 @@ forceContextQualifier=${hudson.version.qualifier}
     <!-- RAT Release Auditing Tool -->
     <property name="rat.version" value="0.7" description="Which Version of RAT to use"/>
 
-    <target name="rat" description="--> Runs the ReleaseAuditingTool"  depends="init-ivy">
+    <target name="rat" description="--> Runs the ReleaseAuditingTool" depends="init-ivy">
+        <fail message="No release available to check. Missing '${dist.dir}/version.properties'">
+            <condition>
+                <not>
+                    <available file="${dist.dir}/version.properties" />
+                </not>
+            </condition>
+        </fail>
         <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="${rat.version}"
                        inline="true" conf="default" pathid="rat.classpath" transitive="true"/>
         <typedef resource="org/apache/rat/anttasks/antlib.xml"
@@ -681,6 +700,7 @@ forceContextQualifier=${hudson.version.qualifier}
         <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportfile="${rat.dir}/report.txt">
             <tarfileset>
                 <gzipresource>
+                    <!-- 'ivyde.build.version' is loaded from prior generated version.properties -->
                     <file file="${dist.dir}/apache-ivyde-${ivyde.build.version}.tar.gz"/>
                 </gzipresource>
             </tarfileset>
