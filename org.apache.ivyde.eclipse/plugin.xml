@@ -144,6 +144,12 @@
             id="org.apache.ivyde.eclipse.ui.preferences.AdvancedSetupPreferencePage"
             name="Advanced">
       </page>
+      <page
+            category="org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage"
+            class="org.apache.ivyde.internal.eclipse.ui.preferences.SecuritySetupPreferencePage"
+            id="org.apache.ivyde.eclipse.ui.preferences.SecuritySetupPreferencePage"
+            name="Security">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
@@ -506,5 +512,4 @@
          </describer>
       </content-type>
    </extension>
-
 </plugin>
