@@ -40,6 +40,8 @@ Lots of ant target depends on that Eclipse installation, so they need a <tt>base
 baseLocation=/home/me/tools/eclipse-3.4
 </code>
 
+An Ant target is provided to download all the necessary binaries, just like the CI is running: <tt>ant download-eclipse</tt>. No need to specify a <tt>baseLocation</tt> in the prperty file to use that downloaded Eclipse and plugins.
+
 <h2><a name="install-ivy"></a>The Apache Ivy bundle</h2>
 
 The IvyDE plugins depends on the Apache Ivy 2.0 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build. An Ant target will accomplished that task quite automatically. Inline help will be displayed when no property is specified:
