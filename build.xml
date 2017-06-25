@@ -284,9 +284,8 @@ ivyde.build.version=${build.version}
 
     <!-- Get the OSGi version of Ivy in the manifest in the jar -->
     <target name="compute-ivy-bundle-version" unless="ivy.bundle.version" depends="init-ivy">
-        <mkdir dir="${ivy.work.dir}/jar" />
         <loadresource property="ivy.bundle.version">
-            <zipentry zipfile="${ivy.work.dir}/ivy.jar" name="META-INF/MANIFEST.MF"/>
+            <zipentry zipfile="${ivy.jar.file}" name="META-INF/MANIFEST.MF"/>
             <filterchain>
                 <linecontains>
                     <contains value="Bundle-Version:" />
