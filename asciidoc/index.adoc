@@ -1,0 +1,37 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse&#153;. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management.
+
+A summary of the features it provides follows:
+
+* link:cp_container.html[Managed classpath container]: for Java projects, automatic build of you classpath with resolve and downloads of jars and
+    sources of your dependencies, and also link:cpc/workspace.html[managed project inter dependencies] within the workspace.
+
+* link:ivyeditor.html[Ivy XML files editor]: creation wizard, html preview and completion for Ivy XML tags, attributes, and attribute values.
+
+* link:settingseditor.html[Ivy settings files editor]: completion for XML tags, attributes, and attribute values.
+
+* link:console.html[Ivy console]: presents every log from Ivy to assist in debugging a failing resolve.
+
+* link:revdepexplorer.html[Reverse Dependency Explorer]: helps you work with conflicting dependencies amongst several projects.
+
+* link:non-java.html[Resolve and retrieve for non Java project]: automation of the retrival of your dependencies in your non Java project
+
+Apache IvyDE can be also used with other plugins like link:cpc/wtp.html[WTP] and link:ant.html[Apache Ant].

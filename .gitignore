@@ -2,6 +2,7 @@ local.build.properties
 dependencies
 work
 org.apache.ivyde.*/bin
+org.apache.ivyde.eclipse/doc
 doc/screenshot-projects/eclipse
 doc/screenshot-projects/workspace
 doc/screenshot-projects/*/bin

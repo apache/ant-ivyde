@@ -1,0 +1,55 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+Most Eclipse&#153; distributions include a plugin to launch Apache Ant build files. The provided Apache Ant distribution is a standard distribution of Ant that doesn't include Apache Ivy. You may wish to run Ivy targets against Eclipse's Ant distribution.
+
+== Install the plugin
+
+Since IvyDE 2.2, a dedicated plugin can be install so that Ivy Ant tasks are automatically added to Ant's classpath. Go check the IvyDE updatesite and install the plugin named "Apache Ivy Ant Tasks"
+
+image::images/install_ivy_ant_tasks.jpg[]
+
+== Manual Configuration
+
+If you want to install your custom version of Ivy, you'll need to do it manually.
+
+In the global preference page of the Ant runtime, click on *Add External JARs...*
+
+image::images/antpref.jpg[]
+
+Then browse your filesystem to the `plugins` directory of your Eclipse installation and select the Ivy jar named `org.apache.ivy_2.X.X.XXXXXXXXX.jar`. Now Ivy has been added to the classpath of the Ant distribution embedded in Eclipse.
+
+== Run Apache Ivy targets
+
+Create an Ant build file and declare the Ivy targets with:
+
+[source]
+----
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" />
+----
+
+And don't forgot to declare the namespace `xmlns:ivy="antlib:org.apache.ivy.ant"`.
+
+After the taskdefs have been added, you will have code completion on Ivy tasks:
+
+image::images/antedit.jpg[]
+
+The build will now be successful:
+
+image::images/antrun.jpg[]

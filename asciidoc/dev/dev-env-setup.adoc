@@ -1,0 +1,88 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+This page describe how to setup an environment to develop IvyDE.
+
+== Requirement
+
+=== Eclipse plugins
+
+You need some plugins installed in your Eclipse:
+
+* the PDE plugins
+* the Zest plugins if you want to work with the IvyDE resolve visualizer
+
+If you have a "Classic" Eclipse, the PDE plugins are already installed. Otherwise you should find them in the Eclipse update site "The Eclipse Project Updates". Under the section "Eclipse Platform SDK", the feature to install is called "Eclipse Platform SDK".
+
+The Zest plugins can be found in the Eclipse updatesite of your Eclipse distribution (Indigo, Juno, etc...). Under the section "Modeling", the feature to install is called "Graphical Editing Framework Zest Visualization Toolkit SDK".
+
+=== Ivy
+
+You will also need Ivy as it is a dependency of IvyDE. Either you will work against a release version of Ivy, or work against an- build form the source in your Eclipse. Note that even when working against a released version, you will still be able to run in debug mode, see the sources and put break points in Ivy code. You just won't be able to modify the sources.
+
+Running against a released version is the simpler. Just install it from the IvyDE updatesite in you Eclipse.
+
+Otherwise you will need to setup a project for Ivy in your workspace, see next section.
+
+== Setup
+
+=== Import Ivy
+
+If you want to run against an Ivy from source in your workspace, you must import the Ivy project in your workspace. Otherwise, you can skip this section.
+
+The Ivy sources already contains the Eclipse metadata. Just "Import" from "Existing Project into Workspace". 
+
+=== Import IvyDE
+
+Once the required plugins are installed, you can import the IvyDE plugins and features into your workspace. Just do a regular "Import" from "Existing Project into Workspace".
+
+If you just have to fix a bug or add a little feature to IvyDE, just import the "org.apache.ivyde.eclipse" plugin.
+If you intend to work on the resolve visualizer, you should import the plugin "org.apache.ivyde.eclipse.resolvevisualizer".
+
+== Launch
+
+You will have to create you "Launch configuration".
+
+* In the Debug menu, select "Debug Configuration...".
+* On the section "Eclipse Application", right click and select "New".
+* Give a better name to your configuration: "IvyDE".
+* You may want to give a better location to the workspace in which the forked eclipse will run: for instance "${workspace_loc}/_eclipse/runtime-IvyDE"
+
+Now you can launch and so some happy debugging !
+
+=== Advanced tips
+
+==== Console log
+
+For old version of Eclipse only, in recent ones the option is automatically added.
+
+By default the logs of the forked Eclipse just goes in the Error log of the forked Eclipse. It is not ideal when browsing a stack trace since you will have to switch between the 2 Eclipse.
+Just add "-consoleLog" in the "Program Arguments" of the launch configuration so that errors of the forked Eclipse will go in the console of the host one.
+
+==== Slow fork
+
+Your hosting Eclipse may have a lot of plugins installed. By default, forking an Eclipse will launch with the same plugins. So forking may take some time and can be painful while developing.
+
+In the launch configuration, you can tune what plugins should be loaded in the "Plug-ins" tab. Select "plug-ins selected below only". Then it is quite tedious to know which one should be selected. The button "Add Required Plug-ins" will help you not missing one.
+Basically you will need:
+
+* org.eclipse.ivyde (in your workspace)
+* org.eclipse.ivy (in your workspace if you have one)
+* org.eclipse.sdk
+* org.eclipse.jdt.*

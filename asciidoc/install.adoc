@@ -1,0 +1,52 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+== [[latest]]Install the last release via Internet
+
+For most user who have access to the internet it is simpler to install the latest release from the Apache IvyDE updatesite. So just look out there:
+http://ant.apache.org/ivy/ivyde/download.cgi
+
+== [[manual]]Manual install
+
+=== Install Apache IvyDE
+
+So you should have the zip distribution of Apache IvyDE in which you should find these files:
+
+* features/org.apache.ivyde.feature_2.1.0.XXXX.jar
+* plugins/org.apache.ivyde.eclipse_2.1.0.XXXX.jar
+
+You can then install them by copying them respectively in the $ECLIPSE_HOME/features and the $ECLIPSE_HOME/plugins:
+[source]
+----
+cp features/* $ECLIPSE_HOME/features
+cp plugins/* $ECLIPSE_HOME/plugins
+----
+
+=== Install the latest Apache Ivy bundle
+
+Get the latest Apache Ivy feature and bundle for the updatesite:
+
+* the link:[preferred]/ant/ivyde/updatesite/features[features folder]
+* the link:[preferred]/ant/ivyde/updatesite/plugins[plugins folder]
+
+And then just copy them respectively in the `$ECLIPSE_HOME/features` and the `$ECLIPSE_HOME/plugins` folders.
+
+=== Restart Eclipse
+
+After installing manually your plugins, you have to restart your Eclipse to have it take into account the changes. It is recommended to restart it with the -clean option on the command line.

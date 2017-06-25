@@ -1,0 +1,136 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+. link:#annoucement[Release Annoucement]
+. link:#what[What is Apache IvyDE?]    
+. link:#status[Status of this release]
+. link:#majorchanges[Major Changes in this Release]
+. link:#contrib[Committers and Contributors for this Release]
+. link:#changes[List of Changes in this Release]
+
+== [[annoucement]]Release Annoucement
+
+[source]
+----
+The Apache IvyDE project is pleased to announce its 2.3.0 release.
+
+The Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse. It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html
+
+Major changes in this release:
+
+!!!! TODO !!!!
+
+Compatibility:
+!!!! TODO !!!!
+
+!!!! TODO !!!! status of the release: stable or beta ?
+
+A more detailed release notes can be read there:
+http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
+
+Download the 2.3.0 release at:
+http://ant.apache.org/ivy/ivyde/download.cgi
+
+Or use directly the Apache IvyDE's updatesite:
+http://www.apache.org/dist/ant/ivyde/updatesite
+
+Issues should be reported to:
+https://issues.apache.org/jira/browse/IVYDE
+
+More information can be found on the Apache IvyDE website:
+http://ant.apache.org/ivy/ivyde/
+----
+
+== [[what]]What is Apache IvyDE?
+
+Apache IvyDE is the Eclipse plugin which integrates Apache Ivy's dependency management into Eclipse&#153;.
+
+Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: http://ant.apache.org/ivy/ivyde/screenshots.html.
+
+== [[status]]Status of this release
+
+!!!! TODO !!!!
+
+== [[majorchanges]]Major Changes in this Release
+
+!!!! TODO !!!!
+
+== [[contrib]]Committers and Contributors
+
+Here is the list of people who have contributed source code and documentation up to this release. Many thanks to all of them, and also to the whole IvyDE community contributing ideas and feedback, and promoting the use of Apache IvyDE !
+
+Committers:
+
+* Maarten Coene
+* Xavier Hanin
+* Nicolas Lalev&eacute;e
+* Jon Schneider
+* Gilles Scokart
+
+Contributors:
+
+* Daniel Becheanu
+* Peter Blstak
+* Clint Burghduff
+* Peter Chanthamynavong
+* Gregory Fernandez
+* Thomas Friol
+* Troy Gaines
+* Nicolas Gavalda
+* Eugene Goldfarb
+* Matt Goldspink
+* Will Gorman
+* Miguel Griffa
+* Stephen Haberman
+* Matt Hillsdon
+* Adam Karl
+* Bernd Kurz
+* Ivica Loncar
+* Jeffrey M. Metcalf
+* S&eacute;bastien Moran
+* Marko Niemi
+* Peter Oxenham
+* Carsten Pfeiffer
+* Joe Sortelli
+* Nathan Summers
+* Phillip Webb
+* James Wilkins
+* Anton Zagorulko
+
+== [[changes]]List of Changes in this Release
+
+List of changes since link:/ivy/ivyde/history/2.2.0.final/release-notes.html[Apache IvyDE 2.2.0 final]:
+    
+* FIX: xml bomb in workspace causes hang in Ivy code during Search or Synchronize operations (link:https://issues.apache.org/jira/browse/IVYDE-354[IVYDE-354]) (thanks to Matt Hillsdon)
+* FIX: Deadlock in classpath container (link:https://issues.apache.org/jira/browse/IVYDE-361[IVYDE-361]) (thanks to Carsten Pfeiffer)
+* FIX: Typo in IvyResolveJob (link:https://issues.apache.org/jira/browse/IVYDE-362[IVYDE-362]) (thanks to Nicolas Gavalda)
+* FIX: User-selected configurations not checked in the viewer (link:https://issues.apache.org/jira/browse/IVYDE-378[IVYDE-378]) (thanks to Carsten Pfeiffer)
+    
+* NEW: add support for OSGi 'Bundle-Classpath' directive (Ivy 2.4.0-rc1 is required)
+* NEW: basic support for the workspace resolver to find OSGi bundles managed by Ivy in the workspace (Ivy 2.4.0-rc2 is required)
+    
+////
+ samples
+* NEW: new new new (IVYDE-XXX) (thanks to XXX)
+* IMPROVE: improve improve improve (IVYDE-XXX) (thanks to XXX)
+* FIX: fix fix fix (IVYDE-XXX) (thanks to XXX)
+////
+
+Most of our changes are logged in our JIRA, where you can find comments and links to our subversion:
+https://issues.apache.org/jira/browse/ivyde

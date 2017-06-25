@@ -1,0 +1,64 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+Some projects are composed of mulpliple modules.  Often, these modules have dependencies between them, dependencies managed by Apache Ivy (of course!). 
+
+Eclipse is capable of calculating the workspace's build order according to dependencies between projects.  To leverage this advantage, Apache IvyDE has the ability to add a project reference to a dependency located in the workspace in place of downloading its published artifact(s) from the repository.  In this way, developers can develop multi-module applications, and test the interaction between these modules, before building and publishing artifacts to the repository.
+
+Consider a multi-module application with a considerable amount of code in each of several projects.  Many developers have experienced the delays involved in waiting for Eclipse&#153; to build code across all of these projects even though development is only being conducted in one isolated part of the application (maybe just one or two projects).  If the latest published artifact in the Ivy repository has the same source code as a module that the developer is not currently working on, simply closing that project in the Eclipse workspace and resolving dependencies on dependent projects that would resolve that artifact speeds the compilation process considerably.
+
+First, each application module should be separate a project in Eclipse, and each of these projects should have a configured IvyDE classpath container.
+
+To enable resolution in the workspace, go to the "classpath" panel of the classpath container and select *Resolve dependencies in workspace*.
+
+image::../images/workspace.jpg[]
+
+Important notes: to make the resolve in workspace work correctly the __info__ in the ivy.xml should be properly set:
+    
+* The __org__ and __name__
+* If there is a __rev__ specified, dependencies should specify the appropriate range
+* If there is no __rev__ specified, only dependencies with __lastest__ will match
+* The __status__ should match the required one: a dependency with __latest.integration__ will only match if there is __status="interation"__ in the info of the dependant module
+
+Having two projects "A" and "B" configured to use IvyDE and the workspace resolver, here is the expected resolved dependencies:
+
+[options="header",cols="30%,30%,40%"]
+|=======
+|latest.integration|1.2|B wired on A
+|1.2|1.2|B wired on A
+|[1.2,1.3)|1.2|B wired on A
+|1.0|1.2|no project wiring
+|latest.integration|__none__|B wired on A
+|1.2|__none__|B wired on A
+|[1.2,1.3)|__none__|B wired on A
+|latest.integration|$version|no project wiring
+|1.2|$version|no project wiring
+|[1.2,1.3)|$version|no project wiring
+|=======
+
+In some setup, if you want to mix some resolver of your own and the workspace resolver, and still want the transitive dependencies work nicely between them, you may want to turn the resolve mode to link:http://ant.apache.org/ivy/history/latest-milestone/use/resolve.html[dynamic]:
+    
+* see the defaultResolveMode attribute of link:http://ant.apache.org/ivy/history/latest-milestone/settings/settings.html[settings] in the ivysettings.
+* see the resolveMode attribute of link:http://ant.apache.org/ivy/history/latest-milestone/settings/module.html[module] in the ivysettings.
+
+Also note that if any of the resolver defined in your ivysettings.xml have the link:http://ant.apache.org/ivy/history/latest-milestone/settings/resolvers.html#common[`force`] attribute set to true, the workspace resolver may won't properly bind projects between them, as the __forced__ resolver will take precedence.
+
+== WTP support
+
+Note that WTP doesn't support IvyDE's workspace resolver. See the details in the page dedicated to link:wtp.html#resolve-in-workspace[WTP integration].

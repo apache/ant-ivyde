@@ -1,0 +1,40 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+The Ivy console provides the Ivy working traces that are visible in the command console. This view can be useful for understanding what Apache Ivy and Apache IvyDE are doing under the covers.
+
+The Ivy Console can be accessed within your Eclipse Console view, by selecting the "Ivy Console" item.
+
+image::images/ivy_console.jpg[]
+
+The colors in the console correspond to the different log levels. Here is the default mapping:
+
+* Debug: light blue
+* Verbose: green
+* Info: black
+* Warn: orange
+* Error: red
+
+There are two kinds of logs. The ones from Ivy itself and the ones from IvyDE. The ones from Ivy are the ones you should be used to see when you use it via Ant.
+
+The IvyDE logs are here to help you understand what IvyDE actually do when launching a resolve or refreshing a project. They can be espacially usefull in debug mode when reporting a bug to the developpers of IvyDE.
+
+To change the level of logging in the console, use the button in the view:
+
+image::images/ivy_console_debug.jpg[]

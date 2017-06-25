@@ -1,0 +1,87 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+Apache IvyDE will resolve the dependencies and artifacts you are requiring. Then with the pool of resolved artifacts, it has to decide which is a binary jar, which contains sources, and which contains javadocs. And also how to bind one on each other.
+
+== Finding jars types
+
+There are three types of jars handled by Eclipse":
+    
+* the binary jars: they will be added to the classpath in oder to compile and run; they contain the .class files.    
+* the source jars/zip: they will be bound to the binary one to browse dependency sources; they are basically a zip of .java files
+* the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of .html files respectively in a layout produced by javadoc.
+
+To find the binary jars, Apache IvyDE is relying on the "Accepted types" preference field you can find in the link:create.html[container configuration panel], or in the link:../preferences.html#classpath[global one]. If the artifact has a type listed here, it is then added to the classpath.
+
+For the sources, it is relying on the "Sources types".
+
+For the javadocs, it is relying on the "Javadocs types".
+
+== Binding the jars
+
+=== Alorithm
+
+The second step is to bind a source artifact with a binary one. IvyDE has the following algorithm:
+    
+* first, it looks up for a specified name in the ivy.xml via the "ivyde" namespace (see bellow)
+* next, if a binary jar has the same artifact name than a source one, there are bound together.
+* if none matched, then IvyDE search for sources which have one of the suffix specified in "Sources suffixes".
+
+=== The IvyDE namespace
+
+In the ivy.xml file in your repository, you can specifically bind a binary artifact to a source one and to a javadoc one, so IvyDE knows for sure which bind to the other.
+
+In the link:http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html[artifact] element, you can specify:
+
+* `ivyde:source="my-source-artifact-name"` which specify the artifact name of the source to bind to the current binary one
+* `ivyde:javadoc="my-javadoc-artifact-name"` which specify the artifact name of the javadoc to bind to the current binary one
+
+=== Exemples
+
+For instance, searching for the sources of mylib.jar (type=jar), with the default value of "Sources suffixes" ("-source,-sources,-src"), IvyDE will look to bind it to the first one existing of:
+
+* mylib.jar (type=source)
+* mylib-source.jar (type=source)
+* mylib-sources.jar (type=source)
+* mylib-src.jar (type=source)
+
+Note that Apache IvyDE don't care about the extension, it can be .zip too.
+
+Same apply for javadocs with respectively "Javadocs suffixes".
+
+'''
+
+With the IvyDE namespace, having the ivy.xml file:
+
+[source]
+----
+<ivy-module version="2.0" xmlns:ivyde="http://ant.apache.org/ivy/ivyde/ns/">
+    <info organisation="com.acme" module="mylib" />
+    <publications>
+        <artifact name="mylib" type="jar" ext="jar" ivyde:source="the-sources-of-mylib" ivyde:javadoc="the-javadoc-of-mylib" />
+        <artifact name="the-sources-of-mylib" type="source" ext="jar" />
+        <artifact name="the-javadoc-of-mylib" type="javadoc" ext="jar" />
+    </publications>
+</ivy-module>
+----
+
+Without furether setup in IvyDE preferences pages, IvyDE will bind:
+
+* the jar `the-sources-of-mylib` as sources of the jar `mylib`
+* the jar `the-javadoc-of-mylib` as javadoc of the jar `mylib`

@@ -1,7 +1,0 @@
-{
-    debug: true,
-    jira: {ids: ['IVYDE'], url: 'https://issues.apache.org/jira'}, 
-	shortcuts: {
-		svn: {pre: 'https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk/'}
-	}
-}

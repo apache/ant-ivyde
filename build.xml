@@ -28,7 +28,8 @@
 - local.build.properties : properties handled by developers, ignored by subversion.
                            The baseLocation property should be set there.
 -->
-<project name="ivyde" basedir="." default="build" xmlns:xooki="antlib:xooki" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="ivyde" basedir="." default="build" xmlns:ivy="antlib:org.apache.ivy.ant"
+        xmlns:asciidoctor="antlib:org.asciidoctor.ant">
 
     <property file="local.build.properties" />
     <property file="build.properties" />
@@ -36,7 +37,7 @@
 
     <property name="work.dir" value="${basedir}/work" />
     <property name="ivy.work.dir" value="${work.dir}/ivy" />
-    <property name="src.doc.dir" value="${basedir}/doc" />
+    <property name="src.doc.dir" value="${basedir}/asciidoc" />
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="dist.work.dir" value="${work.dir}/dist" />
     <property name="dist.work.doc.dir" value="${dist.work.dir}/doc" />
@@ -62,6 +63,11 @@
             <pathelement location="${ivy.jar.file}" />
         </path>
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <target name="init-asciidoctor" depends="init-ivy">
+        <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
     </target>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
@@ -183,30 +189,12 @@
         </copy>
     </target>
 
-    <target name="init-xooki">
-        <property name="xooki.antlib" value="${basedir}/doc/xooki/antlib.xml" />
-        <fail message="Xooki AntLib not available at ${xooki.antlib}">
-            <condition>
-                <not>
-                    <available file="${xooki.antlib}" />
-                </not>
-            </condition>
-        </fail>
-        <taskdef uri="antlib:xooki" file="${xooki.antlib}" />
-    </target>
-
-    <target name="generate-dist-doc-html" unless="skip.doc" depends="compute-version,init-xooki">
-        <property name="checkUpToDate" value="true" />
-        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
-        <xooki:generate destDir="${dist.work.dir}/apache-ivyde-${build.version}/doc" checkUpToDate="${checkUpToDate}" xookidir="${basedir}/doc/xooki">
-            <fileset dir="${src.doc.dir}">
-                <include name="**/*.html" />
-                <exclude name="template*.html" />
-                <exclude name="**/xooki/**" />
-                <exclude name="screenshot-projects/**" />
-                <exclude name="sample/**" />
-            </fileset>
-        </xooki:generate>
+    <target name="generate-dist-doc-html" depends="compute-version,init-asciidoctor" unless="skip.doc">
+        <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5" templateDir="${src.doc.dir}/templates" preserveDirectories="true">
+            <attribute key="basedir" value="${src.doc.dir}"/>
+            <attribute key="imagesdir" value=""/>
+            <attribute key="version" value="${build.version}" />
+        </asciidoctor:convert>
     </target>
 
     <target name="package-binaries" depends="build,generate-p2-category,generate-dist-doc-files,generate-dist-doc-html">
@@ -363,7 +351,6 @@ You have to specify the Ivy to install with one of the following property:
     </target>
 
     <target name="check-ivy-installed" depends="list-installed-ivy">
-        <fail message="No Ivy is installed. Please run 'ant install-ivy' first." unless="ivy.installed" />
     </target>
 
     <!-- 
@@ -554,12 +541,12 @@ You have to specify the Ivy to install with one of the following property:
     <target name="unzip-eclipse" depends="check-unzip-eclipse" unless="eclipse.unzipped">
         <delete dir="${basedir}/dependencies/eclipse" failonerror="false" />
         <delete dir="${basedir}/dependencies/${eclipse.download.sdk.name}" failonerror="false" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.sdk.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.wtp.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.emf.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.xsd.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.sdk.name}.zip" dest="${basedir}/dependencies" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.wtp.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.emf.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.xsd.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
         <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${eclipse.download.sdk.name}" />
     </target>
 
@@ -609,22 +596,17 @@ forceContextQualifier=${jenkins.version.qualifier}
         <zip destfile="${src.doc.dir}/sample/webapp-js-repo.zip" basedir="${src.doc.dir}/sample/webapp-js-repo" />
     </target>
 
-    <target name="generate-eclipse-doc-html" unless="skip.doc">
-        <taskdef uri="antlib:xooki" file="${basedir}/doc/xooki/antlib.xml" />
-        <copy todir="${doc-eclipse.work.dir}">
-            <fileset dir="${src.doc.dir}" />
+    <target name="generate-eclipse-doc-html" depends="init-asciidoctor,compute-version" unless="skip.doc">
+        <mkdir dir="${doc-eclipse.work.dir}/templates" />
+        <copy todir="${doc-eclipse.work.dir}/templates">
+            <fileset dir="${src.doc.dir}/templates" />
         </copy>
-        <copy file="${src.doc.dir}/template-eclipse.html" tofile="${doc-eclipse.work.dir}/template.html" overwrite="true" />
-        <property name="checkUpToDate" value="true" />
-        <xooki:generate destDir="${eclipse-doc.dir}" checkUpToDate="${checkUpToDate}" xookidir="${basedir}/doc/xooki">
-            <fileset dir="${doc-eclipse.work.dir}">
-                <include name="**/*.html" />
-                <exclude name="template*.html" />
-                <exclude name="**/xooki/**" />
-                <exclude name="screenshot-projects/**" />
-                <exclude name="sample/**" />
-            </fileset>
-        </xooki:generate>
+        <copy file="${doc-eclipse.work.dir}/templates/document-eclipse.html.slim" tofile="${doc-eclipse.work.dir}/templates/document.html.slim" overwrite="true" />
+        <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${eclipse-doc.dir}" backend="xhtml5" templateDir="${doc-eclipse.work.dir}/templates" preserveDirectories="true">
+            <attribute key="basedir" value="${src.doc.dir}"/>
+            <attribute key="imagesdir" value=""/>
+            <attribute key="version" value="${build.version}" />
+        </asciidoctor:convert>
     </target>
 
     <target name="generate-eclipse-doc-files" unless="skip.doc">
@@ -646,10 +628,8 @@ forceContextQualifier=${jenkins.version.qualifier}
             <attribute name="jsontocfile" />
             <attribute name="destFile" />
             <![CDATA[
-                importPackage(java.io);
-
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
-                r = new BufferedReader(new FileReader(tocfile));
+                r = new java.io.BufferedReader(new FileReader(tocfile));
                 var val = "";
                 while((s = r.readLine()) != null) {
                     val += s;
@@ -667,7 +647,7 @@ forceContextQualifier=${jenkins.version.qualifier}
                     }
                 };
 
-                out = new FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
+                out = new java.io.FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
                 out.write('<toc label="IvyDE user documentation">\n')
                 writeTopic(out, toc.children[0].children, '    ');
                 out.write('</toc>\n');
