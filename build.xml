@@ -219,7 +219,7 @@
         <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}" />
         <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tar.gz" basedir="${dist.work.dir}" compression="gzip" />
         <!-- put the version in a file so it will be easier in the build of the
-            updatesite on hudson to find out which version it is -->
+            updatesite on jenkins to find out which version it is -->
         <echo file="${dist.dir}/version.properties">
 ivyde.build.version=${build.version}
         </echo>
@@ -454,63 +454,63 @@ You have to specify the Ivy to install with one of the following property:
 
     <!--
         ======================================================================================
-        Targets related to prepare the build environment of IvyDE on hudson.
+        Targets related to prepare the build environment of IvyDE on jenkins.
         ======================================================================================
     -->
 
-    <target name="hudson-prepare" depends="hudson-prepare-eclipse,hudson-prepare-properties,hudson-install-ivy" />
+    <target name="jenkins-prepare" depends="jenkins-prepare-eclipse,jenkins-prepare-properties,jenkins-install-ivy" />
 
-    <target name="hudson-prepare-eclipse" depends="hudson-get-eclipse,hudson-unzip-eclipse" />
+    <target name="jenkins-prepare-eclipse" depends="jenkins-get-eclipse,jenkins-unzip-eclipse" />
 
-    <target name="hudson-check-download-sdk">
-        <check-eclipse-download name="${hudson.download.sdk.name}" property="hudson.sdk.downloaded" md5="${hudson.download.sdk.md5}" />
+    <target name="jenkins-check-download-sdk">
+        <check-eclipse-download name="${jenkins.download.sdk.name}" property="jenkins.sdk.downloaded" md5="${jenkins.download.sdk.md5}" />
     </target>
 
-    <target name="hudson-get-sdk" depends="hudson-check-download-sdk" unless="hudson.sdk.downloaded">
-        <eclipse-download name="${hudson.download.sdk.name}" dropdir="${hudson.download.sdk.dropdir}" />
+    <target name="jenkins-get-sdk" depends="jenkins-check-download-sdk" unless="jenkins.sdk.downloaded">
+        <eclipse-download name="${jenkins.download.sdk.name}" dropdir="${jenkins.download.sdk.dropdir}" />
     </target>
 
-    <target name="hudson-check-download-wtp">
-        <check-eclipse-download name="${hudson.download.wtp.name}" property="hudson.wtp.downloaded" md5="${hudson.download.wtp.md5}" />
+    <target name="jenkins-check-download-wtp">
+        <check-eclipse-download name="${jenkins.download.wtp.name}" property="jenkins.wtp.downloaded" md5="${jenkins.download.wtp.md5}" />
     </target>
 
-    <target name="hudson-get-wtp" depends="hudson-check-download-wtp" unless="hudson.wtp.downloaded">
-        <eclipse-download name="${hudson.download.wtp.name}" dropdir="${hudson.download.wtp.dropdir}" />
+    <target name="jenkins-get-wtp" depends="jenkins-check-download-wtp" unless="jenkins.wtp.downloaded">
+        <eclipse-download name="${jenkins.download.wtp.name}" dropdir="${jenkins.download.wtp.dropdir}" />
     </target>
 
-    <target name="hudson-check-download-emf">
-        <check-eclipse-download name="${hudson.download.emf.name}" property="hudson.emf.downloaded" md5="${hudson.download.emf.md5}" />
+    <target name="jenkins-check-download-emf">
+        <check-eclipse-download name="${jenkins.download.emf.name}" property="jenkins.emf.downloaded" md5="${jenkins.download.emf.md5}" />
     </target>
 
-    <target name="hudson-get-emf" depends="hudson-check-download-emf" unless="hudson.emf.downloaded">
-        <eclipse-download name="${hudson.download.emf.name}" dropdir="${hudson.download.emf.dropdir}" />
+    <target name="jenkins-get-emf" depends="jenkins-check-download-emf" unless="jenkins.emf.downloaded">
+        <eclipse-download name="${jenkins.download.emf.name}" dropdir="${jenkins.download.emf.dropdir}" />
     </target>
 
-    <target name="hudson-check-download-xsd">
-        <check-eclipse-download name="${hudson.download.xsd.name}" property="hudson.xsd.downloaded" md5="${hudson.download.xsd.md5}" />
+    <target name="jenkins-check-download-xsd">
+        <check-eclipse-download name="${jenkins.download.xsd.name}" property="jenkins.xsd.downloaded" md5="${jenkins.download.xsd.md5}" />
     </target>
 
-    <target name="hudson-get-xsd" depends="hudson-check-download-xsd" unless="hudson.xsd.downloaded">
-        <eclipse-download name="${hudson.download.xsd.name}" dropdir="${hudson.download.xsd.dropdir}" />
+    <target name="jenkins-get-xsd" depends="jenkins-check-download-xsd" unless="jenkins.xsd.downloaded">
+        <eclipse-download name="${jenkins.download.xsd.name}" dropdir="${jenkins.download.xsd.dropdir}" />
     </target>
 
-    <target name="hudson-check-download-gef">
-        <check-eclipse-download name="${hudson.download.gef.name}" property="hudson.gef.downloaded" md5="${hudson.download.gef.md5}" />
+    <target name="jenkins-check-download-gef">
+        <check-eclipse-download name="${jenkins.download.gef.name}" property="jenkins.gef.downloaded" md5="${jenkins.download.gef.md5}" />
     </target>
 
-    <target name="hudson-get-gef" depends="hudson-check-download-gef" unless="hudson.gef.downloaded">
-        <eclipse-download name="${hudson.download.gef.name}" dropdir="${hudson.download.gef.dropdir}" />
+    <target name="jenkins-get-gef" depends="jenkins-check-download-gef" unless="jenkins.gef.downloaded">
+        <eclipse-download name="${jenkins.download.gef.name}" dropdir="${jenkins.download.gef.dropdir}" />
     </target>
 
-    <target name="hudson-check-download-zest">
-        <check-eclipse-download name="${hudson.download.zest.name}" property="hudson.zest.downloaded" md5="${hudson.download.zest.md5}" />
+    <target name="jenkins-check-download-zest">
+        <check-eclipse-download name="${jenkins.download.zest.name}" property="jenkins.zest.downloaded" md5="${jenkins.download.zest.md5}" />
     </target>
 
-    <target name="hudson-get-zest" depends="hudson-check-download-zest" unless="hudson.zest.downloaded">
-        <eclipse-download name="${hudson.download.zest.name}" dropdir="${hudson.download.zest.dropdir}" />
+    <target name="jenkins-get-zest" depends="jenkins-check-download-zest" unless="jenkins.zest.downloaded">
+        <eclipse-download name="${jenkins.download.zest.name}" dropdir="${jenkins.download.zest.dropdir}" />
     </target>
 
-    <target name="hudson-get-eclipse" depends="hudson-get-sdk,hudson-get-wtp,hudson-get-emf,hudson-get-xsd,hudson-get-gef,hudson-get-zest" />
+    <target name="jenkins-get-eclipse" depends="jenkins-get-sdk,jenkins-get-wtp,jenkins-get-emf,jenkins-get-xsd,jenkins-get-gef,jenkins-get-zest" />
 
     <!-- wrapper of eclipse download urls which have a common pattern -->
     <macrodef name="check-eclipse-download">
@@ -533,57 +533,57 @@ You have to specify the Ivy to install with one of the following property:
         <sequential>
             <mkdir dir="${basedir}/dependencies" />
             <delete file="${basedir}/dependencies/@{name}.zip" failonerror="false" />
-            <get src="${hudson.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;url=${hudson.download.mirror.url}/@{dropdir}/@{name}.zip&amp;mirror_id=${hudson.download.mirror.id}" dest="${basedir}/dependencies/@{name}.zip" verbose="yes" />
+            <get src="${jenkins.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;url=${jenkins.download.mirror.url}/@{dropdir}/@{name}.zip&amp;mirror_id=${jenkins.download.mirror.id}" dest="${basedir}/dependencies/@{name}.zip" verbose="yes" />
             <checksum file="${basedir}/dependencies/@{name}.zip" algorithm="MD5" />
         </sequential>
     </macrodef>
 
-    <target name="hudson-check-unzip-eclipse">
-        <condition property="hudson.eclipse.unzipped">
-            <available file="${basedir}/dependencies/${hudson.download.sdk.name}" />
+    <target name="jenkins-check-unzip-eclipse">
+        <condition property="jenkins.eclipse.unzipped">
+            <available file="${basedir}/dependencies/${jenkins.download.sdk.name}" />
         </condition>
     </target>
 
-    <target name="hudson-unzip-eclipse" depends="hudson-check-unzip-eclipse" unless="hudson.eclipse.unzipped">
+    <target name="jenkins-unzip-eclipse" depends="jenkins-check-unzip-eclipse" unless="jenkins.eclipse.unzipped">
         <delete dir="${basedir}/dependencies/eclipse" failonerror="false" />
-        <delete dir="${basedir}/dependencies/${hudson.download.sdk.name}" failonerror="false" />
-        <unzip src="${basedir}/dependencies/${hudson.download.sdk.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${hudson.download.wtp.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${hudson.download.emf.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${hudson.download.xsd.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${hudson.download.gef.name}.zip" dest="${basedir}/dependencies/" />
-        <unzip src="${basedir}/dependencies/${hudson.download.zest.name}.zip" dest="${basedir}/dependencies/" />
-        <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${hudson.download.sdk.name}" />
+        <delete dir="${basedir}/dependencies/${jenkins.download.sdk.name}" failonerror="false" />
+        <unzip src="${basedir}/dependencies/${jenkins.download.sdk.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${jenkins.download.wtp.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${jenkins.download.emf.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${jenkins.download.xsd.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${jenkins.download.gef.name}.zip" dest="${basedir}/dependencies/" />
+        <unzip src="${basedir}/dependencies/${jenkins.download.zest.name}.zip" dest="${basedir}/dependencies/" />
+        <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${jenkins.download.sdk.name}" />
     </target>
 
-    <target name="hudson-prepare-properties">
+    <target name="jenkins-prepare-properties">
         <tstamp />
-        <property name="baseLocation" value="${basedir}/dependencies/${hudson.eclipse.name}" />
-        <condition property="hudson.version.qualifier" value="${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}">
+        <property name="baseLocation" value="${basedir}/dependencies/${jenkins.eclipse.name}" />
+        <condition property="jenkins.version.qualifier" value="${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}">
             <length string="${version.qualifier}" trim="true" length="0" />
         </condition>
-        <property name="hudson.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-hudson-${env.BUILD_NUMBER}" />
+        <property name="jenkins.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}" />
         <echo file="local.build.properties">
-baseLocation=${basedir}/dependencies/${hudson.download.sdk.name}
-forceContextQualifier=${hudson.version.qualifier}
+baseLocation=${basedir}/dependencies/${jenkins.download.sdk.name}
+forceContextQualifier=${jenkins.version.qualifier}
 </echo>
     </target>
 
-    <target name="hudson-install-ivy-jar" if="hudson.ivy.jar.url">
+    <target name="jenkins-install-ivy-jar" if="jenkins.ivy.jar.url">
         <ant antfile="build.xml" target="install-ivy">
-            <property name="ivy.jar.url" value="${hudson.ivy.jar.url}" />
-            <property name="baseLocation" location="${basedir}/dependencies/${hudson.download.sdk.name}" />
+            <property name="ivy.jar.url" value="${jenkins.ivy.jar.url}" />
+            <property name="baseLocation" location="${basedir}/dependencies/${jenkins.download.sdk.name}" />
         </ant>
     </target>
 
-    <target name="hudson-install-ivy-release" unless="hudson.ivy.jar.url">
+    <target name="jenkins-install-ivy-release" unless="jenkins.ivy.jar.url">
         <ant antfile="build.xml" target="install-ivy">
-            <property name="ivy.version" value="${hudson.ivy.version}" />
-            <property name="baseLocation" location="${basedir}/dependencies/${hudson.download.sdk.name}" />
+            <property name="ivy.version" value="${jenkins.ivy.version}" />
+            <property name="baseLocation" location="${basedir}/dependencies/${jenkins.download.sdk.name}" />
         </ant>
     </target>
 
-    <target name="hudson-install-ivy" depends="hudson-install-ivy-jar,hudson-install-ivy-release" />
+    <target name="jenkins-install-ivy" depends="jenkins-install-ivy-jar,jenkins-install-ivy-release" />
 
     <!--
         ======================================================================================
