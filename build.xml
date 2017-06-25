@@ -573,13 +573,11 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="jenkins-prepare-properties">
         <tstamp />
-        <property name="baseLocation" value="${basedir}/dependencies/${jenkins.eclipse.name}" />
         <condition property="jenkins.version.qualifier" value="${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}">
             <length string="${version.qualifier}" trim="true" length="0" />
         </condition>
         <property name="jenkins.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}" />
         <echo file="local.build.properties">
-baseLocation=${basedir}/dependencies/${eclipse.download.sdk.name}
 forceContextQualifier=${jenkins.version.qualifier}
 </echo>
     </target>
