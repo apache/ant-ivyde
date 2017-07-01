@@ -17,4 +17,4 @@
 #	 * under the License.
 #	 ***************************************************************
 
-require_relative '../helpers.rb'
+require_relative '../IvyDocHelpers.rb'

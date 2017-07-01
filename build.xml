@@ -37,11 +37,11 @@
 
     <property name="work.dir" value="${basedir}/work" />
     <property name="ivy.work.dir" value="${work.dir}/ivy" />
-    <property name="src.doc.dir" value="${basedir}/asciidoc" />
+    <property name="doc.dir" value="${basedir}/doc" />
+    <property name="src.doc.dir" value="${doc.dir}/src" />
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="dist.work.dir" value="${work.dir}/dist" />
     <property name="dist.work.doc.dir" value="${dist.work.dir}/doc" />
-    <property name="doc-eclipse.work.dir" value="${work.dir}/doc-eclipse" />
     <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
     <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
     <property name="checkstyle.src.dir" value="${basedir}/org.apache.ivyde.eclipse/src/etc/checkstyle" />
@@ -218,7 +218,7 @@
                     for(var c in children) {
                         if (children[c].id) {
                             o.write('= [[' + children[c].id.replace(/\//g, '_') + ']]' + children[c].title + '\n\n');
-                            o.write('include::../asciidoc/' + children[c].id + '.adoc[]\n\n');
+                            o.write('include::../doc/src/' + children[c].id + '.adoc[]\n\n');
                             if (children[c].children && children[c].children.length && children[c].children.length != 0) {
                                 writeInclude(o, children[c].children);
                             }
@@ -240,14 +240,14 @@
 
     <target name="generate-dist-doc-book" depends="compute-version,init-asciidoctor,generate-dist-doc-book-adoc">
         <asciidoctor:convert sourceDirectory="${work.dir}/book" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5"
-                             templateDir="${src.doc.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
+                             templateDir="${doc.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
             <attribute key="version" value="${build.version}" />
         </asciidoctor:convert>
     </target>
 
     <target name="generate-dist-doc-articles" depends="compute-version,init-asciidoctor">
         <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5"
-                             templateDir="${src.doc.dir}/templates" sourceHighlighter="highlightjs" preserveDirectories="true">
+                             templateDir="${doc.dir}/templates/articles" sourceHighlighter="highlightjs" preserveDirectories="true">
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
@@ -647,7 +647,6 @@ forceContextQualifier=${jenkins.version.qualifier}
     </target>
 
     <target name="clean-eclipse-doc" unless="skip.doc">
-        <delete dir="${doc-eclipse.work.dir}" />
         <delete dir="${eclipse-doc.dir}" />
     </target>
 
@@ -657,7 +656,7 @@ forceContextQualifier=${jenkins.version.qualifier}
 
     <target name="generate-eclipse-doc-html" depends="init-asciidoctor,compute-version" unless="skip.doc">
         <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${eclipse-doc.dir}" backend="xhtml5"
-                             templateDir="${src.doc.dir}/templates/eclipse" preserveDirectories="true">
+                             templateDir="${doc.dir}/templates/eclipse" preserveDirectories="true">
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
