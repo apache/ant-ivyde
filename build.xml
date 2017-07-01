@@ -587,7 +587,7 @@ You have to specify the Ivy to install with one of the following property:
         <sequential>
             <mkdir dir="${basedir}/dependencies" />
             <delete file="${basedir}/dependencies/@{name}.zip" failonerror="false" />
-            <get src="${eclipse.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;url=${eclipse.download.mirror.url}/@{dropdir}/@{name}.zip&amp;mirror_id=${eclipse.download.mirror.id}" dest="${basedir}/dependencies/@{name}.zip" verbose="yes" />
+            <get src="${eclipse.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;mirror_id=1" dest="${basedir}/dependencies/@{name}.zip" verbose="yes" />
             <checksum file="${basedir}/dependencies/@{name}.zip" algorithm="MD5" />
         </sequential>
     </macrodef>
@@ -602,11 +602,16 @@ You have to specify the Ivy to install with one of the following property:
         <delete dir="${basedir}/dependencies/eclipse" failonerror="false" />
         <delete dir="${basedir}/dependencies/${eclipse.download.sdk.name}" failonerror="false" />
         <unzip src="${basedir}/dependencies/${eclipse.download.sdk.name}.zip" dest="${basedir}/dependencies" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.wtp.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.emf.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.xsd.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/eclipse/dropins" />
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.wtp.name}" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.wtp.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.wtp.name}" />
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.emf.name}" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.emf.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.emf.name}" />
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.xsd.name}" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.xsd.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.xsd.name}" />
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}" />
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}" />
+        <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}" />
         <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${eclipse.download.sdk.name}" />
     </target>
 
