@@ -19,9 +19,13 @@
 
 During the life of your project, you can change the ivy.xml file or link:maven.html[maven pom.xml] and change its configuration.
 
+== Context Menu
+
 These properties can be accessed by the context menu of the IvyDE classpath container:
 
 image::../images/cp_configuration.jpg[]
+
+== Build Path
 
 You can also edit it via the *build path* configuration:
 

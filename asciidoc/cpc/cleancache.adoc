@@ -26,4 +26,6 @@ On a configured IvyDE classpath container, open the context menu: a list a diffe
 * Clean every repository cache: will clean every cache dedicated to the artifacts
 * Clean the cache 'xxxxxx': will clean only the cache with the specified name
 
+== Context Menu
+
 image::../images/cleancache.jpg[]

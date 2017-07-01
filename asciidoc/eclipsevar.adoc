@@ -21,6 +21,8 @@ Eclipse contains a link:http://help.eclipse.org/galileo/index.jsp?topic=/org.ecl
 
 Apache IvyDE uses it to find the ivysettings.xml and properties files in both the link:preferences.html#settings[global preference page] and the link:cpc/create.html#localconf[project specific preference page].
 
+== Options
+
 Using the "Workspace..." button will open a window to choose a file in the workspace. Apache IvyDE will automatically fill the field with the proper variable.
 
 image::images/eclipsevar_workspace.jpg[]
@@ -31,6 +33,6 @@ Finally, you can choose to depend on the Eclipse variable system by clicking on 
 
 image::images/eclipsevar_variables.jpg[]
 
-*Backwards compatibility*
+== Backwards compatibility
 
 Previously, Apache IvyDE supported the `project://projectName/path/to/file.ext` protocol. It sill does, but references of this style will be automatically converted in the saved settings to the Eclipse variable way of defining this path: `${workspace_loc:projectName/path/to/file.ext}.`

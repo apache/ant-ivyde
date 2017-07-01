@@ -25,13 +25,19 @@ There is also a "refresh" action: this action is similar to the resolve one, but
 
 And there is a "reload settings" action: by default IvyDE does reload ivy settings files each time a resolve it required. But in case the ivy settings file is remote, this take make the user experience quite slow. To work around that, you can check in the link:../preferences.html[preference page] the option to only load on demand, and use the "reload settings" action in the context menu.
 
+== Context Menu
+
 image::../images/cp_resolve.jpg[]
+
+== Full Refresh
 
 You can also trigger a resolve (not a refresh!) of every IvyDE classpath container in the workspace via the button in the tool bar of Eclipse.
 
 image::../images/resolveall.jpg[]
 
-And to launch a resolve on a specified selection of projects:
+== Project Refresh
+
+To launch a resolve on a specified selection of projects:
 
 * Select the projects you want to resolve in the package view,
 * Open the context menu with a right click

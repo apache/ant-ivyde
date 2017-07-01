@@ -17,20 +17,20 @@
    under the License.
 ////
 
-=== Upgrading/Downgrading
+== Upgrading/Downgrading
 
 This version is compatible with every earlier Apache release (since 2.0.0.alpha1). Any upgrade of Apache IvyDE should work without any worries.
 
 The reverse is not true, downgrading is not supported and may break your configuration.
 
-=== Dependency on Apache Ivy
+== Dependency on Apache Ivy
 
 Apache IvyDE expects to be used with a version 2.1 or superior of Apache Ivy. In order to use some OSGi features, an Ivy 2.3 or superior is needed.
 
-=== Eclipse&#153; integration
+== Eclipse&#153; integration
 
 Apache IvyDE has been maintained to be compatible with Eclipse 3.4 to 3.7, and 4.2.
 
-=== JVM compability
+== JVM compability
 
 Apache IvyDE is requiring a minimum of a JRE 6.

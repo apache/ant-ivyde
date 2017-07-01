@@ -19,6 +19,8 @@
 
 The Ivy console provides the Ivy working traces that are visible in the command console. This view can be useful for understanding what Apache Ivy and Apache IvyDE are doing under the covers.
 
+== View Logs
+
 The Ivy Console can be accessed within your Eclipse Console view, by selecting the "Ivy Console" item.
 
 image::images/ivy_console.jpg[]
@@ -34,6 +36,8 @@ The colors in the console correspond to the different log levels. Here is the de
 There are two kinds of logs. The ones from Ivy itself and the ones from IvyDE. The ones from Ivy are the ones you should be used to see when you use it via Ant.
 
 The IvyDE logs are here to help you understand what IvyDE actually do when launching a resolve or refreshing a project. They can be espacially usefull in debug mode when reporting a bug to the developpers of IvyDE.
+
+== Configuration
 
 To change the level of logging in the console, use the button in the view:
 

@@ -35,3 +35,5 @@ A summary of the features it provides follows:
 * link:non-java.html[Resolve and retrieve for non Java project]: automation of the retrival of your dependencies in your non Java project
 
 Apache IvyDE can be also used with other plugins like link:cpc/wtp.html[WTP] and link:ant.html[Apache Ant].
+
+A single page version documentation can be found link:book.html[here].

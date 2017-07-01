@@ -189,13 +189,72 @@
         </copy>
     </target>
 
-    <target name="generate-dist-doc-html" depends="compute-version,init-asciidoctor" unless="skip.doc">
-        <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5" templateDir="${src.doc.dir}/templates" preserveDirectories="true">
+    <target name="generate-dist-doc-book-adoc" depends="generate-dist-doc-files">
+        <scriptdef name="generate-book-adoc" language="javascript">
+            <attribute name="jsontocfile" />
+            <attribute name="destFile" />
+            <![CDATA[
+                var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
+                r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
+                var val = "";
+                while((s = r.readLine()) != null) {
+                    val += s;
+                }
+                r.close();
+                var toc = eval("("+val+")")
+
+                var writeToc = function(o, children, level) {
+                    for(var c in children) {
+                        if (children[c].id) {
+                            o.write(level + ' link:#' + children[c].id.replace(/\//g, '_') + '[' + children[c].title + ']\n');
+                            if (children[c].children && children[c].children.length && children[c].children.length != 0) {
+                                writeToc(o, children[c].children, level+'*');
+                            }
+                        }
+                    }
+                };
+
+                var writeInclude = function(o, children) {
+                    for(var c in children) {
+                        if (children[c].id) {
+                            o.write('= [[' + children[c].id.replace(/\//g, '_') + ']]' + children[c].title + '\n\n');
+                            o.write('include::../asciidoc/' + children[c].id + '.adoc[]\n\n');
+                            if (children[c].children && children[c].children.length && children[c].children.length != 0) {
+                                writeInclude(o, children[c].children);
+                            }
+                        }
+                    }
+                };
+
+                out = new java.io.FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
+                out.write('= Table of Contents\n\n');
+                writeToc(out, toc.children[0].children, '*');
+                out.write('\n\n');
+                writeInclude(out, toc.children[0].children, '*');
+                out.close();
+            ]]>
+        </scriptdef>
+        <mkdir dir="${work.dir}/book" />
+        <generate-book-adoc jsontocfile="${src.doc.dir}/toc.json" destFile="${work.dir}/book/book.adoc" />
+    </target>
+
+    <target name="generate-dist-doc-book" depends="compute-version,init-asciidoctor,generate-dist-doc-book-adoc">
+        <asciidoctor:convert sourceDirectory="${work.dir}/book" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5"
+                             templateDir="${src.doc.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
+            <attribute key="version" value="${build.version}" />
+        </asciidoctor:convert>
+    </target>
+
+    <target name="generate-dist-doc-articles" depends="compute-version,init-asciidoctor">
+        <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5"
+                             templateDir="${src.doc.dir}/templates" sourceHighlighter="highlightjs" preserveDirectories="true">
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
         </asciidoctor:convert>
     </target>
+
+    <target name="generate-dist-doc-html" depends="generate-dist-doc-articles,generate-dist-doc-book" />
 
     <target name="package-binaries" depends="build,generate-p2-category,generate-dist-doc-files,generate-dist-doc-html">
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
@@ -597,12 +656,8 @@ forceContextQualifier=${jenkins.version.qualifier}
     </target>
 
     <target name="generate-eclipse-doc-html" depends="init-asciidoctor,compute-version" unless="skip.doc">
-        <mkdir dir="${doc-eclipse.work.dir}/templates" />
-        <copy todir="${doc-eclipse.work.dir}/templates">
-            <fileset dir="${src.doc.dir}/templates" />
-        </copy>
-        <copy file="${doc-eclipse.work.dir}/templates/document-eclipse.html.slim" tofile="${doc-eclipse.work.dir}/templates/document.html.slim" overwrite="true" />
-        <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${eclipse-doc.dir}" backend="xhtml5" templateDir="${doc-eclipse.work.dir}/templates" preserveDirectories="true">
+        <asciidoctor:convert sourceDirectory="${src.doc.dir}" outputDirectory="${eclipse-doc.dir}" backend="xhtml5"
+                             templateDir="${src.doc.dir}/templates/eclipse" preserveDirectories="true">
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />

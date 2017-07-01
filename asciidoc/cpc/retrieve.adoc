@@ -19,6 +19,8 @@
 
 It is possible to make the classpath container be composed of a retrieved dependencies. Instead of having the container point to the jars in Ivy's cache, jars can be retrieved in the project with a specified pattern and have the container be composed of them.
 
+== Configuration
+
 To enable this behavior, enter the classpath container configuration panel, select the third tab "Classpath" and select "retrieved artifacts".
 
 image::../images/retrieve.jpg[]
