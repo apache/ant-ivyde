@@ -17,6 +17,6 @@
 #	 * under the License.
 #	 ***************************************************************
 plugin@org.apache.ivyde.eclipse=COPY,.,../org.apache.ivyde.eclipse
-plugin@org.apache.ivyde.eclipse.resolvevisualizer=COPY,.,../org.apache.ivyde.eclipse.resolvevisualizer
+#plugin@org.apache.ivyde.eclipse.resolvevisualizer=COPY,.,../org.apache.ivyde.eclipse.resolvevisualizer
 feature@org.apache.ivyde.feature=COPY,.,../org.apache.ivyde.feature
-feature@org.apache.ivyde.eclipse.resolvevisualizer.feature=COPY,.,../org.apache.ivyde.eclipse.resolvevisualizer.feature
+#feature@org.apache.ivyde.eclipse.resolvevisualizer.feature=COPY,.,../org.apache.ivyde.eclipse.resolvevisualizer.feature
