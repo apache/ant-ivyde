@@ -241,6 +241,7 @@
     <target name="generate-dist-doc-book" depends="compute-version,init-asciidoctor,generate-dist-doc-book-adoc">
         <asciidoctor:convert sourceDirectory="${work.dir}/book" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5"
                              templateDir="${doc.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
+            <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
         </asciidoctor:convert>
     </target>
