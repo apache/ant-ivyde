@@ -260,7 +260,7 @@
     <target name="package-binaries" depends="build,generate-p2-category,generate-dist-doc-files,generate-dist-doc-html">
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
         <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
-        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <!--unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" /-->
         <!-- packaging the zip as a p2 repository -->
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
             <fileset dir="${eclipse.work.dir}/p2repo" />
