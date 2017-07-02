@@ -19,9 +19,10 @@ test/cache-fakerepo
 test/cache-sshrepo
 test/jetty-webapp/webapp/WEB-INF/classes
 test/ivy-user-dir/ivyuserdir/cache
-doc/style/
-doc/xooki/
 doc/sample/webapp-js-repo/webapp/bin
 .DS_Store
 .idea
 *.iml
+checkstyle/report
+dist
+doc/src/sample/webapp-js-repo.zip
