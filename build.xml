@@ -689,7 +689,7 @@ forceContextQualifier=${jenkins.version.qualifier}
             <attribute name="destFile" />
             <![CDATA[
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
-                r = new java.io.BufferedReader(new FileReader(tocfile));
+                r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
                 var val = "";
                 while((s = r.readLine()) != null) {
                     val += s;
