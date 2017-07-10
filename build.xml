@@ -260,7 +260,7 @@
     <target name="package-binaries" depends="build,generate-p2-category,generate-dist-doc-files,generate-dist-doc-html">
         <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
         <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
-        <!--unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" /-->
+        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
         <!-- packaging the zip as a p2 repository -->
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
             <fileset dir="${eclipse.work.dir}/p2repo" />
@@ -519,76 +519,75 @@ You have to specify the Ivy to install with one of the following property:
     <target name="download-eclipse" depends="eclipse-get-sdk,eclipse-get-wtp,eclipse-get-emf,eclipse-get-xsd,eclipse-get-gef,eclipse-get-zest" />
 
     <target name="eclipse-check-download-sdk">
-        <check-eclipse-download name="${eclipse.download.sdk.name}" property="eclipse.sdk.downloaded" md5="${eclipse.download.sdk.md5}" />
+        <check-eclipse-download id="sdk" />
     </target>
 
     <target name="eclipse-get-sdk" depends="eclipse-check-download-sdk" unless="eclipse.sdk.downloaded">
-        <eclipse-download name="${eclipse.download.sdk.name}" dropdir="${eclipse.download.sdk.dropdir}" />
+        <eclipse-download id="sdk" />
     </target>
 
     <target name="eclipse-check-download-wtp">
-        <check-eclipse-download name="${eclipse.download.wtp.name}" property="eclipse.wtp.downloaded" md5="${eclipse.download.wtp.md5}" />
+        <check-eclipse-download id="wtp" />
     </target>
 
     <target name="eclipse-get-wtp" depends="eclipse-check-download-wtp" unless="eclipse.wtp.downloaded">
-        <eclipse-download name="${eclipse.download.wtp.name}" dropdir="${eclipse.download.wtp.dropdir}" />
+        <eclipse-download id="wtp" />
     </target>
 
     <target name="eclipse-check-download-emf">
-        <check-eclipse-download name="${eclipse.download.emf.name}" property="eclipse.emf.downloaded" md5="${eclipse.download.emf.md5}" />
+        <check-eclipse-download id="emf" />
     </target>
 
     <target name="eclipse-get-emf" depends="eclipse-check-download-emf" unless="eclipse.emf.downloaded">
-        <eclipse-download name="${eclipse.download.emf.name}" dropdir="${eclipse.download.emf.dropdir}" />
+        <eclipse-download id="emf" />
     </target>
 
     <target name="eclipse-check-download-xsd">
-        <check-eclipse-download name="${eclipse.download.xsd.name}" property="eclipse.xsd.downloaded" md5="${eclipse.download.xsd.md5}" />
+        <check-eclipse-download id="xsd" />
     </target>
 
     <target name="eclipse-get-xsd" depends="eclipse-check-download-xsd" unless="eclipse.xsd.downloaded">
-        <eclipse-download name="${eclipse.download.xsd.name}" dropdir="${eclipse.download.xsd.dropdir}" />
+        <eclipse-download id="xsd" />
     </target>
 
     <target name="eclipse-check-download-gef">
-        <check-eclipse-download name="${eclipse.download.gef.name}" property="eclipse.gef.downloaded" md5="${eclipse.download.gef.md5}" />
+        <check-eclipse-download id="gef" />
     </target>
 
     <target name="eclipse-get-gef" depends="eclipse-check-download-gef" unless="eclipse.gef.downloaded">
-        <eclipse-download name="${eclipse.download.gef.name}" dropdir="${eclipse.download.gef.dropdir}" />
+        <eclipse-download id="gef" />
     </target>
 
     <target name="eclipse-check-download-zest">
-        <check-eclipse-download name="${eclipse.download.zest.name}" property="eclipse.zest.downloaded" md5="${eclipse.download.zest.md5}" />
+        <check-eclipse-download id="zest" />
     </target>
 
     <target name="eclipse-get-zest" depends="eclipse-check-download-zest" unless="eclipse.zest.downloaded">
-        <eclipse-download name="${eclipse.download.zest.name}" dropdir="${eclipse.download.zest.dropdir}" />
+        <eclipse-download id="zest" />
     </target>
 
     <!-- wrapper of eclipse download urls which have a common pattern -->
     <macrodef name="check-eclipse-download">
-        <attribute name="property" />
-        <attribute name="name" />
-        <attribute name="md5" />
+        <attribute name="id" />
         <sequential>
-            <echo file="${basedir}/dependencies/@{name}.zip.md5" message="@{md5}" />
-            <condition property="@{property}">
+            <echo file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip.md5" message="${eclipse.download.@{id}.md5}" />
+            <condition property="eclipse.@{id}.downloaded">
                 <and>
-                    <available file="${basedir}/dependencies/@{name}.zip" />
-                    <checksum file="${basedir}/dependencies/@{name}.zip" algorithm="MD5" />
+                    <available file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" />
+                    <checksum file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" algorithm="MD5" />
                 </and>
             </condition>
         </sequential>
     </macrodef>
     <macrodef name="eclipse-download">
-        <attribute name="name" />
-        <attribute name="dropdir" />
+        <attribute name="id" />
         <sequential>
+            <property name="eclipse.download.@{id}.baseurl" value="${eclipse.download.baseurl}" />
             <mkdir dir="${basedir}/dependencies" />
-            <delete file="${basedir}/dependencies/@{name}.zip" failonerror="false" />
-            <get src="${eclipse.download.baseurl}?file=/@{dropdir}/@{name}.zip&amp;mirror_id=1" dest="${basedir}/dependencies/@{name}.zip" verbose="yes" />
-            <checksum file="${basedir}/dependencies/@{name}.zip" algorithm="MD5" />
+            <delete file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" failonerror="false" />
+            <get src="${eclipse.download.@{id}.baseurl}?file=/${eclipse.download.@{id}.dropdir}/${eclipse.download.@{id}.name}.zip&amp;mirror_id=1"
+                 dest="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" verbose="yes" />
+            <checksum file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" algorithm="MD5" />
         </sequential>
     </macrodef>
 
