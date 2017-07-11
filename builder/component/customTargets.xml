@@ -32,9 +32,9 @@
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
     </target>
 
-    <!--target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature">
+    <target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature">
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
-    </target-->
+    </target>
 
     <target name="assemble.org.apache.ivyde.feature.p2">
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
@@ -44,13 +44,13 @@
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
     </target>
 
-    <!--target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature.p2">
+    <target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature.p2">
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
     </target>
 
     <target name="assemble.org.apache.ivyde.eclipse.resolvevisualizer.feature.group.group.group">
         <ant antfile="${assembleScriptName}" dir="${buildDirectory}" />
-    </target-->
+    </target>
 
     <!-- ===================================================================== -->
     <!-- ===================================================================== -->
@@ -130,24 +130,24 @@
                 <include name="NOTICE" />
             </fileset>
         </copy>
-        <!--copy todir="${buildDirectory}/features/org.apache.ivyde.eclipse.resolvevisualizer.feature/">
+        <copy todir="${buildDirectory}/features/org.apache.ivyde.eclipse.resolvevisualizer.feature/">
             <fileset dir="${buildDirectory}/../..">
                 <include name="LICENSE" />
                 <include name="NOTICE" />
             </fileset>
-        </copy-->
+        </copy>
         <copy todir="${buildDirectory}/plugins/org.apache.ivyde.eclipse/META-INF/">
             <fileset dir="${buildDirectory}/../..">
                 <include name="LICENSE" />
                 <include name="NOTICE" />
             </fileset>
         </copy>
-        <!--copy todir="${buildDirectory}/plugins/org.apache.ivyde.eclipse.resolvevisualizer/META-INF/">
+        <copy todir="${buildDirectory}/plugins/org.apache.ivyde.eclipse.resolvevisualizer/META-INF/">
             <fileset dir="${buildDirectory}/../..">
                 <include name="LICENSE" />
                 <include name="NOTICE" />
             </fileset>
-        </copy-->
+        </copy>
     </target>
 
     <!-- ===================================================================== -->
