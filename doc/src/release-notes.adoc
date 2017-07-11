@@ -34,7 +34,7 @@ The Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management in
 
 Major changes in this release:
 
-!!!! TODO !!!!
+IvyDE can now manage credentials stored in a secured store. Rather than putting passwords for HTTP Authentication in a property file, IvyDE allow you to use the secure storage capability of Eclipse and your OS to store them. See the new "Security" panel in the global preferences of IvyDE.
 
 Compatibility:
 !!!! TODO !!!!
@@ -86,6 +86,7 @@ Committers:
 Contributors:
 
 * Daniel Becheanu
+* Alexander Blaas
 * Peter Blstak
 * Clint Burghduff
 * Peter Chanthamynavong
@@ -124,6 +125,7 @@ List of changes since link:/ivy/ivyde/history/2.2.0.final/release-notes.html[Apa
     
 * NEW: add support for OSGi 'Bundle-Classpath' directive (Ivy 2.4.0-rc1 is required)
 * NEW: basic support for the workspace resolver to find OSGi bundles managed by Ivy in the workspace (Ivy 2.4.0-rc2 is required)
+* NEW: Add support for storing securely credentials (thanks to Alexander Blaas)
     
 ////
  samples
