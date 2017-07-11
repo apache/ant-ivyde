@@ -162,6 +162,13 @@
                 ]
             },
             {
+              "id":"security",
+              "title":"Security",
+              "children": [
+
+                ]
+            },
+            {
               "id":"console",
               "title":"Ivy Console",
               "children": [

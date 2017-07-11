@@ -17,8 +17,6 @@
    under the License.
 ////
 
-== [[security]]Security
-
 This preference section allows you to manage credentials, which the ivy dependency manager needs to access protected repositories. The credentials are directly stored into the Eclipse Secure storage and loaded during the ivyDE-plugin's startup. This preference page allows you to manage your ivy credentials safely without the need to "publish" them in plain-text inside your build-files.
 
 == [[general]]General workflow
@@ -26,8 +24,6 @@ This preference section allows you to manage credentials, which the ivy dependen
 The ivyDE credentials extension allows you - as already mentioned - to protect your ivy credentials by using the Eclipse Secure storage. The credential entries are only maintained by the Eclipse secure storage itself: Every operation (add/edit/remove) is directly performed on the Eclipse secure storage without any intermediate caches. At the ivyDE plugin's startup, the Eclipse Secure storage is accessed (this operation requires you to insert your password if your Eclipse Secure storage is password-protected) and all the credential entries - which are related to the ivy dependency manager - are loaded and copied to the internal ivy credential manager (where ivy looks for credentials in case of protected repositories).
 
 Please note that this "credential-copying" is directly done after the ivyDE plugin's startup. If your ivy-configuration files, respectively, your build-files also contain credentials pointing to the same repository (same host@realm combination as already stored in the Eclipse Secure storage), the credentials inside the Eclipse Secure storage may be overwritten due to the fact, that credentials specified within the mentioned alternative locations may be added to the internal ivy credential manager after the "credential-copying" was performed. 
-
-.General:
 
 == [[credentialsOverview]]Overview
 
