@@ -570,7 +570,7 @@ You have to specify the Ivy to install with one of the following property:
     <macrodef name="check-eclipse-download">
         <attribute name="id" />
         <sequential>
-            <echo file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip.md5" message="${eclipse.download.@{id}.md5}" />
+            <echo file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip.MD5" message="${eclipse.download.@{id}.md5}" />
             <condition property="eclipse.@{id}.downloaded">
                 <and>
                     <available file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" />
