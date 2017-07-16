@@ -116,11 +116,11 @@ Contributors:
 == [[changes]]List of Changes in this Release
 
 List of changes since link:/ivy/ivyde/history/2.2.0.final/release-notes.html[Apache IvyDE 2.2.0 final]:
-    
-* FIX: xml bomb in workspace causes hang in Ivy code during Search or Synchronize operations (link:https://issues.apache.org/jira/browse/IVYDE-354[IVYDE-354]) (thanks to Matt Hillsdon)
-* FIX: Deadlock in classpath container (link:https://issues.apache.org/jira/browse/IVYDE-361[IVYDE-361]) (thanks to Carsten Pfeiffer)
-* FIX: Typo in IvyResolveJob (link:https://issues.apache.org/jira/browse/IVYDE-362[IVYDE-362]) (thanks to Nicolas Gavalda)
-* FIX: User-selected configurations not checked in the viewer (link:https://issues.apache.org/jira/browse/IVYDE-378[IVYDE-378]) (thanks to Carsten Pfeiffer)
+
+* FIX: xml bomb in workspace causes hang in Ivy code during Search or Synchronize operations (jira:IVYDE-354[]) (thanks to Matt Hillsdon)
+* FIX: Deadlock in classpath container (jira:IVYDE-361[]) (thanks to Carsten Pfeiffer)
+* FIX: Typo in IvyResolveJob (jira:IVYDE-362[]) (thanks to Nicolas Gavalda)
+* FIX: User-selected configurations not checked in the viewer (jira:IVYDE-378[]) (thanks to Carsten Pfeiffer)
     
 * NEW: add support for OSGi 'Bundle-Classpath' directive (Ivy 2.4.0-rc1 is required)
 * NEW: basic support for the workspace resolver to find OSGi bundles managed by Ivy in the workspace (Ivy 2.4.0-rc2 is required)
@@ -128,9 +128,9 @@ List of changes since link:/ivy/ivyde/history/2.2.0.final/release-notes.html[Apa
     
 ////
  samples
-* NEW: new new new (IVYDE-XXX) (thanks to XXX)
-* IMPROVE: improve improve improve (IVYDE-XXX) (thanks to XXX)
-* FIX: fix fix fix (IVYDE-XXX) (thanks to XXX)
+* NEW: new new new (jira:IVYDE-XXX[]) (thanks to XXX)
+* IMPROVE: improve improve improve (jira:IVYDE-XXX[]) (thanks to XXX)
+* FIX: fix fix fix (jira:IVYDE-XXX[]) (thanks to XXX)
 ////
 
 Most of our changes are logged in our JIRA, where you can find comments and links to our subversion:

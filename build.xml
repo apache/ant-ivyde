@@ -65,9 +65,26 @@
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-    <target name="init-asciidoctor" depends="init-ivy">
+    <target name="init-asciidoctor-extensions" depends="init-ivy" unless="skip.doc">
+        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.5" inline="true"/>
+        <mkdir dir="${work.dir}/asciidoc-extensions/classes"/>
+        <javac srcdir="${doc.dir}/extensions/src" destdir="${work.dir}/asciidoc-extensions/classes"
+               debug="true" includeantruntime="no" classpathref="asciidoctorj.path"/>
+        <copy todir="${work.dir}/asciidoc-extensions/classes">
+            <fileset dir="${doc.dir}/extensions/src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="init-asciidoctor" depends="init-asciidoctor-extensions">
         <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
-        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path">
+            <classpath>
+                <pathelement location="${work.dir}/asciidoc-extensions/classes" />
+                <path refid="asciidoctor.path" />
+            </classpath>
+        </taskdef>
     </target>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
@@ -243,6 +260,7 @@
                              templateDir="${doc.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
         </asciidoctor:convert>
     </target>
 
@@ -252,6 +270,7 @@
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
         </asciidoctor:convert>
     </target>
 
@@ -671,6 +690,7 @@ forceContextQualifier=${jenkins.version.qualifier}
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
         </asciidoctor:convert>
     </target>
 
