@@ -37,9 +37,8 @@ Major changes in this release:
 IvyDE can now manage credentials stored in a secured store. Rather than putting passwords for HTTP Authentication in a property file, IvyDE allow you to use the secure storage capability of Eclipse and your OS to store them. See the new "Security" panel in the global preferences of IvyDE.
 
 Compatibility:
-!!!! TODO !!!!
 
-!!!! TODO !!!! status of the release: stable or beta ?
+IvyDE now requires Java 7 and Eclipse 4.3 aka Eclipse Kepler as minimum.
 
 A more detailed release notes can be read there:
 http://ant.apache.org/ivy/ivyde/history/latest-milestone/release-notes.html
