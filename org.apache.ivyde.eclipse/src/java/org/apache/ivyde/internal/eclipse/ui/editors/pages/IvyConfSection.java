@@ -59,7 +59,6 @@ public class IvyConfSection extends SectionPart {
     }
 
     private void createOrganisationEntry(Composite parent, FormToolkit toolkit) {
-
     }
 
     public void refresh() {

@@ -32,7 +32,7 @@ public class SettingsSetupTab extends AbstractSetupTab {
     private SettingsSetupEditor settingsEditor;
 
     public SettingsSetupTab(TabFolder tabs, IProject project) {
-        super(tabs, "Settings", SettingsSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
+        super(tabs, "Settings", SettingsSetupPreferencePage.PREFERENCE_PAGE_ID, project);
     }
 
     protected Composite createSetupEditor(Composite configComposite, IProject project) {

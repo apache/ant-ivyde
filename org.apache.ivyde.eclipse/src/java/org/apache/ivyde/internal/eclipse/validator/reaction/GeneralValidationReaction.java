@@ -40,9 +40,9 @@ public class GeneralValidationReaction implements IValidationReaction {
     }
 
     /**
-     * @param okButton
-     * @param errorLabel
-     * @param errorIcon
+     * @param okButton Button
+     * @param errorLabel Label
+     * @param errorIcon Label
      */
     public GeneralValidationReaction(Button okButton, Label errorLabel, Label errorIcon) {
         this.okButton = okButton;

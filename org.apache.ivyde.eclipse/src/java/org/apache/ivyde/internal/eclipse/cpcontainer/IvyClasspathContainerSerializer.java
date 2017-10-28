@@ -93,12 +93,12 @@ public class IvyClasspathContainerSerializer {
 
     private File containersStateDir;
 
-    private IvyAttachementManager ivyAttachementManager;
+    private IvyAttachmentManager ivyAttachmentManager;
 
     public IvyClasspathContainerSerializer(File containersStateDir,
-            IvyAttachementManager ivyAttachementManager) {
+            IvyAttachmentManager ivyAttachmentManager) {
         this.containersStateDir = containersStateDir;
-        this.ivyAttachementManager = ivyAttachementManager;
+        this.ivyAttachmentManager = ivyAttachmentManager;
     }
 
     public void save(IJavaProject project) {
@@ -120,7 +120,7 @@ public class IvyClasspathContainerSerializer {
             }
         } catch (Exception ioe) {
             IvyPlugin.logWarn("IvyDE container states of the project "
-                    + project.getProject().getName() + " cound not be saved", ioe);
+                    + project.getProject().getName() + " could not be saved", ioe);
         }
     }
 
@@ -146,7 +146,7 @@ public class IvyClasspathContainerSerializer {
             }
         } catch (Exception ioe) {
             IvyPlugin.logWarn("IvyDE container states of the project "
-                    + project.getProject().getName() + " cound not be read", ioe);
+                    + project.getProject().getName() + " could not be read", ioe);
             return null;
         }
     }
@@ -195,9 +195,7 @@ public class IvyClasspathContainerSerializer {
             if (e.getException() instanceof IOException) {
                 throw (IOException) e.getException();
             }
-            IOException ioe = new IOException(e.getMessage());
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -375,8 +373,8 @@ public class IvyClasspathContainerSerializer {
                 entry = JavaCore.newProjectEntry(path, accessRules, true, cpAttrs, true);
                 break;
             case IClasspathEntry.CPE_LIBRARY:
-                IPath sources = ivyAttachementManager.getSourceAttachment(path, sourcePath);
-                IPath sourcesRoot = ivyAttachementManager.getSourceAttachmentRoot(path, sourcePath);
+                IPath sources = ivyAttachmentManager.getSourceAttachment(path, sourcePath);
+                IPath sourcesRoot = ivyAttachmentManager.getSourceAttachmentRoot(path, sourcePath);
                 entry = JavaCore.newLibraryEntry(path, sources, sourcesRoot, accessRules, cpAttrs,
                     false);
                 break;

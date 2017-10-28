@@ -116,6 +116,8 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
 
     /**
      * Saves the multi-page editor's document.
+     *
+     * @param monitor IProgressMonitor
      */
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
@@ -150,6 +152,10 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
     /**
      * The <code>MultiPageEditorExample</code> implementation of this method checks that the input
      * is an instance of <code>IFileEditorInput</code>.
+     *
+     * @param site IEditorSite
+     * @param editorInput IEditorInput
+     * @throws PartInitException if editorInput is not IFileEditorInput
      */
     public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
         if (!(editorInput instanceof IFileEditorInput)) {
@@ -164,6 +170,8 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
 
     /**
      * Closes all project files on project close.
+     *
+     * @param event IResourceChangeEvent
      */
     public void resourceChanged(IResourceChangeEvent event) {
         if (event.getType() == IResourceChangeEvent.PRE_CLOSE) {

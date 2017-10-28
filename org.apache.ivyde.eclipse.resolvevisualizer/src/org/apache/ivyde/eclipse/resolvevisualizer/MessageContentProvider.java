@@ -33,6 +33,8 @@ public class MessageContentProvider {
 
     /**
      * Called when the view selection changes and the message list needs to be rebuilt.
+     *
+     * @param root IvyNodeElement
      */
     public void selectionChanged(IvyNodeElement root) {
         if (root == null) {
@@ -47,8 +49,9 @@ public class MessageContentProvider {
             if (deepDependencies[i].getConflicts().length > 0) {
                 Collection/* <IvyNodeElement> */conflictParticipants = (Collection) conflicts.get(deepDependencies[i]
                         .getModuleRevisionId().getModuleId());
-                if (conflictParticipants == null)
+                if (conflictParticipants == null) {
                     conflictParticipants = new HashSet/* <IvyNodeElement> */();
+                }
                 conflictParticipants.add(deepDependencies[i]);
                 conflicts.put(deepDependencies[i].getModuleRevisionId().getModuleId(), conflictParticipants);
             }

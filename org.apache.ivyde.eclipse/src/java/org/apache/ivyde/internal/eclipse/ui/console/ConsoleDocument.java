@@ -67,6 +67,9 @@ public class ConsoleDocument {
 
     /**
      * Appends a line of the specified type to the end of the console.
+     *
+     * @param type int
+     * @param line String
      */
     public void appendConsoleLine(int type, String line) {
         if (lines == null) {

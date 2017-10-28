@@ -33,13 +33,17 @@ import org.apache.ivyde.common.model.Proposal;
 public class IvyCodeCompletionProcessor {
     private String errorMessage = null;
     private final IvyModel model;
-    
+
     public IvyCodeCompletionProcessor(IvyModel model) {
         this.model = model;
     }
 
     /**
-     * Call by viewer to retrieve a list of ICompletionProposal
+     * Call by viewer to retrieve a list of ICompletionProposal.
+     *
+     * @param ivyfile IvyFile
+     * @param caretOffset int
+     * @return CodeCompletionProposal[]
      */
     public CodeCompletionProposal[] computeCompletionProposals(IvyFile ivyfile, int caretOffset) {
         model.refreshIfNeeded(ivyfile);
@@ -61,14 +65,13 @@ public class IvyCodeCompletionProcessor {
     }
 
     /**
-     * Compute a list of possible attribute for the tag given in arguement.<br/> If attribute are
-     * already used in tag they are discard of the list
-     * 
-     * @param tagName
-     * @param doc
-     * @param documentOffset
-     * @param propList
-     * @param selectedRange
+     * Compute a list of possible attributes for the tag given in argument.<br/>
+     * If attributes are already used in tag, they are discarded from the list.
+     *
+     * @param tagName Ivy tag name
+     * @param ivyfile IvyFile
+     * @param propList List&lt;CodeCompletionProposal&gt;
+     * @param caretOffset ditto
      */
     private void computeTagAttributeProposals(String tagName, IvyFile ivyfile, List propList,
             int caretOffset) {
@@ -98,7 +101,7 @@ public class IvyCodeCompletionProcessor {
                     String text = att.getName() + "=\"\"";
                     // Construct proposal
                     CodeCompletionProposal proposal = new CodeCompletionProposal(
-                            text, ivyfile.getOffset() - qlen, qlen + caretOffset, 
+                            text, ivyfile.getOffset() - qlen, qlen + caretOffset,
                             text.length() - 1, att.getName(), att.getDoc());
                     // and add to result list
                     propList.add(proposal);
@@ -108,15 +111,14 @@ public class IvyCodeCompletionProcessor {
     }
 
     /**
-     * Compute a list of possible values for the current attribute of the given tag.<br>
-     * The list is retrieve by calling <code> IvyTag.getPossibleValuesForAttribute</code>
-     * 
-     * @see IvyTag#getPossibleValuesForAttribute(String, Map, String)
-     * @param tagName
-     * @param doc
-     * @param documentOffset
-     * @param propList
-     * @param selection
+     * Compute a list of possible values for the current attribute of the given tag.<br/>
+     * The list is retrieve by calling <code>IvyTag.getPossibleValuesForAttribute</code>
+     *
+     * @see org.apache.ivyde.common.model.IvyTag#getPossibleValuesForAttribute(String, IvyFile)
+     * @param tagName Ivy tag name
+     * @param ivyfile IvyFile
+     * @param propList List&lt;CodeCompletionProposal&gt;
+     * @param caretOffset ditto
      */
     private void computeValueProposals(String tagName, IvyFile ivyfile, List propList,
             int caretOffset) {
@@ -152,6 +154,10 @@ public class IvyCodeCompletionProcessor {
 
     /**
      * Compute xml structural proposition
+     *
+     * @param ivyfile IvyFile
+     * @param propList List&lt;CodeCompletionProposal&gt;
+     * @param caretOffset int
      */
     private void computeStructureProposals(IvyFile ivyfile, List propList, int caretOffset) {
         String parent = ivyfile.getParentTagName();
@@ -204,7 +210,7 @@ public class IvyCodeCompletionProcessor {
                     for (int i = 0; i < props.length; i++) {
                         // Construct proposal and add to result list
                         propList.add(new CodeCompletionProposal(
-                            props[i].getProposal(), ivyfile.getOffset() - qlen, qlen + caretOffset, 
+                            props[i].getProposal(), ivyfile.getOffset() - qlen, qlen + caretOffset,
                             props[i].getCursor(), null, props[i].getDoc()));
                     }
                 }

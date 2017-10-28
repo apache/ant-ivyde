@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 public class RealmValidator extends BaseValidator {
 
     /**
-     * @param reaction
+     * @param reaction IValidationReaction
      */
     public RealmValidator(IValidationReaction reaction) {
         super(reaction);

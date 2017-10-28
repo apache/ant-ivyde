@@ -41,6 +41,8 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
     /**
      * Constructor for NonRuleBasedDamagerRepairer.
+     *
+     * @param defaultTextAttribute TextAttribute
      */
     public NonRuleBasedDamagerRepairer(TextAttribute defaultTextAttribute) {
         Assert.isNotNull(defaultTextAttribute);
@@ -50,6 +52,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
     /**
      * @see IPresentationRepairer#setDocument(IDocument)
+     * @param document IDocument
      */
     public void setDocument(IDocument document) {
         fDocument = document;
@@ -58,11 +61,11 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
     /**
      * Returns the end offset of the line that contains the specified offset or if the offset is
      * inside a line delimiter, the end offset of the next line.
-     * 
+     *
      * @param offset
      *            the offset whose line end offset must be computed
      * @return the line end offset for the given offset
-     * @exception BadLocationException
+     * @throws BadLocationException
      *                if offset is invalid in the current document
      */
     protected int endOfLineOf(int offset) throws BadLocationException {
@@ -83,6 +86,10 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
     /**
      * @see IPresentationDamager#getDamageRegion(ITypedRegion, DocumentEvent, boolean)
+     * @param partition ITypedRegion
+     * @param event DocumentEvent
+     * @param documentPartitioningChanged boolean
+     * @return IRegion
      */
     public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event,
             boolean documentPartitioningChanged) {
@@ -116,6 +123,8 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
     /**
      * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
+     * @param presentation TextPresentation
+     * @param region ITypedRegion
      */
     public void createPresentation(TextPresentation presentation, ITypedRegion region) {
         addRange(presentation, region.getOffset(), region.getLength(), fDefaultTextAttribute);
@@ -123,7 +132,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
     /**
      * Adds style information to the given text presentation.
-     * 
+     *
      * @param presentation
      *            the text presentation to be extended
      * @param offset

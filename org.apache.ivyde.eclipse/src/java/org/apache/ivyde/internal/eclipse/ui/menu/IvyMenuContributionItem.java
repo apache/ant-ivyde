@@ -275,9 +275,9 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         addCleanable(menuManager, items, "Clean all caches", allCleanables);
         addCleanable(menuManager, items, "Clean the resolution cache", resolutionCleanables);
         addCleanable(menuManager, items, "Clean every repository cache", repositoryCleanables);
-        Iterator itCleanble = resolutionCleanables.iterator();
-        while (itCleanble.hasNext()) {
-            Cleanable cleanable = (Cleanable) itCleanble.next();
+        Iterator itCleanable = resolutionCleanables.iterator();
+        while (itCleanable.hasNext()) {
+            Cleanable cleanable = (Cleanable) itCleanable.next();
             addCleanable(menuManager, items, "Clean the cache '" + cleanable.getName() + "'",
                 Collections.singletonList(cleanable));
         }

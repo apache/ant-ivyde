@@ -112,7 +112,7 @@ public class IvyFilePathText extends PathEditor {
         }
     }
 
-    public void remodeListener(IvyXmlPathListener listener) {
+    public void removeListener(IvyXmlPathListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }

@@ -85,7 +85,7 @@ public class ClasspathTypeComposite extends Composite {
     public RetrieveSetup getRetrieveSetup() {
         return retrieveComposite.getRetrieveSetup();
     }
-    
+
     public void setEnabled(boolean enabled) {
         selectCache.setEnabled(enabled);
         selectRetrieve.setEnabled(enabled);

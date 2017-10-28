@@ -25,8 +25,8 @@ public class IvyRunner {
     private static final int WAIT_FOR_JOIN = 100;
 
     /**
-     * Launch some ivy related work and cancel it if the end user has requested it
-     * 
+     * Launch some ivy related work and cancel it if the end user has requested it.
+     *
      * @param runnable
      *            the ivy work to do
      * @param ivy

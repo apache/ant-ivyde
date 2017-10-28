@@ -121,11 +121,12 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     /**
-     * Check that the chosen configuration doesn't already exist within the current project
+     * Check that the chosen configuration doesn't already exist within the current project.
      * <p>
      * The uniqueness is for xmlivyPath + conf
-     * 
-     * @return
+     * </p>
+     *
+     * @return String
      */
     private String checkConf() {
         String error = null;

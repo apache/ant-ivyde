@@ -68,11 +68,12 @@ public class IvyFileUpdater {
      * Removes a direct dependency in the given Ivy file, or excludes it if it isn't a direct
      * dependency, unless the Ivy file declares no dependency at all, in which case the file isn't
      * changed.
-     * 
+     *
      * @param ivyFile
      *            the file pointing to the Ivy file to update
      * @param depId
      *            the module id of the dependency to remove or exclude
+     * @throws IOException failing to read the Ivy file
      */
     public void removeOrExcludeDependency(File ivyFile, ModuleId depId) throws IOException {
         String content = FileUtil.readEntirely(ivyFile);

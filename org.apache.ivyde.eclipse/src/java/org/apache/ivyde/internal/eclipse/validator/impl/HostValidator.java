@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 public class HostValidator extends BaseValidator {
 
     /**
-     * @param reaction
+     * @param reaction IValidationReaction
      */
     public HostValidator(IValidationReaction reaction) {
         super(reaction);

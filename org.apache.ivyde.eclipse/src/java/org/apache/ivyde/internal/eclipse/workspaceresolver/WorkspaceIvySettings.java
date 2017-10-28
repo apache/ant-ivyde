@@ -52,6 +52,6 @@ public class WorkspaceIvySettings extends IvySettings {
         chain.add(new WorkspaceResolver(project, this));
         chain.add(resolver);
         return chain;
-        
     }
+
 }

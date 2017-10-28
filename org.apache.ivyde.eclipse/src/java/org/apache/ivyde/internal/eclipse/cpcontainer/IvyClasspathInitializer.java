@@ -55,6 +55,10 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     /**
      * Initialize the container with the "persisted" classpath entries, and then schedule the
      * refresh
+     *
+     * @param containerPath IPath
+     * @param project IJavaProject
+     * @throws CoreException if initialisation fails
      */
     public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
         if (IvyClasspathContainerHelper.isIvyClasspathContainer(containerPath)) {
@@ -77,12 +81,9 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 IClasspathEntry entry = IvyClasspathContainerHelper.getEntry(containerPath,
                     project);
                 IClasspathAttribute[] attributes;
-                boolean exported;
                 if (entry != null) {
                     attributes = entry.getExtraAttributes();
-                    exported = entry.isExported();
                 } else {
-                    exported = false;
                     attributes = new IClasspathAttribute[0];
                 }
 
@@ -147,7 +148,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                 if (refresh) {
                     IvyDEMessage.info("Scheduling a refresh of the container");
                 } else {
-                    IvyDEMessage.info("Scheduling a resolve of the container");       
+                    IvyDEMessage.info("Scheduling a resolve of the container");
                 }
                 // now refresh the container to be synchronized with the ivy.xml
                 ivycp.launchResolve(refresh, null);
@@ -194,10 +195,10 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
     public void requestClasspathContainerUpdate(final IPath containerPath,
             final IJavaProject project, final IClasspathContainer containerSuggestion)
             throws CoreException {
-        new Job("IvyDE attachement updater") {
+        new Job("IvyDE attachment updater") {
             protected IStatus run(IProgressMonitor monitor) {
-                IvyPlugin.getDefault().getIvyAttachementManager()
-                        .updateAttchements(project, containerPath, containerSuggestion);
+                IvyPlugin.getDefault().getIvyAttachmentManager()
+                        .updateAttachments(project, containerPath, containerSuggestion);
                 return Status.OK_STATUS;
             }
         }.schedule();

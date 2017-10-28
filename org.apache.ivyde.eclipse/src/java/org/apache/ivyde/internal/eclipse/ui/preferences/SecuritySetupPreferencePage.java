@@ -18,7 +18,6 @@
 package org.apache.ivyde.internal.eclipse.ui.preferences;
 
 import org.apache.ivyde.eclipse.IvyDEsecurityHelper;
-import org.apache.ivyde.eclipse.cp.SecuritySetup;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.controller.SecuritySetupController;
 import org.apache.ivyde.internal.eclipse.ui.SecuritySetupEditor;
@@ -32,8 +31,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class SecuritySetupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.SecuritySetupPreferencePage";
+    /** the ID of the preference page. */
+    public static final String PREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.SecuritySetupPreferencePage";
 
     private SecuritySetupEditor securitySetupComposite;
 
@@ -62,10 +61,12 @@ public class SecuritySetupPreferencePage extends PreferencePage implements IWork
 
     /*
      * NOTE: The table containing the credentials is directly coupled with the eclipse
-     * secure-storage: 
-     * - all operations are performed immediately on the secure-storage 
-     * - performOk(), performApply() and performDefaults() won't have any additional effects: They just
-     * redo performed operations (for the sake of completeness)
+     * secure-storage:
+     * <ul>
+     * <li>all operations are performed immediately on the secure-storage</li>
+     * <li>performOk(), performApply() and performDefaults() won't have any additional effects: They just
+     * redo performed operations (for the sake of completeness)</li>
+     * </ul>
      */
 
     @Override

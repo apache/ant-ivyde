@@ -85,7 +85,7 @@ public abstract class AbstractSetupTab {
         tab.setControl(composite);
     }
 
-    abstract protected Composite createSetupEditor(Composite configComposite, IProject project);
+    protected abstract Composite createSetupEditor(Composite configComposite, IProject project);
 
     public void init(boolean isProjectSpecific) {
         if (isProjectSpecific) {

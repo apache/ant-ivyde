@@ -18,7 +18,5 @@
 package org.apache.ivyde.common.model;
 
 public interface IDocumentedValueProvider extends IValueProvider {
-
     String getDocForValue(String value, IvyFile ivyFile);
-
 }

@@ -35,7 +35,7 @@ public class IvyTagAttribute {
     private IValueProvider valueProvider = null;
 
     /**
-     * @param name
+     * @param name Ivy tag attribute name
      */
     public IvyTagAttribute(String name) {
         super();

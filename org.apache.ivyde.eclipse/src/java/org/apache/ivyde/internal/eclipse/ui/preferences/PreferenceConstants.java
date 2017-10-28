@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Constant definitions for plug-in preferences
+ * Constant definitions for plug-in preferences.
  */
 public final class PreferenceConstants {
 
@@ -70,7 +70,7 @@ public final class PreferenceConstants {
     public static final String ALPHABETICAL_ORDER = "order.alphabetical";
 
     public static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
-    
+
     public static final String TRANSITIVE_RESOLVE = "transitiveResolve";
 
     public static final String READ_OSGI_METADATA = "readOSGIMetadata";

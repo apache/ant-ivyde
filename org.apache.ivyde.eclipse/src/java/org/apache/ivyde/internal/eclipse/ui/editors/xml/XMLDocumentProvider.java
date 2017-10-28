@@ -34,7 +34,7 @@ public class XMLDocumentProvider extends FileDocumentProvider {
             partitioner.connect(document);
             document.setDocumentPartitioner(partitioner);
             // document.addDocumentListener(new IDocumentListener() {
-            //                
+            //
             // public void documentAboutToBeChanged(DocumentEvent event) {
             // }
             //

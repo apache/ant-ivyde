@@ -60,7 +60,7 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
     private GraphViewer viewer;
 
     private ILabelDecoratorAlgorithm autoSelectDecorator = new ShortestRootPathAlgorithm();
-    private DirectDependenciesAlgorithm rootDirectDependenciesDecorator = new DirectDependenciesAlgorithm();;
+    private DirectDependenciesAlgorithm rootDirectDependenciesDecorator = new DirectDependenciesAlgorithm();
     private ConfigurationConflictAlgorithm conflictDecorator = new ConfigurationConflictAlgorithm();
 
     private Color rootColor;
@@ -90,8 +90,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
             String text = node.getOrganization() + "#" + node.getName() + ";";
             if (node.getRevision().indexOf("working@") != -1)
                 text += "WORKSPACE";
-            else
+            } else {
                 text += node.getRevision();
+            }
             return text;
         }
 
@@ -110,6 +111,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
 
     /**
      * Colors all connections regardless of their selection status.
+     *
+     * @param rel Object
+     * @return Color
      */
     public Color getColor(Object rel) {
         if (highlightedRelationships.keySet().contains(rel)) {
@@ -124,8 +128,11 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
     }
 
     /**
-     * Colors "highlighted" relationships. We want to differentiate between those highlighted programatically by the
-     * auto-select mechanism, and those hand-selected by the user.
+     * Colors "highlighted" relationships. We want to differentiate between those highlighted
+     * programmatically by the auto-select mechanism, and those hand-selected by the user.
+     *
+     * @param rel Object
+     * @return Color
      */
     public Color getHighlightColor(Object rel) {
         if (highlightedRelationships.keySet().contains(rel)) {
@@ -219,10 +226,10 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
     }
 
     /**
-     * Sets the current selection
-     * 
-     * @param root
-     * @param currentSelection
+     * Sets the current selection.
+     *
+     * @param root IvyNodeElement
+     * @param currentSelection IvyNodeElement
      */
     public void setCurrentSelection(IvyNodeElement root, IvyNodeElement currentSelection) {
         for (Iterator iter = highlightedRelationships.keySet().iterator(); iter.hasNext();) {

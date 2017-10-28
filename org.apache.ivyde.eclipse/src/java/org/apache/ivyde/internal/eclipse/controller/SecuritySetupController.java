@@ -76,8 +76,7 @@ public class SecuritySetupController {
     private DataBindingContext ctx = new DataBindingContext();
 
     /**
-     * @param setupEditorGUI
-     * @param addDialog
+     * @param setupEditorGUI SecuritySetupEditor
      */
     public SecuritySetupController(SecuritySetupEditor setupEditorGUI) {
         this.setupEditorGUI = setupEditorGUI;

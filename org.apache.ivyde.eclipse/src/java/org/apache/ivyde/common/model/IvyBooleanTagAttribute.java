@@ -25,7 +25,6 @@ public class IvyBooleanTagAttribute extends IvyTagAttribute {
         public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
             return BOOLEAN_VALUES;
         }
-
     };
 
     public IvyBooleanTagAttribute(String name, String doc, boolean mandatory) {

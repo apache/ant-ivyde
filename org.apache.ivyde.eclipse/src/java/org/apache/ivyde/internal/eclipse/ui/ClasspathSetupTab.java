@@ -31,7 +31,7 @@ public class ClasspathSetupTab extends AbstractSetupTab {
     private ClasspathSetupEditor classpathSetupEditor;
 
     public ClasspathSetupTab(TabFolder tabs, IProject project) {
-        super(tabs, "Classpath", ClasspathSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
+        super(tabs, "Classpath", ClasspathSetupPreferencePage.PREFERENCE_PAGE_ID, project);
     }
 
     protected Composite createSetupEditor(Composite configComposite, IProject project) {

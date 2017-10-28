@@ -152,7 +152,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     }
 
     /*
-     * Initialize thre streams of the console. Must be called from the UI thread.
+     * Initialize three streams of the console. Must be called from the UI thread.
      */
     private void initializeStreams() {
         synchronized (document) {
@@ -217,6 +217,10 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     /**
      * Returns a color instance based on data from a preference field.
+     *
+     * @param display Display
+     * @param preference String
+     * @return Color
      */
     private Color createColor(Display display, String preference) {
         RGB rgb = PreferenceConverter.getColor(IvyPlugin.getDefault().getPreferenceStore(),
@@ -250,7 +254,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     /**
      * Show the console.
-     * 
+     *
      * @param showNoMatterWhat
      *            ignore preferences if <code>true</code>
      */

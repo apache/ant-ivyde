@@ -31,7 +31,7 @@ public class ClasspathSetupPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage";
+    public static final String PREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.ClasspathSetupPreferencePage";
 
     private ClasspathSetupEditor classpathSetupComposite;
 

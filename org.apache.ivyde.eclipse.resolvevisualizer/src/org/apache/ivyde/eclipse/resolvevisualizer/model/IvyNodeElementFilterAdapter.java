@@ -24,13 +24,15 @@ public abstract class IvyNodeElementFilterAdapter implements IIvyNodeElementFilt
     protected boolean enabled = false;
 
     public IvyNodeElement[] filter(IvyNodeElement[] unfiltered) {
-        if (!enabled)
+        if (!enabled) {
             return unfiltered;
+        }
 
         Collection/* <IvyNodeElement> */filtered = new HashSet/* <IvyNodeElement> */();
         for (int i = 0; i < unfiltered.length; i++) {
-            if (accept(unfiltered[i]))
+            if (accept(unfiltered[i])) {
                 filtered.add(unfiltered[i]);
+            }
         }
 
         return (IvyNodeElement[]) filtered.toArray(new IvyNodeElement[filtered.size()]);

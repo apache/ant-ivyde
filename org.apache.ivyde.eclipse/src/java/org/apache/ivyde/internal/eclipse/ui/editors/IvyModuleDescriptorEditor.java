@@ -76,11 +76,11 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     public IvyModuleDescriptorEditor() {
         super();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-        parseModuleDescriptorExtensionMetadatas();
-        parseEditorPageExtensionMetadatas();
+        parseModuleDescriptorExtensionMetadata();
+        parseEditorPageExtensionMetadata();
     }
 
-    private void parseModuleDescriptorExtensionMetadatas() {
+    private void parseModuleDescriptorExtensionMetadata() {
         final IExtension[] extensions = Platform.getExtensionRegistry()
                 .getExtensionPoint(ModuleDescriptorExtension.EXTENSION_POINT).getExtensions();
         for (int i = 0; i < extensions.length; i++) {
@@ -93,7 +93,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
         }
     }
 
-    private void parseEditorPageExtensionMetadatas() {
+    private void parseEditorPageExtensionMetadata() {
         final IExtension[] extensions = Platform.getExtensionRegistry()
                 .getExtensionPoint(IvyEditorPage.EXTENSION_POINT).getExtensions();
         for (int i = 0; i < extensions.length; i++) {
@@ -221,6 +221,8 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
 
     /**
      * Saves the multi-page editor's document.
+     *
+     * @param monitor IProgressMonitor
      */
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
@@ -244,6 +246,10 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     /**
      * The <code>MultiPageEditorExample</code> implementation of this method checks that the input
      * is an instance of <code>IFileEditorInput</code>.
+     *
+     * @param site IEditorSite
+     * @param editorInput IEditorInput
+     * @throws PartInitException if editorInput is not IFileEditorInput
      */
     public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
         if (!(editorInput instanceof IFileEditorInput)) {
@@ -258,6 +264,8 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
 
     /**
      * Calculates the contents of page 2 when the it is activated.
+     *
+     * @param newPageIndex int
      */
     protected void pageChange(int newPageIndex) {
         super.pageChange(newPageIndex);
@@ -268,6 +276,8 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
 
     /**
      * Closes all project files on project close.
+     *
+     * @param event IResourceChangeEvent
      */
     public void resourceChanged(IResourceChangeEvent event) {
         if (event.getType() == IResourceChangeEvent.PRE_CLOSE) {

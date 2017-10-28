@@ -82,9 +82,7 @@ public final class IvyUtil {
                 if (equal == 0) {
                     equal = desc1.getModule().compareTo(desc2.getModule());
                 }
-
                 return equal;
-
             }
         });
 
@@ -94,8 +92,8 @@ public final class IvyUtil {
 
     /**
      * This returns a list of multi-revision dependency descriptors which is a grouping of the
-     * revisions under and organization and module <br>
-     * 
+     * revisions under and organization and module.
+     *
      * @return multi-revision dependency descriptors
      */
     public static MultiRevDependencyDescriptor[] getAllDependencyDescriptorsInWorkspace() {

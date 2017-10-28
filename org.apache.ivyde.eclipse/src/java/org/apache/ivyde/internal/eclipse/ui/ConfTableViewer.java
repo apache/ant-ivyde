@@ -254,7 +254,7 @@ public class ConfTableViewer extends Composite {
         }
     }
 
-    public void remodeListener(ConfTableListener listener) {
+    public void removeListener(ConfTableListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }

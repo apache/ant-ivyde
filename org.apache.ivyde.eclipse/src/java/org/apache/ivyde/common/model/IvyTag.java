@@ -43,7 +43,7 @@ public class IvyTag {
     private boolean allowNoChild = true;
 
     /**
-     * @param name
+     * @param name Ivy tag name
      */
     public IvyTag(String name) {
         super();

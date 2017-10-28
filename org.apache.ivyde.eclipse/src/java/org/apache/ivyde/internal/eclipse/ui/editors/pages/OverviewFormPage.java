@@ -28,9 +28,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 public class OverviewFormPage extends FormPage {
 
     /**
-     * @param editor
-     * @param id
-     * @param title
+     * @param editor FormEditor
      */
     public OverviewFormPage(FormEditor editor) {
         super(editor, "overview", "Overview");

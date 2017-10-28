@@ -112,6 +112,8 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
 
     /**
      * This is a callback that will allow us to create the viewer and initialize it.
+     *
+     * @param parent Composite
      */
     public void createPartControl(Composite parent) {
         toolKit = new FormToolkit(parent.getDisplay());
@@ -366,13 +368,13 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
         viewer.getControl().setFocus();
     }
 
-    private final void focusOnContainer(IvyClasspathContainer container) {
+    private void focusOnContainer(IvyClasspathContainer container) {
         ResolveReport report = container.getResolveReport();
 
         if (report != null) {
             forceHiddenFilter.clearHidden();
             visualizationForm.getForm().setText(
-                    ResolveVisualizerForm.HeaderText + " - " + container.getConf().getIvyXmlPath() + " in \""
+                    ResolveVisualizerForm.HEADER_TEXT + " - " + container.getConf().getIvyXmlPath() + " in \""
                             + container.getConf().getJavaProject().getProject().getName() + "\"");
 
             IvyNodeElement nextRoot = IvyNodeElementAdapter.adapt(report);
@@ -389,9 +391,8 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
     /**
      * Update the view to focus on a particular bundle. If record history is set to true, and bundle does not equal the
      * current bundle, then the current bundle will be saved on the history stack
-     * 
-     * @param focus
-     * @param recordHistory
+     *
+     * @param focus IvyNodeElement
      */
     public void focusOn(IvyNodeElement focus) {
         viewer.setSelection(new StructuredSelection(focus));
@@ -423,8 +424,8 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
 
     /**
      * Handle the select changed. This will update the view whenever a selection occurs.
-     * 
-     * @param selectedItem
+     *
+     * @param selectedItem IvyNodeElement
      */
     private void selectionChanged(IvyNodeElement selectedItem) {
         currentSelection = selectedItem;

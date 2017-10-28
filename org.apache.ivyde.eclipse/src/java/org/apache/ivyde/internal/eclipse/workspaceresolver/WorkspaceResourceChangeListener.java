@@ -90,7 +90,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
             }
         } catch (OperationCanceledException oce) {
             IvyPlugin.log(IStatus.CANCEL,
-                "Ivy update of dependent proejects affected by project close operation canceled",
+                "Ivy update of dependent projects affected by project close operation canceled",
                 null);
         }
     }
@@ -154,7 +154,10 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
     }
 
     /**
-     * Return the IvyDE container which include the specified project path as ivy dependency
+     * Return the IvyDE container which include the specified project path as Ivy dependency.
+     *
+     * @param projectPath IPath
+     * @return List&lt;IvyClasspathContainer&gt;
      */
     private List getAffectedContainers(IPath projectPath) {
         List/* <IvyClasspathContainer> */allContainers = new ArrayList();
@@ -164,7 +167,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         try {
             projects = JavaCore.create(root).getJavaProjects();
         } catch (JavaModelException e) {
-            // something bad happend in the JDT...
+            // something bad happened in the JDT...
             IvyPlugin.log(e);
             return allContainers;
         }
@@ -201,7 +204,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         try {
             projects = JavaCore.create(root).getJavaProjects();
         } catch (JavaModelException e) {
-            // something bad happend in the JDT...
+            // something bad happened in the JDT...
             IvyPlugin.log(e);
             return allContainers;
         }

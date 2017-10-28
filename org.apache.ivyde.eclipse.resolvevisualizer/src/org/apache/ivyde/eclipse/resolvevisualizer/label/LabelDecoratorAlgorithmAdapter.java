@@ -26,9 +26,9 @@ public abstract class LabelDecoratorAlgorithmAdapter implements ILabelDecoratorA
 
     /**
      * Specify custom colors for this algorithm instance.
-     * 
-     * @param entityColor
-     * @param relationshipColor
+     *
+     * @param entityColor Color
+     * @param relationshipColor ConnectionStyle
      */
     public void setStyles(Color entityColor, ConnectionStyle relationshipColor) {
         this.entityColor = entityColor;

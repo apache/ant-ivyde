@@ -35,7 +35,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 
-public class IvyAttachementManager {
+public class IvyAttachmentManager {
 
     private static final String SRC_SUFFIX = "-src";
 
@@ -43,19 +43,19 @@ public class IvyAttachementManager {
 
     private static final String DOC_SUFFIX = "-doc";
 
-    private Properties prop = new Properties();
+    private final Properties prop = new Properties();
 
-    private File containersAttachementFile;
+    private final File containersAttachmentFile;
 
-    public IvyAttachementManager(File containersAttachementFile) {
-        this.containersAttachementFile = containersAttachementFile;
-        if (!containersAttachementFile.exists()) {
-            IvyDEMessage.verbose("Attachement properties file not found: nothing to load");
+    public IvyAttachmentManager(File containersAttachmentFile) {
+        this.containersAttachmentFile = containersAttachmentFile;
+        if (!containersAttachmentFile.exists()) {
+            IvyDEMessage.verbose("Attachment properties file not found: nothing to load");
             return;
         }
-        IvyDEMessage.verbose("Reading attachement properties");
+        IvyDEMessage.verbose("Reading attachment properties");
         try {
-            FileInputStream in = new FileInputStream(containersAttachementFile);
+            FileInputStream in = new FileInputStream(containersAttachmentFile);
             try {
                 prop.load(in);
             } finally {
@@ -66,19 +66,18 @@ public class IvyAttachementManager {
                 }
             }
         } catch (IOException ioe) {
-            IvyPlugin.logWarn("IvyDE attachement properties could not be loaded", ioe);
+            IvyPlugin.logWarn("IvyDE attachment properties could not be loaded", ioe);
         }
     }
 
-    public void updateAttchements(IJavaProject project, IPath containerPath,
-            IClasspathContainer containerSuggestion) {
-        IvyDEMessage.verbose("Updating attachements on the container " + containerPath);
+    public void updateAttachments(IJavaProject project, IPath containerPath,
+                                  IClasspathContainer containerSuggestion) {
+        IvyDEMessage.verbose("Updating attachments to the container " + containerPath);
 
         Properties newProps = new Properties();
 
         IClasspathEntry[] newEntries = containerSuggestion.getClasspathEntries();
-        for (int i = 0; i < newEntries.length; i++) {
-            IClasspathEntry entry = newEntries[i];
+        for (IClasspathEntry entry : newEntries) {
             if (IClasspathEntry.CPE_LIBRARY == entry.getEntryKind()) {
                 String path = entry.getPath().toPortableString();
                 if (entry.getSourceAttachmentPath() != null) {
@@ -100,13 +99,11 @@ public class IvyAttachementManager {
                 .getContainer(containerPath, project);
         if (ivycp == null) {
             IvyDEMessage
-                    .error("The IvyDE container could not be found. Aborting updating attachements.");
+                    .error("The IvyDE container could not be found. Aborting updating attachments.");
             // something wrong happened, give up
             return;
         }
-        IClasspathEntry[] existingEntries = ivycp.getClasspathEntries();
-        for (int i = 0; i < existingEntries.length; i++) {
-            IClasspathEntry entry = existingEntries[i];
+        for (IClasspathEntry entry : ivycp.getClasspathEntries()) {
             if (IClasspathEntry.CPE_LIBRARY == entry.getEntryKind()) {
                 String path = entry.getPath().toPortableString();
                 String value = (String) prop.get(path + SRC_SUFFIX);
@@ -122,16 +119,16 @@ public class IvyAttachementManager {
             }
         }
 
-        // copy the actually new overrided properties
+        // copy the actually new overridden properties
         prop.putAll(newProps);
 
         // now update the ivyde container for real
         ivycp.updateClasspathEntries(newEntries);
 
         // store the global result
-        IvyDEMessage.verbose("Saving attachement properties");
+        IvyDEMessage.verbose("Saving attachment properties");
         try {
-            FileOutputStream out = new FileOutputStream(containersAttachementFile);
+            FileOutputStream out = new FileOutputStream(containersAttachmentFile);
             try {
                 prop.store(out, "");
             } finally {
@@ -142,7 +139,7 @@ public class IvyAttachementManager {
                 }
             }
         } catch (IOException ioe) {
-            IvyPlugin.logWarn("IvyDE attachement properties could not be saved", ioe);
+            IvyPlugin.logWarn("IvyDE attachment properties could not be saved", ioe);
         }
     }
 
@@ -168,7 +165,7 @@ public class IvyAttachementManager {
             try {
                 return new URL(srcPath);
             } catch (MalformedURLException e) {
-                IvyPlugin.logWarn("The path for the doc attachement is not a valid URL", e);
+                IvyPlugin.logWarn("The path for the doc attachment is not a valid URL", e);
                 return null;
             }
         }
@@ -192,9 +189,7 @@ public class IvyAttachementManager {
     }
 
     public String getJavadocLocation(IClasspathEntry entry) {
-        IClasspathAttribute[] attributes = entry.getExtraAttributes();
-        for (int j = 0; j < attributes.length; j++) {
-            IClasspathAttribute attribute = attributes[j];
+        for (IClasspathAttribute attribute : entry.getExtraAttributes()) {
             if (IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME.equals(attribute.getName())) {
                 return attribute.getValue();
             }

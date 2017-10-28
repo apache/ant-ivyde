@@ -46,12 +46,14 @@ public class IvyModuleDescriptorEditorContributor extends MultiPageEditorActionB
     }
 
     /**
-     * Returns the action registed with the given text editor.
-     * 
+     * Returns the action registered with the given text editor.
+     *
+     * @param editor ITextEditor
+     * @param actionID String
      * @return IAction or null if editor is null.
      */
     protected IAction getAction(ITextEditor editor, String actionID) {
-        return (editor == null ? null : editor.getAction(actionID));
+        return (editor == null) ? null : editor.getAction(actionID);
     }
 
     public void setActivePage(IEditorPart part) {

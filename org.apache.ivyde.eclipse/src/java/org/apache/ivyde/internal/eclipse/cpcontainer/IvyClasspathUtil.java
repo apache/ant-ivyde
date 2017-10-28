@@ -49,8 +49,8 @@ public final class IvyClasspathUtil {
     }
 
     /**
-     * Work around the non adaptability of ClassPathContainer
-     * 
+     * Work around the non adaptability of ClassPathContainer.
+     *
      * @param cpc
      *            the container to transform into an IvyClasspathContainer
      * @return the IvyClasspathContainer is such, null, if not
@@ -99,11 +99,10 @@ public final class IvyClasspathUtil {
 
     /**
      * Just a verbatim copy of the internal Eclipse function:
-     * org.eclipse.jdt.internal.corext.javadoc
-     * .JavaDocLocations#getLibraryJavadocLocation(IClasspathEntry)
-     * 
-     * @param entry
-     * @return
+     * org.eclipse.jdt.internal.corext.javadoc.JavaDocLocations#getLibraryJavadocLocation(IClasspathEntry)
+     *
+     * @param entry IClasspathEntry
+     * @return URL
      */
     public static URL getLibraryJavadocLocation(IClasspathEntry entry) {
         if (entry == null) {
@@ -132,10 +131,12 @@ public final class IvyClasspathUtil {
 
     /**
      * Rewrites the module descriptor back to project's ivy file.
-     * 
-     * @throws IOException
-     * @throws ParseException
-     * @throws IvyDEException
+     *
+     * @param descriptor ModuleDescriptor
+     * @param container IvyClasspathContainerImpl
+     * @throws IOException when access problems occur
+     * @throws ParseException when parser problems occur
+     * @throws IvyDEException when other problems occur
      */
     public static void toIvyFile(ModuleDescriptor descriptor, IvyClasspathContainerImpl container)
             throws ParseException, IOException, IvyDEException {
@@ -152,10 +153,9 @@ public final class IvyClasspathUtil {
 
     /**
      * Build the resolve id used when reading and writing resolve reports.
-     * 
-     * @param conf
-     *            The IvyClasspathContainerConfiguration indicating if extended resolve id is being
-     *            used.
+     *
+     * @param useExtendedResolveId
+     *            boolean indicating if extended resolve id is being used.
      * @param md
      *            The ModuleDescriptor to be resolved.
      * @return The resolve id.

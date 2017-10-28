@@ -24,9 +24,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
- * Exception that will be displayed somehow to the end user. Once catched, depending of the context
- * the error could be popuped or just logged
+ * Exception that will be displayed somehow to the end user. Once caught, depending of the context
+ * the error could be popped up or just logged
  */
+@SuppressWarnings("serial")
 public class IvyDEException extends Exception {
 
     private final String shortMsg;
@@ -35,7 +36,7 @@ public class IvyDEException extends Exception {
 
     /**
      * Default constructor
-     * 
+     *
      * @param shortMsg
      *            a short description of the error, which doesn't need context information
      * @param msg
@@ -63,7 +64,7 @@ public class IvyDEException extends Exception {
 
     /**
      * Create a popup window to display the exception to the end user.
-     * 
+     *
      * @param status
      *            the status of the exception (error, waring or info)
      * @param title
@@ -98,7 +99,7 @@ public class IvyDEException extends Exception {
 
     /**
      * Log the exception in Eclipse log system.
-     * 
+     *
      * @param status
      *            the status of the exception (error, waring or info)
      * @param preMsg
@@ -111,7 +112,7 @@ public class IvyDEException extends Exception {
 
     /**
      * Convert the exception into an Eclipse status
-     * 
+     *
      * @param status
      *            the status of the exception (error, waring or info)
      * @param preMsg
@@ -124,8 +125,8 @@ public class IvyDEException extends Exception {
     }
 
     /**
-     * Show the exception in the Ivy console
-     * 
+     * Show the exception in the Ivy console.
+     *
      * @param status
      *            the status of the exception (error, waring or info)
      * @param preMsg

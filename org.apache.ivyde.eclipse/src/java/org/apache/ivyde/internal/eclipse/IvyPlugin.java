@@ -32,7 +32,7 @@ import org.apache.ivyde.common.ivyfile.IvyFileResourceListener;
 import org.apache.ivyde.eclipse.IvyDEsecurityHelper;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
-import org.apache.ivyde.internal.eclipse.cpcontainer.IvyAttachementManager;
+import org.apache.ivyde.internal.eclipse.cpcontainer.IvyAttachmentManager;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerSerializer;
 import org.apache.ivyde.internal.eclipse.resolve.IvyResolveJob;
@@ -75,14 +75,14 @@ public class IvyPlugin extends AbstractUIPlugin {
     private static final Pattern IVY_VERSION_PATTERN = Pattern
             .compile("([0-9]+)\\.([0-9]+)\\.([0-9]+).*");
 
-    /** The ID of IvyDE plugin */
+    /** The ID of IvyDE plugin. */
     public static final String ID = "org.apache.ivyde.eclipse";
 
-    /** The ID of IvyDE problem markers */
+    /** The ID of IvyDE problem markers. */
     public static final String MARKER_ID = ID + ".marker";
 
     // The shared instance.
-    private volatile static IvyPlugin plugin;
+    private static volatile IvyPlugin plugin;
 
     // Resource bundle.
     private ResourceBundle resourceBundle;
@@ -113,7 +113,7 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     private IvyClasspathContainerSerializer ivyCpcSerializer;
 
-    private IvyAttachementManager ivyAttachementManager;
+    private IvyAttachmentManager ivyAttachmentManager;
 
     private int ivyVersionMajor = 0;
 
@@ -130,7 +130,10 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * This method is called upon plug-in activation
+     * This method is called upon plug-in activation.
+     *
+     * @param context BundleContext
+     * @throws Exception if something goes wrong
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -206,14 +209,14 @@ public class IvyPlugin extends AbstractUIPlugin {
         ivyMarkerManager = new IvyMarkerManager();
 
         File stateLocation = getStateLocation().toFile();
-        ivyAttachementManager = new IvyAttachementManager(
-                new File(stateLocation, "attachements.properties"));
+        ivyAttachmentManager = new IvyAttachmentManager(
+                new File(stateLocation, "attachment.properties"));
         File containersStateDir = new File(stateLocation, "cpstates");
         if (!containersStateDir.exists()) {
             containersStateDir.mkdirs();
         }
         ivyCpcSerializer = new IvyClasspathContainerSerializer(containersStateDir,
-                ivyAttachementManager);
+                ivyAttachmentManager);
 
         try {
             Class.forName("org.apache.ivy.osgi.core.ManifestParser");
@@ -234,12 +237,15 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * This method is called when the plug-in is stopped
+     * This method is called when the plug-in is stopped.
+     *
+     * @param context BundleContext
+     * @throws Exception if something goes wrong
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
         ivyCpcSerializer = null;
-        ivyAttachementManager = null;
+        ivyAttachmentManager = null;
         resourceBundle = null;
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         workspace.removeSaveParticipant(this);
@@ -279,8 +285,8 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Convenience method for logging statuses to the plugin log
-     * 
+     * Convenience method for logging statuses to the plugin log.
+     *
      * @param status
      *            the status to log
      */
@@ -306,7 +312,11 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Log the given exception along with the provided message and severity indicator
+     * Log the given exception along with the provided message and severity indicator.
+     *
+     * @param severity int
+     * @param message String
+     * @param e Throwable
      */
     public static void log(int severity, String message, Throwable e) {
         log(new Status(severity, ID, 0, message, e));
@@ -334,7 +344,7 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance.
-     * 
+     *
      * @return the plugin instance
      */
     public static IvyPlugin getDefault() {
@@ -350,8 +360,8 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the active workbench shell
-     * 
+     * Returns the active workbench shell.
+     *
      * @return the active workbench shell
      */
     public static Shell getActiveWorkbenchShell() {
@@ -364,7 +374,7 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the active workbench page or <code>null</code> if none.
-     * 
+     *
      * @return the active workbench page
      */
     public static IWorkbenchPage getActivePage() {
@@ -376,8 +386,8 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the active workbench window
-     * 
+     * Returns the active workbench window.
+     *
      * @return the active workbench window
      */
     public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -393,6 +403,8 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the string from the plugin's resource bundle, or 'key' if not found.
+     *
+     * @param key String
      */
     public static String getResourceString(String key) {
         ResourceBundle bundle = IvyPlugin.getDefault().getResourceBundle();
@@ -405,7 +417,7 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     /**
      * Utility class that tries to adapt a non null object to the specified type
-     * 
+     *
      * @param object
      *            the object to adapt
      * @param type
@@ -423,7 +435,9 @@ public class IvyPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the plugin's resource bundle,
+     * Returns the plugin's resource bundle.
+     *
+     * @return ResourceBundle
      */
     public ResourceBundle getResourceBundle() {
         try {
@@ -448,7 +462,7 @@ public class IvyPlugin extends AbstractUIPlugin {
 
     /**
      * Returns an image descriptor for the image file at the given plug-in relative path.
-     * 
+     *
      * @param path
      *            the path
      * @return the image descriptor
@@ -484,8 +498,8 @@ public class IvyPlugin extends AbstractUIPlugin {
         return ivyCpcSerializer;
     }
 
-    public IvyAttachementManager getIvyAttachementManager() {
-        return ivyAttachementManager;
+    public IvyAttachmentManager getIvyAttachmentManager() {
+        return ivyAttachmentManager;
     }
 
     public IvyResolveJob getIvyResolveJob() {

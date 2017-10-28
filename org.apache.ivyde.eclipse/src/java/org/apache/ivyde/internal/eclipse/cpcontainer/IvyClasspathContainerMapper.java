@@ -84,8 +84,8 @@ public class IvyClasspathContainerMapper {
 
     private boolean osgiClasspathAvailable;
 
-    private IvyAttachementManager attachementManager = IvyPlugin.getDefault()
-            .getIvyAttachementManager();
+    private IvyAttachmentManager attachmentManager = IvyPlugin.getDefault()
+            .getIvyAttachmentManager();
 
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,
             IvyClasspathContainerConfiguration conf, ResolveResult resolveResult) {
@@ -179,7 +179,7 @@ public class IvyClasspathContainerMapper {
             // an non existing inner jar is 'just' a broken MANIFEST.MF, which happens sometimes
             // with Eclipse bundles
             IvyDEMessage.warn("The MANIFEST of " + artifact + " (" + manifestFile
-                    + ") is referencing a non exitant jar " + classpathArtifact + ". Ignoring it");
+                    + ") is referencing a non existant jar " + classpathArtifact + ". Ignoring it");
             return null;
         }
         return doBuildEntry(artifact, classpathArtifact, rules);
@@ -196,8 +196,8 @@ public class IvyClasspathContainerMapper {
             mapping.isMapIfOnlyOneSource(), "");
         IPath javadocArtifact = getArtifactPath(artifact, javadocArtifactMatcher,
             mapping.isMapIfOnlyOneJavadoc(), "");
-        IPath sources = attachementManager.getSourceAttachment(classpathArtifact, sourcesArtifact);
-        IPath sourcesRoot = attachementManager.getSourceAttachmentRoot(classpathArtifact,
+        IPath sources = attachmentManager.getSourceAttachment(classpathArtifact, sourcesArtifact);
+        IPath sourcesRoot = attachmentManager.getSourceAttachmentRoot(classpathArtifact,
             sourcesArtifact);
         IClasspathAttribute[] att = getExtraAttribute(classpathArtifact, javadocArtifact);
 
@@ -359,7 +359,7 @@ public class IvyClasspathContainerMapper {
 
     private IClasspathAttribute[] getExtraAttribute(IPath classpathArtifact, IPath javadocArtifact) {
         List<IClasspathAttribute> result = new ArrayList<IClasspathAttribute>();
-        URL url = attachementManager.getDocAttachment(classpathArtifact);
+        URL url = attachmentManager.getDocAttachment(classpathArtifact);
 
         if (url == null) {
             IPath path = javadocArtifact;
@@ -390,7 +390,7 @@ public class IvyClasspathContainerMapper {
 
     /**
      * Check if the artifact is an artifact which can be added to the classpath container
-     * 
+     *
      * @param artifact
      *            the artifact to check
      * @return <code>true</code> if the artifact can be added

@@ -77,7 +77,7 @@ import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.widgets.Graph;
 
 public class ResolveVisualizerForm {
-    public static final String HeaderText = "Ivy Resolve Visualization";
+    public static final String HEADER_TEXT = "Ivy Resolve Visualization";
 
     private FormToolkit toolkit;
     private GraphViewer viewer;
@@ -126,8 +126,8 @@ public class ResolveVisualizerForm {
 
     /**
      * Creates the section of the form where the graph is drawn
-     * 
-     * @param parent
+     *
+     * @param parent Composite
      */
     private void createGraphSection(Composite parent) {
         Section section = this.toolkit.createSection(parent, Section.TITLE_BAR);
@@ -156,7 +156,7 @@ public class ResolveVisualizerForm {
 
         toolkit.paintBordersFor(headClient);
         form.setHeadClient(headClient);
-        form.setText(HeaderText);
+        form.setText(HEADER_TEXT);
         enableSearchBox(false);
 
         form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter() {
@@ -217,8 +217,8 @@ public class ResolveVisualizerForm {
 
     /**
      * Creates the sash form to separate the graph from the controls.
-     * 
-     * @param parent
+     *
+     * @param parent Composite
      */
     private void createSash(Composite parent) {
         sash = new SashForm(parent, SWT.NONE);

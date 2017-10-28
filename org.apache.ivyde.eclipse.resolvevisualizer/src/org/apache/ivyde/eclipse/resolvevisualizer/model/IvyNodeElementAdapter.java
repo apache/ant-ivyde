@@ -33,8 +33,8 @@ import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 public class IvyNodeElementAdapter {
     /**
      * Adapt all dependencies and evictions from the ResolveReport.
-     * 
-     * @param report
+     *
+     * @param report ResolveReport
      * @return the root node adapted from the ResolveReport
      */
     public static IvyNodeElement adapt(ResolveReport report) {
@@ -104,8 +104,8 @@ public class IvyNodeElementAdapter {
 
     /**
      * Derives configuration conflicts that exist between node and all of its descendant dependencies.
-     * 
-     * @param node
+     *
+     * @param node IvyNodeElement
      */
     private static void findConflictsBeneathNode(IvyNodeElement node) {
         // Derive conflicts
@@ -115,8 +115,9 @@ public class IvyNodeElementAdapter {
                                                                                        */();
         IvyNodeElement[] deepDependencies = node.getDeepDependencies();
         for (int i = 0; i < deepDependencies.length; i++) {
-            if (deepDependencies[i].isEvicted())
+            if (deepDependencies[i].isEvicted()) {
                 continue;
+            }
 
             ModuleId moduleId = deepDependencies[i].getModuleRevisionId().getModuleId();
             if (moduleRevisionMap.containsKey(moduleId)) {

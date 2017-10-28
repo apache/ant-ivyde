@@ -46,8 +46,8 @@ import org.osgi.framework.Constants;
 
 public class IvyPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID
+    /** the ID of the preference page. */
+    public static final String PREFERENCE_PAGE_ID
             = "org.apache.ivyde.eclipse.ui.preferences.IvyPreferencePage";
 
     private Text organizationText;
@@ -177,7 +177,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
             default:
-                IvyPlugin.logWarn("Unkwnon resolve-on-startup mode: "
+                IvyPlugin.logWarn("Unknown resolve-on-startup mode: "
                         + helper.getResolveOnStartup());
         }
 
@@ -188,7 +188,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
         }
 
         openIvyConsoleOnStartupButton.setSelection(helper.isOpenIvyConsoleOnStartup());
-        
+
         organizationText.setText(helper.getIvyOrg());
         organizationUrlText.setText(helper.getIvyOrgUrl());
 
@@ -235,7 +235,7 @@ public class IvyPreferencePage extends PreferencePage implements IWorkbenchPrefe
                 resolveOnStartupButton.setSelection(true);
                 break;
             default:
-                IvyPlugin.logWarn("Unkwnon resolve-on-startup mode: "
+                IvyPlugin.logWarn("Unknown resolve-on-startup mode: "
                         + PreferenceInitializer.DEFAULT_RESOLVE_ON_STARTUP);
         }
 

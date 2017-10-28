@@ -48,6 +48,10 @@ public abstract class IvyContentAssistProcessor implements IContentAssistProcess
 
     /**
      * Call by viewer to retrieve a list of ICompletionProposal
+     *
+     * @param viewer ITextViewer
+     * @param documentOffset int
+     * @return ICompletionProposal[]
      */
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
             int documentOffset) {

@@ -63,17 +63,15 @@ public class IvyClasspathContainerImpl implements IClasspathContainer, IvyClassp
      * path entries should come from the default "persisted" classpath container. Note that no
      * resolve nor resolve are executed here, so some inconsistencies might exist between the
      * ivy.xml and the provided classpath entries.
-     * 
+     *
      * @param javaProject
      *            the project of containing this container
      * @param path
      *            the path the container
-     * @param ivyFile
-     *            the path to the ivy file
-     * @param confs
-     *            the configuration that will be resolved
      * @param classpathEntries
      *            the entries to start with
+     * @param attributes
+     *            ditto
      */
     public IvyClasspathContainerImpl(IJavaProject javaProject, IPath path,
             IClasspathEntry[] classpathEntries, IClasspathAttribute[] attributes) {

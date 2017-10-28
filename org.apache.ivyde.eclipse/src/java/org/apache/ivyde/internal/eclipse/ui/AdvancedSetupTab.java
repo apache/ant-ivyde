@@ -31,7 +31,7 @@ public class AdvancedSetupTab extends AbstractSetupTab {
     private AdvancedSetupEditor advancedSetupEditor;
 
     public AdvancedSetupTab(TabFolder tabs, IProject project) {
-        super(tabs, "Advanced", AdvancedSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
+        super(tabs, "Advanced", AdvancedSetupPreferencePage.PREFERENCE_PAGE_ID, project);
     }
 
     protected Composite createSetupEditor(Composite configComposite, IProject project) {

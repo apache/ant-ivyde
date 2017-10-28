@@ -80,7 +80,8 @@ public final class IvyClasspathContainerConfAdapter {
 
     /**
      * Load the pre-IVYDE-70 configuration
-     * 
+     *
+     * @param conf IvyClasspathContainerConfiguration
      * @param path
      *            the path of the container
      */
@@ -98,7 +99,8 @@ public final class IvyClasspathContainerConfAdapter {
 
     /**
      * Load the post-IVYDE-70 configuration
-     * 
+     *
+     * @param conf IvyClasspathContainerConfiguration
      * @param path
      *            the path of the container
      */
@@ -310,10 +312,13 @@ public final class IvyClasspathContainerConfAdapter {
      * "file:./ivysettings.xml", and also URL like "project:///ivysettings.xml".
      * <p>
      * It will be replaced by the Eclipse variable ${workspace_loc: ... }
-     * 
+     * </p>
+     *
+     * @param conf IvyClasspathContainerConfiguration
      * @param value
      *            the value to read
      * @return
+     *            Eclipse variable
      */
     private static String readOldSettings(IvyClasspathContainerConfiguration conf, String value) {
         if (conf.getJavaProject() == null) {
@@ -379,7 +384,7 @@ public final class IvyClasspathContainerConfAdapter {
             /*
              * Implementation note about why the project is serialized in the path. This is related
              * to https://issues.apache.org/jira/browse/IVYDE-237
-             * 
+             *
              * For some reason, when we add a project to the source path of a launch configuration,
              * any IvyDE container involved of that project lose its reference to its project. Then
              * when the JDT call the IvyDERuntimeClasspathEntryResolver to resolve the source of
@@ -387,12 +392,12 @@ public final class IvyClasspathContainerConfAdapter {
              * case, an IvyDE classpath container reference an ivy.xml relatively to the project. So
              * in that context, the classpath cannot be resolved without a reference to the project
              * in the path of the container.
-             * 
+             *
              * Another reason for having the project in the path of the container, is to make the
              * path unique. Again the source path in a launch configuration would consider two
              * containers with exactly the configurations the same, even if the
              * IRuntimeClasspathEntry reference different projects.
-             * 
+             *
              * To reproduce the issue, some test project is available and configured accordingly.
              * See in the test folder of the IvyDE project, check out the project 'jetty' and
              * 'jetty-webapp'.

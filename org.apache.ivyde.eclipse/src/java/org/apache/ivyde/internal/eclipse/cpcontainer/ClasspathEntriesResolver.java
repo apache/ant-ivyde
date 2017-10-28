@@ -84,7 +84,10 @@ public class ClasspathEntriesResolver extends IvyResolver {
      * Trigger a warn if there are duplicates entries due to configuration conflict.
      * <p>
      * TODO: the algorithm can be more clever and find which configuration are conflicting.
-     * 
+     * </p>
+     * @param ivy Ivy
+     * @param mapper IvyClasspathContainerMapper
+     * @param artifactReports Set&lt;ArtifactDownloadReport&gt;
      */
     private void warnIfDuplicates(Ivy ivy, IvyClasspathContainerMapper mapper, Set artifactReports) {
         ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) artifactReports

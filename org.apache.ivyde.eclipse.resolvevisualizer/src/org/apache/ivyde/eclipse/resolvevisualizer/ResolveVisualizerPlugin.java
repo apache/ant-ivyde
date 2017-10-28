@@ -22,7 +22,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The activator class controls the plug-in life cycle.
  */
 public class ResolveVisualizerPlugin extends AbstractUIPlugin {
 
@@ -49,8 +49,8 @@ public class ResolveVisualizerPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the shared instance
-     * 
+     * Returns the shared instance.
+     *
      * @return the shared instance
      */
     public static ResolveVisualizerPlugin getDefault() {

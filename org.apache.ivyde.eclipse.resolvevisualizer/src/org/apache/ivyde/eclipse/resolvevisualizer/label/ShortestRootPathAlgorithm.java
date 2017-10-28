@@ -59,8 +59,7 @@ public class ShortestRootPathAlgorithm extends LabelDecoratorAlgorithmAdapter {
                 q.addAll(Arrays.asList(head.getDependencies()));
             }
         }
-        IvyNodeElement[] path = fixedWeightDijkstraAlgorithm(orderedList, root, target);
-        return path;
+        return fixedWeightDijkstraAlgorithm(orderedList, root, target);
     }
 
     private IvyNodeElement[] fixedWeightDijkstraAlgorithm(LinkedList q, IvyNodeElement s, IvyNodeElement t) {

@@ -32,22 +32,22 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 
 public class SecuritySetupEditor extends Composite {
-    
+
     private TableViewer tableViewer;
     private Group credentialsGroup;
     private Button addBtn;
     private Button editBtn;
     private Button deleteBtn;
     private Table table;
-    
+
     public SecuritySetupEditor(Composite parent, int style) {
         super(parent, style);
         setLayout(new GridLayout());
-                
+
         credentialsGroup = new Group(this, style);
         credentialsGroup.setText("Credentials");
         credentialsGroup.setLayout(new GridLayout(2, false));
-        credentialsGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,1,1));
+        credentialsGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1));
 
         tableViewer = new TableViewer(credentialsGroup,
                 SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -56,29 +56,29 @@ public class SecuritySetupEditor extends Composite {
         GUIfactoryHelper.buildTableColumn(tableViewer, 175, "Realm", GUIfactoryHelper.buildRealmLabelProvider());
         GUIfactoryHelper.buildTableColumn(tableViewer, 100, "Username", GUIfactoryHelper.buildUsernameLabelProvider());
         GUIfactoryHelper.buildTableColumn(tableViewer, 100, "Pwd", GUIfactoryHelper.buildPwdLabelProvider());
-                
+
         // make lines and header visible
         table = tableViewer.getTable();
         table.setParent(credentialsGroup);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
-        GridData tableGD = new GridData(GridData.FILL, GridData.FILL, true, false,1,3);
-        tableGD.heightHint=200;
+        GridData tableGD = new GridData(GridData.FILL, GridData.FILL, true, false, 1, 3);
+        tableGD.heightHint = 200;
         table.setLayoutData(tableGD);
-        
+
         addBtn = new Button(credentialsGroup, SWT.PUSH);
         addBtn.setText("Add...");
-        addBtn.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false,1,1));
-        
+        addBtn.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
+
         editBtn = new Button(credentialsGroup, SWT.PUSH);
         editBtn.setText("Edit...");
-        editBtn.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false,1,1));
+        editBtn.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
         editBtn.setEnabled(false);
-        
+
         deleteBtn = new Button(credentialsGroup, SWT.PUSH);
-        deleteBtn.setText("Remove");                
-        deleteBtn.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false,1,1));        
+        deleteBtn.setText("Remove");
+        deleteBtn.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false, 1, 1));
         deleteBtn.setEnabled(false);
     }
 
@@ -87,13 +87,13 @@ public class SecuritySetupEditor extends Composite {
        this.tableViewer.setInput(setup);
     }
 
-    public void setEnabled(boolean enabled) {       
+    public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         credentialsGroup.setEnabled(enabled);
         addBtn.setEnabled(enabled);
         editBtn.setEnabled(enabled);
         deleteBtn.setEnabled(enabled);
-        table.setEnabled(enabled);        
+        table.setEnabled(enabled);
     }
 
     /**
@@ -123,6 +123,5 @@ public class SecuritySetupEditor extends Composite {
     public TableViewer getTableViewer() {
         return tableViewer;
     }
-    
-    
+
 }

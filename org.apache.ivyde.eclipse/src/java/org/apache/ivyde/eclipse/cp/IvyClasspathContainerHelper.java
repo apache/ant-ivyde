@@ -48,11 +48,10 @@ public final class IvyClasspathContainerHelper {
 
     /**
      * Get the Ivy classpath container from the selection in the Java package view
-     * 
+     *
      * @param selection
      *            the selection
-     * @return
-     * @throws JavaModelException
+     * @return IvyClasspathContainer
      */
     public static IvyClasspathContainer getContainer(IStructuredSelection selection) {
         if (selection == null) {
@@ -81,7 +80,7 @@ public final class IvyClasspathContainerHelper {
 
     /**
      * Search the Ivy classpath containers within the specified Java project
-     * 
+     *
      * @param javaProject
      *            the project to search into
      * @return the Ivy classpath container if found
@@ -199,8 +198,8 @@ public final class IvyClasspathContainerHelper {
     }
 
     /**
-     * Search the Ivy classpath entry within the specified Java project with the specific path
-     * 
+     * Search the Ivy classpath entry within the specified Java project with the specific path.
+     *
      * @param containerPath
      *            the path of the container
      * @param javaProject
@@ -237,8 +236,8 @@ public final class IvyClasspathContainerHelper {
     }
 
     /**
-     * This will return all ivy projects in the workspace <br>
-     * 
+     * This will return all ivy projects in the workspace.
+     *
      * @return collection of ivy projects
      */
     public static IProject[] getIvyProjectsInWorkspace() {

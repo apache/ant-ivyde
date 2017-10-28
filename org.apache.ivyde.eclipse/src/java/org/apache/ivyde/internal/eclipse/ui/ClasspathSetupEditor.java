@@ -42,7 +42,7 @@ public class ClasspathSetupEditor extends Composite {
             + "Example: jar, zip";
 
     private Button resolveInWorkspaceCheck;
-    
+
     private Button transitiveResolveCheck;
 
     private Label alphaOrderLabel;
@@ -81,7 +81,7 @@ public class ClasspathSetupEditor extends Composite {
                 false, 2, 1));
         transitiveResolveCheck.setText("Resolve dependencies transitively");
         transitiveResolveCheck
-                .setToolTipText("If uncheck, will resolve dependency with transitivity disabled regardless to the settings in ivy.xml");        
+                .setToolTipText("If unchecked, will resolve dependency with transitivity disabled regardless of the settings in ivy.xml");
 
         readOSGiMetadataCheck = new Button(this, SWT.CHECK);
         readOSGiMetadataCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,

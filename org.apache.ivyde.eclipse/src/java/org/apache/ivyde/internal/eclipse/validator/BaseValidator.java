@@ -45,8 +45,7 @@ public abstract class BaseValidator implements IValidator {
     }
 
     /**
-     * @param exclusion
-     * @param reaction
+     * @param reaction IValidationReaction
      */
     public BaseValidator(IValidationReaction reaction) {
         this.reaction = reaction;

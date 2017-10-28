@@ -62,7 +62,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * This is a view to manage synchronizing ivy files in a workspace
+ * This is a view to manage synchronizing Ivy files in a workspace.
  */
 public class ReverseDependencyExplorerView extends ViewPart {
 
@@ -89,6 +89,8 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
     /**
      * This is a callback that will allow us to create the viewer and initialize it.
+     *
+     * @param parent Composite
      */
     public void createPartControl(Composite parent) {
         display = parent.getDisplay();
@@ -215,7 +217,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
                     MultiRevDependencyDescriptor multiRD = (MultiRevDependencyDescriptor) item
                             .getData();
 
-                    if (multiRD.hasMultipleRevisons() && !multiRD.hasNewRevision()) {
+                    if (multiRD.hasMultipleRevisions() && !multiRD.hasNewRevision()) {
                         item.setForeground(display.getSystemColor(SWT.COLOR_RED));
                     } else if (multiRD.hasNewRevision()) {
                         item.setForeground(new Color(Display.getDefault(), LIGHT_GREEEN));
@@ -312,7 +314,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
             if (obj instanceof MultiRevDependencyDescriptor) {
                 MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) obj;
 
-                if (mrdd.hasMultipleRevisons() && !mrdd.hasNewRevision()) {
+                if (mrdd.hasMultipleRevisions() && !mrdd.hasNewRevision()) {
                     return sharedImages.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
                 } else {
                     return IvyPlugin.getImageDescriptor("icons/synced.gif").createImage();
@@ -388,10 +390,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
     class CellModifier implements ICellModifier {
 
         public boolean canModify(Object element, String property) {
-            if (property.equals(NEW_REVISION)) {
-                return true;
-            }
-            return false;
+            return property.equals(NEW_REVISION);
         }
 
         public Object getValue(Object element, String property) {

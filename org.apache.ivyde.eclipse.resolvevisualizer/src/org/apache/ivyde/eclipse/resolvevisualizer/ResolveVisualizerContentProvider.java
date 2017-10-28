@@ -75,10 +75,11 @@ public class ResolveVisualizerContentProvider implements IGraphEntityContentProv
             IvyNodeElement element1 = (IvyNodeElement) arg1;
             IvyNodeElement element2 = (IvyNodeElement) arg2;
 
-            if (element1.getDepth() > element2.getDepth())
+            if (element1.getDepth() > element2.getDepth()) {
                 return -1;
-            else if (element1.getDepth() < element2.getDepth())
+            } else if (element1.getDepth() < element2.getDepth()) {
                 return 1;
+            }
 
             return element1.getModuleRevisionId().toString().compareTo(element2.getModuleRevisionId().toString());
         }

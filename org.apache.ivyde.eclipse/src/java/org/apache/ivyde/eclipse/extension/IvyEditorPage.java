@@ -22,7 +22,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 public interface IvyEditorPage extends IFormPage {
 
     public final static String EXTENSION_POINT = "org.apache.ivyde.eclipse.editorPage";
- 
+
     public String getPageName();
 
 }

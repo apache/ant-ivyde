@@ -45,7 +45,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -74,6 +73,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     /**
      * This method is called when 'Finish' button is pressed in the wizard. We will create an
      * operation and run it using wizard as execution context.
+     *
+     * @return true when method completes successfully
      */
     public boolean performFinish() {
         final String containerName = page.getContainerName();
@@ -123,6 +124,13 @@ public class IvyNewWizard extends Wizard implements INewWizard {
     /**
      * The worker method. It will find the container, create the file if missing or just replace its
      * contents, and open the editor on the newly created file.
+     *
+     * @param file IFile
+     * @param org String
+     * @param module String
+     * @param status String
+     * @param monitor IProgressMonitor
+     * @throws CoreException when file cannot be created
      */
 
     private void doFinish(final IFile file, String org, String module, String status,
@@ -147,7 +155,7 @@ public class IvyNewWizard extends Wizard implements INewWizard {
             }
             stream.close();
         } catch (IOException e) {
-            throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, 
+            throw new CoreException(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
                     "The ivy.xml could not be created", e));
         }
         monitor.worked(1);
@@ -171,6 +179,8 @@ public class IvyNewWizard extends Wizard implements INewWizard {
 
     /**
      * We will initialize file contents with a sample text.
+     *
+     * @return InputStream
      */
     private InputStream openContentStream() {
         return getClass().getResourceAsStream("ivy-template.xml");
@@ -178,8 +188,10 @@ public class IvyNewWizard extends Wizard implements INewWizard {
 
     /**
      * We will accept the selection in the workbench to see if we can initialize from it.
-     * 
-     * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+     *
+     * @see org.eclipse.ui.IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+     * @param workbench IWorkbench
+     * @param selection IStructuredSelection
      */
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.selection = selection;

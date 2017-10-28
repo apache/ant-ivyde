@@ -28,7 +28,7 @@ import org.apache.ivy.util.FileUtil;
 
 public class IvyFileUpdaterTest extends TestCase {
     private IvyFileUpdater updater = new IvyFileUpdater();
-    
+
     public void testAddDependency() throws Exception {
         testAddDependency("addDependency1");
         testAddDependency("addDependency2");
@@ -50,7 +50,7 @@ public class IvyFileUpdaterTest extends TestCase {
             FileUtil.readEntirely(IvyFileUpdaterTest.class.getResourceAsStream(test + "/expected.xml")),
             FileUtil.readEntirely(dest));
     }
-    
+
     public void testRemoveDependency() throws Exception {
         testRemoveDependency("removeDependency1");
         testRemoveDependency("removeDependency2");

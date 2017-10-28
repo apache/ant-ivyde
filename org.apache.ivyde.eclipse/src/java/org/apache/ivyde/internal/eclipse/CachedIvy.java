@@ -250,7 +250,7 @@ public abstract class CachedIvy {
             ivySettings.setDefaultIvyUserDir(ivyUserDir.getFile());
         }
         Collection propFiles = getPropertyFiles();
-        if (propFiles == null || propFiles.isEmpty()) { 
+        if (propFiles == null || propFiles.isEmpty()) {
             IvyDEMessage.verbose("No property files to load");
         } else {
             IvyDEMessage.verbose(propFiles.size() + " property file(s) to load");

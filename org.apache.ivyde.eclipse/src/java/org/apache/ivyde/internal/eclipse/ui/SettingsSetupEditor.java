@@ -181,7 +181,7 @@ public class SettingsSetupEditor extends Composite {
         }
     }
 
-    public void remodeListener(SettingsEditorListener listener) {
+    public void removeListener(SettingsEditorListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }

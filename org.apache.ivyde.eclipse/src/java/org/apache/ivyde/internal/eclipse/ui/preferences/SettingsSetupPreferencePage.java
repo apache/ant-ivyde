@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class SettingsSetupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** the ID of the preference page */
-    public static final String PEREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage";
+    public static final String PREFERENCE_PAGE_ID = "org.apache.ivyde.eclipse.ui.preferences.SettingsSetupPreferencePage";
 
     private SettingsSetupEditor settingsEditor;
 

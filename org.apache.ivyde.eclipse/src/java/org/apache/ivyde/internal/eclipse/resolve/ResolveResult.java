@@ -28,18 +28,17 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.eclipse.core.runtime.MultiStatus;
 
 /**
- * Container of result of an Ivy resolve and maybe retrieve
+ * Container of result of an Ivy resolve and maybe retrieve.
  */
 public class ResolveResult {
 
     private final boolean previousUsed;
 
-    private Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<ArtifactDownloadReport> ();
+    private Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<ArtifactDownloadReport>();
 
-    private Set<String> problemMessages = new HashSet<String> ();
+    private Set<String> problemMessages = new HashSet<String>();
 
     private final ResolveReport report;
 
@@ -52,10 +51,10 @@ public class ResolveResult {
      * The paths may be relative It shouldn't be an issue has every relative path should be relative
      * to the eclipse project FIXME: not sure why the Ivy API is returning a set of paths...
      */
-    private Map <ArtifactDownloadReport, Set<String>> retrievedArtifacts;
+    private Map<ArtifactDownloadReport, Set<String>> retrievedArtifacts;
 
     /**
-     * Constructor to be used when the resolve have been refreshed
+     * Constructor to be used when the resolve have been refreshed.
      */
     ResolveResult() {
         report = null;
@@ -63,7 +62,9 @@ public class ResolveResult {
     }
 
     /**
-     * Constructor to be used based on the fresh resolve report
+     * Constructor to be used based on the fresh resolve report.
+     *
+     * @param report ResolveReport
      */
     ResolveResult(ResolveReport report) {
         this.report = report;
@@ -72,7 +73,6 @@ public class ResolveResult {
     }
 
     /**
-     * 
      * @return <code>true</code> if the refresh has been successful
      */
     public boolean isPreviousUsed() {
@@ -80,7 +80,6 @@ public class ResolveResult {
     }
 
     /**
-     * 
      * @return the report from the resolve, <code>null</code> if there was a successful refresh
      */
     public ResolveReport getReport() {
@@ -88,8 +87,9 @@ public class ResolveResult {
     }
 
     /**
-     * Get the list of errors of the resolve. They will be used to build a {@link MultiStatus}.
-     * 
+     * Get the list of errors of the resolve. They will be used to build a
+     * {@link org.eclipse.core.runtime.MultiStatus}.
+     *
      * @return the list of error message
      */
     public Set<String> getProblemMessages() {
@@ -105,18 +105,16 @@ public class ResolveResult {
     }
 
     /**
-     * 
      * @return the reports of the artifacts resolved
      */
-    public Set <ArtifactDownloadReport> getArtifactReports() {
+    public Set<ArtifactDownloadReport> getArtifactReports() {
         return artifactReports;
     }
 
     /**
-     * 
      * @return the reports of the artifacts by dependency
      */
-    public Map  <ModuleRevisionId, Artifact[]> getArtifactsByDependency() {
+    public Map<ModuleRevisionId, Artifact[]> getArtifactsByDependency() {
         return artifactsByDependency;
     }
 
@@ -125,7 +123,6 @@ public class ResolveResult {
     }
 
     /**
-     * 
      * @return the path(s) of the retrieved artifacts
      */
     public Map<ArtifactDownloadReport, Set<String>> getRetrievedArtifacts() {

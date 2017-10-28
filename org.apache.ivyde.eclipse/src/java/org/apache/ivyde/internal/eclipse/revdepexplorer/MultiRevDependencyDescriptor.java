@@ -61,13 +61,13 @@ public class MultiRevDependencyDescriptor {
         return false;
     }
 
-    public boolean hasMultipleRevisons() {
+    public boolean hasMultipleRevisions() {
         return getRevisions().length > 1;
     }
 
     /**
-     * @param project
-     *            revision
+     * @param container
+     *            classpath container
      * @param dependencyDescriptor
      *            current descriptor
      */
@@ -156,8 +156,8 @@ public class MultiRevDependencyDescriptor {
     }
 
     /**
-     * @param project
-     *            project
+     * @param container
+     *            classpath container
      * @return true if there is a project match
      */
     public boolean isForContainer(IvyClasspathContainerImpl container) {
@@ -168,22 +168,21 @@ public class MultiRevDependencyDescriptor {
                 return true;
             }
         }
-
         return false;
     }
 
     /**
-     * @return
+     * @return ModuleId
      */
     public ModuleId getModuleId() {
         return moduleId;
     }
 
     /**
-     * This returns the current revisions for a project <br>
-     * 
-     * @param project
-     *            project
+     * This returns the current revisions for a project.
+     *
+     * @param container
+     *            container
      * @return revision
      */
     public String[] getRevisions(IvyClasspathContainerImpl container) {

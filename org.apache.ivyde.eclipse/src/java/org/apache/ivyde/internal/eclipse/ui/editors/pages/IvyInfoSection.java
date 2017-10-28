@@ -20,7 +20,6 @@ package org.apache.ivyde.internal.eclipse.ui.editors.pages;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.apache.ivyde.internal.eclipse.ui.core.IvyFileEditorInput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -57,12 +56,10 @@ public class IvyInfoSection extends SectionPart implements PropertyChangeListene
         layout.leftMargin = layout.rightMargin;
         layout.numColumns = 2;
         client.setLayout(layout);
-        IvyFileEditorInput editorInput = (IvyFileEditorInput) page.getEditorInput();
+        // IvyFileEditorInput editorInput = (IvyFileEditorInput) page.getEditorInput();
         // PresentationModel moduleModel = editorInput.getPresentationModel();
-        // PresentationModel revisionModel = new
-        // PresentationModel(moduleModel.getModel("resolvedModuleRevisionId"));
-        // PresentationModel moduleIdModel = new
-        // PresentationModel(moduleModel.getModel("moduleId"));
+        // PresentationModel revisionModel = new PresentationModel(moduleModel.getModel("resolvedModuleRevisionId"));
+        // PresentationModel moduleIdModel = new PresentationModel(moduleModel.getModel("moduleId"));
 
         toolkit.createLabel(client, "Organisation");
         Text org = toolkit.createText(client, "");
@@ -88,7 +85,6 @@ public class IvyInfoSection extends SectionPart implements PropertyChangeListene
     }
 
     private void createOrganisationEntry(Composite parent, FormToolkit toolkit) {
-
     }
 
     public void refresh() {

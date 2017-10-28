@@ -62,7 +62,7 @@ public class IvyClasspathContainerConfiguration {
 
     /**
      * Constructor
-     * 
+     *
      * @param javaProject
      *            the classpath container's Java project, <code>null</code> is not bind to a project
      * @param ivyXmlPath
@@ -79,7 +79,7 @@ public class IvyClasspathContainerConfiguration {
 
     /**
      * Constructor
-     * 
+     *
      * @param javaProject
      *            the classpath container's Java project, <code>null</code> if not bind to a project
      * @param path
@@ -87,7 +87,7 @@ public class IvyClasspathContainerConfiguration {
      * @param editing
      *            if set to true, this bean will be used for edition purpose, so no need to trigger
      *            UI notification about some errors in there
-     * @param attributes
+     * @param attributes an array of IClasspathAttribute
      */
     public IvyClasspathContainerConfiguration(IJavaProject javaProject, IPath path,
             boolean editing, IClasspathAttribute[] attributes) {

@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -62,8 +61,8 @@ public class IvyNewWizardPage extends WizardPage {
 
     /**
      * Constructor for SampleNewWizardPage.
-     * 
-     * @param pageName
+     *
+     * @param selection ISelection
      */
     public IvyNewWizardPage(ISelection selection) {
         super("wizardPage");
@@ -74,7 +73,8 @@ public class IvyNewWizardPage extends WizardPage {
     }
 
     /**
-     * @see IDialogPage#createControl(Composite)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
+     * @param parent Composite
      */
     public void createControl(Composite parent) {
         Composite container = new Composite(parent, SWT.NULL);

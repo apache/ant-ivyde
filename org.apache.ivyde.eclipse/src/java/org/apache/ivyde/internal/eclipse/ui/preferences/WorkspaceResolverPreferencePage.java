@@ -69,7 +69,7 @@ public class WorkspaceResolverPreferencePage extends FieldEditorPreferencePage i
             }
         };
         addField(autoResolveOnOpen);
-        
+
         BooleanFieldEditor ignoreBranchOnWorkspaceProjects = new BooleanFieldEditor(
                 PreferenceConstants.IGNORE_BRANCH_ON_WORKSPACE_PROJECTS,
                 "Ignore branch when resolving workspace projects", fieldParent) {

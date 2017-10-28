@@ -34,10 +34,10 @@ public class SecuritySetup implements Comparable<SecuritySetup> {
     }
 
     /**
-     * @param host
-     * @param realm
-     * @param userName
-     * @param pwd
+     * @param host String
+     * @param realm String
+     * @param userName String
+     * @param pwd String
      */
     public SecuritySetup(String host, String realm, String userName, String pwd) {
         this.id = host + "@" + realm;
@@ -132,7 +132,7 @@ public class SecuritySetup implements Comparable<SecuritySetup> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -146,28 +146,32 @@ public class SecuritySetup implements Comparable<SecuritySetup> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         SecuritySetup other = (SecuritySetup) obj;
         if (host == null) {
-            if (other.host != null)
+            if (other.host != null) {
                 return false;
-        } else if (!host.equals(other.host))
+            }
+        } else if (!host.equals(other.host)) {
             return false;
+        }
         if (realm == null) {
-            if (other.realm != null)
+            if (other.realm != null) {
                 return false;
-        } else if (!realm.equals(other.realm))
+            }
+        } else if (!realm.equals(other.realm)) {
             return false;
+        }
         return true;
     }
 

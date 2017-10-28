@@ -41,7 +41,7 @@ public class XMLEditorPreferencesPage extends FieldEditorPreferencePage implemen
                 fieldParent));
 
         addField(new ColorFieldEditor(PreferenceConstants.EDITOR_COLOR_PROC_INSTR,
-                "Processing instrcution", fieldParent));
+                "Processing instruction", fieldParent));
 
         addField(new ColorFieldEditor(PreferenceConstants.EDITOR_COLOR_STRING, "String",
                 fieldParent));

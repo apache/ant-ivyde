@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 public class UserNameValidator extends BaseValidator {
 
     /**
-     * @param reaction
+     * @param reaction IValidationReaction
      */
     public UserNameValidator(IValidationReaction reaction) {
         super(reaction);

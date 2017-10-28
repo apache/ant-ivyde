@@ -31,15 +31,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class RetrieveComposite extends Composite {
 
-    public static final String TOOLTIP_RETRIEVE_PATTERN = "Exemple: lib/[conf]/[artifact].[ext]\n"
+    public static final String TOOLTIP_RETRIEVE_PATTERN = "Example: lib/[conf]/[artifact].[ext]\n"
             + "To copy artifacts in folder named lib without revision by folder"
             + " named like configurations";
 
     public static final String TOOLTIP_RETRIEVE_CONFS = "Comma separated list of configuration to"
-            + " retrieve\nExemple: '*' or 'compile,test'";
+            + " retrieve\nExample: '*' or 'compile,test'";
 
     public static final String TOOLTIP_RETRIEVE_TYPES = "Comma separated list of types to retrieve"
-            + "\nExemple: '*' or 'jar,source'";
+            + "\nExample: '*' or 'jar,source'";
 
     private static final String DEFAULT_PATTERN = "/[type]s/[artifact]-[revision](-[classifier]).[ext]";
 

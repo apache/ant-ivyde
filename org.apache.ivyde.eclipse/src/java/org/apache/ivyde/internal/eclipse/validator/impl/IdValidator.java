@@ -32,10 +32,10 @@ public class IdValidator extends BaseValidator {
     private String prevRealmVal;
 
     /**
-     * @param reaction
-     * @param isAddOperation
-     * @param prevHostVal
-     * @param prevRealmVal
+     * @param reaction IValidationReaction
+     * @param isAddOperation boolean
+     * @param prevHostVal String
+     * @param prevRealmVal String
      */
     public IdValidator(IValidationReaction reaction, boolean isAddOperation, String prevHostVal,
             String prevRealmVal) {

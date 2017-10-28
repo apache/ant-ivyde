@@ -119,7 +119,7 @@ public class IvyResolveJob extends Job {
 
         boolean forceFailOnError = false;
 
-        // Ivy use the SaxParserFactory, and we want it to instanciate the xerces parser which is in
+        // Ivy use the SaxParserFactory, and we want it to instantiate the xerces parser which is in
         // the dependencies of IvyDE, so accessible via the current classloader
         ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
@@ -266,7 +266,7 @@ public class IvyResolveJob extends Job {
         }
 
         if (errorsStatus.getChildren().length != 0) {
-            // some errors happend, stop here
+            // some errors happened, stop here
             if (forceFailOnError || IvyPlugin.getPreferenceStoreHelper().isErrorPopup()) {
                 return errorsStatus;
             }

@@ -85,19 +85,19 @@ public class IvySettingsModel extends IvyModel {
     private void doLoadModel() {
         IvyTag ivyTag = new IvyTag("ivysettings", "Root tag of Ivy settings file");
 
-        ivyTag.addChildIvyTag(new IvyTag("property",  
+        ivyTag.addChildIvyTag(new IvyTag("property",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("name", true),
                 new IvyTagAttribute("value", true),
                 new IvyBooleanTagAttribute("override"),
         }));
-        ivyTag.addChildIvyTag(new IvyTag("properties",  
+        ivyTag.addChildIvyTag(new IvyTag("properties",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("file", true),
                 new IvyTagAttribute("environment"),
                 new IvyBooleanTagAttribute("override"),
         }));
-        ivyTag.addChildIvyTag(new IvyTag("settings",  
+        ivyTag.addChildIvyTag(new IvyTag("settings",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("defaultResolver"),
                 new IvyTagAttribute("defaultLatestStrategy"),
@@ -108,17 +108,17 @@ public class IvySettingsModel extends IvyModel {
                 new IvyBooleanTagAttribute("validate"),
                 new IvyBooleanTagAttribute("useRemoteConfig"),
         }));
-        ivyTag.addChildIvyTag(new IvyTag("include",  
+        ivyTag.addChildIvyTag(new IvyTag("include",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("url"),
                 new IvyTagAttribute("file"),
         }));
-        ivyTag.addChildIvyTag(new IvyTag("classpath",  
+        ivyTag.addChildIvyTag(new IvyTag("classpath",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("url"),
                 new IvyTagAttribute("file"),
         }));
-        ivyTag.addChildIvyTag(new IvyTag("typedef",  
+        ivyTag.addChildIvyTag(new IvyTag("typedef",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("name"),
                 new IvyTagAttribute("classname"),
@@ -128,7 +128,7 @@ public class IvySettingsModel extends IvyModel {
         addTypedefChildren(tag, getChildClasses(typedefClasses, LockStrategy.class));
         ivyTag.addChildIvyTag(tag);
 
-        ivyTag.addChildIvyTag(new IvyTag("caches",  
+        ivyTag.addChildIvyTag(new IvyTag("caches",
             new IvyTagAttribute[] {
                 new IvyTagAttribute("default"),
                 new IvyTagAttribute("defaultCacheDir"),
@@ -139,7 +139,7 @@ public class IvySettingsModel extends IvyModel {
                 new IvyBooleanTagAttribute("checkUpToDate"),
                 new IvyBooleanTagAttribute("useOrigin"),
                 new IvyTagAttribute("lockStrategy"),
-            }).addChildIvyTag(new IvyTag("cache",  
+            }).addChildIvyTag(new IvyTag("cache",
                 new IvyTagAttribute[] {
                     new IvyTagAttribute("name"),
                     new IvyTagAttribute("basedir"),
@@ -148,7 +148,7 @@ public class IvySettingsModel extends IvyModel {
                     new IvyBooleanTagAttribute("useOrigin"),
                     new IvyTagAttribute("lockStrategy"),
                     new IvyTagAttribute("defaultTTL"),
-                }).addChildIvyTag(new IvyTag("ttl",  
+                }).addChildIvyTag(new IvyTag("ttl",
                     new IvyTagAttribute[] {
                         new IvyTagAttribute("organisation"),
                         new IvyTagAttribute("module"),
@@ -160,11 +160,11 @@ public class IvySettingsModel extends IvyModel {
         tag = new IvyTag("latest-strategies");
         addTypedefChildren(tag, getChildClasses(typedefClasses, LatestStrategy.class));
         ivyTag.addChildIvyTag(tag);
-        
+
         tag = new IvyTag("parsers");
         addTypedefChildren(tag, getChildClasses(typedefClasses, ModuleDescriptorParser.class));
         ivyTag.addChildIvyTag(tag);
-        
+
         tag = new IvyTag("namespaces");
         addTypedefChildren(tag, getChildClasses(typedefClasses, Namespace.class));
         ivyTag.addChildIvyTag(tag);
@@ -182,13 +182,13 @@ public class IvySettingsModel extends IvyModel {
         addTypedefChildren(tag, getChildClasses(typedefClasses, DependencyResolver.class));
         tag.addChildIvyTag(new IvyReferenceTag("resolver"));
         ivyTag.addChildIvyTag(tag);
-        
+
         tag = new IvyTag("conflict-managers");
         addTypedefChildren(tag, getChildClasses(typedefClasses, ConflictManager.class));
         ivyTag.addChildIvyTag(tag);
 
         ivyTag.addChildIvyTag(new IvyTag("modules")
-            .addChildIvyTag(new IvyTag("module",  
+            .addChildIvyTag(new IvyTag("module",
                 new IvyTagAttribute[] {
                     new IvyTagAttribute("organisation"),
                     new IvyTagAttribute("name"),
@@ -208,7 +208,7 @@ public class IvySettingsModel extends IvyModel {
             new IvyTagAttribute[] {
                     new IvyTagAttribute("default"),
                 })
-            .addChildIvyTag(new IvyTag("status",  
+            .addChildIvyTag(new IvyTag("status",
                 new IvyTagAttribute[] {
                     new IvyTagAttribute("name"),
                     new IvyTagAttribute("integration"),
@@ -243,17 +243,17 @@ public class IvySettingsModel extends IvyModel {
                 init();
                 return super.getAttributes();
             }
-            
+
             public List getChilds() {
                 init();
                 return super.getChilds();
             }
-            
+
             public boolean hasChild() {
                 init();
                 return super.hasChild();
             }
-            
+
             private void init() {
                 if (!init) {
                     try {
@@ -282,7 +282,7 @@ public class IvySettingsModel extends IvyModel {
                                 } else {
                                     addChildIvyTag(typedefedTag(name, m.getParameterTypes()[0]));
                                 }
-                            } else if (m.getName().startsWith("set") 
+                            } else if (m.getName().startsWith("set")
                                     && Void.TYPE.equals(m.getReturnType())
                                     && m.getParameterTypes().length == 1
                                     && isSupportedAttributeType(m.getParameterTypes()[0])) {
@@ -302,7 +302,7 @@ public class IvySettingsModel extends IvyModel {
                             null);
                     } catch (Exception e) {
                         getSettings().logError(
-                            "error occured while initializing tag for " + clazz + ": " + e,
+                            "error occurred while initializing tag for " + clazz + ": " + e,
                             e);
                     }
                     init = true;

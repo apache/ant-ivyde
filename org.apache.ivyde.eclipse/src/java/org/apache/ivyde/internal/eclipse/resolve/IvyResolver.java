@@ -81,7 +81,7 @@ public class IvyResolver {
     private boolean useCacheOnly = IvyPlugin.getPreferenceStoreHelper().isOffline();
 
     private boolean useExtendedResolveId = false;
-    
+
     private boolean transitiveResolve = true;
 
     public IvyResolver(String ivyXmlPath, List confInput, IProject project) {
@@ -219,7 +219,7 @@ public class IvyResolver {
 
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
                 IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), confs[i]);
-            IvyDEMessage.debug("Cheking resolve report at " + report);
+            IvyDEMessage.debug("Checking resolve report at " + report);
             if (!report.exists()) {
                 IvyDEMessage.info("The resolve report for the configuration " + confs[i]
                         + " was not found. Falling back by doing a resolve again.");
@@ -288,9 +288,11 @@ public class IvyResolver {
     /**
      * Populate the map of artifact. The map should be populated by metadata in cache as this is
      * called in the refresh process.
-     * 
-     * @param parser
-     * @throws ParseException
+     *
+     * @param ivy Ivy
+     * @param parser XmlReportParser
+     * @param result ResolveResult
+     * @throws ParseException if parser fails
      */
     private void findAllArtifactOnRefresh(Ivy ivy, XmlReportParser parser, ResolveResult result)
             throws ParseException {
@@ -335,7 +337,7 @@ public class IvyResolver {
             return Status.OK_STATUS;
         }
 
-        // Perform variable substition on the pattern.
+        // Perform variable substitution on the pattern.
         IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
         String pattern;
         try {

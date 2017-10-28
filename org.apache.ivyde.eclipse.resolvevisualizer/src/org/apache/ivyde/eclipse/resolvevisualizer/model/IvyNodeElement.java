@@ -51,8 +51,9 @@ public class IvyNodeElement {
         if (obj instanceof IvyNodeElement) {
             IvyNodeElement elem = (IvyNodeElement) obj;
             if (elem.getOrganization().equals(getOrganization()) && elem.getName().equals(getName())
-                    && elem.getRevision().equals(getRevision()))
+                    && elem.getRevision().equals(getRevision())) {
                 return true;
+            }
         }
         return false;
     }
@@ -62,8 +63,8 @@ public class IvyNodeElement {
     }
 
     /**
-     * Recursive dependency retrieval
-     * 
+     * Recursive dependency retrieval.
+     *
      * @return The array of nodes that represents a node's immediate and transitive dependencies down to an arbitrary
      *         depth.
      */
@@ -76,9 +77,9 @@ public class IvyNodeElement {
 
     /**
      * Recursive dependency retrieval
-     * 
-     * @param node
-     * @return
+     *
+     * @param node IvyNodeElement
+     * @return Collection&lt;IvyNodeElement&gt;
      */
     private Collection/* <IvyNodeElement> */getDeepDependencies(IvyNodeElement node) {
         Collection/* <IvyNodeElement> */deepDependencies = new HashSet/* <IvyNodeElement> */();
@@ -93,6 +94,7 @@ public class IvyNodeElement {
     }
 
     /**
+     * @param caller IvyNodeElement
      * @return An array of configurations by which this module was resolved
      */
     public String[] getCallerConfigurations(IvyNodeElement caller) {
@@ -129,8 +131,8 @@ public class IvyNodeElement {
 
     /**
      * Set this node's depth and recursively update the node's children to relative to the new value.
-     * 
-     * @param depth
+     *
+     * @param depth int
      */
     public void setDepth(int depth) {
         this.depth = depth;

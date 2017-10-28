@@ -139,11 +139,8 @@ public class PathEditor extends Composite {
                 if (element instanceof IProject) {
                     return ((IProject) element).getName().equals(project.getName());
                 }
-                if (defaultExtension == null) {
-                    // we want a folder
-                    return element instanceof IContainer;
-                }
-                return true;
+                // we want a folder
+                return defaultExtension != null || element instanceof IContainer;
             }
         });
         dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
@@ -167,11 +164,8 @@ public class PathEditor extends Composite {
                 if (element instanceof IProject) {
                     return ((IProject) element).isAccessible();
                 }
-                if (defaultExtension == null) {
-                    // we want a folder
-                    return element instanceof IContainer;
-                }
-                return true;
+                // we want a folder
+                return defaultExtension != null || element instanceof IContainer;
             }
         });
         dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
@@ -201,7 +195,7 @@ public class PathEditor extends Composite {
                 dialog.setFileName(text.getText());
             }
             dialog.setFilterExtensions(new String[] {defaultExtension, "*"});
-            file = dialog.open();            
+            file = dialog.open();
         }
         if (file != null) {
             setFile(file);

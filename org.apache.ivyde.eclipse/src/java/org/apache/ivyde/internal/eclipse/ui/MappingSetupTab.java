@@ -31,7 +31,7 @@ public class MappingSetupTab extends AbstractSetupTab {
     private MappingSetupEditor mappingSetupEditor;
 
     public MappingSetupTab(TabFolder tabs, IProject project) {
-        super(tabs, "Source/Javadoc", MappingSetupPreferencePage.PEREFERENCE_PAGE_ID, project);
+        super(tabs, "Source/Javadoc", MappingSetupPreferencePage.PREFERENCE_PAGE_ID, project);
     }
 
     protected Composite createSetupEditor(Composite configComposite, IProject project) {
