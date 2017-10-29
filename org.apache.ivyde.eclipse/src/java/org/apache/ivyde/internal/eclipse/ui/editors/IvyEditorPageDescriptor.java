@@ -41,10 +41,7 @@ public class IvyEditorPageDescriptor {
     public IvyEditorPage createPage() {
         try {
             return (IvyEditorPage) element.createExecutableExtension(CLASS_ATTRIBUTE);
-        } catch (final CoreException e) {
-            IvyPlugin.log(IStatus.ERROR,
-                "Impossible to create the page " + element.getAttribute(CLASS_ATTRIBUTE), e);
-        } catch (final ClassCastException e) {
+        } catch (final CoreException | ClassCastException e) {
             IvyPlugin.log(IStatus.ERROR,
                 "Impossible to create the page " + element.getAttribute(CLASS_ATTRIBUTE), e);
         }

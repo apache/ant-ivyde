@@ -523,10 +523,6 @@ public class IvyPlugin extends AbstractUIPlugin {
             return false;
         }
         // ivyVersionMinor == minor
-        if (ivyVersionPatch >= patch) {
-            return true;
-        } else {
-            return false;
-        }
+        return ivyVersionPatch >= patch;
     }
 }

@@ -119,7 +119,7 @@ public class ClasspathEntriesResolver extends IvyResolver {
             return;
         }
 
-        StringBuffer buffer = new StringBuffer("There are some duplicates entries due to conflicts"
+        StringBuilder buffer = new StringBuilder("There are some duplicates entries due to conflicts"
                 + " between the resolved configurations " + conf.getConfs());
         buffer.append(":\n  - ");
         Iterator it = duplicates.iterator();

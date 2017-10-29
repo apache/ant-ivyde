@@ -18,6 +18,7 @@
 package org.apache.ivyde.internal.eclipse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ivyde.internal.eclipse.cpcontainer.ClasspathEntriesResolver;
@@ -160,9 +161,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
         for (int i = 0; i < entries.length; i++) {
             IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(entries[i],
                 project);
-            for (int j = 0; j < temp.length; j++) {
-                resolved.add(temp[j]);
-            }
+            resolved.addAll(Arrays.asList(temp));
         }
         return (IRuntimeClasspathEntry[]) resolved.toArray(new IRuntimeClasspathEntry[resolved
                 .size()]);

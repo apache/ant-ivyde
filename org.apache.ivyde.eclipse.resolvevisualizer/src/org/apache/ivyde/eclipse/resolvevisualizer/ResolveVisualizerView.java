@@ -161,7 +161,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
                 if (textString.length() > 0) {
                     while (iterator.hasNext()) {
                         String string = (String) iterator.next();
-                        if (string.toLowerCase().indexOf(textString.toLowerCase()) >= 0) {
+                        if (string.toLowerCase().contains(textString.toLowerCase())) {
                             list.add(figureListing.get(string));
                         }
                     }

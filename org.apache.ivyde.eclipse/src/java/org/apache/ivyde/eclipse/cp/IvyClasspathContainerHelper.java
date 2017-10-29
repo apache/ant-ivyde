@@ -86,7 +86,7 @@ public final class IvyClasspathContainerHelper {
      * @return the Ivy classpath container if found
      */
     public static List<IvyClasspathContainer> getContainers(IJavaProject javaProject) {
-        List<IvyClasspathContainer> containers = new ArrayList<IvyClasspathContainer>();
+        List<IvyClasspathContainer> containers = new ArrayList<>();
         if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
@@ -113,7 +113,7 @@ public final class IvyClasspathContainerHelper {
 
     public static List<IvyClasspathContainer> getContainersFromIvyFile(IFile ivyfile) {
         IJavaProject javaProject = JavaCore.create(ivyfile.getProject());
-        List<IvyClasspathContainer> containers = new ArrayList<IvyClasspathContainer>();
+        List<IvyClasspathContainer> containers = new ArrayList<>();
         if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
@@ -144,7 +144,7 @@ public final class IvyClasspathContainerHelper {
 
     public static List<IvyClasspathContainer> getContainersFromIvySettings(IFile ivySettings) {
         IJavaProject javaProject = JavaCore.create(ivySettings.getProject());
-        List<IvyClasspathContainer> containers = new ArrayList<IvyClasspathContainer>();
+        List<IvyClasspathContainer> containers = new ArrayList<>();
         if (javaProject == null || !javaProject.exists()) {
             return containers;
         }
@@ -241,7 +241,7 @@ public final class IvyClasspathContainerHelper {
      * @return collection of ivy projects
      */
     public static IProject[] getIvyProjectsInWorkspace() {
-        Collection<IProject> ivyProjects = new HashSet<IProject>();
+        Collection<IProject> ivyProjects = new HashSet<>();
 
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
@@ -251,7 +251,7 @@ public final class IvyClasspathContainerHelper {
             }
         }
 
-        return (IProject[]) ivyProjects.toArray(new IProject[ivyProjects.size()]);
+        return ivyProjects.toArray(new IProject[ivyProjects.size()]);
     }
 
 }

@@ -264,7 +264,7 @@ public class IvyResolver {
 
         ArtifactDownloadReport[] artifactReports = report.getArtifactsReports(null, false);
 
-        Map/* <Artifact, ArtifactDownloadReport> */workspaceArtifacts = (Map) IvyContext
+        Map/* <Artifact, ArtifactDownloadReport> */workspaceArtifacts = IvyContext
                 .getContext().get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
         if (workspaceArtifacts != null) {
             // some artifact were 'forced' by the dependency declaration, whereas they should be

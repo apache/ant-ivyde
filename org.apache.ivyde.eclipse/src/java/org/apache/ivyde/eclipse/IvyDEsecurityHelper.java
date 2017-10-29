@@ -74,16 +74,14 @@ public final class IvyDEsecurityHelper {
             childChildNode.flush();
             IvyPlugin.logInfo(
                 "Credentials " + setup.toString() + " added to eclipse secure storage");
-        } catch (StorageException e1) {
-            IvyPlugin.logError(e1.getMessage(), e1);
-        } catch (IOException e) {
+        } catch (StorageException | IOException e) {
             IvyPlugin.logError(e.getMessage(), e);
         }
     }
 
     public static List<SecuritySetup> getCredentialsFromSecureStore() {
         ISecurePreferences preferences = SecurePreferencesFactory.getDefault();
-        List<SecuritySetup> setupValues = new ArrayList<SecuritySetup>();
+        List<SecuritySetup> setupValues = new ArrayList<>();
         if (preferences.nodeExists(IVY_DE_CREDENTIALS_BASE_NODE)) {
             ISecurePreferences node = preferences.node(IVY_DE_CREDENTIALS_BASE_NODE);
             String[] childNames = node.childrenNames();

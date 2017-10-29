@@ -86,16 +86,13 @@ public class IvyFileUpdater {
 
     private void update(File ivyFile, String content, UpdateInfo info)
             throws FileNotFoundException {
-        PrintWriter w = new PrintWriter(new FileOutputStream(ivyFile));
-        try {
+        try (PrintWriter w = new PrintWriter(new FileOutputStream(ivyFile))) {
             w.print(content.substring(0, info.insertFromIndex));
             w.print(info.prefix);
             w.print(info.insert);
             w.print(info.suffix);
             w.print(content.substring(info.insertToIndex));
             w.flush();
-        } finally {
-            w.close();
         }
     }
 

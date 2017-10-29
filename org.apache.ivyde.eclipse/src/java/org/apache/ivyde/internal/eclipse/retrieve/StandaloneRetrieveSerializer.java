@@ -220,7 +220,7 @@ public class StandaloneRetrieveSerializer {
 
                 Node attr = attributes.getNamedItem(RESOLVE_IN_WORKSPACE);
                 if (attr != null) {
-                    setup.setResolveInWorkspace(Boolean.valueOf(attr.getNodeValue()).booleanValue());
+                    setup.setResolveInWorkspace(Boolean.valueOf(attr.getNodeValue()));
                 }
 
                 NodeList children = node.getChildNodes();
@@ -274,7 +274,7 @@ public class StandaloneRetrieveSerializer {
         settingsSetup.setIvySettingsPath(path);
 
         String loadOnDemand = getAttribute(attributes, IVYSETTING_LOADONDEMAND);
-        settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(loadOnDemand).booleanValue());
+        settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(loadOnDemand));
 
         String ivyUserDir = getAttribute(attributes, IVY_USER_DIR);
         settingsSetup.setIvyUserDir(ivyUserDir);
@@ -317,7 +317,7 @@ public class StandaloneRetrieveSerializer {
         retrieveSetup.setRetrieveTypes(types);
 
         String sync = getAttribute(attributes, RETRIEVE_SYNC);
-        retrieveSetup.setRetrieveSync(Boolean.valueOf(sync).booleanValue());
+        retrieveSetup.setRetrieveSync(Boolean.valueOf(sync));
 
         return retrieveSetup;
     }

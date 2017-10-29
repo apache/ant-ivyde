@@ -133,109 +133,136 @@ public final class IvyClasspathContainerConfAdapter {
                 IvyPlugin.logError(UTF8_ERROR, e);
                 throw new RuntimeException(UTF8_ERROR, e);
             }
-            if (parameter[0].equals("project")) {
-                if (conf.getJavaProject() == null && value.trim().length() != 0) {
-                    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-                    IProject project = root.getProject(value.trim());
-                    IJavaProject javaProject = JavaCore.create(project);
-                    conf.setProject(javaProject);
-                }
-            } else if (parameter[0].equals("ivyXmlPath")) {
-                ivyXmlPath = value;
-                conf.setIvyXmlPath(value);
-            } else if (parameter[0].equals("confs")) {
-                List confs = IvyClasspathUtil.split(value);
-                if (confs.isEmpty()) {
-                    confs = Collections.singletonList("*");
-                }
-                conf.setConfs(confs);
-            } else if (parameter[0].equals("ivySettingsPath")) {
-                settingsSetup.setIvySettingsPath(readOldSettings(conf, value));
-                conf.setSettingsProjectSpecific(true);
-            } else if (parameter[0].equals("loadSettingsOnDemand")) {
-                settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(value).booleanValue());
-                conf.setSettingsProjectSpecific(true);
-            } else if (parameter[0].equals("ivyUserDir")) {
-                settingsSetup.setIvyUserDir(value);
-                conf.setSettingsProjectSpecific(true);
-            } else if (parameter[0].equals("propertyFiles")) {
-                settingsSetup.setPropertyFiles(IvyClasspathUtil.split(value));
-                conf.setSettingsProjectSpecific(true);
-            } else if (parameter[0].equals("acceptedTypes")) {
-                classpathSetup.setAcceptedTypes(IvyClasspathUtil.split(value));
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("sourceTypes")) {
-                mappingSetup.setSourceTypes(IvyClasspathUtil.split(value));
-                conf.setMappingProjectSpecific(true);
-            } else if (parameter[0].equals("javadocTypes")) {
-                mappingSetup.setJavadocTypes(IvyClasspathUtil.split(value));
-                conf.setMappingProjectSpecific(true);
-            } else if (parameter[0].equals("sourceSuffixes")) {
-                mappingSetup.setSourceSuffixes(IvyClasspathUtil.split(value));
-                conf.setMappingProjectSpecific(true);
-            } else if (parameter[0].equals("javadocSuffixes")) {
-                mappingSetup.setJavadocSuffixes(IvyClasspathUtil.split(value));
-                conf.setMappingProjectSpecific(true);
-            } else if (parameter[0].equals("alphaOrder")) {
-                // if the value is not actually "true" or "false", the Boolean class ensure to
-                // return false, so it is fine
-                classpathSetup.setAlphaOrder(Boolean.valueOf(value).booleanValue());
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("resolveInWorkspace")) {
-                classpathSetup.setResolveInWorkspace(Boolean.valueOf(value).booleanValue());
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("transitiveResolve")) {
-                classpathSetup.setTransitiveResolve(Boolean.valueOf(value).booleanValue());
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("readOSGiMetadata")) {
-                classpathSetup.setReadOSGiMetadata(Boolean.valueOf(value).booleanValue());
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("resolveBeforeLaunch")) {
-                advancedSetup.setResolveBeforeLaunch(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
-            } else if (parameter[0].equals("retrievedClasspath")) {
-                classpathSetup.setRetrievedClasspath(Boolean.valueOf(value).booleanValue());
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("retrievedClasspathPattern")) {
-                classpathSetup.getRetrieveSetup().setRetrievePattern(value);
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("retrievedClasspathSync")) {
-                classpathSetup.getRetrieveSetup().setRetrieveSync(
-                    Boolean.valueOf(value).booleanValue());
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("retrievedClasspathTypes")) {
-                classpathSetup.getRetrieveSetup().setRetrieveTypes(value);
-                conf.setClassthProjectSpecific(true);
-            } else if (parameter[0].equals("mapIfOnlyOneSource")) {
-                mappingSetup.setMapIfOnlyOneSource(Boolean.valueOf(value).booleanValue());
-                conf.setMappingProjectSpecific(true);
-            } else if (parameter[0].equals("mapIfOnlyOneJavadoc")) {
-                mappingSetup.setMapIfOnlyOneJavadoc(Boolean.valueOf(value).booleanValue());
-                conf.setMappingProjectSpecific(true);
-
+            switch (parameter[0]) {
+                case "project":
+                    if (conf.getJavaProject() == null && value.trim().length() != 0) {
+                        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                        IProject project = root.getProject(value.trim());
+                        IJavaProject javaProject = JavaCore.create(project);
+                        conf.setProject(javaProject);
+                    }
+                    break;
+                case "ivyXmlPath":
+                    ivyXmlPath = value;
+                    conf.setIvyXmlPath(value);
+                    break;
+                case "confs":
+                    List<String> confs = IvyClasspathUtil.split(value);
+                    if (confs.isEmpty()) {
+                        confs = Collections.singletonList("*");
+                    }
+                    conf.setConfs(confs);
+                    break;
+                case "ivySettingsPath":
+                    settingsSetup.setIvySettingsPath(readOldSettings(conf, value));
+                    conf.setSettingsProjectSpecific(true);
+                    break;
+                case "loadSettingsOnDemand":
+                    settingsSetup.setLoadSettingsOnDemand(Boolean.valueOf(value));
+                    conf.setSettingsProjectSpecific(true);
+                    break;
+                case "ivyUserDir":
+                    settingsSetup.setIvyUserDir(value);
+                    conf.setSettingsProjectSpecific(true);
+                    break;
+                case "propertyFiles":
+                    settingsSetup.setPropertyFiles(IvyClasspathUtil.split(value));
+                    conf.setSettingsProjectSpecific(true);
+                    break;
+                case "acceptedTypes":
+                    classpathSetup.setAcceptedTypes(IvyClasspathUtil.split(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "sourceTypes":
+                    mappingSetup.setSourceTypes(IvyClasspathUtil.split(value));
+                    conf.setMappingProjectSpecific(true);
+                    break;
+                case "javadocTypes":
+                    mappingSetup.setJavadocTypes(IvyClasspathUtil.split(value));
+                    conf.setMappingProjectSpecific(true);
+                    break;
+                case "sourceSuffixes":
+                    mappingSetup.setSourceSuffixes(IvyClasspathUtil.split(value));
+                    conf.setMappingProjectSpecific(true);
+                    break;
+                case "javadocSuffixes":
+                    mappingSetup.setJavadocSuffixes(IvyClasspathUtil.split(value));
+                    conf.setMappingProjectSpecific(true);
+                    break;
+                case "alphaOrder":
+                    // if the value is not actually "true" or "false", the Boolean class ensure to
+                    // return false, so it is fine
+                    classpathSetup.setAlphaOrder(Boolean.valueOf(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "resolveInWorkspace":
+                    classpathSetup.setResolveInWorkspace(Boolean.valueOf(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "transitiveResolve":
+                    classpathSetup.setTransitiveResolve(Boolean.valueOf(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "readOSGiMetadata":
+                    classpathSetup.setReadOSGiMetadata(Boolean.valueOf(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "resolveBeforeLaunch":
+                    advancedSetup.setResolveBeforeLaunch(Boolean.valueOf(value));
+                    conf.setAdvancedProjectSpecific(true);
+                    break;
+                case "retrievedClasspath":
+                    classpathSetup.setRetrievedClasspath(Boolean.valueOf(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "retrievedClasspathPattern":
+                    classpathSetup.getRetrieveSetup().setRetrievePattern(value);
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "retrievedClasspathSync":
+                    classpathSetup.getRetrieveSetup().setRetrieveSync(Boolean.valueOf(value));
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "retrievedClasspathTypes":
+                    classpathSetup.getRetrieveSetup().setRetrieveTypes(value);
+                    conf.setClassthProjectSpecific(true);
+                    break;
+                case "mapIfOnlyOneSource":
+                    mappingSetup.setMapIfOnlyOneSource(Boolean.valueOf(value));
+                    conf.setMappingProjectSpecific(true);
+                    break;
+                case "mapIfOnlyOneJavadoc":
+                    mappingSetup.setMapIfOnlyOneJavadoc(Boolean.valueOf(value));
+                    conf.setMappingProjectSpecific(true);
+                    break;
                 // the following is the retrieve conf pre -IVYDE-56
                 // from this conf should be build StandaloneRetrieveSetup
-
-            } else if (parameter[0].equals("doRetrieve")) {
-                // if the value is not actually "true" or "false", the Boolean class ensure to
-                // return false, so it is fine
-                doStandaloneRetrieve = Boolean.valueOf(value).booleanValue();
-                isRetrieveProjectSpecific = true;
-            } else if (parameter[0].equals("retrievePattern")) {
-                standaloneRetrieveSetup.setRetrievePattern(value);
-                isRetrieveProjectSpecific = true;
-            } else if (parameter[0].equals("retrieveSync")) {
-                standaloneRetrieveSetup.setRetrieveSync(Boolean.valueOf(value).booleanValue());
-                isRetrieveProjectSpecific = true;
-            } else if (parameter[0].equals("retrieveConfs")) {
-                standaloneRetrieveSetup.setRetrieveConfs(value);
-                isRetrieveProjectSpecific = true;
-            } else if (parameter[0].equals("retrieveTypes")) {
-                standaloneRetrieveSetup.setRetrieveTypes(value);
-                isRetrieveProjectSpecific = true;
-            } else if (parameter[0].equals("useExtendedResolveId")) {
-                advancedSetup.setUseExtendedResolveId(Boolean.valueOf(value).booleanValue());
-                conf.setAdvancedProjectSpecific(true);
+                case "doRetrieve":
+                    // if the value is not actually "true" or "false", the Boolean class ensure to
+                    // return false, so it is fine
+                    doStandaloneRetrieve = Boolean.valueOf(value);
+                    isRetrieveProjectSpecific = true;
+                    break;
+                case "retrievePattern":
+                    standaloneRetrieveSetup.setRetrievePattern(value);
+                    isRetrieveProjectSpecific = true;
+                    break;
+                case "retrieveSync":
+                    standaloneRetrieveSetup.setRetrieveSync(Boolean.valueOf(value));
+                    isRetrieveProjectSpecific = true;
+                    break;
+                case "retrieveConfs":
+                    standaloneRetrieveSetup.setRetrieveConfs(value);
+                    isRetrieveProjectSpecific = true;
+                    break;
+                case "retrieveTypes":
+                    standaloneRetrieveSetup.setRetrieveTypes(value);
+                    isRetrieveProjectSpecific = true;
+                    break;
+                case "useExtendedResolveId":
+                    advancedSetup.setUseExtendedResolveId(Boolean.valueOf(value));
+                    conf.setAdvancedProjectSpecific(true);
+                    break;
             }
         }
         if (conf.isAdvancedProjectSpecific()) {

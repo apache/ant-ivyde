@@ -38,9 +38,6 @@ public class IvyFileUtilTest extends TestCase {
             content = new byte[(int) accessFile.length()];
             accessFile.read(content);
             hibContentStr = new String(content);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -19,7 +19,6 @@ package org.apache.ivyde.internal.eclipse.ui.editors.xml;
 
 import org.apache.ivyde.internal.eclipse.ui.preferences.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -44,8 +43,6 @@ public class XMLConfiguration extends SourceViewerConfiguration {
     private XMLScanner scanner;
 
     private ColorManager colorManager;
-
-    private IProject project;
 
     private IvyContentAssistProcessor processor;
 

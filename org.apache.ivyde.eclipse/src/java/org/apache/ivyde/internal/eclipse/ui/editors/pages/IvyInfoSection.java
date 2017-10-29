@@ -54,7 +54,7 @@ public class IvyInfoSection extends SectionPart implements PropertyChangeListene
         TableWrapLayout layout = new TableWrapLayout();
         layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
         layout.leftMargin = layout.rightMargin;
-        layout.numColumns = 2;
+        layout.numColumns = NUM_COLUMNS;
         client.setLayout(layout);
         // IvyFileEditorInput editorInput = (IvyFileEditorInput) page.getEditorInput();
         // PresentationModel moduleModel = editorInput.getPresentationModel();
@@ -80,10 +80,11 @@ public class IvyInfoSection extends SectionPart implements PropertyChangeListene
         toolkit.paintBordersFor(client);
         section.setClient(client);
         TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
-        td.colspan = 2;
+        td.colspan = NUM_COLUMNS;
         section.setLayoutData(td);
     }
 
+    @SuppressWarnings("unused")
     private void createOrganisationEntry(Composite parent, FormToolkit toolkit) {
     }
 

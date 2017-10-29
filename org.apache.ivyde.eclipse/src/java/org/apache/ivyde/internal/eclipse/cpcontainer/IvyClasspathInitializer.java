@@ -160,6 +160,7 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
         }
     }
 
+    @SuppressWarnings("unused")
     private void updateIvyDEContainerPath(final IJavaProject project, final IClasspathEntry entry,
             final IClasspathAttribute[] attributes, final boolean exported, final IPath updatedPath) {
         Display.getDefault().asyncExec(new Runnable() {

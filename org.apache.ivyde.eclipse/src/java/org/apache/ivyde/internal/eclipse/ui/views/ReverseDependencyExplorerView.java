@@ -288,14 +288,13 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
 
         private String toRevisionList(String[] revisions) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
 
-            for (int i = 0; i < revisions.length; i++) {
-                buffer.append(revisions[i]);
-
-                if (i + 1 < revisions.length) {
+            for (String revision : revisions) {
+                if (buffer.length() > 0) {
                     buffer.append(", ");
                 }
+                buffer.append(revision);
             }
 
             return buffer.toString();

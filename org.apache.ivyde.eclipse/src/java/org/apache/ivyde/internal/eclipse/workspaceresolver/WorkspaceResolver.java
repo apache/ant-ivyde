@@ -140,11 +140,11 @@ public class WorkspaceResolver extends AbstractResolver {
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         IvyContext context = IvyContext.getContext();
         @SuppressWarnings("unchecked")
-        Map<Artifact, Artifact> workspaceArtifacts = (Map<Artifact, Artifact>) context
+        Map<Artifact, Artifact> workspaceArtifacts = context
                 .get(IVYDE_WORKSPACE_ARTIFACTS);
         Map<Artifact, ArtifactDownloadReport> workspaceReports = null;
         if (workspaceArtifacts != null) {
-            workspaceReports = new HashMap<Artifact, ArtifactDownloadReport>();
+            workspaceReports = new HashMap<>();
             context.set(IVYDE_WORKSPACE_ARTIFACT_REPORTS, workspaceReports);
         }
 
@@ -162,7 +162,7 @@ public class WorkspaceResolver extends AbstractResolver {
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
                 // there is some 'forced' artifact by the dependency descriptor
-                Artifact eclipseArtifact = (Artifact) workspaceArtifacts.get(artifacts[i]);
+                Artifact eclipseArtifact = workspaceArtifacts.get(artifacts[i]);
                 ArtifactDownloadReport eclipseAdr = new ArtifactDownloadReport(eclipseArtifact);
                 eclipseAdr.setDownloadStatus(DownloadStatus.NO);
                 eclipseAdr.setSize(0);
@@ -183,7 +183,7 @@ public class WorkspaceResolver extends AbstractResolver {
 
         String contextId = "ivyde.workspaceresolver." + getName() + "."
                 + dd.getDependencyRevisionId().toString();
-        DependencyDescriptor parentDD = (DependencyDescriptor) context.get(contextId);
+        DependencyDescriptor parentDD = context.get(contextId);
         if (parentDD != null
                 && parentDD.getDependencyRevisionId().equals(dd.getDependencyRevisionId())) {
             // this very workspace resolver has been already called for the same dependency
@@ -317,10 +317,10 @@ public class WorkspaceResolver extends AbstractResolver {
                         IvyContext currentContext = IvyContext.popContext();
                         IvyContext parentContext = IvyContext.getContext();
                         @SuppressWarnings("unchecked")
-                        Map<Artifact, Artifact> workspaceArtifacts = (Map<Artifact, Artifact>) parentContext
+                        Map<Artifact, Artifact> workspaceArtifacts = parentContext
                                 .get(IVYDE_WORKSPACE_ARTIFACTS);
                         if (workspaceArtifacts == null) {
-                            workspaceArtifacts = new HashMap<Artifact, Artifact>();
+                            workspaceArtifacts = new HashMap<>();
                             parentContext.set(IVYDE_WORKSPACE_ARTIFACTS, workspaceArtifacts);
                         }
                         for (int j = 0; j < dArtifacts.length; j++) {

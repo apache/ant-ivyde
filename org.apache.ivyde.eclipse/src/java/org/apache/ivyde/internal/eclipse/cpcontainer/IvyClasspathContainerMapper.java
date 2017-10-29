@@ -60,6 +60,7 @@ import org.eclipse.jdt.core.JavaCore;
  */
 public class IvyClasspathContainerMapper {
 
+    @SuppressWarnings("unused")
     private static final String IVYDE_NS = "http://ant.apache.org/ivy/ivyde/ns/";
 
     private static final String IVYDE_NS_PREFIX = "ivyde:";
@@ -103,7 +104,7 @@ public class IvyClasspathContainerMapper {
 
     public IClasspathEntry[] map() {
         IClasspathEntry[] classpathEntries;
-        Collection<IClasspathEntry> paths = new LinkedHashSet<IClasspathEntry>();
+        Collection<IClasspathEntry> paths = new LinkedHashSet<>();
 
         IvyDEMessage.verbose("Building classpath from " + all.size() + " resolved artifact(s)");
 
@@ -167,7 +168,7 @@ public class IvyClasspathContainerMapper {
             }
 
         }
-        classpathEntries = (IClasspathEntry[]) paths.toArray(new IClasspathEntry[paths.size()]);
+        classpathEntries = paths.toArray(new IClasspathEntry[paths.size()]);
 
         return classpathEntries;
     }
@@ -179,7 +180,7 @@ public class IvyClasspathContainerMapper {
             // an non existing inner jar is 'just' a broken MANIFEST.MF, which happens sometimes
             // with Eclipse bundles
             IvyDEMessage.warn("The MANIFEST of " + artifact + " (" + manifestFile
-                    + ") is referencing a non existant jar " + classpathArtifact + ". Ignoring it");
+                    + ") is referencing a nonexistent jar " + classpathArtifact + ". Ignoring it");
             return null;
         }
         return doBuildEntry(artifact, classpathArtifact, rules);
@@ -243,7 +244,7 @@ public class IvyClasspathContainerMapper {
         if (retrievedArtifacts != null) {
             Set<String> pathSet = retrievedArtifacts.get(artifact);
             if (pathSet != null && !pathSet.isEmpty()) {
-                return new Path((String) pathSet.iterator().next() + innerPath);
+                return new Path(pathSet.iterator().next() + innerPath);
             }
         }
         return new Path(artifact.getLocalFile().getAbsolutePath() + innerPath);
@@ -272,7 +273,7 @@ public class IvyClasspathContainerMapper {
         // we haven't found source artifact in resolved artifacts,
         // let's look in the module declaring the artifact
         ModuleRevisionId mrid = artifact.getId().getModuleRevisionId();
-        Artifact[] artifacts = (Artifact[]) artifactsByDependency.get(mrid);
+        Artifact[] artifacts = artifactsByDependency.get(mrid);
         if (artifacts != null) {
             Artifact foundArtifact = null;
             int nbFound = 0;
@@ -340,7 +341,7 @@ public class IvyClasspathContainerMapper {
 
     private boolean isArtifactName(Artifact artifact, String name, Collection<String> suffixes,
             String type) {
-        String artifactNameToMatch = (String) artifact.getExtraAttribute(IVYDE_NS_PREFIX + type);
+        String artifactNameToMatch = artifact.getExtraAttribute(IVYDE_NS_PREFIX + type);
         if (artifactNameToMatch != null) {
             // some name is specified, it overrides suffix matching
             return name.equals(artifactNameToMatch);
@@ -358,15 +359,14 @@ public class IvyClasspathContainerMapper {
     }
 
     private IClasspathAttribute[] getExtraAttribute(IPath classpathArtifact, IPath javadocArtifact) {
-        List<IClasspathAttribute> result = new ArrayList<IClasspathAttribute>();
+        List<IClasspathAttribute> result = new ArrayList<>();
         URL url = attachmentManager.getDocAttachment(classpathArtifact);
 
         if (url == null) {
-            IPath path = javadocArtifact;
-            if (path != null) {
+            if (javadocArtifact != null) {
                 String u;
                 try {
-                    u = "jar:" + path.toFile().toURI().toURL().toExternalForm() + "!/";
+                    u = "jar:" + javadocArtifact.toFile().toURI().toURL().toExternalForm() + "!/";
                     try {
                         url = new URL(u);
                     } catch (MalformedURLException e) {
@@ -376,7 +376,7 @@ public class IvyClasspathContainerMapper {
                     }
                 } catch (MalformedURLException e) {
                     // this should not happen
-                    IvyPlugin.logError("The path has not a correct URL: " + path, e);
+                    IvyPlugin.logError("The path has not a correct URL: " + javadocArtifact, e);
                 }
             }
         }

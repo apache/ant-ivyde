@@ -66,18 +66,18 @@ public class ShortestRootPathAlgorithm extends LabelDecoratorAlgorithmAdapter {
         HashMap/* <IvyNodeElement, Integer> */previous = new HashMap/* <IvyNodeElement, Integer> */();
         HashMap/* <IvyNodeElement, Integer> */dValues = new HashMap/* <IvyNodeElement, Integer> */();
         for (Iterator/* <IvyNodeElement> */iter = q.iterator(); iter.hasNext();) {
-            dValues.put(iter.next(), new Integer(Integer.MAX_VALUE / 10));
+            dValues.put(iter.next(), Integer.MAX_VALUE / 10);
         }
-        dValues.put(s, new Integer(0));
+        dValues.put(s, 0);
 
         while (!q.isEmpty()) {
             IvyNodeElement head = (IvyNodeElement) q.remove(0);
             IvyNodeElement[] outgoing = head.getDependencies();
             for (int i = 0; i < outgoing.length; i++) {
                 IvyNodeElement v = outgoing[i];
-                if (((Integer) dValues.get(head)).intValue() + 1 < ((Integer) dValues.get(v)).intValue()) {
+                if ((Integer) dValues.get(head) + 1 < (Integer) dValues.get(v)) {
                     previous.put(v, head);
-                    dValues.put(v, new Integer(((Integer) dValues.get(head)).intValue() + 1));
+                    dValues.put(v, (Integer) dValues.get(head) + 1);
                 }
             }
         }

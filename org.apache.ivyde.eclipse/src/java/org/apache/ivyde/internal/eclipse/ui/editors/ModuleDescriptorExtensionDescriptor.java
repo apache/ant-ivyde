@@ -41,10 +41,7 @@ public class ModuleDescriptorExtensionDescriptor {
         try {
             return (ModuleDescriptorExtension) element
                     .createExecutableExtension(MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE);
-        } catch (final CoreException e) {
-            IvyPlugin.log(IStatus.ERROR, "Impossible to create the module descriptor extension "
-                    + element.getAttribute(MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE), e);
-        } catch (final ClassCastException e) {
+        } catch (final CoreException | ClassCastException e) {
             IvyPlugin.log(IStatus.ERROR, "Impossible to create the module descriptor extension "
                     + element.getAttribute(MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE), e);
         }

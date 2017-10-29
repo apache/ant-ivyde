@@ -203,7 +203,7 @@ public class IvyNewWizardPage extends WizardPage {
         if (dialog.open() == ContainerSelectionDialog.OK) {
             Object[] result = dialog.getResult();
             if (result.length == 1) {
-                containerText.setText(((Path) result[0]).toString());
+                containerText.setText(result[0].toString());
             }
         }
     }

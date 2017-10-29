@@ -77,7 +77,7 @@ public class IvyCodeCompletionProcessor {
             int caretOffset) {
         String qualifier = ivyfile.getQualifier();
         int qlen = qualifier.length();
-        if (qualifier.indexOf('/') > -1) {
+        if (qualifier.contains("/")) {
             String text = "/>";
             CodeCompletionProposal proposal = new CodeCompletionProposal(
                 text, ivyfile.getOffset() - qlen, qlen + caretOffset, text.length());

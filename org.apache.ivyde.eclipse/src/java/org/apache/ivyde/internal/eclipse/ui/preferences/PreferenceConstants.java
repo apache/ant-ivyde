@@ -139,9 +139,7 @@ public final class PreferenceConstants {
             if (Modifier.isStatic(fields[i].getModifiers())) {
                 try {
                     ALL.add(fields[i].get(null));
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalAccessException e) {
+                } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }

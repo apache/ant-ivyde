@@ -224,7 +224,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         + "that the current configuration extends", false);
         IValueProvider masterConfsValueProvider = new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                StringBuffer base = new StringBuffer();
+                StringBuilder base = new StringBuilder();
                 String qualifier = ivyFile.getAttributeValueQualifier();
                 int comma = qualifier.lastIndexOf(",") + 1;
                 base.append(qualifier.substring(0, comma));
@@ -477,7 +477,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                             if (org != null && otherAttValues != null
                                     && otherAttValues.get("name") != null
                                     && otherAttValues.get("rev") != null) {
-                                StringBuffer base = new StringBuffer();
+                                StringBuilder base = new StringBuilder();
                                 String qualifier = ivyFile.getAttributeValueQualifier();
                                 // search for word after last comma
                                 int comma = qualifier.lastIndexOf(",") + 1;
@@ -563,7 +563,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
         String[] matcherNames = new String[0];
         Ivy ivy = getIvy();
         if (ivy != null) {
-            matcherNames = (String[]) ivy.getSettings().getMatcherNames().toArray(new String[0]);
+            matcherNames = ivy.getSettings().getMatcherNames().toArray(new String[0]);
         }
         ListValueProvider matcherNamesProvider = new ListValueProvider(matcherNames);
 

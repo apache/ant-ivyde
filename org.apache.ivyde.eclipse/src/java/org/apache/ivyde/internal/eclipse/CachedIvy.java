@@ -144,11 +144,10 @@ public abstract class CachedIvy {
                     ivy.configureDefault();
                 } catch (ParseException e) {
                     ivy = null;
-                    IvyDEException ex = new IvyDEException(
+                    throw new IvyDEException(
                             "Parsing error of the default Ivy settings",
                             "The default Ivy settings file could not be parsed: " + e.getMessage(),
                             e);
-                    throw ex;
                 } catch (IOException e) {
                     ivy = null;
                     throw new IvyDEException("Read error of the default Ivy settings",

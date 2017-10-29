@@ -45,6 +45,7 @@ public class IvyConsolePageParticipant implements IConsolePageParticipant {
         filterLogAction = null;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Object getAdapter(Class adapter) {
         return null;
     }

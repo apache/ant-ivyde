@@ -36,13 +36,13 @@ public class ResolveResult {
 
     private final boolean previousUsed;
 
-    private Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<ArtifactDownloadReport>();
+    private Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<>();
 
-    private Set<String> problemMessages = new HashSet<String>();
+    private Set<String> problemMessages = new HashSet<>();
 
     private final ResolveReport report;
 
-    private Map<ModuleRevisionId, Artifact[]> artifactsByDependency = new HashMap<ModuleRevisionId, Artifact[]>();
+    private Map<ModuleRevisionId, Artifact[]> artifactsByDependency = new HashMap<>();
 
     /**
      * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no
@@ -69,7 +69,7 @@ public class ResolveResult {
     ResolveResult(ResolveReport report) {
         this.report = report;
         previousUsed = false;
-        problemMessages = new HashSet<String>(report.getAllProblemMessages());
+        problemMessages = new HashSet<>(report.getAllProblemMessages());
     }
 
     /**

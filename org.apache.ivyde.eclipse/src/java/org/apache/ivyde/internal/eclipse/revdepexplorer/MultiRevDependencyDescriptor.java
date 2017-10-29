@@ -124,11 +124,7 @@ public class MultiRevDependencyDescriptor {
      * @return true if a new revision has been applied
      */
     public boolean hasNewRevision() {
-        if (newRevision == null || "".equals(newRevision.trim())) {
-            return false;
-        }
-
-        return true;
+        return !(newRevision == null || "".equals(newRevision.trim()));
     }
 
     /**

@@ -85,7 +85,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             }
 
             public ModuleRevisionId transform(ModuleRevisionId mrid) {
-                if (mrid.getRevision().indexOf("working@") > -1) {
+                if (mrid.getRevision().contains("working@")) {
                     return new NullableRevisionModuleRevisionId(mrid.getModuleId(), null);
                 }
                 return new ModuleRevisionId(mrid.getModuleId(), mrid.getRevision());
@@ -154,10 +154,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
             } catch (MalformedURLException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
                         "Failed to write Ivy file " + ivyFile + " (malformed URL)", e));
-            } catch (IOException e) {
-                errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                        "Failed to write Ivy file " + ivyFile, e));
-            } catch (SAXException e) {
+            } catch (IOException | SAXException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
                         "Failed to write Ivy file " + ivyFile, e));
             } finally {

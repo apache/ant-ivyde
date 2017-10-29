@@ -139,7 +139,7 @@ public class IvyNewWizard extends Wizard implements INewWizard {
         monitor.beginTask("Creating " + file.getName(), 2);
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(openContentStream()));
-            final StringBuffer buf = new StringBuffer();
+            final StringBuilder buf = new StringBuilder();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 line = line.replaceAll("@ORGANISATION@", org);
                 line = line.replaceAll("@MODULE@", module);

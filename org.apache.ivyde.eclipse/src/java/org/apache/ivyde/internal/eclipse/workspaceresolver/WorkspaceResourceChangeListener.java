@@ -64,10 +64,10 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                 IProject project;
                 switch (res.getType()) {
                     case IResource.FOLDER:
-                        project = ((IFolder) res).getProject();
+                        project = res.getProject();
                         break;
                     case IResource.FILE:
-                        project = ((IFile) res).getProject();
+                        project = res.getProject();
                         break;
                     case IResource.PROJECT:
                         project = (IProject) res;

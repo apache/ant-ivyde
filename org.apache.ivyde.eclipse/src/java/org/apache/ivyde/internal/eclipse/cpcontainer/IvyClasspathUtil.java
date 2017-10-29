@@ -86,7 +86,7 @@ public final class IvyClasspathUtil {
         if (list == null) {
             return "";
         }
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         Iterator it = list.iterator();
         while (it.hasNext()) {
             b.append(it.next());
@@ -161,7 +161,7 @@ public final class IvyClasspathUtil {
      * @return The resolve id.
      */
     public static String buildResolveId(boolean useExtendedResolveId, ModuleDescriptor md) {
-        StringBuffer sb = new StringBuffer(ResolveOptions.getDefaultResolveId(md));
+        StringBuilder sb = new StringBuilder(ResolveOptions.getDefaultResolveId(md));
         if (useExtendedResolveId) {
             ModuleRevisionId mrid = md.getModuleRevisionId();
             String sts = md.getStatus();

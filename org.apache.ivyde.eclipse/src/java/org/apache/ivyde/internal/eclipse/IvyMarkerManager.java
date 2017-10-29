@@ -65,7 +65,7 @@ public class IvyMarkerManager {
                 return;
             }
             if (status.isMultiStatus()) {
-                IStatus[] allStatus = ((MultiStatus) status).getChildren();
+                IStatus[] allStatus = status.getChildren();
                 for (int i = 0; i < allStatus.length; i++) {
                     addMarker(r, allStatus[i]);
                 }

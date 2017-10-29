@@ -88,7 +88,7 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
         if (element instanceof IvyNodeElement) {
             IvyNodeElement node = (IvyNodeElement) element;
             String text = node.getOrganization() + "#" + node.getName() + ";";
-            if (node.getRevision().indexOf("working@") != -1) {
+            if (node.getRevision().contains("working@")) {
                 text += "WORKSPACE";
             } else {
                 text += node.getRevision();

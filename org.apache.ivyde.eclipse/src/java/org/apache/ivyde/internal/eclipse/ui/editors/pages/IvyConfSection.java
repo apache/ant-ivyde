@@ -58,6 +58,7 @@ public class IvyConfSection extends SectionPart {
         section.setLayoutData(td);
     }
 
+    @SuppressWarnings("unused")
     private void createOrganisationEntry(Composite parent, FormToolkit toolkit) {
     }
 
