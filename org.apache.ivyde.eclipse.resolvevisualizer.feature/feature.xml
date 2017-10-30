@@ -49,7 +49,7 @@
       <import plugin="org.eclipse.jdt.core" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.core.resources" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.ui.forms" version="3.4.0" match="compatible"/>
-      <import plugin="org.apache.ivy" version="2.1.0" match="compatible"/>
+      <import plugin="org.apache.ivy" version="2.5.0" match="compatible"/>
    </requires>
 
    <plugin

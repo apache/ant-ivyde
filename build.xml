@@ -14,7 +14,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <!--
    This build script expects two properties:
@@ -31,23 +31,23 @@
 <project name="ivyde" basedir="." default="build" xmlns:ivy="antlib:org.apache.ivy.ant"
         xmlns:asciidoctor="antlib:org.asciidoctor.ant">
 
-    <property file="local.build.properties" />
-    <property file="build.properties" />
-    <property environment="env" />
+    <property file="local.build.properties"/>
+    <property file="build.properties"/>
+    <property environment="env"/>
 
-    <property name="work.dir" value="${basedir}/work" />
-    <property name="ivy.work.dir" value="${work.dir}/ivy" />
-    <property name="doc.dir" value="${basedir}/doc" />
-    <property name="src.doc.dir" value="${doc.dir}/src" />
-    <property name="dist.dir" value="${basedir}/dist" />
-    <property name="dist.work.dir" value="${work.dir}/dist" />
-    <property name="dist.work.doc.dir" value="${dist.work.dir}/doc" />
-    <property name="eclipse.work.dir" value="${work.dir}/eclipse" />
-    <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc" />
-    <property name="checkstyle.src.dir" value="${basedir}/org.apache.ivyde.eclipse/src/etc/checkstyle" />
-    <property name="checkstyle.report.dir" value="${basedir}/checkstyle/report" />
-    <property name="checkstyle.lib" value="${basedir}/checkstyle/lib" />
-    <property name="rat.dir" value="${work.dir}/rat" />
+    <property name="work.dir" value="${basedir}/work"/>
+    <property name="ivy.work.dir" value="${work.dir}/ivy"/>
+    <property name="doc.dir" value="${basedir}/doc"/>
+    <property name="src.doc.dir" value="${doc.dir}/src"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="dist.work.dir" value="${work.dir}/dist"/>
+    <property name="dist.work.doc.dir" value="${dist.work.dir}/doc"/>
+    <property name="eclipse.work.dir" value="${work.dir}/eclipse"/>
+    <property name="eclipse-doc.dir" value="${basedir}/org.apache.ivyde.eclipse/doc"/>
+    <property name="checkstyle.src.dir" value="${basedir}/org.apache.ivyde.eclipse/src/etc/checkstyle"/>
+    <property name="checkstyle.report.dir" value="${basedir}/checkstyle/report"/>
+    <property name="checkstyle.lib" value="${basedir}/checkstyle/lib"/>
+    <property name="rat.dir" value="${work.dir}/rat"/>
 
     <target name="download-ivy" unless="ivy.jar.file">
         <property name="ivy.version"  value="2.4.0"/>
@@ -55,12 +55,12 @@
         <property name="ivy.jar.dir"  value="${work.dir}"/>
         <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
         <mkdir dir="${ivy.jar.dir}"/>
-        <get src="${ivy.jar.url}" dest="${ivy.jar.file}" usetimestamp="true"/>        
+        <get src="${ivy.jar.url}" dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 
     <target name="init-ivy" depends="download-ivy">
         <path id="ivy.lib.path">
-            <pathelement location="${ivy.jar.file}" />
+            <pathelement location="${ivy.jar.file}"/>
         </path>
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
@@ -81,33 +81,33 @@
         <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path">
             <classpath>
-                <pathelement location="${work.dir}/asciidoc-extensions/classes" />
-                <path refid="asciidoctor.path" />
+                <pathelement location="${work.dir}/asciidoc-extensions/classes"/>
+                <path refid="asciidoctor.path"/>
             </classpath>
         </taskdef>
     </target>
 
     <target name="/release" description="Make the build artifacts tagged with the release version">
-        <tstamp />
+        <tstamp/>
         <condition property="forceContextQualifier" value="${DSTAMP}${TSTAMP}-RELEASE">
-            <length string="${version.qualifier}" trim="true" length="0" />
+            <length string="${version.qualifier}" trim="true" length="0"/>
         </condition>
-        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE" />
+        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-RELEASE"/>
     </target>
 
-    <target name="dist" depends="generate-eclipse-doc,build,package-binaries,package-sources,checksum" description="Build every artifacts for distribution" />
+    <target name="dist" depends="generate-eclipse-doc,build,package-binaries,package-sources,checksum" description="Build every artifacts for distribution"/>
 
     <target name="clean" description="Remove every build artifacts">
-        <delete dir="${work.dir}" />
-        <delete dir="${dist.dir}" />
+        <delete dir="${work.dir}"/>
+        <delete dir="${dist.dir}"/>
     </target>
 
     <target name="check-baseLocation">
-        <property name="baseLocation" location="${basedir}/dependencies/${eclipse.download.sdk.name}" />
+        <property name="baseLocation" location="${basedir}/dependencies/${eclipse.download.sdk.name}"/>
         <fail message="An Eclipse install is needed to run the build. Set your Eclipse install dir in the 'baseLocation' property. Or run 'ant download-eclipse'">
             <condition>
                 <not>
-                    <available file="${baseLocation}" />
+                    <available file="${baseLocation}"/>
                 </not>
             </condition>
         </fail>
@@ -115,12 +115,12 @@
 
     <target name="eclipse-startup-check" depends="check-baseLocation">
         <condition property="eclipse.startup">
-            <available file="${baseLocation}/startup.jar" />
+            <available file="${baseLocation}/startup.jar"/>
         </condition>
     </target>
 
     <target name="eclipse-startup-classpath" depends="eclipse-startup-check" if="eclipse.startup">
-        <property name="eclipse.classpath" value="${baseLocation}/startup.jar" />
+        <property name="eclipse.classpath" value="${baseLocation}/startup.jar"/>
     </target>
 
     <target name="eclipse-launcher-classpath" depends="eclipse-startup-check" unless="eclipse.startup">
@@ -128,46 +128,46 @@
         <path id="newest.equinox.launcher.path.id">
             <first count="1">
                 <sort>
-                    <fileset dir="${baseLocation}/plugins" includes="**/org.eclipse.equinox.launcher_*.jar" />
+                    <fileset dir="${baseLocation}/plugins" includes="**/org.eclipse.equinox.launcher_*.jar"/>
                     <!-- Seems the default order is oldest > newest so we must reverse it.
                        The 'reverse' and 'date' comparators are in the internal antlib
                        org.apache.tools.ant.types.resources.comparators.
                     -->
                     <reverse xmlns="antlib:org.apache.tools.ant.types.resources.comparators">
                         <!-- 'date' inherits 'reverse's namespace -->
-                        <date />
+                        <date/>
                     </reverse>
                 </sort>
             </first>
         </path>
 
         <!-- turn the path into a property -->
-        <property name="eclipse.classpath" refid="newest.equinox.launcher.path.id" />
+        <property name="eclipse.classpath" refid="newest.equinox.launcher.path.id"/>
     </target>
 
     <target name="eclipse-classpath" depends="eclipse-startup-classpath,eclipse-launcher-classpath">
-        <echo message="Using equinox launcher jar: ${eclipse.classpath}" />
+        <echo message="Using equinox launcher jar: ${eclipse.classpath}"/>
     </target>
 
     <target name="compute-version">
-        <tstamp />
+        <tstamp/>
         <condition property="forceContextQualifier" value="${DSTAMP}${TSTAMP}-dev">
-            <length string="${version.qualifier}" trim="true" length="0" />
+            <length string="${version.qualifier}" trim="true" length="0"/>
         </condition>
-        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-dev" />
+        <property name="forceContextQualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-dev"/>
         <loadfile srcfile="org.apache.ivyde.eclipse/META-INF/MANIFEST.MF" property="build.version">
             <filterchain>
                 <linecontainsregexp>
-                    <regexp pattern="Bundle-Version:.*" />
+                    <regexp pattern="Bundle-Version:.*"/>
                 </linecontainsregexp>
-                <replaceregex pattern="Bundle-Version: (.*)qualifier" replace="\1${forceContextQualifier}" />
-                <striplinebreaks />
+                <replaceregex pattern="Bundle-Version: (.*)qualifier" replace="\1${forceContextQualifier}"/>
+                <striplinebreaks/>
             </filterchain>
         </loadfile>
-        <echo message="Building version ${build.version}" />
+        <echo message="Building version ${build.version}"/>
     </target>
 
-    <!-- 
+    <!--
         ======================================================================================
         Build targets
         ======================================================================================
@@ -175,41 +175,41 @@
 
     <target name="build" depends="check-ivy-installed,eclipse-classpath,compute-version" description="Build the plugin distribution binaries">
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true" taskname="pde-build">
-            <arg value="-clean" />
-            <arg line="-application org.eclipse.pde.build.Build" />
-            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
-            <sysproperty key="baseLocation" value="${baseLocation}" />
-            <sysproperty key="builder" path="${basedir}/builder/component" />
-            <sysproperty key="mapsPath" path="${basedir}/builder/maps" />
-            <sysproperty key="buildDirectory" path="${eclipse.work.dir}" />
-            <sysproperty key="DSTAMP" value="${DSTAMP}" />
-            <sysproperty key="TSTAMP" value="${TSTAMP}" />
-            <sysproperty key="forceContextQualifier" value="${forceContextQualifier}" />
-            <sysproperty key="outputUpdateJars" value="true" />
-            <sysproperty key="build.version" value="${build.version}" />
-            <sysproperty key="javacDebugInfo" value="true" />
+            <arg value="-clean"/>
+            <arg line="-application org.eclipse.pde.build.Build"/>
+            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}"/>
+            <sysproperty key="baseLocation" value="${baseLocation}"/>
+            <sysproperty key="builder" path="${basedir}/builder/component"/>
+            <sysproperty key="mapsPath" path="${basedir}/builder/maps"/>
+            <sysproperty key="buildDirectory" path="${eclipse.work.dir}"/>
+            <sysproperty key="DSTAMP" value="${DSTAMP}"/>
+            <sysproperty key="TSTAMP" value="${TSTAMP}"/>
+            <sysproperty key="forceContextQualifier" value="${forceContextQualifier}"/>
+            <sysproperty key="outputUpdateJars" value="true"/>
+            <sysproperty key="build.version" value="${build.version}"/>
+            <sysproperty key="javacDebugInfo" value="true"/>
         </java>
     </target>
 
     <target name="generate-dist-doc-files" depends="compute-version">
-        <property name="checkUpToDate" value="true" />
+        <property name="checkUpToDate" value="true"/>
         <condition property="overwrite">
-            <isfalse value="${checkUpToDate}" />
+            <isfalse value="${checkUpToDate}"/>
         </condition>
-        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc" />
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}/doc"/>
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}/doc" overwrite="${overwrite}">
             <fileset dir="${src.doc.dir}">
-                <include name="style/**" />
-                <include name="js/**" />
-                <include name="images/**" />
+                <include name="style/**"/>
+                <include name="js/**"/>
+                <include name="images/**"/>
             </fileset>
         </copy>
     </target>
 
     <target name="generate-dist-doc-book-adoc" depends="generate-dist-doc-files">
         <scriptdef name="generate-book-adoc" language="javascript">
-            <attribute name="jsontocfile" />
-            <attribute name="destFile" />
+            <attribute name="jsontocfile"/>
+            <attribute name="destFile"/>
             <![CDATA[
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
                 r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
@@ -251,16 +251,16 @@
                 out.close();
             ]]>
         </scriptdef>
-        <mkdir dir="${work.dir}/book" />
-        <generate-book-adoc jsontocfile="${src.doc.dir}/toc.json" destFile="${work.dir}/book/book.adoc" />
+        <mkdir dir="${work.dir}/book"/>
+        <generate-book-adoc jsontocfile="${src.doc.dir}/toc.json" destFile="${work.dir}/book/book.adoc"/>
     </target>
 
     <target name="generate-dist-doc-book" depends="compute-version,init-asciidoctor,generate-dist-doc-book-adoc">
         <asciidoctor:convert sourceDirectory="${work.dir}/book" outputDirectory="${dist.work.dir}/apache-ivyde-${build.version}/doc" backend="xhtml5"
                              templateDir="${doc.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
             <attribute key="imagesdir" value=""/>
-            <attribute key="version" value="${build.version}" />
-            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
+            <attribute key="version" value="${build.version}"/>
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro"/>
         </asciidoctor:convert>
     </target>
 
@@ -269,34 +269,34 @@
                              templateDir="${doc.dir}/templates/articles" sourceHighlighter="highlightjs" preserveDirectories="true">
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
-            <attribute key="version" value="${build.version}" />
-            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
+            <attribute key="version" value="${build.version}"/>
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro"/>
         </asciidoctor:convert>
     </target>
 
-    <target name="generate-dist-doc-html" depends="generate-dist-doc-articles,generate-dist-doc-book" />
+    <target name="generate-dist-doc-html" depends="generate-dist-doc-articles,generate-dist-doc-book"/>
 
     <target name="package-binaries" depends="build,generate-p2-category,generate-dist-doc-files,generate-dist-doc-html">
-        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}" />
-        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
-        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}" />
+        <mkdir dir="${dist.work.dir}/apache-ivyde-${build.version}"/>
+        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}"/>
+        <unzip src="${eclipse.work.dir}/${build.version}/org.apache.ivyde.eclipse.resolvevisualizer.feature-${build.version}.zip" dest="${dist.work.dir}/apache-ivyde-${build.version}"/>
         <!-- packaging the zip as a p2 repository -->
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
-            <fileset dir="${eclipse.work.dir}/p2repo" />
+            <fileset dir="${eclipse.work.dir}/p2repo"/>
         </copy>
         <copy todir="${dist.work.dir}/apache-ivyde-${build.version}">
             <fileset dir="${basedir}">
-                <include name="LICENSE" />
-                <include name="NOTICE" />
-                <include name="CHANGES.txt" />
-                <include name="README.txt" />
+                <include name="LICENSE"/>
+                <include name="NOTICE"/>
+                <include name="CHANGES.txt"/>
+                <include name="README.txt"/>
             </fileset>
         </copy>
-        <mkdir dir="${dist.dir}" />
-        <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}" />
-        <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tar.gz" basedir="${dist.work.dir}" compression="gzip" />
+        <mkdir dir="${dist.dir}"/>
+        <zip destfile="${dist.dir}/apache-ivyde-${build.version}.zip" basedir="${dist.work.dir}"/>
+        <tar destfile="${dist.dir}/apache-ivyde-${build.version}.tar.gz" basedir="${dist.work.dir}" compression="gzip"/>
         <!-- put the version in a file so it will be easier in the build of the
-            updatesite on jenkins to find out which version it is -->
+             updatesite on jenkins to find out which version it is -->
         <echo file="${dist.dir}/version.properties">
 ivyde.build.version=${build.version}
         </echo>
@@ -304,31 +304,31 @@ ivyde.build.version=${build.version}
 
     <target name="package-sources" depends="compute-version">
         <exec executable="svn" dir="${basedir}" outputproperty="svn.info.url">
-            <arg value="--xml" />
-            <arg value="info" />
+            <arg value="--xml"/>
+            <arg value="info"/>
             <redirector>
                 <outputfilterchain>
-                    <containsregex pattern="&lt;url&gt;(.*)&lt;/url&gt;" replace="\1" />
+                    <containsregex pattern="&lt;url&gt;(.*)&lt;/url&gt;" replace="\1"/>
                 </outputfilterchain>
             </redirector>
         </exec>
-        <delete dir="${work.dir}/sources" />
-        <mkdir dir="${work.dir}/sources" />
+        <delete dir="${work.dir}/sources"/>
+        <mkdir dir="${work.dir}/sources"/>
         <exec executable="svn" dir="${work.dir}/sources" >
-            <arg value="export" />
-            <arg value="${svn.info.url}" />
-            <arg value="apache-ivyde-sources-${build.version}" />
+            <arg value="export"/>
+            <arg value="${svn.info.url}"/>
+            <arg value="apache-ivyde-sources-${build.version}"/>
         </exec>
-        <mkdir dir="${dist.dir}" />
-        <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources" />
-        <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz" basedir="${work.dir}/sources" compression="gzip" />
+        <mkdir dir="${dist.dir}"/>
+        <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources"/>
+        <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz" basedir="${work.dir}/sources" compression="gzip"/>
     </target>
 
     <target name="generate-p2-category" depends="compute-version,eclipse-classpath">
         <loadfile property="ASL2-header" srcFile="${basedir}/builder/ASL2-header.xml"/>
         <echo file="${work.dir}/category.xml"><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
 <site>
-    <category-def name="org.apache.ivyde.category" label="Apache IvyDE Eclipse plugins" />
+    <category-def name="org.apache.ivyde.category" label="Apache IvyDE Eclipse plugins"/>
     <feature url="features/org.apache.ivyde.feature_${build.version}.jar" id="org.apache.ivyde.feature" version="${build.version}">
         <category name="org.apache.ivyde.category"/>
     </feature>
@@ -340,20 +340,20 @@ ivyde.build.version=${build.version}
         <makeurl file="${eclipse.work.dir}/p2repo" property="p2repo.eclipse.work.dir.url"/>
         <makeurl file="${work.dir}/category.xml" property="p2repo.category.url"/>
         <java classpath="${eclipse.classpath}" classname="org.eclipse.core.launcher.Main" fork="true" failonerror="true">
-            <arg line="-clean" />
-            <arg line="-application org.eclipse.equinox.p2.publisher.CategoryPublisher" />
-            <arg line="-metadataRepository ${p2repo.eclipse.work.dir.url}" />
-            <arg line="-categoryDefinition ${p2repo.category.url}" />
-            <arg line="-categoryQualifier" />
-            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}" />
+            <arg line="-clean"/>
+            <arg line="-application org.eclipse.equinox.p2.publisher.CategoryPublisher"/>
+            <arg line="-metadataRepository ${p2repo.eclipse.work.dir.url}"/>
+            <arg line="-categoryDefinition ${p2repo.category.url}"/>
+            <arg line="-categoryQualifier"/>
+            <sysproperty key="eclipse.consoleLog" value="${eclipse.consoleLog}"/>
         </java>
         <!-- as we're at it, let's put the ASL header -->
         <replaceregexp match="&lt;repository name='" replace="${ASL2-header}&lt;repository name='" flags="g">
-            <fileset dir="${eclipse.work.dir}/p2repo" includes="*.xml" />
+            <fileset dir="${eclipse.work.dir}/p2repo" includes="*.xml"/>
         </replaceregexp>
     </target>
 
-    <!-- 
+    <!--
         ======================================================================================
         Targets related to the installation of Ivy in the Eclipse install
         ======================================================================================
@@ -365,24 +365,24 @@ ivyde.build.version=${build.version}
             <zipentry zipfile="${ivy.jar.file}" name="META-INF/MANIFEST.MF"/>
             <filterchain>
                 <linecontains>
-                    <contains value="Bundle-Version:" />
+                    <contains value="Bundle-Version:"/>
                 </linecontains>
                 <tokenfilter>
-                    <replaceregex pattern="Bundle-Version: (.*)" replace="\1" flags="gi" />
+                    <replaceregex pattern="Bundle-Version: (.*)" replace="\1" flags="gi"/>
                 </tokenfilter>
-                <striplinebreaks />
+                <striplinebreaks/>
             </filterchain>
         </loadresource>
-        <echo message="Ivy Bundle-Version: ${ivy.bundle.version}" />
+        <echo message="Ivy Bundle-Version: ${ivy.bundle.version}"/>
     </target>
 
     <!-- clean up every installed ivy and install the specified one -->
     <target name="install-ivy-jar" depends="compute-ivy-bundle-version">
         <delete>
-            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivy_*.jar" />
+            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivy_*.jar"/>
         </delete>
-        <copy file="${ivy.jar.file}" tofile="${baseLocation}/plugins/org.apache.ivy_${ivy.bundle.version}.jar" />
-        <echo message="Ivy ${ivy.bundle.version} has been installed in ${baseLocation}" />
+        <copy file="${ivy.jar.file}" tofile="${baseLocation}/plugins/org.apache.ivy_${ivy.bundle.version}.jar"/>
+        <echo message="Ivy ${ivy.bundle.version} has been installed in ${baseLocation}"/>
     </target>
 
     <!-- Get the Ivy jar from a zip distribution -->
@@ -395,44 +395,44 @@ You have to specify the Ivy to install with one of the following property:
             <condition>
                 <not>
                     <or>
-                        <isset property="ivy.version" />
-                        <isset property="ivy.zip.url" />
+                        <isset property="ivy.version"/>
+                        <isset property="ivy.zip.url"/>
                     </or>
                 </not>
             </condition>
         </fail>
-        <mkdir dir="${ivy.work.dir}/distrib" />
-        <mkdir dir="${basedir}/dependencies" />
-        <property name="ivy.zip.url" value="${mirror.url}/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip" />
-        <get src="${ivy.zip.url}" usetimestamp="true" dest="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" verbose="true" />
-        <unzip overwrite="true" src="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" dest="${ivy.work.dir}/distrib" />
+        <mkdir dir="${ivy.work.dir}/distrib"/>
+        <mkdir dir="${basedir}/dependencies"/>
+        <property name="ivy.zip.url" value="${mirror.url}/ant/ivy/${ivy.version}/apache-ivy-${ivy.version}-bin.zip"/>
+        <get src="${ivy.zip.url}" usetimestamp="true" dest="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" verbose="true"/>
+        <unzip overwrite="true" src="${basedir}/dependencies/apache-ivy-${ivy.version}-bin.zip" dest="${ivy.work.dir}/distrib"/>
         <path id="ivy.jar.path">
             <first count="1">
-                <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar" />
+                <fileset dir="${ivy.work.dir}" includes="distrib/apache-ivy-*/ivy-*.jar"/>
             </first>
         </path>
-        <makeurl property="ivy.jar.url" file="${toString:ivy.jar.path}" />
-        <echo message="ivy.jar.url: ${ivy.jar.url}" />
+        <makeurl property="ivy.jar.url" file="${toString:ivy.jar.path}"/>
+        <echo message="ivy.jar.url: ${ivy.jar.url}"/>
     </target>
 
     <target name="install-ivy" depends="check-baseLocation,get-ivy-jar,install-ivy-jar" description="Install an Ivy bundle into the eclipse install">
-        <delete dir="${ivy.work.dir}" />
+        <delete dir="${ivy.work.dir}"/>
     </target>
 
     <target name="list-installed-ivy" depends="check-baseLocation" description="List the Ivy bundle(s) in your Eclipse install">
         <path id="ivy.eclipse.paths">
-            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivy_*.jar" />
+            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivy_*.jar"/>
         </path>
         <condition property="ivy.installed">
-            <resourcecount refid="ivy.eclipse.paths" when="greater" count="0" />
+            <resourcecount refid="ivy.eclipse.paths" when="greater" count="0"/>
         </condition>
-        <echo message="The Ivy installed in ${baseLocation}: ${toString:ivy.eclipse.paths}" />
+        <echo message="The Ivy installed in ${baseLocation}: ${toString:ivy.eclipse.paths}"/>
     </target>
 
     <target name="check-ivy-installed" depends="list-installed-ivy">
     </target>
 
-    <!-- 
+    <!--
         ======================================================================================
         Targets related to the installation of IvyDE in the Eclipse install
         ======================================================================================
@@ -440,23 +440,23 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="clean-installed-ivyde" description="Remove every IvyDE version installed in Eclipse">
         <delete>
-            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivyde*.jar" />
-            <fileset dir="${baseLocation}/features/" includes="org.apache.ivyde*.jar" />
+            <fileset dir="${baseLocation}/plugins/" includes="org.apache.ivyde*.jar"/>
+            <fileset dir="${baseLocation}/features/" includes="org.apache.ivyde*.jar"/>
         </delete>
     </target>
 
     <target name="list-installed-ivyde" depends="check-baseLocation" description="List the IvyDE plugin(s) in your Eclipse install">
         <path id="ivyde.eclipse.paths">
-            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivyde*.jar" />
+            <fileset dir="${baseLocation}/plugins" includes="org.apache.ivyde*.jar"/>
         </path>
-        <echo message="The IvyDE installed in ${baseLocation}: ${toString:ivyde.eclipse.paths}" />
+        <echo message="The IvyDE installed in ${baseLocation}: ${toString:ivyde.eclipse.paths}"/>
     </target>
 
     <target name="install" depends="dist,clean-installed-ivyde" description="Install the IvyDE bundle into the eclipse install">
-        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${baseLocation}" />
+        <unzip src="${dist.dir}/org.apache.ivyde.feature-${build.version}.zip" dest="${baseLocation}"/>
     </target>
 
-    <!-- 
+    <!--
         ======================================================================================
         Targets related to the checksums of the distribution
         ======================================================================================
@@ -465,14 +465,14 @@ You have to specify the Ivy to install with one of the following property:
     <target name="checksum" description="Compute the checksum for every artifact to distribute">
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM">
             <fileset dir="${dist.dir}">
-                <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tar.gz" />
+                <include name="apache-ivyde-*.zip"/>
+                <include name="apache-ivyde-*.tar.gz"/>
             </fileset>
         </checksum>
         <checksum algorithm="SHA" fileext=".sha" format="MD5SUM">
             <fileset dir="${dist.dir}">
-                <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tar.gz" />
+                <include name="apache-ivyde-*.zip"/>
+                <include name="apache-ivyde-*.tar.gz"/>
             </fileset>
         </checksum>
     </target>
@@ -480,28 +480,28 @@ You have to specify the Ivy to install with one of the following property:
     <target name="verify-checksum" description="Verify the checksums of the artifacts to publish">
         <checksum algorithm="MD5" fileext=".md5" format="MD5SUM" verifyproperty="checksum.md5.ok">
             <fileset dir="${dist.dir}">
-                <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tar.gz" />
+                <include name="apache-ivyde-*.zip"/>
+                <include name="apache-ivyde-*.tar.gz"/>
             </fileset>
         </checksum>
         <fail message="MD5 Checksum verify failed !">
             <condition>
-                <isfalse value="${checksum.md5.ok}" />
+                <isfalse value="${checksum.md5.ok}"/>
             </condition>
         </fail>
-        <echo message="MD5 Checksum verify passed successfully" />
+        <echo message="MD5 Checksum verify passed successfully"/>
         <checksum algorithm="SHA" fileext=".sha" format="MD5SUM" verifyproperty="checksum.sha.ok">
             <fileset dir="${dist.dir}">
-                <include name="apache-ivyde-*.zip" />
-                <include name="apache-ivyde-*.tar.gz" />
+                <include name="apache-ivyde-*.zip"/>
+                <include name="apache-ivyde-*.tar.gz"/>
             </fileset>
         </checksum>
         <fail message="SHA Checksum verify failed !">
             <condition>
-                <isfalse value="${checksum.sha.ok}" />
+                <isfalse value="${checksum.sha.ok}"/>
             </condition>
         </fail>
-        <echo message="SHA Checksum verify passed successfully" />
+        <echo message="SHA Checksum verify passed successfully"/>
     </target>
 
     <!--
@@ -512,17 +512,17 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="checkstyle" depends="init-ivy" description="Generate checkstyle report">
         <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="5.0"
-                       inline="true" conf="default" pathid="checkstyle.classpath" transitive="true" />
-        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
+                       inline="true" conf="default" pathid="checkstyle.classpath" transitive="true"/>
+        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
 
-        <mkdir dir="${checkstyle.report.dir}" />
+        <mkdir dir="${checkstyle.report.dir}"/>
         <checkstyle config="${checkstyle.src.dir}/checkstyle-config" failOnViolation="false" failureProperty="checkstyle.failed">
             <classpath>
-                <path refid="checkstyle.classpath" />
+                <path refid="checkstyle.classpath"/>
             </classpath>
-            <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml" />
+            <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml"/>
             <fileset dir="org.apache.ivyde.eclipse/src/java">
-                <include name="**/*.java" />
+                <include name="**/*.java"/>
             </fileset>
         </checkstyle>
     </target>
@@ -533,83 +533,83 @@ You have to specify the Ivy to install with one of the following property:
         ======================================================================================
     -->
 
-    <target name="prepare-eclipse" depends="download-eclipse,unzip-eclipse" />
+    <target name="prepare-eclipse" depends="download-eclipse,unzip-eclipse"/>
 
-    <target name="download-eclipse" depends="eclipse-get-sdk,eclipse-get-wtp,eclipse-get-emf,eclipse-get-xsd,eclipse-get-gef,eclipse-get-zest" />
+    <target name="download-eclipse" depends="eclipse-get-sdk,eclipse-get-wtp,eclipse-get-emf,eclipse-get-xsd,eclipse-get-gef,eclipse-get-zest"/>
 
     <target name="eclipse-check-download-sdk">
-        <check-eclipse-download id="sdk" />
+        <check-eclipse-download id="sdk"/>
     </target>
 
     <target name="eclipse-get-sdk" depends="eclipse-check-download-sdk" unless="eclipse.sdk.downloaded">
-        <eclipse-download id="sdk" />
+        <eclipse-download id="sdk"/>
     </target>
 
     <target name="eclipse-check-download-wtp">
-        <check-eclipse-download id="wtp" />
+        <check-eclipse-download id="wtp"/>
     </target>
 
     <target name="eclipse-get-wtp" depends="eclipse-check-download-wtp" unless="eclipse.wtp.downloaded">
-        <eclipse-download id="wtp" />
+        <eclipse-download id="wtp"/>
     </target>
 
     <target name="eclipse-check-download-emf">
-        <check-eclipse-download id="emf" />
+        <check-eclipse-download id="emf"/>
     </target>
 
     <target name="eclipse-get-emf" depends="eclipse-check-download-emf" unless="eclipse.emf.downloaded">
-        <eclipse-download id="emf" />
+        <eclipse-download id="emf"/>
     </target>
 
     <target name="eclipse-check-download-xsd">
-        <check-eclipse-download id="xsd" />
+        <check-eclipse-download id="xsd"/>
     </target>
 
     <target name="eclipse-get-xsd" depends="eclipse-check-download-xsd" unless="eclipse.xsd.downloaded">
-        <eclipse-download id="xsd" />
+        <eclipse-download id="xsd"/>
     </target>
 
     <target name="eclipse-check-download-gef">
-        <check-eclipse-download id="gef" />
+        <check-eclipse-download id="gef"/>
     </target>
 
     <target name="eclipse-get-gef" depends="eclipse-check-download-gef" unless="eclipse.gef.downloaded">
-        <eclipse-download id="gef" />
+        <eclipse-download id="gef"/>
     </target>
 
     <target name="eclipse-check-download-zest">
-        <check-eclipse-download id="zest" />
+        <check-eclipse-download id="zest"/>
     </target>
 
     <target name="eclipse-get-zest" depends="eclipse-check-download-zest" unless="eclipse.zest.downloaded">
-        <eclipse-download id="zest" />
+        <eclipse-download id="zest"/>
     </target>
 
     <!-- wrapper of eclipse download urls which have a common pattern -->
     <macrodef name="check-eclipse-download">
-        <attribute name="id" />
+        <attribute name="id"/>
         <sequential>
-            <echo file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip.MD5" message="${eclipse.download.@{id}.md5}" />
+            <echo file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip.MD5" message="${eclipse.download.@{id}.md5}"/>
             <condition property="eclipse.@{id}.downloaded">
                 <and>
-                    <available file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" />
-                    <checksum file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" algorithm="MD5" />
+                    <available file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip"/>
+                    <checksum file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" algorithm="MD5"/>
                 </and>
             </condition>
         </sequential>
     </macrodef>
     <macrodef name="eclipse-download">
-        <attribute name="id" />
+        <attribute name="id"/>
         <sequential>
-            <property name="eclipse.download.@{id}.baseurl" value="${eclipse.download.baseurl}" />
-            <mkdir dir="${basedir}/dependencies" />
-            <delete file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" failonerror="false" />
+            <property name="eclipse.download.@{id}.baseurl" value="${eclipse.download.baseurl}"/>
+            <mkdir dir="${basedir}/dependencies"/>
+            <delete file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" failonerror="false"/>
             <get src="${eclipse.download.@{id}.baseurl}/${eclipse.download.@{id}.dropdir}/${eclipse.download.@{id}.name}.zip"
-                 dest="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" verbose="yes" />
+                 dest="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" verbose="yes"/>
             <fail message="Bad MD5 on downloaded file ${eclipse.download.@{id}.name}">
                 <condition>
                     <not>
-                        <checksum file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" algorithm="MD5" />
+                        <checksum file="${basedir}/dependencies/${eclipse.download.@{id}.name}.zip" algorithm="MD5"/>
                     </not>
                 </condition>
             </fail>
@@ -618,25 +618,25 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="check-unzip-eclipse">
         <condition property="eclipse.unzipped">
-            <available file="${basedir}/dependencies/${eclipse.download.sdk.name}" />
+            <available file="${basedir}/dependencies/${eclipse.download.sdk.name}"/>
         </condition>
     </target>
 
     <target name="unzip-eclipse" depends="check-unzip-eclipse" unless="eclipse.unzipped">
-        <delete dir="${basedir}/dependencies/eclipse" failonerror="false" />
-        <delete dir="${basedir}/dependencies/${eclipse.download.sdk.name}" failonerror="false" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.sdk.name}.zip" dest="${basedir}/dependencies" />
-        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.wtp.name}" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.wtp.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.wtp.name}" />
-        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.emf.name}" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.emf.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.emf.name}" />
-        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.xsd.name}" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.xsd.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.xsd.name}" />
-        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}" />
-        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}" />
-        <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}" />
-        <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${eclipse.download.sdk.name}" />
+        <delete dir="${basedir}/dependencies/eclipse" failonerror="false"/>
+        <delete dir="${basedir}/dependencies/${eclipse.download.sdk.name}" failonerror="false"/>
+        <unzip src="${basedir}/dependencies/${eclipse.download.sdk.name}.zip" dest="${basedir}/dependencies"/>
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.wtp.name}"/>
+        <unzip src="${basedir}/dependencies/${eclipse.download.wtp.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.wtp.name}"/>
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.emf.name}"/>
+        <unzip src="${basedir}/dependencies/${eclipse.download.emf.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.emf.name}"/>
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.xsd.name}"/>
+        <unzip src="${basedir}/dependencies/${eclipse.download.xsd.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.xsd.name}"/>
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}"/>
+        <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}"/>
+        <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}"/>
+        <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}"/>
+        <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${eclipse.download.sdk.name}"/>
     </target>
 
     <!--
@@ -645,14 +645,14 @@ You have to specify the Ivy to install with one of the following property:
         ======================================================================================
     -->
 
-    <target name="jenkins-prepare" depends="prepare-eclipse,jenkins-prepare-properties,jenkins-install-ivy" />
+    <target name="jenkins-prepare" depends="prepare-eclipse,jenkins-prepare-properties,jenkins-install-ivy"/>
 
     <target name="jenkins-prepare-properties">
-        <tstamp />
+        <tstamp/>
         <condition property="jenkins.version.qualifier" value="${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}">
-            <length string="${version.qualifier}" trim="true" length="0" />
+            <length string="${version.qualifier}" trim="true" length="0"/>
         </condition>
-        <property name="jenkins.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}" />
+        <property name="jenkins.version.qualifier" value="${version.qualifier}-${DSTAMP}${TSTAMP}-jenkins-${env.BUILD_NUMBER}"/>
         <echo file="local.build.properties">
 forceContextQualifier=${jenkins.version.qualifier}
 </echo>
@@ -661,9 +661,9 @@ forceContextQualifier=${jenkins.version.qualifier}
     <target name="jenkins-install-ivy">
         <ant antfile="build.xml" target="install-ivy">
             <!-- defined, to avoid to download anything -->
-            <property name="ivy.jar.url" value="" />
+            <property name="ivy.jar.url" value=""/>
             <!-- this path should be propulated by the Jenkins plugins which will copy artifacts from the Ivy Job -->
-            <property name="ivy.jar.file" value="${basedir}/dependencies/build/artifact/jars/ivy.jar" />
+            <property name="ivy.jar.file" value="${basedir}/dependencies/build/artifact/jars/ivy.jar"/>
         </ant>
     </target>
 
@@ -677,11 +677,11 @@ forceContextQualifier=${jenkins.version.qualifier}
     </target>
 
     <target name="clean-eclipse-doc" unless="skip.doc">
-        <delete dir="${eclipse-doc.dir}" />
+        <delete dir="${eclipse-doc.dir}"/>
     </target>
 
     <target name="generate-sample-zip" unless="skip.doc">
-        <zip destfile="${src.doc.dir}/sample/webapp-js-repo.zip" basedir="${src.doc.dir}/sample/webapp-js-repo" />
+        <zip destfile="${src.doc.dir}/sample/webapp-js-repo.zip" basedir="${src.doc.dir}/sample/webapp-js-repo"/>
     </target>
 
     <target name="generate-eclipse-doc-html" depends="init-asciidoctor,compute-version" unless="skip.doc">
@@ -689,29 +689,29 @@ forceContextQualifier=${jenkins.version.qualifier}
                              templateDir="${doc.dir}/templates/eclipse" preserveDirectories="true">
             <attribute key="basedir" value="${src.doc.dir}"/>
             <attribute key="imagesdir" value=""/>
-            <attribute key="version" value="${build.version}" />
-            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
+            <attribute key="version" value="${build.version}"/>
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro"/>
         </asciidoctor:convert>
     </target>
 
     <target name="generate-eclipse-doc-files" unless="skip.doc">
-        <property name="checkUpToDate" value="true" />
+        <property name="checkUpToDate" value="true"/>
         <condition property="overwrite">
-            <isfalse value="${checkUpToDate}" />
+            <isfalse value="${checkUpToDate}"/>
         </condition>
         <copy todir="${eclipse-doc.dir}" overwrite="${overwrite}">
             <fileset dir="${src.doc.dir}">
-                <include name="style/**" />
-                <include name="js/**" />
-                <include name="images/**" />
+                <include name="style/**"/>
+                <include name="js/**"/>
+                <include name="images/**"/>
             </fileset>
         </copy>
     </target>
 
     <target name="generate-eclipse-toc" unless="skip.doc">
         <scriptdef name="generate-eclipse-toc" language="javascript">
-            <attribute name="jsontocfile" />
-            <attribute name="destFile" />
+            <attribute name="jsontocfile"/>
+            <attribute name="destFile"/>
             <![CDATA[
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
                 r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
@@ -739,7 +739,7 @@ forceContextQualifier=${jenkins.version.qualifier}
                 out.close();
             ]]>
         </scriptdef>
-        <generate-eclipse-toc jsontocfile="${src.doc.dir}/toc.json" destFile="${eclipse-doc.dir}/toc.xml" />
+        <generate-eclipse-toc jsontocfile="${src.doc.dir}/toc.json" destFile="${eclipse-doc.dir}/toc.xml"/>
     </target>
 
 
@@ -756,7 +756,7 @@ forceContextQualifier=${jenkins.version.qualifier}
         <fail message="No release available to check. Missing '${dist.dir}/version.properties'">
             <condition>
                 <not>
-                    <available file="${dist.dir}/version.properties" />
+                    <available file="${dist.dir}/version.properties"/>
                 </not>
             </condition>
         </fail>
@@ -767,7 +767,7 @@ forceContextQualifier=${jenkins.version.qualifier}
                  classpathref="rat.classpath"/>
         <delete dir="${rat.dir}"/>
         <mkdir dir="${rat.dir}"/>
-        <property file="${dist.dir}/version.properties" />
+        <property file="${dist.dir}/version.properties"/>
         <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportfile="${rat.dir}/report.txt">
             <tarfileset>
                 <gzipresource>
