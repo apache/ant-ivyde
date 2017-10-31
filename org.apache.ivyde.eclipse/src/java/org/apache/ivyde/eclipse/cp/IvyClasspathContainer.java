@@ -25,19 +25,19 @@ import org.eclipse.core.runtime.IStatus;
 
 public interface IvyClasspathContainer {
 
-    public static final String ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
+    String ID = "org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER";
 
-    public IvyClasspathContainerConfiguration getConf();
+    IvyClasspathContainerConfiguration getConf();
 
-    public void setConf(IvyClasspathContainerConfiguration conf);
+    void setConf(IvyClasspathContainerConfiguration conf);
 
-    public IStatus launchResolve(boolean usePreviousResolveIfExist, IProgressMonitor monitor);
+    IStatus launchResolve(boolean usePreviousResolveIfExist, IProgressMonitor monitor);
 
-    public URL getReportUrl();
+    URL getReportUrl();
 
-    public void reloadSettings();
+    void reloadSettings();
 
-    public ResolveReport getResolveReport();
+    ResolveReport getResolveReport();
 
-    public String getDescription();
+    String getDescription();
 }

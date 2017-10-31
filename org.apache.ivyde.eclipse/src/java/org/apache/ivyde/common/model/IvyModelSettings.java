@@ -20,8 +20,8 @@ package org.apache.ivyde.common.model;
 import org.apache.ivy.Ivy;
 
 public interface IvyModelSettings {
-    public String getDefaultOrganization();
-    public String getDefaultOrganizationURL();
-    public Ivy getIvyInstance();
-    public void logError(String message, Exception e);
+    String getDefaultOrganization();
+    String getDefaultOrganizationURL();
+    Ivy getIvyInstance();
+    void logError(String message, Exception e);
 }

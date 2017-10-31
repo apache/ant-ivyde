@@ -21,9 +21,9 @@ import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
 
 public interface ModuleDescriptorExtension {
 
-    public final static String EXTENSION_POINT = "org.apache.ivyde.eclipse.moduleDescriptorExtension";
+    String EXTENSION_POINT = "org.apache.ivyde.eclipse.moduleDescriptorExtension";
 
-    public IvyModuleDescriptorModel contributeModel(
+    IvyModuleDescriptorModel contributeModel(
             IvyModuleDescriptorModel ivyModuleDescriptorModel);
 
 }

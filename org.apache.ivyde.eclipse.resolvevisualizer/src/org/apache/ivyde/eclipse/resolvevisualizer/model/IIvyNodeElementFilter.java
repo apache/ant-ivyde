@@ -18,9 +18,9 @@
 package org.apache.ivyde.eclipse.resolvevisualizer.model;
 
 public interface IIvyNodeElementFilter {
-    public IvyNodeElement[] filter(IvyNodeElement[] unfiltered);
+    IvyNodeElement[] filter(IvyNodeElement[] unfiltered);
 
-    public boolean isEnabled();
+    boolean isEnabled();
 
-    public void setEnabled(boolean enabled);
+    void setEnabled(boolean enabled);
 }

@@ -22,6 +22,6 @@ import java.util.Map;
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
 
 public interface ILabelDecoratorAlgorithm {
-    public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
+    void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
             Map/* <EntityConnectionData> */highlightRelationships, Map/* <IvyNodeElement> */highlightEntities);
 }
