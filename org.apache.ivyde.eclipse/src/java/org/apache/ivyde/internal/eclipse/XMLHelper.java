@@ -59,7 +59,7 @@ public class XMLHelper {
         InputStream schemaStream = null;
         try {
             if (schema != null) {
-                schemaStream = URLHandlerRegistry.getDefault().openStream(schema);
+                schemaStream = URLHandlerRegistry.getDefault().openStream(schema, null);
             }
             SAXParser parser = newSAXParser(schema, schemaStream, loadExternalDtds);
 

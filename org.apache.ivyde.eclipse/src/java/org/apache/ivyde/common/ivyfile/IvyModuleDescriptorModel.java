@@ -32,6 +32,7 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivyde.common.model.IValueProvider;
 import org.apache.ivyde.common.model.IvyBooleanTagAttribute;
 import org.apache.ivyde.common.model.IvyFile;
@@ -76,7 +77,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         + "It should be given in this format: yyyyMMddHHmmss");
         pubTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                return new String[] {Ivy.DATE_FORMAT.format(new Date())};
+                return new String[] {DateUtil.format(new Date())};
             }
         });
         IvyTagAttribute moduleTagAttribute = new IvyTagAttribute("module",
@@ -253,7 +254,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         + "It should be given in this format: yyyyMMddHHmmss", false);
         deprecatedTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                return new String[] {Ivy.DATE_FORMAT.format(new Date())};
+                return new String[] {DateUtil.format(new Date())};
             }
         });
         conf.addAttribute(deprecatedTagAttribute);

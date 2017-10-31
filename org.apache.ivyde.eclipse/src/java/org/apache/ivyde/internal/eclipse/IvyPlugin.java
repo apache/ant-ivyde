@@ -159,7 +159,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         retrieveSetupManager = new RetrieveSetupManager();
 
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        workspace.addSaveParticipant(this, retrieveSetupManager);
+        workspace.addSaveParticipant(ID, retrieveSetupManager);
 
         colorManager = new ColorManager();
         Display.getDefault().asyncExec(new Runnable() {
@@ -248,7 +248,7 @@ public class IvyPlugin extends AbstractUIPlugin {
         ivyAttachmentManager = null;
         resourceBundle = null;
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        workspace.removeSaveParticipant(this);
+        workspace.removeSaveParticipant(ID);
         colorManager = null;
         ivyMarkerManager = null;
         ivyResolveJob = null;

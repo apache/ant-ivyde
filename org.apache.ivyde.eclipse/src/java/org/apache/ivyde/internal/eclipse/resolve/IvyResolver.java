@@ -361,7 +361,7 @@ public class IvyResolver {
         if (!result.isPreviousUsed()) {
             options.setResolveId(result.getReport().getResolveId());
         }
-        options.setConfs(confs);
+        options.setConfs(confs).setDestArtifactPattern(pattern);
         if (retrieveTypes != null && !retrieveTypes.equals("*")) {
             List typeList = IvyClasspathUtil.split(retrieveTypes);
             options.setArtifactFilter(new ArtifactTypeFilter(typeList));
@@ -381,7 +381,7 @@ public class IvyResolver {
         // Actually do the retrieve
         // FIXME here we will parse a report we already have
         // with a better Java API, we could do probably better
-        int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        int numberOfItemsRetrieved = ivy.retrieve(md.getModuleRevisionId(), options).getNbrArtifactsCopied();
 
         IvyDEMessage.info(numberOfItemsRetrieved + " retrieved file(s)");
 
