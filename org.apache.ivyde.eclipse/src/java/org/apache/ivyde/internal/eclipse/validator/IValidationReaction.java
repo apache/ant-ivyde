@@ -19,7 +19,7 @@ package org.apache.ivyde.internal.eclipse.validator;
 
 public interface IValidationReaction {
 
-    public void ok();
+    void ok();
 
-    public void error();
+    void error();
 }
