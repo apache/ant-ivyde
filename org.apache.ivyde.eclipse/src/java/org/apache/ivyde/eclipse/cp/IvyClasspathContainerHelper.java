@@ -158,14 +158,8 @@ public final class IvyClasspathContainerHelper {
                         IClasspathContainer cp = JavaCore.getClasspathContainer(path, javaProject);
                         if (cp instanceof IvyClasspathContainerImpl) {
                             IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) cp;
-                            ResolvedPath settingsPath;
-                            try {
-                                settingsPath = ivycp.getConf().getInheritedSettingsSetup()
-                                        .getResolvedIvySettingsPath(ivycp.getConf().getProject());
-                            } catch (IvyDEException e) {
-                                // cannot resolve the ivy settings so just ignore
-                                continue;
-                            }
+                            ResolvedPath settingsPath = ivycp.getConf().getInheritedSettingsSetup()
+                                    .getResolvedIvySettingsPath(ivycp.getConf().getProject());
                             if (settingsPath.getResolvedPath().equals(
                                 ivySettings.getProjectRelativePath().toString())) {
                                 containers.add(ivycp);

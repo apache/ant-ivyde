@@ -32,7 +32,7 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
         this.setup = setup;
     }
 
-    protected ResolvedPath getIvySettingsPath() throws IvyDEException {
+    protected ResolvedPath getIvySettingsPath() {
         return setup.getInheritedSettingSetup().getResolvedIvySettingsPath(setup.getProject());
     }
 
@@ -44,7 +44,7 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
         return setup.getProject();
     }
 
-    protected ResolvedPath getIvyUserDir() throws IvyDEException {
+    protected ResolvedPath getIvyUserDir() {
         return setup.getInheritedSettingSetup().getResolvedIvyUserDir(setup.getProject());
     }
 

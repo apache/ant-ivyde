@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.internal.eclipse.cpcontainer;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -62,7 +61,7 @@ public class ClasspathEntriesResolver extends IvyResolver {
     }
 
     protected void postResolveOrRefresh(Ivy ivy, ModuleDescriptor md, ResolveResult resolveResult,
-            IProgressMonitor monitor) throws IOException {
+            IProgressMonitor monitor) {
         IvyClasspathContainerMapper mapper = new IvyClasspathContainerMapper(monitor, ivy, conf,
                 resolveResult);
 

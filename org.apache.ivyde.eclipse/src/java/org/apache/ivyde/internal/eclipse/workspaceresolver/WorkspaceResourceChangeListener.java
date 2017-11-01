@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -75,12 +74,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
                     default:
                         return;
                 }
-                try {
-                    if (IvyNatureHelper.hasNature(project)) {
-                        projectClosed(project);
-                    }
-                } catch (CoreException e) {
-                    // project doesn't exist or is not open: ignore
+                if (IvyNatureHelper.hasNature(project)) {
+                    projectClosed(project);
                 }
             } else if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
                 if (!IvyPlugin.getPreferenceStoreHelper().getAutoResolveOnOpen()) {
@@ -95,7 +90,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         }
     }
 
-    private void projectClosed(final IProject project) throws JavaModelException {
+    private void projectClosed(final IProject project) {
         // Check if one of Ivy projects is being removed
         List containers = IvyClasspathContainerHelper.getContainers(project);
         if (containers.isEmpty()) {

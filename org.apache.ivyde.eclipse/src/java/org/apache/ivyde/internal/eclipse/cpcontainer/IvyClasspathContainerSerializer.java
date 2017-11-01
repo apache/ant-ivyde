@@ -439,7 +439,7 @@ public class IvyClasspathContainerSerializer {
         return att;
     }
 
-    private String getAttribute(NamedNodeMap attributes, String name) throws IOException {
+    private String getAttribute(NamedNodeMap attributes, String name) {
         Node node = attributes.getNamedItem(name);
         if (node == null) {
             return null;

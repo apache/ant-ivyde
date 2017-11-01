@@ -192,7 +192,7 @@ public class IvyResolver {
     }
 
     protected void postResolveOrRefresh(Ivy ivy, ModuleDescriptor md, ResolveResult resolveResult,
-            IProgressMonitor monitor) throws IOException {
+            IProgressMonitor monitor) {
         // nothing to do by default
     }
 

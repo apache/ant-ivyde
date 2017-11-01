@@ -82,11 +82,11 @@ public abstract class CachedIvy {
 
     protected abstract String getIvyXmlPath();
 
-    protected abstract ResolvedPath getIvySettingsPath() throws IvyDEException;
+    protected abstract ResolvedPath getIvySettingsPath();
 
     protected abstract boolean isLoadSettingsOnDemandPath();
 
-    protected abstract ResolvedPath getIvyUserDir() throws IvyDEException;
+    protected abstract ResolvedPath getIvyUserDir();
 
     protected abstract Collection getPropertyFiles() throws IvyDEException;
 

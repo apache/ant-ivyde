@@ -55,7 +55,7 @@ public class SettingsSetup {
         this.ivyUserDir = setup.ivyUserDir;
     }
 
-    public ResolvedPath getResolvedIvySettingsPath(IProject project) throws IvyDEException {
+    public ResolvedPath getResolvedIvySettingsPath(IProject project) {
         return new ResolvedPath(ivySettingsPath, project);
     }
 
@@ -104,7 +104,7 @@ public class SettingsSetup {
         this.ivyUserDir = ivyUserDir;
     }
 
-    public ResolvedPath getResolvedIvyUserDir(IProject project) throws IvyDEException {
+    public ResolvedPath getResolvedIvyUserDir(IProject project) {
         return new ResolvedPath(ivyUserDir, project);
     }
 

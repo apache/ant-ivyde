@@ -42,7 +42,7 @@ public class IvyClasspathContainerState extends CachedIvy {
         reset();
     }
 
-    protected ResolvedPath getIvySettingsPath() throws IvyDEException {
+    protected ResolvedPath getIvySettingsPath() {
         return conf.getInheritedSettingsSetup().getResolvedIvySettingsPath(getProject());
     }
 
@@ -62,7 +62,7 @@ public class IvyClasspathContainerState extends CachedIvy {
         return conf.getInheritedSettingsSetup().isLoadSettingsOnDemand();
     }
 
-    protected ResolvedPath getIvyUserDir() throws IvyDEException {
+    protected ResolvedPath getIvyUserDir() {
         return conf.getInheritedSettingsSetup().getResolvedIvyUserDir(getProject());
     }
 

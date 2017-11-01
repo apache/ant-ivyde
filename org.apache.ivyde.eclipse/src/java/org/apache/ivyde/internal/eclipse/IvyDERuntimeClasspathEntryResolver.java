@@ -36,7 +36,6 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
@@ -65,7 +64,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
     }
 
     private IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry,
-            IJavaProject project) throws JavaModelException, CoreException {
+            IJavaProject project) throws CoreException {
         IvyClasspathContainerImpl ivycp;
 
         if (project == null) {
