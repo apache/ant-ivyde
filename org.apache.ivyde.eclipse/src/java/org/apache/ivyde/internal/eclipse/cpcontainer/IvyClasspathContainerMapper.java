@@ -263,10 +263,10 @@ public class IvyClasspathContainerMapper {
         Artifact artifact = adr.getArtifact();
         monitor.subTask("searching " + matcher.getName() + " for " + artifact);
         for (ArtifactDownloadReport otherAdr : all) {
-            Artifact a = otherAdr.getArtifact();
-            if (otherAdr.getLocalFile() != null && matcher.matchName(artifact, a.getName())
-                    && a.getModuleRevisionId().equals(artifact.getModuleRevisionId())
-                    && matcher.match(a)) {
+            Artifact otherArtifact = otherAdr.getArtifact();
+            if (otherAdr.getLocalFile() != null && matcher.matchName(artifact, otherArtifact.getName())
+                    && otherArtifact.getModuleRevisionId().equals(artifact.getModuleRevisionId())
+                    && matcher.match(otherArtifact)) {
                 return getArtifactPath(otherAdr, innerPath);
             }
         }
@@ -277,8 +277,7 @@ public class IvyClasspathContainerMapper {
         if (artifacts != null) {
             Artifact foundArtifact = null;
             int nbFound = 0;
-            for (int i = 0; i < artifacts.length; i++) {
-                Artifact metaArtifact = artifacts[i];
+            for (Artifact metaArtifact : artifacts) {
                 if (matcher.match(metaArtifact)) {
                     if (matcher.matchName(artifact, metaArtifact.getName())) {
                         // we've found a matching artifact, let's provision it
@@ -311,7 +310,7 @@ public class IvyClasspathContainerMapper {
         return null;
     }
 
-    private ArtifactMatcher sourceArtifactMatcher = new ArtifactMatcher() {
+    private final ArtifactMatcher sourceArtifactMatcher = new ArtifactMatcher() {
         public boolean matchName(Artifact artifact, String source) {
             return isArtifactName(artifact, source, mapping.getSourceSuffixes(), "source");
         }
@@ -325,7 +324,7 @@ public class IvyClasspathContainerMapper {
         }
     };
 
-    private ArtifactMatcher javadocArtifactMatcher = new ArtifactMatcher() {
+    private final ArtifactMatcher javadocArtifactMatcher = new ArtifactMatcher() {
         public boolean matchName(Artifact artifact, String javadoc) {
             return isArtifactName(artifact, javadoc, mapping.getJavadocSuffixes(), "javadoc");
         }

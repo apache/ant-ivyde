@@ -110,8 +110,6 @@ public final class IvyClasspathContainerConfAdapter {
         MappingSetup mappingSetup = conf.getMappingSetup();
         AdvancedSetup advancedSetup = conf.getAdvancedSetup();
 
-        String url = path.segment(1).substring(1);
-        String[] parameters = url.split("&");
         conf.setAdvancedProjectSpecific(false);
         conf.setSettingsProjectSpecific(false);
 
@@ -120,8 +118,8 @@ public final class IvyClasspathContainerConfAdapter {
         boolean isRetrieveProjectSpecific = false;
         RetrieveSetup standaloneRetrieveSetup = new RetrieveSetup();
 
-        for (int i = 0; i < parameters.length; i++) {
-            String[] parameter = parameters[i].split("=");
+        for (String keyValue : path.segment(1).substring(1).split("&")) {
+            String[] parameter = keyValue.split("=");
             if (parameter == null || parameter.length == 0) {
                 continue;
             }

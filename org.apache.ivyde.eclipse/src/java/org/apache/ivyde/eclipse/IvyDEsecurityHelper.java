@@ -52,8 +52,7 @@ public final class IvyDEsecurityHelper {
     }
 
     public static void cpyCredentialsFromSecureToIvyStorage() {
-        List<SecuritySetup> credentials = getCredentialsFromSecureStore();
-        for (SecuritySetup entry : credentials) {
+        for (SecuritySetup entry : getCredentialsFromSecureStore()) {
             addCredentialsToIvyCredentialStorage(entry);
             IvyPlugin.logInfo("Credentials " + entry.toString()
                     + " from eclipse secure storage copied to ivyDE credential store");
@@ -84,11 +83,9 @@ public final class IvyDEsecurityHelper {
         List<SecuritySetup> setupValues = new ArrayList<>();
         if (preferences.nodeExists(IVY_DE_CREDENTIALS_BASE_NODE)) {
             ISecurePreferences node = preferences.node(IVY_DE_CREDENTIALS_BASE_NODE);
-            String[] childNames = node.childrenNames();
-            for (String childName : childNames) {
+            for (String childName : node.childrenNames()) {
                 ISecurePreferences childNode = node.node(childName);
-                String[] childChildNames = childNode.childrenNames();
-                for (String childChildName : childChildNames) {
+                for (String childChildName : childNode.childrenNames()) {
                     ISecurePreferences childChildNode = childNode.node(childChildName);
                     try {
                         SecuritySetup toAdd = new SecuritySetup(

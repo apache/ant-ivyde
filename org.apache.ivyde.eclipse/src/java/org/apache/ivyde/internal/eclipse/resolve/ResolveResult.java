@@ -36,13 +36,13 @@ public class ResolveResult {
 
     private final boolean previousUsed;
 
-    private Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<>();
+    private final Set<ArtifactDownloadReport> artifactReports = new LinkedHashSet<>();
 
     private Set<String> problemMessages = new HashSet<>();
 
     private final ResolveReport report;
 
-    private Map<ModuleRevisionId, Artifact[]> artifactsByDependency = new HashMap<>();
+    private final Map<ModuleRevisionId, Artifact[]> artifactsByDependency = new HashMap<>();
 
     /**
      * Mapping of resolved artifact to their retrieved path, <code>null</code> if there were no

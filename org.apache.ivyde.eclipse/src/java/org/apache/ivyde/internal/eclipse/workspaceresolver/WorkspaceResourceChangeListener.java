@@ -204,9 +204,9 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
             return allContainers;
         }
 
-        for (int i = 0; i < projects.length; i++) {
-            if (!openedProjects.contains(projects[i].getProject())) {
-                allContainers.addAll(IvyClasspathContainerHelper.getContainers(projects[i]));
+        for (IJavaProject project : projects) {
+            if (!openedProjects.contains(project.getProject())) {
+                allContainers.addAll(IvyClasspathContainerHelper.getContainers(project));
             }
         }
 

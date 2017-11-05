@@ -207,30 +207,30 @@ public class IvyClasspathContainerSerializer {
         Node cpEntriesNode = document.createElement(CPENTRIES);
         node.appendChild(cpEntriesNode);
 
-        for (int i = 0; i < classpathEntries.length; i++) {
+        for (IClasspathEntry classpathEntry : classpathEntries) {
             Node cpEntryNode = document.createElement(CPENTRY);
             cpEntriesNode.appendChild(cpEntryNode);
 
-            int kind = classpathEntries[i].getEntryKind();
+            int kind = classpathEntry.getEntryKind();
             NamedNodeMap attributes = cpEntryNode.getAttributes();
             Attr attr = document.createAttribute(KIND);
             attr.setValue(Integer.toString(kind));
             attributes.setNamedItem(attr);
 
             attr = document.createAttribute(PATH);
-            attr.setValue(classpathEntries[i].getPath().toString());
+            attr.setValue(classpathEntry.getPath().toString());
             attributes.setNamedItem(attr);
 
-            IPath source = classpathEntries[i].getSourceAttachmentPath();
+            IPath source = classpathEntry.getSourceAttachmentPath();
             if (source != null) {
                 attr = document.createAttribute(SOURCE);
                 attr.setValue(source.toString());
                 attributes.setNamedItem(attr);
             }
 
-            writeAccessRules(ivycp, document, cpEntryNode, classpathEntries[i].getAccessRules());
+            writeAccessRules(ivycp, document, cpEntryNode, classpathEntry.getAccessRules());
 
-            writeCpAttr(ivycp, document, cpEntryNode, classpathEntries[i].getExtraAttributes());
+            writeCpAttr(ivycp, document, cpEntryNode, classpathEntry.getExtraAttributes());
         }
     }
 
@@ -242,17 +242,17 @@ public class IvyClasspathContainerSerializer {
         Node accessRulesNode = document.createElement(ACCESS_RULES);
         cpEntryNode.appendChild(accessRulesNode);
 
-        for (int i = 0; i < accessRules.length; i++) {
+        for (IAccessRule accessRule : accessRules) {
             Node accessRuleNode = document.createElement(RULE);
             accessRulesNode.appendChild(accessRuleNode);
 
             NamedNodeMap attributes = accessRuleNode.getAttributes();
             Attr attr = document.createAttribute(PATTERN);
-            attr.setValue(accessRules[i].getPattern().toString());
+            attr.setValue(accessRule.getPattern().toString());
             attributes.setNamedItem(attr);
 
             attr = document.createAttribute(KIND);
-            attr.setValue(Integer.toString(accessRules[i].getKind()));
+            attr.setValue(Integer.toString(accessRule.getKind()));
             attributes.setNamedItem(attr);
 
         }
@@ -266,17 +266,17 @@ public class IvyClasspathContainerSerializer {
         Node cpAttrsNode = document.createElement(CPATTRS);
         node.appendChild(cpAttrsNode);
 
-        for (int i = 0; i < attrs.length; i++) {
+        for (IClasspathAttribute attribute : attrs) {
             Node attrNode = document.createElement(ATTR);
             cpAttrsNode.appendChild(attrNode);
 
             NamedNodeMap attributes = attrNode.getAttributes();
             Attr attr = document.createAttribute(NAME);
-            attr.setValue(attrs[i].getName());
+            attr.setValue(attribute.getName());
             attributes.setNamedItem(attr);
 
             attr = document.createAttribute(VALUE);
-            attr.setValue(attrs[i].getValue());
+            attr.setValue(attribute.getValue());
             attributes.setNamedItem(attr);
         }
     }

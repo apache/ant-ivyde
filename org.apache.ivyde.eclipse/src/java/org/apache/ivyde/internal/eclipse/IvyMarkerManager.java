@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 public class IvyMarkerManager {
@@ -65,9 +64,8 @@ public class IvyMarkerManager {
                 return;
             }
             if (status.isMultiStatus()) {
-                IStatus[] allStatus = status.getChildren();
-                for (int i = 0; i < allStatus.length; i++) {
-                    addMarker(r, allStatus[i]);
+                for (IStatus childStatus : status.getChildren()) {
+                    addMarker(r, childStatus);
                 }
             } else {
                 addMarker(r, status);

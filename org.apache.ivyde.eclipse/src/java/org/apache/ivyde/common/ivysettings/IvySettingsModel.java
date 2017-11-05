@@ -257,9 +257,7 @@ public class IvySettingsModel extends IvyModel {
             private void init() {
                 if (!init) {
                     try {
-                        Method[] methods = clazz.getMethods();
-                        for (int i = 0; i < methods.length; i++) {
-                            Method m = methods[i];
+                        for (Method m : clazz.getMethods()) {
                             if (m.getName().startsWith("create")
                                     && m.getParameterTypes().length == 0
                                     && isSupportedChildType(m.getReturnType())) {
@@ -335,7 +333,7 @@ public class IvySettingsModel extends IvyModel {
             return true;
         }
         try {
-            type.getConstructor(new Class[] {String.class});
+            type.getConstructor(String.class);
             return true;
         } catch (Exception e) {
             return false;

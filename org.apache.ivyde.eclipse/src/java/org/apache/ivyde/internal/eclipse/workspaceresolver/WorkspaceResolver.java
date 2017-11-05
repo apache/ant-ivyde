@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
@@ -150,28 +148,28 @@ public class WorkspaceResolver extends AbstractResolver {
 
         // Not much to do here - downloads are not required for workspace projects.
         DownloadReport dr = new DownloadReport();
-        for (int i = 0; i < artifacts.length; i++) {
-            ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
+        for (Artifact artifact : artifacts) {
+            ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
             dr.addArtifactReport(adr);
             // Only report java projects as downloaded
-            if (artifacts[i].getType().equals(ECLIPSE_PROJECT_TYPE)) {
+            if (artifact.getType().equals(ECLIPSE_PROJECT_TYPE)) {
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
-                Message.verbose("\t[IN WORKSPACE] " + artifacts[i]);
-            } else if (workspaceArtifacts != null && workspaceArtifacts.containsKey(artifacts[i])) {
+                Message.verbose("\t[IN WORKSPACE] " + artifact);
+            } else if (workspaceArtifacts != null && workspaceArtifacts.containsKey(artifact)) {
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
                 // there is some 'forced' artifact by the dependency descriptor
-                Artifact eclipseArtifact = workspaceArtifacts.get(artifacts[i]);
+                Artifact eclipseArtifact = workspaceArtifacts.get(artifact);
                 ArtifactDownloadReport eclipseAdr = new ArtifactDownloadReport(eclipseArtifact);
                 eclipseAdr.setDownloadStatus(DownloadStatus.NO);
                 eclipseAdr.setSize(0);
-                workspaceReports.put(artifacts[i], eclipseAdr);
+                workspaceReports.put(artifact, eclipseAdr);
                 Message.verbose("\t[IN WORKSPACE] " + eclipseArtifact);
             } else {
                 adr.setDownloadStatus(DownloadStatus.FAILED);
                 Message.verbose("\t[Eclipse Workspace resolver] "
-                        + "cannot download non-project artifact: " + artifacts[i]);
+                        + "cannot download non-project artifact: " + artifact);
             }
         }
         return dr;
@@ -200,15 +198,12 @@ public class WorkspaceResolver extends AbstractResolver {
 
         // Iterate over workspace to find Java project which has an Ivy
         // container for this dependency
-        for (int i = 0; i < projects.length; i++) {
-            IProject p = projects[i];
+        for (IProject p : projects) {
             if (!p.exists()) {
                 continue;
             }
-            List<IvyClasspathContainer> containers = IvyClasspathContainerHelper.getContainers(p);
-            Iterator<IvyClasspathContainer> itContainer = containers.iterator();
-            while (itContainer.hasNext()) {
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
+            for (IvyClasspathContainer container : IvyClasspathContainerHelper.getContainers(p)) {
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) container;
                 ModuleDescriptor md = ivycp.getState().getCachedModuleDescriptor();
                 if (md == null) {
                     continue;
@@ -323,11 +318,11 @@ public class WorkspaceResolver extends AbstractResolver {
                             workspaceArtifacts = new HashMap<>();
                             parentContext.set(IVYDE_WORKSPACE_ARTIFACTS, workspaceArtifacts);
                         }
-                        for (int j = 0; j < dArtifacts.length; j++) {
-                            Artifact artifact = new MDArtifact(md, dArtifacts[j].getName(),
-                                    dArtifacts[j].getType(), dArtifacts[j].getExt(),
-                                    dArtifacts[j].getUrl(),
-                                    dArtifacts[j].getQualifiedExtraAttributes());
+                        for (DependencyArtifactDescriptor dArtifact : dArtifacts) {
+                            Artifact artifact = new MDArtifact(md, dArtifact.getName(),
+                                    dArtifact.getType(), dArtifact.getExt(),
+                                    dArtifact.getUrl(),
+                                    dArtifact.getQualifiedExtraAttributes());
                             workspaceArtifacts.put(artifact, af);
                         }
                         IvyContext.pushContext(currentContext);
@@ -368,27 +363,24 @@ public class WorkspaceResolver extends AbstractResolver {
         if (allConfs.length == 0) {
             newMd.addArtifact(ModuleDescriptor.DEFAULT_CONFIGURATION, af);
         } else {
-            for (int k = 0; k < allConfs.length; k++) {
-                newMd.addConfiguration(allConfs[k]);
-                newMd.addArtifact(allConfs[k].getName(), af);
+            for (Configuration conf : allConfs) {
+                newMd.addConfiguration(conf);
+                newMd.addArtifact(conf.getName(), af);
             }
         }
 
-        DependencyDescriptor[] dependencies = md.getDependencies();
-        for (int k = 0; k < dependencies.length; k++) {
-            newMd.addDependency(dependencies[k]);
+        for (DependencyDescriptor dependency : md.getDependencies()) {
+            newMd.addDependency(dependency);
         }
 
-        ExcludeRule[] allExcludeRules = md.getAllExcludeRules();
-        for (int k = 0; k < allExcludeRules.length; k++) {
-            newMd.addExcludeRule(allExcludeRules[k]);
+        for (ExcludeRule excludeRule : md.getAllExcludeRules()) {
+            newMd.addExcludeRule(excludeRule);
         }
 
         newMd.getExtraInfos().addAll(md.getExtraInfos());
 
-        License[] licenses = md.getLicenses();
-        for (int k = 0; k < licenses.length; k++) {
-            newMd.addLicense(licenses[k]);
+        for (License license : md.getLicenses()) {
+            newMd.addLicense(license);
         }
 
         return newMd;

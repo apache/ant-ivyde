@@ -223,7 +223,7 @@ public class IvyPlugin extends AbstractUIPlugin {
             osgiAvailable = true;
             try {
                 Class.forName("org.apache.ivy.osgi.core.BundleInfo")
-                        .getDeclaredMethod("getClasspath", new Class[] {});
+                        .getDeclaredMethod("getClasspath");
                 osgiClasspathAvailable = true;
             } catch (Exception e) {
                 osgiClasspathAvailable = false;

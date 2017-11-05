@@ -210,10 +210,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 viewer.refresh();
 
-                TreeItem[] items = viewer.getTree().getItems();
-
-                for (int i = 0; i < items.length; i++) {
-                    TreeItem item = items[i];
+                for (TreeItem item : viewer.getTree().getItems()) {
                     MultiRevDependencyDescriptor multiRD = (MultiRevDependencyDescriptor) item
                             .getData();
 
@@ -360,9 +357,9 @@ public class ReverseDependencyExplorerView extends ViewPart {
     }
 
     class CPDependencyDescriptor {
-        private IvyClasspathContainerImpl container;
+        private final IvyClasspathContainerImpl container;
 
-        private MultiRevDependencyDescriptor multiRevisionDescriptor;
+        private final MultiRevDependencyDescriptor multiRevisionDescriptor;
 
         public CPDependencyDescriptor(IvyClasspathContainerImpl container,
                 MultiRevDependencyDescriptor multiRevisionDescriptor) {

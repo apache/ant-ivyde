@@ -87,7 +87,6 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
                 addElement(projects, element);
             }
         }
-
         return projects;
     }
 

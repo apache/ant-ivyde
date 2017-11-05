@@ -214,14 +214,14 @@ public class IvyResolver {
         ResolveResult result = new ResolveResult();
 
         // we check if all required configurations have been resolved
-        for (int i = 0; i < confs.length; i++) {
-            IvyDEMessage.verbose("Fetching the resolve report for configuration " + confs[i]);
+        for (String conf : confs) {
+            IvyDEMessage.verbose("Fetching the resolve report for configuration " + conf);
 
             File report = ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
-                IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), confs[i]);
+                    IvyClasspathUtil.buildResolveId(useExtendedResolveId, md), conf);
             IvyDEMessage.debug("Checking resolve report at " + report);
             if (!report.exists()) {
-                IvyDEMessage.info("The resolve report for the configuration " + confs[i]
+                IvyDEMessage.info("The resolve report for the configuration " + conf
                         + " was not found. Falling back by doing a resolve again.");
                 return doResolve(ivy, md);
             } else {
@@ -296,26 +296,26 @@ public class IvyResolver {
      */
     private void findAllArtifactOnRefresh(Ivy ivy, XmlReportParser parser, ResolveResult result)
             throws ParseException {
-        ModuleRevisionId[] dependencyMrdis = parser.getDependencyRevisionIds();
+        ModuleRevisionId[] dependencyMrids = parser.getDependencyRevisionIds();
         IvyDEMessage.verbose("Resolve report parsed. Fetching artifacts of "
-                + dependencyMrdis.length + " dependencie(s)");
-        for (int iDep = 0; iDep < dependencyMrdis.length; iDep++) {
-            DependencyResolver depResolver = ivy.getSettings().getResolver(dependencyMrdis[iDep]);
+                + dependencyMrids.length + " dependencie(s)");
+        for (ModuleRevisionId dependencyMrid : dependencyMrids) {
+            DependencyResolver depResolver = ivy.getSettings().getResolver(dependencyMrid);
             DefaultDependencyDescriptor depDescriptor = new DefaultDependencyDescriptor(
-                    dependencyMrdis[iDep], false);
+                    dependencyMrid, false);
             ResolveOptions options = new ResolveOptions();
             options.setRefresh(true);
             options.setUseCacheOnly(true);
-            IvyDEMessage.debug("Fetching dependency " + dependencyMrdis[iDep]);
+            IvyDEMessage.debug("Fetching dependency " + dependencyMrid);
             ResolvedModuleRevision dependency = depResolver.getDependency(depDescriptor,
                 new ResolveData(ivy.getResolveEngine(), options));
             if (dependency != null) {
                 Artifact[] artifacts = dependency.getDescriptor().getAllArtifacts();
-                IvyDEMessage.debug("Dependency " + dependencyMrdis[iDep] + " found: "
+                IvyDEMessage.debug("Dependency " + dependencyMrid + " found: "
                         + artifacts.length + " artifact(s) found");
-                result.putArtifactsForDep(dependencyMrdis[iDep], artifacts);
+                result.putArtifactsForDep(dependencyMrid, artifacts);
             } else {
-                IvyDEMessage.debug("Dependency " + dependencyMrdis[iDep] + " not found");
+                IvyDEMessage.debug("Dependency " + dependencyMrid + " not found");
             }
         }
     }

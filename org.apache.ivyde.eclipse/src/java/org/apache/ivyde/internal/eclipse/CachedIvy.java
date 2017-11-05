@@ -287,11 +287,8 @@ public abstract class CachedIvy {
                     // don't care
                 }
 
-                Iterator keys = props.keySet().iterator();
-                while (keys.hasNext()) {
-                    String key = (String) keys.next();
-                    String value = props.getProperty(key);
-                    ivySettings.setVariable(key, value);
+                for (String key : props.stringPropertyNames()) {
+                    ivySettings.setVariable(key, props.getProperty(key));
                 }
             }
         }

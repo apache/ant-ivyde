@@ -57,7 +57,7 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
     private Map/* <IvyNodeElement, Color> */highlightedDependencies = new HashMap/* <IvyNodeElement, Color> */();
     private Color disabledColor = null;
     private IvyNodeElement pinnedNode = null;
-    private GraphViewer viewer;
+    private final GraphViewer viewer;
 
     private ILabelDecoratorAlgorithm autoSelectDecorator = new ShortestRootPathAlgorithm();
     private final DirectDependenciesAlgorithm rootDirectDependenciesDecorator = new DirectDependenciesAlgorithm();

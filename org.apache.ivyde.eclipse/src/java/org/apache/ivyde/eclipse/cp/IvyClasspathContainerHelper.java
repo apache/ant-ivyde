@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivyde.eclipse.IvyDEException;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathUtil;
@@ -91,9 +90,7 @@ public final class IvyClasspathContainerHelper {
             return containers;
         }
         try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
+            for (IClasspathEntry entry : javaProject.getRawClasspath()) {
                 if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
                     IPath path = entry.getPath();
                     if (isIvyClasspathContainer(path)) {
@@ -118,9 +115,7 @@ public final class IvyClasspathContainerHelper {
             return containers;
         }
         try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
+            for (IClasspathEntry entry : javaProject.getRawClasspath()) {
                 if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
                     IPath path = entry.getPath();
                     if (isIvyClasspathContainer(path)) {
@@ -149,9 +144,7 @@ public final class IvyClasspathContainerHelper {
             return containers;
         }
         try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
+            for (IClasspathEntry entry : javaProject.getRawClasspath()) {
                 if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
                     IPath path = entry.getPath();
                     if (isIvyClasspathContainer(path)) {
@@ -205,9 +198,7 @@ public final class IvyClasspathContainerHelper {
             return null;
         }
         try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            for (int i = 0; i < entries.length; i++) {
-                IClasspathEntry entry = entries[i];
+            for (IClasspathEntry entry : javaProject.getRawClasspath()) {
                 if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
                     if (containerPath.equals(entry.getPath())) {
                         return entry;
@@ -237,11 +228,9 @@ public final class IvyClasspathContainerHelper {
     public static IProject[] getIvyProjectsInWorkspace() {
         Collection<IProject> ivyProjects = new HashSet<>();
 
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i].isOpen() && getContainers(projects[i]).size() > 0) {
-                ivyProjects.add(projects[i]);
+        for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+            if (project.isOpen() && getContainers(project).size() > 0) {
+                ivyProjects.add(project);
             }
         }
 

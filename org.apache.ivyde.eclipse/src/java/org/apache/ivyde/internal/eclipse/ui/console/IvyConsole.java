@@ -118,8 +118,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
      */
     public class MyLifecycle implements org.eclipse.ui.console.IConsoleListener {
         public void consolesAdded(IConsole[] consoles) {
-            for (int i = 0; i < consoles.length; i++) {
-                IConsole console = consoles[i];
+            for (IConsole console : consoles) {
                 if (console == IvyConsole.this) {
                     init();
                 }
@@ -128,8 +127,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         }
 
         public void consolesRemoved(IConsole[] consoles) {
-            for (int i = 0; i < consoles.length; i++) {
-                IConsole console = consoles[i];
+            for (IConsole console : consoles) {
                 if (console == IvyConsole.this) {
                     ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
                     dispose();
@@ -183,9 +181,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     private void dump() {
         synchronized (document) {
             visible = true;
-            ConsoleDocument.ConsoleLine[] lines = document.getLines();
-            for (int i = 0; i < lines.length; i++) {
-                ConsoleDocument.ConsoleLine line = lines[i];
+            for (ConsoleDocument.ConsoleLine line : document.getLines()) {
                 appendLine(line.getType(), line.getLine());
             }
             document.clear();

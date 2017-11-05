@@ -52,11 +52,8 @@ public final class IvyUtil {
                 if (md == null) {
                     continue;
                 }
-                DependencyDescriptor[] descriptors = md.getDependencies();
-                for (int j = 0; j < descriptors.length; j++) {
-                    DependencyDescriptor descriptor = descriptors[j];
-                    MultiRevDependencyDescriptor syncabledd = (MultiRevDependencyDescriptor) mdMap
-                            .get(descriptor.getDependencyId());
+                for (DependencyDescriptor descriptor : md.getDependencies()) {
+                    MultiRevDependencyDescriptor syncabledd = mdMap.get(descriptor.getDependencyId());
 
                     if (syncabledd == null) {
                         syncabledd = new MultiRevDependencyDescriptor(

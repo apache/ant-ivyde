@@ -178,13 +178,12 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
             final IResource res = event.getResource();
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
-                    for (int i = 0; i < pages.length; i++) {
+                    for (IWorkbenchPage page : getSite().getWorkbenchWindow().getPages()) {
                         if (((IFileEditorInput) xmlEditor.getEditorInput()).getFile().getProject()
                                 .equals(res)) {
-                            IEditorPart editorPart = pages[i]
+                            IEditorPart editorPart = page
                                     .findEditor(xmlEditor.getEditorInput());
-                            pages[i].closeEditor(editorPart, true);
+                            page.closeEditor(editorPart, true);
                         }
                     }
                 }

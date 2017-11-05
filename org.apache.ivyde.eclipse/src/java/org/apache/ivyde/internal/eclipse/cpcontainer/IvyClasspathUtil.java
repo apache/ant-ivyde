@@ -115,9 +115,7 @@ public final class IvyClasspathUtil {
                     "Entry must be of kind CPE_LIBRARY or " + "CPE_VARIABLE"); //$NON-NLS-1$
         }
 
-        IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
-        for (int i = 0; i < extraAttributes.length; i++) {
-            IClasspathAttribute attrib = extraAttributes[i];
+        for (IClasspathAttribute attrib : entry.getExtraAttributes()) {
             if (IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME.equals(attrib.getName())) {
                 try {
                     return new URL(attrib.getValue());
@@ -133,21 +131,21 @@ public final class IvyClasspathUtil {
      * Rewrites the module descriptor back to project's ivy file.
      *
      * @param descriptor ModuleDescriptor
-     * @param container IvyClasspathContainerImpl
+     * @param ivycp IvyClasspathContainerImpl
      * @throws IOException when access problems occur
      * @throws ParseException when parser problems occur
      * @throws IvyDEException when other problems occur
      */
-    public static void toIvyFile(ModuleDescriptor descriptor, IvyClasspathContainerImpl container)
+    public static void toIvyFile(ModuleDescriptor descriptor, IvyClasspathContainerImpl ivycp)
             throws ParseException, IOException, IvyDEException {
-        IvyClasspathContainerConfiguration conf = container.getConf();
+        IvyClasspathContainerConfiguration conf = ivycp.getConf();
         // TODO the ivy file might not be in the workspace or may be an absolute path
         // in a such case the Eclipse API will state the file a read only
         IFile ivyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());
         IStatus writable = ivyFile.getWorkspace().validateEdit(new IFile[] {ivyFile},
             IWorkspace.VALIDATE_PROMPT);
         if (writable.isOK()) {
-            descriptor.toIvyFile(container.getState().getIvyFile());
+            descriptor.toIvyFile(ivycp.getState().getIvyFile());
         }
     }
 

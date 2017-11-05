@@ -83,11 +83,10 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     private void parseModuleDescriptorExtensionMetadata() {
         final IExtension[] extensions = Platform.getExtensionRegistry()
                 .getExtensionPoint(ModuleDescriptorExtension.EXTENSION_POINT).getExtensions();
-        for (int i = 0; i < extensions.length; i++) {
-            final IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-            for (int j = 0; j < configElements.length; j++) {
+        for (IExtension extension : extensions) {
+            for (IConfigurationElement configElement : extension.getConfigurationElements()) {
                 final ModuleDescriptorExtensionDescriptor descriptor = new ModuleDescriptorExtensionDescriptor(
-                        configElements[j]);
+                        configElement);
                 moduleDescriptorExtensionDescriptors.add(descriptor);
             }
         }
@@ -96,11 +95,10 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     private void parseEditorPageExtensionMetadata() {
         final IExtension[] extensions = Platform.getExtensionRegistry()
                 .getExtensionPoint(IvyEditorPage.EXTENSION_POINT).getExtensions();
-        for (int i = 0; i < extensions.length; i++) {
-            final IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-            for (int j = 0; j < configElements.length; j++) {
+        for (IExtension extension : extensions) {
+            for (IConfigurationElement configElement : extension.getConfigurationElements()) {
                 final IvyEditorPageDescriptor descriptor = new IvyEditorPageDescriptor(
-                        configElements[j]);
+                        configElement);
                 ivyEditorPageDescriptors.add(descriptor);
             }
         }
@@ -284,12 +282,11 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
             final IResource res = event.getResource();
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
-                    for (int i = 0; i < pages.length; i++) {
+                    for (IWorkbenchPage page : getSite().getWorkbenchWindow().getPages()) {
                         if (((IFileEditorInput) xmlEditor.getEditorInput()).getFile().getProject()
                                 .equals(res)) {
-                            IEditorPart editorPart = pages[i].findEditor(xmlEditor.getEditorInput());
-                            pages[i].closeEditor(editorPart, true);
+                            IEditorPart editorPart = page.findEditor(xmlEditor.getEditorInput());
+                            page.closeEditor(editorPart, true);
                         }
                     }
                 }

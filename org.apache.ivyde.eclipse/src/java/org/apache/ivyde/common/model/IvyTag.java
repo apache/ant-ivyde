@@ -159,9 +159,9 @@ public class IvyTag {
             String[] values = provider.getValuesfor(ivyTagAttribute, ivyfile);
             if (values != null) {
                 Set ret = new HashSet(values.length);
-                for (int i = 0; i < values.length; i++) {
-                    if (values[i].startsWith(qualifier)) {
-                        ret.add(values[i]);
+                for (String value : values) {
+                    if (value.startsWith(qualifier)) {
+                        ret.add(value);
                     }
                 }
                 return (String[]) ret.toArray(new String[ret.size()]);
@@ -182,8 +182,7 @@ public class IvyTag {
         }
         IValueProvider provider = ivyTagAttribute.getValueProvider();
         if (provider != null && (provider instanceof IDocumentedValueProvider)) {
-            String doc = ((IDocumentedValueProvider) provider).getDocForValue(value, ivyfile);
-            return doc;
+            return ((IDocumentedValueProvider) provider).getDocForValue(value, ivyfile);
         }
         return null;
     }

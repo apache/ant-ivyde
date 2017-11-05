@@ -32,10 +32,9 @@ public class IvyConsoleFactory implements IConsoleFactory {
         IvyConsole console = IvyPlugin.getDefault().getConsole();
         if (console != null) {
             IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-            IConsole[] existing = manager.getConsoles();
             boolean exists = false;
-            for (int i = 0; i < existing.length; i++) {
-                if (console == existing[i]) {
+            for (IConsole existing : manager.getConsoles()) {
+                if (console == existing) {
                     exists = true;
                 }
             }
