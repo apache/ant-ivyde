@@ -90,7 +90,7 @@ public class IvyDEMessage {
         }
     }
 
-    public static List getProblems() {
+    public static List<String> getProblems() {
         return getLogger().getProblems();
     }
 

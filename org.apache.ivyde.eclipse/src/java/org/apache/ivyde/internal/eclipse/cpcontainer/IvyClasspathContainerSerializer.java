@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.IvyDEMessage;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
@@ -101,7 +101,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     public void save(IJavaProject project) {
-        List/* <IvyClasspathContainer> */ivycps = IvyClasspathContainerHelper
+        List<IvyClasspathContainer> containers = IvyClasspathContainerHelper
                 .getContainers(project);
         try {
             File file = new File(containersStateDir, project.getProject().getName() + ".xml");
@@ -109,7 +109,7 @@ public class IvyClasspathContainerSerializer {
                     + project.getProject().getName() + " into " + file);
             FileOutputStream out = new FileOutputStream(file);
             try {
-                write(out, ivycps);
+                write(out, containers);
             } finally {
                 try {
                     out.close();
@@ -123,7 +123,7 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    public Map/* <IPath, IvyClasspathContainer> */read(IJavaProject project) {
+    public Map<IPath, IvyClasspathContainer> read(IJavaProject project) {
         File file = new File(containersStateDir, project.getProject().getName() + ".xml");
         IvyDEMessage.verbose("Loading the state of the containers of the project "
                 + project.getProject().getName() + " from " + file);
@@ -150,7 +150,7 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    private void write(OutputStream out, List/* <IvyClasspathContainer> */containers)
+    private void write(OutputStream out, List<IvyClasspathContainer> containers)
             throws IOException {
         try {
             StreamResult result = new StreamResult(out);
@@ -161,9 +161,8 @@ public class IvyClasspathContainerSerializer {
             Node root = document.createElement(ROOT);
             document.appendChild(root);
 
-            Iterator it = containers.iterator();
-            while (it.hasNext()) {
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
+            for (IvyClasspathContainer container : containers) {
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) container;
 
                 Node node = document.createElement(IVYCP);
                 root.appendChild(node);
@@ -281,7 +280,7 @@ public class IvyClasspathContainerSerializer {
         }
     }
 
-    public Map/* <IPath, IvyClasspathContainer> */read(InputStream in) throws IOException,
+    public Map<IPath, IvyClasspathContainer> read(InputStream in) throws IOException,
             SAXException {
         try {
             InputSource source = new InputSource(in);
@@ -292,7 +291,7 @@ public class IvyClasspathContainerSerializer {
 
             NodeList elements = document.getElementsByTagName(IVYCP);
 
-            Map/* <IPath, IvyClasspathContainer> */ivycps = new HashMap();
+            Map<IPath, IvyClasspathContainer> containers = new HashMap<>();
 
             int count = elements.getLength();
             for (int i = 0; i != count; i++) {
@@ -320,9 +319,9 @@ public class IvyClasspathContainerSerializer {
 
                 IvyClasspathContainerImpl ivycp = new IvyClasspathContainerImpl(project, path, cpEntries,
                         cpAttributes);
-                ivycps.put(path, ivycp);
+                containers.put(path, ivycp);
             }
-            return ivycps;
+            return containers;
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -330,7 +329,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     private IClasspathEntry[] readCpEntries(Node cpEntries) throws IOException {
-        List/* <IClasspathEntry> */entries = new ArrayList();
+        List<IClasspathEntry> entries = new ArrayList<>();
         NodeList children = cpEntries.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node item = children.item(i);
@@ -341,7 +340,7 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         }
-        return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
+        return entries.toArray(new IClasspathEntry[entries.size()]);
     }
 
     private IClasspathEntry readCpEntry(Node cpEntryNode) throws IOException {
@@ -385,7 +384,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     private IAccessRule[] readAccessRules(Node accessRulesNode) throws IOException {
-        List/* <IAccessRule> */rules = new ArrayList();
+        List<IAccessRule> rules = new ArrayList<>();
         NodeList children = accessRulesNode.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node item = children.item(i);
@@ -396,7 +395,7 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         }
-        return (IAccessRule[]) rules.toArray(new IAccessRule[rules.size()]);
+        return rules.toArray(new IAccessRule[rules.size()]);
     }
 
     private IAccessRule readAccessRule(Node ruleNode) throws IOException {
@@ -407,7 +406,7 @@ public class IvyClasspathContainerSerializer {
     }
 
     private IClasspathAttribute[] readCpAttr(Node cpAttrsNode) throws IOException {
-        List/* <IClasspathAttribute> */attrs = new ArrayList();
+        List<IClasspathAttribute> attrs = new ArrayList<>();
         NodeList children = cpAttrsNode.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node item = children.item(i);
@@ -418,7 +417,7 @@ public class IvyClasspathContainerSerializer {
                 }
             }
         }
-        return (IClasspathAttribute[]) attrs.toArray(new IClasspathAttribute[attrs.size()]);
+        return attrs.toArray(new IClasspathAttribute[attrs.size()]);
     }
 
     private IClasspathAttribute readAttr(Node attrNode) throws IOException {

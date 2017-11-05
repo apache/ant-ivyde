@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.internal.eclipse.ui.menu;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,7 +34,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class CleanCacheAction extends Action {
 
-    private final List/* <Cleanable> */cleanables;
+    private final List<Cleanable> cleanables;
 
     private final String name;
 
@@ -89,13 +88,13 @@ public class CleanCacheAction extends Action {
         }
     }
 
-    public CleanCacheAction(String name, List/* <Cleanable> */cleanables) {
+    public CleanCacheAction(String name, List<Cleanable> cleanables) {
         this.name = name;
         this.cleanables = cleanables;
     }
 
     public void run() {
-        final boolean ok[] = new boolean[1];
+        final boolean[] ok = new boolean[1];
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
                 ok[0] = MessageDialog.openConfirm(IvyPlugin.getActiveWorkbenchShell(), name,
@@ -104,9 +103,7 @@ public class CleanCacheAction extends Action {
             }
         });
         if (ok[0]) {
-            Iterator itCleanable = cleanables.iterator();
-            while (itCleanable.hasNext()) {
-                Cleanable cleanable = (Cleanable) itCleanable.next();
+            for (Cleanable cleanable : cleanables) {
                 cleanable.launchClean();
                 IvyDEMessage.info("Ivy cache cleaned: " + cleanable.getName());
             }

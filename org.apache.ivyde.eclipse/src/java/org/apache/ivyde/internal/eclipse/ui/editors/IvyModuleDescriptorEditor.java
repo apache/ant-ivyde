@@ -18,7 +18,6 @@
 package org.apache.ivyde.internal.eclipse.ui.editors;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.common.ivyfile.IvyModuleDescriptorModel;
@@ -66,9 +65,9 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
 
     private Browser browser;
 
-    private List/* <IvyEditorPageDescriptor> */ivyEditorPageDescriptors = new ArrayList();
+    private final List<IvyEditorPageDescriptor> ivyEditorPageDescriptors = new ArrayList<>();
 
-    private List/* <ModuleDescriptorExtensionDescriptor> */moduleDescriptorExtensionDescriptors = new ArrayList();
+    private final List<ModuleDescriptorExtensionDescriptor> moduleDescriptorExtensionDescriptors = new ArrayList<>();
 
     /**
      * Creates a multi-page editor example.
@@ -141,10 +140,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     private IvyModuleDescriptorModel getIvyCompletionModel(IvyModelSettings ivyModelSettings) {
         IvyModuleDescriptorModel ivyModuleDescriptorModel = new IvyModuleDescriptorModel(
                 ivyModelSettings);
-        Iterator iterator = moduleDescriptorExtensionDescriptors.iterator();
-        while (iterator.hasNext()) {
-            ModuleDescriptorExtensionDescriptor descriptor = (ModuleDescriptorExtensionDescriptor) iterator
-                    .next();
+        for (ModuleDescriptorExtensionDescriptor descriptor : moduleDescriptorExtensionDescriptors) {
             ModuleDescriptorExtension moduleDescriptorExtension = descriptor
                     .createModuleDescriptorExtension();
             if (moduleDescriptorExtension != null) {
@@ -192,10 +188,7 @@ public class IvyModuleDescriptorEditor extends FormEditor implements IResourceCh
     }
 
     private void addIvyEditorPageExtensions() {
-        Iterator iterator = ivyEditorPageDescriptors.iterator();
-        while (iterator.hasNext()) {
-            IvyEditorPageDescriptor ivyEditorPageDescriptor = (IvyEditorPageDescriptor) iterator
-                    .next();
+        for (IvyEditorPageDescriptor ivyEditorPageDescriptor : ivyEditorPageDescriptors) {
             IvyEditorPage page = ivyEditorPageDescriptor.createPage();
             try {
                 page.initialize(this);

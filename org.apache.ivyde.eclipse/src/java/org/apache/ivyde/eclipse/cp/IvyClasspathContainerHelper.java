@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
@@ -56,13 +55,11 @@ public final class IvyClasspathContainerHelper {
         if (selection == null) {
             return null;
         }
-        for (@SuppressWarnings("unchecked")
-        Iterator<Object> it = selection.iterator(); it.hasNext();) {
-            Object element = it.next();
-            IvyClasspathContainerImpl cp = (IvyClasspathContainerImpl) IvyPlugin.adapt(element,
+        for (Object element : selection.toList()) {
+            IvyClasspathContainerImpl ivycp = IvyPlugin.adapt(element,
                 IvyClasspathContainerImpl.class);
-            if (cp != null) {
-                return cp;
+            if (ivycp != null) {
+                return ivycp;
             }
             if (element instanceof ClassPathContainer) {
                 // FIXME: we shouldn't check against internal JDT API but they are not adaptable to

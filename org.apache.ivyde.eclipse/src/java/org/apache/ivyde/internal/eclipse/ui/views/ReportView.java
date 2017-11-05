@@ -55,11 +55,11 @@ public class ReportView extends ViewPart implements ISelectionListener {
 
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {
         if (sel instanceof IStructuredSelection) {
-            IvyClasspathContainer ivycp = IvyClasspathContainerHelper
+            IvyClasspathContainer container = IvyClasspathContainerHelper
                     .getContainer((IStructuredSelection) sel);
-            if (ivycp != null) {
+            if (container != null) {
                 browser.setText("<html></html>");
-                URL report = ivycp.getReportUrl();
+                URL report = container.getReportUrl();
                 if (report == null || !browser.setUrl(report.toExternalForm())) {
                     browser.setText("<html></html>");
                     IvyDEMessage.warn("Impossible to set report view url to " + report.toExternalForm());

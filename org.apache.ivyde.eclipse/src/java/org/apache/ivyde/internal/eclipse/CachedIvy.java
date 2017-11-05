@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
@@ -88,7 +87,7 @@ public abstract class CachedIvy {
 
     protected abstract ResolvedPath getIvyUserDir();
 
-    protected abstract Collection getPropertyFiles() throws IvyDEException;
+    protected abstract Collection<String> getPropertyFiles() throws IvyDEException;
 
     protected abstract boolean isResolveInWorkspace();
 
@@ -248,14 +247,12 @@ public abstract class CachedIvy {
         if (ivyUserDir.isSet()) {
             ivySettings.setDefaultIvyUserDir(ivyUserDir.getFile());
         }
-        Collection propFiles = getPropertyFiles();
+        Collection<String> propFiles = getPropertyFiles();
         if (propFiles == null || propFiles.isEmpty()) {
             IvyDEMessage.verbose("No property files to load");
         } else {
             IvyDEMessage.verbose(propFiles.size() + " property file(s) to load");
-            Iterator iter = propFiles.iterator();
-            while (iter.hasNext()) {
-                String file = (String) iter.next();
+            for (String file : propFiles) {
                 InputStream is;
                 Path p = new Path(file);
                 IvyDEMessage.debug("Loading property file " + p);

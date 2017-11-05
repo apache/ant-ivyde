@@ -17,13 +17,10 @@
  */
 package org.apache.ivyde.internal.eclipse.ui.editors;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.ivyde.common.ivysettings.IvySettingsModel;
 import org.apache.ivyde.common.model.IvyModel;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
-import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.internal.eclipse.ui.core.IvyFileEditorInput;
 import org.apache.ivyde.internal.eclipse.ui.editors.xml.EclipseIvyModelSettings;
 import org.apache.ivyde.internal.eclipse.ui.editors.xml.IvyContentAssistProcessor;
@@ -122,12 +119,9 @@ public class IvySettingsEditor extends FormEditor implements IResourceChangeList
     public void doSave(IProgressMonitor monitor) {
         xmlEditor.doSave(monitor);
         IFile file = ((IvyFileEditorInput) getEditorInput()).getFile();
-        List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
-                .getContainersFromIvySettings(file);
-        Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-        while (itContainers.hasNext()) {
-            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainers.next();
-            ivycp.launchResolve(false, null);
+        for (IvyClasspathContainer container : IvyClasspathContainerHelper
+                .getContainersFromIvySettings(file)) {
+            container.launchResolve(false, null);
         }
     }
 

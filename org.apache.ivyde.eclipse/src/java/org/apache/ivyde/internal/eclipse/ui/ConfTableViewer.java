@@ -18,8 +18,7 @@
 package org.apache.ivyde.internal.eclipse.ui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -45,7 +44,7 @@ public class ConfTableViewer extends Composite {
 
     private CheckboxTableViewer confTableViewer;
 
-    private final List listeners = new ArrayList();
+    private final List<ConfTableListener> listeners = new ArrayList<>();
 
     private final Button selectAll;
 
@@ -191,22 +190,21 @@ public class ConfTableViewer extends Composite {
         confTableViewer.setInput(orderedConfigurations);
     }
 
-    public void init(List/* <String> */confs) {
+    public void init(List<String> confs) {
         boolean enabled;
         if (confs.size() == 1 && "*".equals(confs.get(0))) {
             enabled = true;
             selectAll.setSelection(true);
-            for (int i = 0; i < orderedConfigurations.length; i++) {
-                confTableViewer.setChecked(orderedConfigurations[i], true);
+            for (Configuration orderedConfiguration : orderedConfigurations) {
+                confTableViewer.setChecked(orderedConfiguration, true);
             }
         } else {
             enabled = false;
             selectAll.setSelection(false);
-            for (int i = 0; i < confs.size(); i++) {
-                String c = (String) confs.get(i);
-                for (int j = 0; j < orderedConfigurations.length; j++) {
-                    if (orderedConfigurations[j].getName().equals(c)) {
-                        confTableViewer.setChecked(orderedConfigurations[j], true);
+            for (String conf : confs) {
+                for (Configuration orderedConfiguration : orderedConfigurations) {
+                    if (orderedConfiguration.getName().equals(conf)) {
+                        confTableViewer.setChecked(orderedConfiguration, true);
                         break;
                     }
                 }
@@ -217,15 +215,13 @@ public class ConfTableViewer extends Composite {
         updateUpDownEnableButtons(enabled);
     }
 
-    public List getSelectedConfigurations() {
+    public List<String> getSelectedConfigurations() {
         if (selectAll.getSelection()) {
-            return Arrays.asList(new String[] {"*"});
+            return Collections.singletonList("*");
         }
-        Object[] confs = confTableViewer.getCheckedElements();
-        List confList = new ArrayList();
-        for (int i = 0; i < confs.length; i++) {
-            Configuration c = (Configuration) confs[i];
-            confList.add(c.getName());
+        List<String> confList = new ArrayList<>();
+        for (Object conf : confTableViewer.getCheckedElements()) {
+            confList.add(((Configuration) conf).getName());
         }
         return confList;
     }
@@ -245,7 +241,7 @@ public class ConfTableViewer extends Composite {
     }
 
     public interface ConfTableListener {
-        void confTableUpdated(List confs);
+        void confTableUpdated(List<String> confs);
     }
 
     public void addListener(ConfTableListener listener) {
@@ -260,11 +256,10 @@ public class ConfTableViewer extends Composite {
         }
     }
 
-    void confTableUpdated() {
+    private void confTableUpdated() {
         synchronized (listeners) {
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                ((ConfTableListener) it.next()).confTableUpdated(getSelectedConfigurations());
+            for (ConfTableListener listener : listeners) {
+                listener.confTableUpdated(getSelectedConfigurations());
             }
         }
     }

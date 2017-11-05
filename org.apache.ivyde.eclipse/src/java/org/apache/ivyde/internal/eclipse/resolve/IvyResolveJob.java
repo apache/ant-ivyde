@@ -19,7 +19,6 @@ package org.apache.ivyde.internal.eclipse.resolve;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class IvyResolveJob extends Job {
 
     private static final int WAIT_BEFORE_LAUNCH = 1000;
 
-    private final List resolveQueue = new ArrayList();
+    private final List<ResolveRequest> resolveQueue = new ArrayList<>();
 
     public IvyResolveJob() {
         super("IvyDE resolve");
@@ -92,9 +91,9 @@ public class IvyResolveJob extends Job {
     private IStatus doRun(IProgressMonitor monitor) {
         IvyDEMessage.info("Resolve job starting...");
 
-        List toResolve;
+        List<ResolveRequest> toResolve;
         synchronized (resolveQueue) {
-            toResolve = new ArrayList(resolveQueue);
+            toResolve = new ArrayList<>(resolveQueue);
             resolveQueue.clear();
         }
 
@@ -107,10 +106,10 @@ public class IvyResolveJob extends Job {
 
         monitor.beginTask("Loading ivy descriptors", MONITOR_LENGTH);
 
-        Map/* <ModuleDescriptor, List<ResolveRequest>> */inworkspaceModules = new LinkedHashMap();
-        List/* <ResolveRequest> */otherModules = new ArrayList();
-        Map/* <ResolveRequest, Ivy> */ivys = new HashMap();
-        Map/* <ResolveRequest, ModuleDescriptor> */mds = new HashMap();
+        Map<ModuleDescriptor, List<ResolveRequest>> inworkspaceModules = new LinkedHashMap<>();
+        List<ResolveRequest> otherModules = new ArrayList<>();
+        Map<ResolveRequest, Ivy> ivys = new HashMap<>();
+        Map<ResolveRequest, ModuleDescriptor> mds = new HashMap<>();
 
         final MultiStatus errorsStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                 "Some projects fail to be resolved", null);
@@ -124,10 +123,7 @@ public class IvyResolveJob extends Job {
         ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(IvyResolveJob.class.getClassLoader());
         try {
-            Iterator itRequests = toResolve.iterator();
-            while (itRequests.hasNext()) {
-                ResolveRequest request = (ResolveRequest) itRequests.next();
-
+            for (ResolveRequest request : toResolve) {
                 IvyDEMessage.info("Processing resolve request " + request.toString());
 
                 forceFailOnError = forceFailOnError || request.isForceFailOnError();
@@ -174,9 +170,9 @@ public class IvyResolveJob extends Job {
                 cachedIvy.setErrorMarker(null);
                 mds.put(request, md);
                 if (request.isInWorkspace()) {
-                    List requests = (List) inworkspaceModules.get(md);
+                    List<ResolveRequest> requests = inworkspaceModules.get(md);
                     if (requests == null) {
-                        requests = new ArrayList();
+                        requests = new ArrayList<>();
                         inworkspaceModules.put(md, requests);
                     }
                     requests.add(request);
@@ -199,30 +195,22 @@ public class IvyResolveJob extends Job {
             // we resolve them in the correct order
 
             // The version matcher used will be the one configured for the first project
-            ResolveRequest request = (ResolveRequest) ((List) inworkspaceModules.values()
-                    .iterator().next()).get(0);
-            VersionMatcher versionMatcher = ((Ivy) ivys.get(request)).getSettings()
-                    .getVersionMatcher();
+            ResolveRequest request = inworkspaceModules.values().iterator().next().get(0);
+            VersionMatcher versionMatcher = ivys.get(request).getSettings().getVersionMatcher();
 
             WarningNonMatchingVersionReporter vReporter = new WarningNonMatchingVersionReporter();
             CircularDependencyStrategy circularDependencyStrategy = WarnCircularDependencyStrategy
                     .getInstance();
             ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(inworkspaceModules.keySet(),
                     versionMatcher, vReporter, circularDependencyStrategy);
-            List sortedModuleDescriptors = sorter.sortModuleDescriptors();
 
-            Iterator it = sortedModuleDescriptors.iterator();
-            while (it.hasNext()) {
-                ModuleDescriptor module = (ModuleDescriptor) it.next();
-                List requests = (List) inworkspaceModules.get(module);
+            for (ModuleDescriptor module : sorter.sortModuleDescriptors()) {
+                List<ResolveRequest> requests = inworkspaceModules.get(module);
                 IvyDEMessage.info(requests.size() + " container(s) of module " + module
                         + " to resolve in workspace");
-                for (int i = 0; i < requests.size(); i++) {
-                    request = (ResolveRequest) requests.get(i);
-                    Ivy ivy = (Ivy) ivys.get(request);
-                    ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
-                    boolean canceled = launchResolveThread(request, monitor, step, errorsStatus,
-                        ivy, md);
+                for (ResolveRequest req : requests) {
+                    boolean canceled = launchResolveThread(req, monitor, step, errorsStatus,
+                            ivys.get(req), mds.get(req));
                     if (canceled) {
                         IvyDEMessage.warn("Resolve job canceled");
                         return Status.CANCEL_STATUS;
@@ -236,13 +224,9 @@ public class IvyResolveJob extends Job {
         } else {
             IvyDEMessage.info(otherModules.size() + " module(s) to resolve outside the workspace");
 
-            Iterator it = otherModules.iterator();
-            while (it.hasNext()) {
-                ResolveRequest request = (ResolveRequest) it.next();
-                Ivy ivy = (Ivy) ivys.get(request);
-                ModuleDescriptor md = (ModuleDescriptor) mds.get(request);
-                boolean canceled = launchResolveThread(request, monitor, step, errorsStatus, ivy,
-                    md);
+            for (ResolveRequest request : otherModules) {
+                boolean canceled = launchResolveThread(request, monitor, step, errorsStatus,
+                        ivys.get(request), mds.get(request));
                 if (canceled) {
                     IvyDEMessage.warn("Resolve job canceled");
                     return Status.CANCEL_STATUS;
@@ -255,9 +239,7 @@ public class IvyResolveJob extends Job {
         monitor.setTaskName("Post resolve");
 
         // launch every post batch resolve
-        Iterator itRequests = toResolve.iterator();
-        while (itRequests.hasNext()) {
-            ResolveRequest request = (ResolveRequest) itRequests.next();
+        for (ResolveRequest request : toResolve) {
             if (!request.isResolveFailed()) {
                 monitor.setTaskName(request.getResolver().toString());
                 request.getResolver().postBatchResolve();

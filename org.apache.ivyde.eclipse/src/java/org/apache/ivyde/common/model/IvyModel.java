@@ -18,8 +18,8 @@
 package org.apache.ivyde.common.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.apache.ivy.Ivy;
 
 public abstract class IvyModel {
-    private final Map model = new HashMap();
+    private final Map<String, List<IvyTag>> model = new HashMap<>();
 
     private Properties defaults;
 
@@ -39,18 +39,12 @@ public abstract class IvyModel {
     }
 
     public IvyTag getIvyTag(String tagName, String parentName) {
-        Object tag = model.get(tagName);
-        if (tag instanceof List) {
-            List all = (List) tag;
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                IvyTag t = (IvyTag) iter.next();
-                if (t.getParent() != null && t.getParent().getName().equals(parentName)) {
-                    return t;
-                }
+        for (IvyTag tag : model.get(tagName)) {
+            if (tag.getParent() != null && tag.getParent().getName().equals(parentName)) {
+                return tag;
             }
-            return null;
         }
-        return (IvyTag) tag;
+        return null;
     }
 
     private void loadDefaults() {
@@ -77,15 +71,16 @@ public abstract class IvyModel {
         return settings;
     }
 
-    protected void addTag(String name, List list) {
+    protected void addTag(String name, List<IvyTag> list) {
         model.put(name, list);
     }
 
     public void addTag(IvyTag ivyTag) {
         if (!model.containsKey(ivyTag.getName())) {
-            model.put(ivyTag.getName(), ivyTag);
-            for (Iterator it = ivyTag.getChilds().iterator(); it.hasNext();) {
-                IvyTag child = (IvyTag) it.next();
+            List<IvyTag> list = new ArrayList<>();
+            list.add(ivyTag);
+            model.put(ivyTag.getName(), list);
+            for (IvyTag child : ivyTag.getChilds()) {
                 addTag(child);
             }
         } else {

@@ -143,12 +143,12 @@ public abstract class IvyFile {
         return doc.indexOf(string, documentOffset);
     }
 
-    public Map getAllAttsValues() {
+    public Map<String, String> getAllAttsValues() {
         return getAllAttsValues(currentOffset);
     }
 
-    public Map getAllAttsValues(int documentOffset) {
-        Map result = new HashMap();
+    public Map<String, String> getAllAttsValues(int documentOffset) {
+        Map<String, String> result = new HashMap<>();
 
         int start = reversed.indexOf('<', getReverseOffset(documentOffset));
         if (start != -1) {
@@ -285,7 +285,7 @@ public abstract class IvyFile {
         int parentEndTagIndex = -1;
         boolean parentEndTagReached = false;
         boolean inSimpleTag = false;
-        Stack stack = new Stack();
+        Stack<String> stack = new Stack<>();
         while (offset > 0) {
             char c = doc.charAt(--offset);
             if (c == '>' && doc.charAt(offset - 1) != '-') {
@@ -313,7 +313,7 @@ public abstract class IvyFile {
                     if (doc.charAt(offset + 1) != '!' && doc.charAt(offset + 1) != '?') {
                         // not a doc tag or xml
                         if (!stack.isEmpty()) { // we found the closing tag before
-                            String closedName = (String) stack.peek();
+                            String closedName = stack.peek();
                             if (closedName.equalsIgnoreCase(doc.substring(offset + 1, offset + 1
                                     + closedName.length()))) {
                                 stack.pop();

@@ -17,15 +17,15 @@
  */
 package org.apache.ivyde.internal.eclipse.handlers;
 
-import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.eclipse.core.resources.IProject;
 
 public class ResolveHandler extends AbstractIvyDEHandler {
 
     public static final String COMMAND_ID = "org.apache.ivyde.commands.resolve";
 
-    protected void handleContainer(IProject project, IvyClasspathContainerImpl ivycp) {
-        ivycp.launchResolve(false, null);
+    protected void handleContainer(IProject project, IvyClasspathContainer container) {
+        container.launchResolve(false, null);
     }
 
 }

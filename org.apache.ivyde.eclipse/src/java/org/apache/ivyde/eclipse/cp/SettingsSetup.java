@@ -18,7 +18,6 @@
 package org.apache.ivyde.eclipse.cp;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
@@ -35,7 +34,7 @@ public class SettingsSetup {
 
     private String ivySettingsPath;
 
-    private List/* <String> */propertyFiles = new ArrayList();
+    private List<String> propertyFiles = new ArrayList<>();
 
     private boolean loadSettingsOnDemand = false;
 
@@ -67,17 +66,15 @@ public class SettingsSetup {
         this.ivySettingsPath = ivySettingsPath;
     }
 
-    public List getRawPropertyFiles() {
+    public List<String> getRawPropertyFiles() {
         return propertyFiles;
     }
 
-    public List getResolvedPropertyFiles() throws IvyDEException {
-        List resolvedProps = new ArrayList();
+    public List<String> getResolvedPropertyFiles() throws IvyDEException {
+        List<String> resolvedProps = new ArrayList<>();
         IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
         try {
-            Iterator it = propertyFiles.iterator();
-            while (it.hasNext()) {
-                String propFile = (String) it.next();
+            for (String propFile : propertyFiles) {
                 String resolvedProp = manager.performStringSubstitution(propFile, false);
                 resolvedProps.add(resolvedProp);
             }
@@ -88,7 +85,7 @@ public class SettingsSetup {
         return resolvedProps;
     }
 
-    public void setPropertyFiles(List propertyFiles) {
+    public void setPropertyFiles(List<String> propertyFiles) {
         this.propertyFiles = propertyFiles;
     }
 

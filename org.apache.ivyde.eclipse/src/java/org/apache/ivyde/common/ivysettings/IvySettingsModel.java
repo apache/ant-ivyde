@@ -21,7 +21,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class IvySettingsModel extends IvyModel {
     private String loaded = null;
     private final File file;
     private ClassLoader cl;
-    private Map typedefClasses;
+    private Map<String, Class<?>> typedefClasses;
 
     public IvySettingsModel(IvyModelSettings settings, File file) {
         super(settings);
@@ -225,26 +224,23 @@ public class IvySettingsModel extends IvyModel {
         addTag(ivyTag);
     }
 
-    private void addTypedefChildren(IvyTag tag, Map children) {
-        for (Iterator it = children.entrySet().iterator(); it.hasNext();) {
-            Entry entry = (Entry) it.next();
-            Class clazz = (Class) entry.getValue();
-            String childName = (String) entry.getKey();
-            tag.addChildIvyTag(typedefedTag(childName, clazz));
+    private void addTypedefChildren(IvyTag tag, Map<String, Class<?>> children) {
+        for (Entry<String, Class<?>> entry : children.entrySet()) {
+            tag.addChildIvyTag(typedefedTag(entry.getKey(), entry.getValue()));
         }
     }
 
-    private IvyTag typedefedTag(String tagName, final Class clazz) {
-        IvyTag child = new IvyTag(tagName) {
+    private IvyTag typedefedTag(String tagName, final Class<?> clazz) {
+        return new IvyTag(tagName) {
             // we lazy load children, since we may have a loop in children (chain can contain chain)
             // causing a stack overflow if we try to recursively add typedefed children
             private boolean init = false;
-            public List getAttributes() {
+            public List<IvyTagAttribute> getAttributes() {
                 init();
                 return super.getAttributes();
             }
 
-            public List getChilds() {
+            public List<IvyTag> getChilds() {
                 init();
                 return super.getChilds();
             }
@@ -307,10 +303,9 @@ public class IvySettingsModel extends IvyModel {
                 }
             }
         };
-        return child;
     }
 
-    protected boolean isSupportedChildType(Class type) {
+    protected boolean isSupportedChildType(Class<?> type) {
         return !Void.TYPE.equals(type)
                 && !String.class.equals(type)
                 && !Character.class.equals(type) && !char.class.equals(type)
@@ -321,7 +316,7 @@ public class IvySettingsModel extends IvyModel {
                 && !Class.class.equals(type);
     }
 
-    private boolean isSupportedAttributeType(Class type) {
+    private boolean isSupportedAttributeType(Class<?> type) {
         if (String.class.isAssignableFrom(type)
                 || Character.class.equals(type) || char.class.equals(type)
                 || Boolean.class.equals(type) || boolean.class.equals(type)
@@ -348,17 +343,16 @@ public class IvySettingsModel extends IvyModel {
         }
     }
 
-    private Map/*<String,Class>*/ getTypedefClasses(IvySettingsFile file, ClassLoader cl) {
-        Map typedefs = file.getTypedefs();
+    private Map<String, Class<?>> getTypedefClasses(IvySettingsFile file, ClassLoader cl) {
+        Map<Object, Object> typedefs = file.getTypedefs();
         return getTypedefClasses(cl, typedefs);
     }
 
-    private Map getTypedefClasses(ClassLoader cl, Map typedefs) {
-        Map/*<String,Class>*/ classes = new LinkedHashMap();
-        for (Iterator it = typedefs.entrySet().iterator(); it.hasNext();) {
-            Entry entry = (Entry) it.next();
+    private Map<String, Class<?>> getTypedefClasses(ClassLoader cl, Map<Object, Object> typedefs) {
+        Map<String, Class<?>> classes = new LinkedHashMap<>();
+        for (Entry<Object, Object> entry : typedefs.entrySet()) {
             try {
-                classes.put(entry.getKey(), cl.loadClass((String) entry.getValue()));
+                classes.put((String) entry.getKey(), cl.loadClass((String) entry.getValue()));
             } catch (ClassNotFoundException e) {
                 // ignored
             }
@@ -366,11 +360,10 @@ public class IvySettingsModel extends IvyModel {
         return classes;
     }
 
-    private Map/*<String,Class>*/ getChildClasses(Map/*<String,Class>*/ classes, Class type) {
-        Map/*<String,Class>*/ childClasses = new LinkedHashMap();
-        for (Iterator it = classes.entrySet().iterator(); it.hasNext();) {
-            Entry entry = (Entry) it.next();
-            if (type.isAssignableFrom((Class) entry.getValue())) {
+    private Map<String, Class<?>> getChildClasses(Map<String, Class<?>> classes, Class<?> type) {
+        Map<String, Class<?>> childClasses = new LinkedHashMap<>();
+        for (Entry<String, Class<?>> entry : classes.entrySet()) {
+            if (type.isAssignableFrom(entry.getValue())) {
                 childClasses.put(entry.getKey(), entry.getValue());
             }
         }

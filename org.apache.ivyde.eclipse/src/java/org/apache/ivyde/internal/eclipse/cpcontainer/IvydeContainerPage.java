@@ -19,11 +19,11 @@ package org.apache.ivyde.internal.eclipse.cpcontainer;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.eclipse.cp.SettingsSetup;
@@ -86,7 +86,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     private String oldIvyFile = null;
 
-    private List oldConfs = null;
+    private List<String> oldConfs = null;
 
     private IvyClasspathContainerState state;
 
@@ -132,18 +132,16 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         String error = null;
 
         String ivyFilePath = ivyFilePathText.getIvyFilePath();
-        List selectedConfigurations = confTableViewer.getSelectedConfigurations();
+        List<String> selectedConfigurations = confTableViewer.getSelectedConfigurations();
 
-        List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
+        List<IvyClasspathContainer> containers = IvyClasspathContainerHelper
                 .getContainers(project);
         if (containers == null) {
             return null;
         }
 
-        Iterator/* <IvyClasspathContainer> */itContainers = containers.iterator();
-        while (error == null && itContainers.hasNext()) {
-            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainers.next();
-            IvyClasspathContainerConfiguration cpc = ivycp.getConf();
+        for (IvyClasspathContainer container : containers) {
+            IvyClasspathContainerConfiguration cpc = container.getConf();
 
             // first check that this is not the one we are editing
             if (oldIvyFile != null && cpc.getIvyXmlPath().equals(oldIvyFile) && oldConfs != null
@@ -157,12 +155,14 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                         || cpc.getConfs().isEmpty() || cpc.getConfs().contains("*")) {
                     error = "A container already exists for the selected conf of "
                             + "the module descriptor";
+                    break;
                 } else {
-                    ArrayList list = new ArrayList(cpc.getConfs());
+                    List<String> list = new ArrayList<>(cpc.getConfs());
                     list.retainAll(selectedConfigurations);
                     if (!list.isEmpty()) {
                         error = "A container already exists for the selected conf of "
                                 + "the module descriptor";
+                        break;
                     }
                 }
             }
@@ -185,7 +185,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     }
 
     public boolean finish() {
-        List confs = confTableViewer.getSelectedConfigurations();
+        List<String> confs = confTableViewer.getSelectedConfigurations();
         if (confs.isEmpty()) {
             confs = Collections.singletonList("*");
         }
@@ -356,7 +356,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
         confTableViewer = new ConfTableViewer(configComposite, SWT.NONE);
         confTableViewer.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         confTableViewer.addListener(new ConfTableListener() {
-            public void confTableUpdated(List confs) {
+            public void confTableUpdated(List<String> confs) {
                 checkCompleted();
             }
         });

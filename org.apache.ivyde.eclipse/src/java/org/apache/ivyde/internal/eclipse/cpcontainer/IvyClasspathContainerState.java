@@ -54,7 +54,7 @@ public class IvyClasspathContainerState extends CachedIvy {
         return conf.getProject();
     }
 
-    protected Collection getPropertyFiles() throws IvyDEException {
+    protected Collection<String> getPropertyFiles() throws IvyDEException {
         return conf.getInheritedSettingsSetup().getResolvedPropertyFiles();
     }
 

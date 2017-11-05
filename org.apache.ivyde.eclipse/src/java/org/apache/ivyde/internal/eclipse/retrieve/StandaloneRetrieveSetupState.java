@@ -48,7 +48,7 @@ public class StandaloneRetrieveSetupState extends CachedIvy {
         return setup.getInheritedSettingSetup().getResolvedIvyUserDir(setup.getProject());
     }
 
-    protected Collection getPropertyFiles() throws IvyDEException {
+    protected Collection<String> getPropertyFiles() throws IvyDEException {
         return setup.getInheritedSettingSetup().getResolvedPropertyFiles();
     }
 

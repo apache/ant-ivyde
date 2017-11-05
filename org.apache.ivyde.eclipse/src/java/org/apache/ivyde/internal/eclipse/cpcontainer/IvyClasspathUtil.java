@@ -23,7 +23,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -70,11 +69,10 @@ public final class IvyClasspathUtil {
         return null;
     }
 
-    public static List split(String str) {
-        String[] terms = str.split(",");
-        List ret = new ArrayList();
-        for (int i = 0; i < terms.length; i++) {
-            String t = terms[i].trim();
+    public static List<String> split(String str) {
+        List<String> ret = new ArrayList<>();
+        for (String term : str.split(",")) {
+            String t = term.trim();
             if (t.length() > 0) {
                 ret.add(t);
             }
@@ -82,17 +80,16 @@ public final class IvyClasspathUtil {
         return ret;
     }
 
-    public static String concat(Collection/* <String> */list) {
+    public static String concat(Collection<String> list) {
         if (list == null) {
             return "";
         }
         StringBuilder b = new StringBuilder();
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            b.append(it.next());
-            if (it.hasNext()) {
+        for (String item : list) {
+            if (b.length() > 0) {
                 b.append(",");
             }
+            b.append(item);
         }
         return b.toString();
     }

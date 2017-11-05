@@ -147,10 +147,10 @@ public class IvyClasspathContainerImpl implements IClasspathContainer, IvyClassp
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 if (conf.getInheritedClasspathSetup().isAlphaOrder()) {
-                    Arrays.sort(entries, new Comparator() {
-                        public int compare(Object o1, Object o2) {
-                            return ((IClasspathEntry) o1).getPath().lastSegment()
-                                    .compareTo(((IClasspathEntry) o2).getPath().lastSegment());
+                    Arrays.sort(entries, new Comparator<IClasspathEntry>() {
+                        public int compare(IClasspathEntry o1, IClasspathEntry o2) {
+                            return (o1.getPath().lastSegment()
+                                    .compareTo(o2.getPath().lastSegment()));
                         }
                     });
                 }

@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,13 +40,13 @@ public class RetrieveSetupManager implements ISaveParticipant {
 
     private static final String PREF_ID = "org.apache.ivyde.eclipse.standaloneretrieve";
 
-    private Map/* <IProject, IEclipsePreferences> */projectPrefs = new HashMap();
+    private final Map<IProject, IEclipsePreferences> projectPrefs = new HashMap<>();
 
-    public List/* <StandaloneRetrieveSetup> */getSetup(IProject project) throws IOException {
+    public List<StandaloneRetrieveSetup> getSetup(IProject project) throws IOException {
 
         IEclipsePreferences pref;
         synchronized (projectPrefs) {
-            pref = (IEclipsePreferences) projectPrefs.get(project);
+            pref = projectPrefs.get(project);
         }
         if (pref == null) {
             IScopeContext projectScope = new ProjectScope(project);
@@ -55,9 +54,9 @@ public class RetrieveSetupManager implements ISaveParticipant {
         }
         String retrieveSetup = pref.get(PREF_ID, null);
         if (retrieveSetup == null) {
-            return new ArrayList();
+            return new ArrayList<>();
         }
-        List/* <StandaloneRetrieveSetup> */retrieveSetups;
+        List<StandaloneRetrieveSetup> retrieveSetups;
 
         StandaloneRetrieveSerializer serializer = new StandaloneRetrieveSerializer();
         ByteArrayInputStream in = new ByteArrayInputStream(retrieveSetup.getBytes());
@@ -73,7 +72,7 @@ public class RetrieveSetupManager implements ISaveParticipant {
         return retrieveSetups;
     }
 
-    public void save(final IProject project, List/* <StandaloneRetrieveSetup> */retrieveSetups)
+    public void save(final IProject project, List<StandaloneRetrieveSetup> retrieveSetups)
             throws IOException {
         StandaloneRetrieveSerializer serializer = new StandaloneRetrieveSerializer();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -90,7 +89,7 @@ public class RetrieveSetupManager implements ISaveParticipant {
         final String retrieveSetup = new String(out.toByteArray());
 
         synchronized (projectPrefs) {
-            IEclipsePreferences pref = (IEclipsePreferences) projectPrefs.get(project);
+            IEclipsePreferences pref = projectPrefs.get(project);
             if (pref == null) {
                 IScopeContext projectScope = new ProjectScope(project);
                 pref = projectScope.getNode(IvyPlugin.ID);
@@ -105,19 +104,17 @@ public class RetrieveSetupManager implements ISaveParticipant {
     }
 
     public void saving(ISaveContext context) throws CoreException {
-        Map toFlush = new HashMap();
+        Map<IProject, IEclipsePreferences> toFlush = new HashMap<>();
         synchronized (projectPrefs) {
             toFlush.putAll(projectPrefs);
             projectPrefs.clear();
         }
-        Iterator itPrefs = toFlush.entrySet().iterator();
-        while (itPrefs.hasNext()) {
-            Entry entry = (Entry) itPrefs.next();
+        for (Entry<IProject, IEclipsePreferences> entry : toFlush.entrySet()) {
             try {
-                ((IEclipsePreferences) entry.getValue()).flush();
+                entry.getValue().flush();
             } catch (BackingStoreException e) {
                 IvyPlugin.logError("Failed to save the state of the Ivy preferences of "
-                        + ((IProject) entry.getKey()).getName(), e);
+                        + entry.getKey().getName(), e);
             }
         }
     }

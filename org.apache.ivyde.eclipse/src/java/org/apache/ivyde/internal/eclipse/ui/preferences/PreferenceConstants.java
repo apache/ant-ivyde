@@ -131,14 +131,13 @@ public final class PreferenceConstants {
 
     public static final String ERROR_POPUP = "error.popup";
 
-    public static final Set/*<String>*/ ALL = new HashSet();
+    public static final Set<String> ALL = new HashSet<>();
 
     static {
-        Field[] fields = PreferenceConstants.class.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            if (Modifier.isStatic(fields[i].getModifiers())) {
+        for (Field field : PreferenceConstants.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 try {
-                    ALL.add(fields[i].get(null));
+                    ALL.add((String) field.get(null));
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }

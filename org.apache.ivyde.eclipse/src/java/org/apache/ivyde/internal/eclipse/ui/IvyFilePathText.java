@@ -20,7 +20,6 @@ package org.apache.ivyde.internal.eclipse.ui;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
@@ -47,7 +46,7 @@ public class IvyFilePathText extends PathEditor {
 
     private IvyDEException ivyXmlError;
 
-    private final List listeners = new ArrayList();
+    private final List<IvyXmlPathListener> listeners = new ArrayList<>();
 
     private FieldDecoration errorDecoration;
 
@@ -124,9 +123,8 @@ public class IvyFilePathText extends PathEditor {
 
     void ivyXmlPathUpdated() {
         synchronized (listeners) {
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                ((IvyXmlPathListener) it.next()).ivyXmlPathUpdated(ivyFilePathText.getText());
+            for (IvyXmlPathListener listener : listeners) {
+                listener.ivyXmlPathUpdated(ivyFilePathText.getText());
             }
         }
     }

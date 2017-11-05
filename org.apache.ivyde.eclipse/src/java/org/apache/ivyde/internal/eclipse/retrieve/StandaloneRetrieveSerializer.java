@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -81,7 +80,7 @@ public class StandaloneRetrieveSerializer {
 
     private static final String RESOLVE_IN_WORKSPACE = "resolveInWorkspace";
 
-    public void write(OutputStream out, List/* <StandaloneRetrieveSetup> */setuplist)
+    public void write(OutputStream out, List<StandaloneRetrieveSetup> setuplist)
             throws IOException {
         try {
             StreamResult result = new StreamResult(out);
@@ -92,9 +91,7 @@ public class StandaloneRetrieveSerializer {
             Node root = document.createElement(ROOT);
             document.appendChild(root);
 
-            Iterator it = setuplist.iterator();
-            while (it.hasNext()) {
-                StandaloneRetrieveSetup setup = (StandaloneRetrieveSetup) it.next();
+            for (StandaloneRetrieveSetup setup : setuplist) {
 
                 Node node = document.createElement(SETUP);
                 root.appendChild(node);
@@ -155,9 +152,7 @@ public class StandaloneRetrieveSerializer {
         attr.setValue(settingsSetup.getRawIvyUserDir());
         attributes.setNamedItem(attr);
 
-        Iterator it = settingsSetup.getRawPropertyFiles().iterator();
-        while (it.hasNext()) {
-            String file = (String) it.next();
+        for (String file : settingsSetup.getRawPropertyFiles()) {
             Node pathNode = document.createElement(PROPERTYFILE);
             settingsNode.appendChild(pathNode);
             attributes = pathNode.getAttributes();
@@ -195,7 +190,7 @@ public class StandaloneRetrieveSerializer {
         attributes.setNamedItem(attr);
     }
 
-    public List/* <StandaloneRetrieveSetup> */read(InputStream in, IProject project)
+    public List<StandaloneRetrieveSetup> read(InputStream in, IProject project)
             throws IOException {
         try {
             InputSource source = new InputSource(in);
@@ -206,7 +201,7 @@ public class StandaloneRetrieveSerializer {
 
             NodeList elements = document.getElementsByTagName(SETUP);
 
-            List/* <StandaloneRetrieveSetup> */setupList = new ArrayList();
+            List<StandaloneRetrieveSetup> setupList = new ArrayList<>();
 
             int count = elements.getLength();
             for (int i = 0; i != count; i++) {
@@ -279,7 +274,7 @@ public class StandaloneRetrieveSerializer {
         String ivyUserDir = getAttribute(attributes, IVY_USER_DIR);
         settingsSetup.setIvyUserDir(ivyUserDir);
 
-        List/* <String> */propertyFiles = new ArrayList();
+        List<String> propertyFiles = new ArrayList<>();
 
         NodeList children = node.getChildNodes();
         for (int j = 0; j != children.getLength(); j++) {

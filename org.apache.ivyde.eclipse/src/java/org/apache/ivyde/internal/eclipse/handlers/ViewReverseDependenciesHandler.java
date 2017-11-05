@@ -18,7 +18,9 @@
 package org.apache.ivyde.internal.eclipse.handlers;
 
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.ui.views.ReverseDependencyExplorerView;
 import org.eclipse.core.resources.IProject;
@@ -29,10 +31,9 @@ public class ViewReverseDependenciesHandler extends AbstractIvyDEHandler {
 
     public static final String COMMAND_ID = "org.apache.ivyde.commands.revdepexplorer";
 
-    protected void handleProjects(Map projects) {
+    protected void handleProjects(Map<IProject, Set<IvyClasspathContainer>> projects) {
         try {
-            ReverseDependencyExplorerView.setSelectedProjects((IProject[]) projects.keySet()
-                    .toArray(new IProject[0]));
+            ReverseDependencyExplorerView.setSelectedProjects(projects.keySet().toArray(new IProject[0]));
             IWorkbenchPage page = IvyPlugin.getActivePage();
             page.showView("org.apache.ivyde.eclipse.ui.views.ReverseDependencyExplorer");
             ReverseDependencyExplorerView.refresh(true);

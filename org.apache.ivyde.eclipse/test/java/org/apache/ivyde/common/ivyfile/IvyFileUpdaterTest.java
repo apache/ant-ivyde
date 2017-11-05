@@ -20,16 +20,18 @@ package org.apache.ivyde.common.ivyfile;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.FileUtil;
+import org.junit.Test;
 
-public class IvyFileUpdaterTest extends TestCase {
-    private IvyFileUpdater updater = new IvyFileUpdater();
+import static org.junit.Assert.assertEquals;
 
-    public void testAddDependency() throws Exception {
+public class IvyFileUpdaterTest {
+    private final IvyFileUpdater updater = new IvyFileUpdater();
+
+    @Test
+    public void testAddDependency() throws IOException {
         testAddDependency("addDependency1");
         testAddDependency("addDependency2");
         testAddDependency("addDependency3");
@@ -50,8 +52,8 @@ public class IvyFileUpdaterTest extends TestCase {
             FileUtil.readEntirely(IvyFileUpdaterTest.class.getResourceAsStream(test + "/expected.xml")),
             FileUtil.readEntirely(dest));
     }
-
-    public void testRemoveDependency() throws Exception {
+    @Test
+    public void testRemoveDependency() throws IOException {
         testRemoveDependency("removeDependency1");
         testRemoveDependency("removeDependency2");
         testRemoveDependency("removeDependency3");

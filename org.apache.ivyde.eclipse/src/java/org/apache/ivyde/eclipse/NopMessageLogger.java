@@ -62,15 +62,15 @@ public class NopMessageLogger implements MessageLogger {
         // no nothing
     }
 
-    public List getProblems() {
+    public List<String> getProblems() {
         return Collections.emptyList();
     }
 
-    public List getWarns() {
+    public List<String> getWarns() {
         return Collections.emptyList();
     }
 
-    public List getErrors() {
+    public List<String> getErrors() {
         return Collections.emptyList();
     }
 

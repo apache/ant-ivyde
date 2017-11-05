@@ -59,10 +59,9 @@ public class NewIvyDEContainerWizard extends Wizard {
             JavaCore.setClasspathContainer(path, new IJavaProject[] {project},
                 new IClasspathContainer[] {ivycp}, null);
             IClasspathEntry[] entries = project.getRawClasspath();
-            List newEntries = new ArrayList(Arrays.asList(entries));
+            List<IClasspathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
             newEntries.add(newEntry);
-            entries = (IClasspathEntry[]) newEntries
-                    .toArray(new IClasspathEntry[newEntries.size()]);
+            entries = newEntries.toArray(new IClasspathEntry[newEntries.size()]);
             project.setRawClasspath(entries, project.getOutputLocation(), null);
             ivycp.launchResolve(false, null);
         } catch (JavaModelException e) {

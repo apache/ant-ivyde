@@ -41,7 +41,7 @@ public class RetrieveAction extends Action {
 
     public void run() {
         RetrieveSetup retrieveSetup = setup.getRetrieveSetup();
-        List confs = IvyClasspathUtil.split(retrieveSetup.getRetrieveConfs());
+        List<String> confs = IvyClasspathUtil.split(retrieveSetup.getRetrieveConfs());
         IvyResolver resolver = new IvyResolver(setup.getIvyXmlPath(), confs, setup.getProject());
         resolver.setRetrievePattern(retrieveSetup.getRetrievePattern());
         resolver.setRetrieveSync(retrieveSetup.isRetrieveSync());

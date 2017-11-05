@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.eclipse.core.resources.IProject;
@@ -37,24 +38,18 @@ public final class IvyUtil {
         // utility class
     }
 
-    public static MultiRevDependencyDescriptor[] getDependencyDescriptorsByProjects(
-            IProject[] projects) {
+    public static MultiRevDependencyDescriptor[] getDependencyDescriptorsByProjects(IProject[] projects) {
         // a temporary cache of multi-revision dependency descriptors
-        Map/* <ModuleId, MultiRevisionDependencyDescriptor> */mdMap = new HashMap();
+        Map<ModuleId, MultiRevDependencyDescriptor> mdMap = new HashMap<>();
 
-        for (int i = 0; i < projects.length; i++) {
-            List containers = IvyClasspathContainerHelper.getContainers(projects[i]);
-            Iterator containerIter = containers.iterator();
-
-            while (containerIter.hasNext()) {
-                IvyClasspathContainerImpl container = (IvyClasspathContainerImpl) containerIter.next();
-                ModuleDescriptor md = container.getState().getCachedModuleDescriptor();
+        for (IProject project : projects) {
+            for (IvyClasspathContainer container : IvyClasspathContainerHelper.getContainers(project)) {
+                ModuleDescriptor md = ((IvyClasspathContainerImpl) container).getState().getCachedModuleDescriptor();
                 if (md == null) {
                     continue;
                 }
                 for (DependencyDescriptor descriptor : md.getDependencies()) {
-                    MultiRevDependencyDescriptor syncabledd = (MultiRevDependencyDescriptor)
-                            mdMap.get(descriptor.getDependencyId());
+                    MultiRevDependencyDescriptor syncabledd = mdMap.get(descriptor.getDependencyId());
 
                     if (syncabledd == null) {
                         syncabledd = new MultiRevDependencyDescriptor(
@@ -68,14 +63,10 @@ public final class IvyUtil {
             }
         }
 
-        List/* <MultiRevisionDependencyDescriptor> */sorted = new ArrayList(mdMap
-                .values());
+        List<MultiRevDependencyDescriptor> sorted = new ArrayList<>(mdMap.values());
 
-        Collections.sort(sorted, new Comparator/* <MultiRevisionDependencyDescriptor> */() {
-            public int compare(Object o1, Object o2) {
-                MultiRevDependencyDescriptor desc1 = (MultiRevDependencyDescriptor) o1;
-                MultiRevDependencyDescriptor desc2 = (MultiRevDependencyDescriptor) o2;
-
+        Collections.sort(sorted, new Comparator<MultiRevDependencyDescriptor>() {
+            public int compare(MultiRevDependencyDescriptor desc1, MultiRevDependencyDescriptor desc2) {
                 int equal = desc1.getOrganization().compareTo(desc2.getOrganization());
                 if (equal == 0) {
                     equal = desc1.getModule().compareTo(desc2.getModule());
@@ -84,8 +75,7 @@ public final class IvyUtil {
             }
         });
 
-        return (MultiRevDependencyDescriptor[]) sorted
-                .toArray(new MultiRevDependencyDescriptor[sorted.size()]);
+        return sorted.toArray(new MultiRevDependencyDescriptor[sorted.size()]);
     }
 
     /**

@@ -18,7 +18,6 @@
 package org.apache.ivyde.internal.eclipse.ui.editors.xml;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivyde.internal.eclipse.ui.preferences.PreferenceConstants;
@@ -30,16 +29,14 @@ import org.eclipse.swt.widgets.Display;
 
 public class ColorManager {
 
-    private Map fKeyTable = new HashMap();
+    private final Map<String, RGB> fKeyTable = new HashMap<>();
 
-    private Map fDisplayTable = new HashMap();
+    private final Map<Display, Map<RGB, Color>> fDisplayTable = new HashMap<>();
 
     public void dispose(Display display) {
-        Map colorTable = (Map) fDisplayTable.get(display);
+        Map<RGB, Color> colorTable = fDisplayTable.get(display);
         if (colorTable != null) {
-            Iterator e = colorTable.values().iterator();
-            while (e.hasNext()) {
-                Color color = (Color) e.next();
+            for (Color color : colorTable.values()) {
                 if (color != null && !color.isDisposed()) {
                     color.dispose();
                 }
@@ -53,9 +50,9 @@ public class ColorManager {
         }
 
         final Display display = Display.getCurrent();
-        Map colorTable = (Map) fDisplayTable.get(display);
+        Map<RGB, Color> colorTable = fDisplayTable.get(display);
         if (colorTable == null) {
-            colorTable = new HashMap();
+            colorTable = new HashMap<>();
             fDisplayTable.put(display, colorTable);
             display.disposeExec(new Runnable() {
                 public void run() {
@@ -64,7 +61,7 @@ public class ColorManager {
             });
         }
 
-        Color color = (Color) colorTable.get(rgb);
+        Color color = colorTable.get(rgb);
         if (color == null) {
             color = new Color(Display.getCurrent(), rgb);
             colorTable.put(rgb, color);
@@ -77,7 +74,7 @@ public class ColorManager {
         if (key == null) {
             return null;
         }
-        RGB rgb = (RGB) fKeyTable.get(key);
+        RGB rgb = fKeyTable.get(key);
         return getColor(rgb);
     }
 

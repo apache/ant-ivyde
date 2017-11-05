@@ -19,16 +19,14 @@ package org.apache.ivyde.internal.eclipse.workspaceresolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -92,7 +90,7 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
     private void projectClosed(final IProject project) {
         // Check if one of Ivy projects is being removed
-        List containers = IvyClasspathContainerHelper.getContainers(project);
+        List<IvyClasspathContainer> containers = IvyClasspathContainerHelper.getContainers(project);
         if (containers.isEmpty()) {
             return;
         }
@@ -100,12 +98,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         // Found an Ivy container in this project -- notify dependent projects
         // to perform fresh resolve
 
-        List affectedContainers = getAffectedContainers(project.getFullPath());
-
-        Iterator it = affectedContainers.iterator();
-        while (it.hasNext()) {
-            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
-            ivycp.launchResolve(false, null);
+        for (IvyClasspathContainer affectedContainer : getAffectedContainers(project.getFullPath())) {
+            affectedContainer.launchResolve(false, null);
         }
     }
 
@@ -117,14 +111,12 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
             return;
         }
 
-        final Collection projects = new LinkedHashSet();
-        IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
-        for (int i = 0; i < projDeltas.length; ++i) {
-            IResourceDelta projDelta = projDeltas[i];
-            if ((projDelta.getFlags() & IResourceDelta.OPEN) == 0) {
+        final Collection<IResource> projects = new LinkedHashSet<>();
+        for (IResourceDelta projectDelta : delta.getAffectedChildren(IResourceDelta.CHANGED)) {
+            if ((projectDelta.getFlags() & IResourceDelta.OPEN) == 0) {
                 continue;
             }
-            IResource resource = projDeltas[i].getResource();
+            IResource resource = projectDelta.getResource();
             if (!(resource instanceof IProject)) {
                 continue;
             }
@@ -139,12 +131,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
 
         // Let's try to be nice and use the workspace method to schedule resolves in
         // dependent projects after the open operation has finished.
-        List allContainers = getAllContainersExcludingProjects(projects);
-
-        Iterator it = allContainers.iterator();
-        while (it.hasNext()) {
-            IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) it.next();
-            ivycp.launchResolve(false, null);
+        for (IvyClasspathContainer container : getAllContainersExcludingProjects(projects)) {
+            container.launchResolve(false, null);
         }
     }
 
@@ -154,8 +142,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
      * @param projectPath IPath
      * @return List&lt;IvyClasspathContainer&gt;
      */
-    private List getAffectedContainers(IPath projectPath) {
-        List/* <IvyClasspathContainer> */allContainers = new ArrayList();
+    private List<IvyClasspathContainer> getAffectedContainers(IPath projectPath) {
+        List<IvyClasspathContainer> allContainers = new ArrayList<>();
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IJavaProject[] projects;
@@ -167,16 +155,10 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
             return allContainers;
         }
 
-        for (int i = 0; i < projects.length; i++) {
-            IJavaProject javaProject = projects[i];
-            List/* <IvyClasspathContainer> */containers = IvyClasspathContainerHelper
-                    .getContainers(javaProject);
-            Iterator/* <IvyClasspathContainer> */itContainer = containers.iterator();
-            while (itContainer.hasNext()) {
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
-                IClasspathEntry[] containerEntries = ivycp.getClasspathEntries();
-                for (int j = 0; j < containerEntries.length; j++) {
-                    IClasspathEntry containerEntry = containerEntries[j];
+        for (IJavaProject javaProject : projects) {
+            for (IvyClasspathContainer container : IvyClasspathContainerHelper.getContainers(javaProject)) {
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) container;
+                for (IClasspathEntry containerEntry : ivycp.getClasspathEntries()) {
                     if (containerEntry == null
                             || containerEntry.getEntryKind() != IClasspathEntry.CPE_PROJECT
                             || !containerEntry.getPath().equals(projectPath)) {
@@ -191,8 +173,8 @@ public class WorkspaceResourceChangeListener implements IResourceChangeListener 
         return allContainers;
     }
 
-    private List getAllContainersExcludingProjects(Collection openedProjects) {
-        List/* <IvyClasspathContainer> */allContainers = new ArrayList();
+    private List<IvyClasspathContainer> getAllContainersExcludingProjects(Collection<IResource> openedProjects) {
+        List<IvyClasspathContainer> allContainers = new ArrayList<>();
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IJavaProject[] projects;

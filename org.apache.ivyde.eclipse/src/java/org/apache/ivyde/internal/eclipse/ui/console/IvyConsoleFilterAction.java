@@ -25,10 +25,13 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IvyConsoleFilterAction extends Action implements IMenuCreator {
 
-    private static final String[] LOG_LEVEL_MESSAGES = {"error", "warning", "info", "verbose",
-            "debug"};
+    private static final List<String> LOG_LEVEL_MESSAGES = Arrays.asList("error", "warning", "info", "verbose",
+            "debug");
 
     private Menu fMenu;
 
@@ -58,25 +61,25 @@ public class IvyConsoleFilterAction extends Action implements IMenuCreator {
         }
 
         fMenu = new Menu(parent);
-        for (int i = 0; i < LOG_LEVEL_MESSAGES.length; i++) {
-            final int logLevel = i;
-            Action action = new Action(LOG_LEVEL_MESSAGES[i]) {
+        for (final String logLevelMessage : LOG_LEVEL_MESSAGES) {
+            final int logLevel = LOG_LEVEL_MESSAGES.indexOf(logLevelMessage);
+            Action action = new Action(logLevelMessage) {
                 public void run() {
                     console.setLogLevel(logLevel);
                 }
             };
-            action.setChecked(console.getLogLevel() == i);
+            action.setChecked(console.getLogLevel() == logLevel);
             addActionToMenu(fMenu, action);
         }
         new Separator().fill(fMenu, -1);
-        for (int i = 0; i < LOG_LEVEL_MESSAGES.length; i++) {
-            final int logLevel = i;
-            Action action = new Action("IvyDE " + LOG_LEVEL_MESSAGES[i]) {
+        for (final String logLevelMessage : LOG_LEVEL_MESSAGES) {
+            final int logLevel = LOG_LEVEL_MESSAGES.indexOf(logLevelMessage);
+            Action action = new Action("IvyDE " + logLevelMessage) {
                 public void run() {
                     console.getIvyDEMessageLogger().setLogLevel(logLevel);
                 }
             };
-            action.setChecked(console.getIvyDEMessageLogger().getLogLevel() == i);
+            action.setChecked(console.getIvyDEMessageLogger().getLogLevel() == logLevel);
             addActionToMenu(fMenu, action);
         }
         return fMenu;

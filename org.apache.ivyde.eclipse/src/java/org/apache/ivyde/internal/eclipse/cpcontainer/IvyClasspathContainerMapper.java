@@ -103,7 +103,6 @@ public class IvyClasspathContainerMapper {
     }
 
     public IClasspathEntry[] map() {
-        IClasspathEntry[] classpathEntries;
         Collection<IClasspathEntry> paths = new LinkedHashSet<>();
 
         IvyDEMessage.verbose("Building classpath from " + all.size() + " resolved artifact(s)");
@@ -168,9 +167,8 @@ public class IvyClasspathContainerMapper {
             }
 
         }
-        classpathEntries = paths.toArray(new IClasspathEntry[paths.size()]);
 
-        return classpathEntries;
+        return paths.toArray(new IClasspathEntry[paths.size()]);
     }
 
     private IClasspathEntry buildEntry(ArtifactDownloadReport artifact, IAccessRule[] rules,
@@ -228,16 +226,15 @@ public class IvyClasspathContainerMapper {
         if (bundleInfo == null || !classpathSetup.isReadOSGiMetadata()) {
             return null;
         }
-        IAccessRule[] rules = new IAccessRule[bundleInfo.getExports().size() + 1];
-        int i = 0;
+        List<IAccessRule> rules = new ArrayList<>(bundleInfo.getExports().size() + 1);
         for (ExportPackage exportPackage : bundleInfo.getExports()) {
-            rules[i++] = JavaCore.newAccessRule(
+            rules.add(JavaCore.newAccessRule(
                 new Path(exportPackage.getName().replace('.', IPath.SEPARATOR) + "/*"),
-                IAccessRule.K_ACCESSIBLE);
+                IAccessRule.K_ACCESSIBLE));
         }
-        rules[i++] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE
-                | IAccessRule.IGNORE_IF_BETTER);
-        return rules;
+        rules.add(JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE
+                | IAccessRule.IGNORE_IF_BETTER));
+        return rules.toArray(new IAccessRule[rules.size()]);
     }
 
     private Path getArtifactPath(ArtifactDownloadReport artifact, String innerPath) {

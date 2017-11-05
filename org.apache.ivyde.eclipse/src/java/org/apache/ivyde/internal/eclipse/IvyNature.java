@@ -50,16 +50,16 @@ public class IvyNature implements IProjectNature {
             return;
         }
         IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
-        List newEntries = new ArrayList();
+        List<IClasspathEntry> newEntries = new ArrayList<>();
 
-        for (int i = 0; i < classpathEntries.length; i++) {
-            if (!IvyClasspathContainerHelper.isIvyClasspathContainer(classpathEntries[i].getPath())) {
-                newEntries.add(classpathEntries[i]);
+        for (IClasspathEntry classpathEntry : classpathEntries) {
+            if (!IvyClasspathContainerHelper.isIvyClasspathContainer(classpathEntry.getPath())) {
+                newEntries.add(classpathEntry);
             }
         }
 
         if (newEntries.size() != classpathEntries.length) {
-            IClasspathEntry[] newClasspathEntries = (IClasspathEntry[]) newEntries
+            IClasspathEntry[] newClasspathEntries = newEntries
                     .toArray(new IClasspathEntry[newEntries.size()]);
             javaProject.setRawClasspath(newClasspathEntries, null);
         }

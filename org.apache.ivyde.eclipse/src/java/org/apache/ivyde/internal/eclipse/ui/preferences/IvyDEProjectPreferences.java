@@ -18,7 +18,6 @@
 package org.apache.ivyde.internal.eclipse.ui.preferences;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
@@ -69,7 +68,7 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(2, false));
 
-        final IProject project = (IProject) IvyPlugin.adapt(getElement(), IProject.class);
+        final IProject project = IvyPlugin.adapt(getElement(), IProject.class);
 
         Label label = new Label(composite, SWT.NONE);
         label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 0));
@@ -104,12 +103,13 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
         newButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
         newButton.setText("New...");
         newButton.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings("unchecked")
             public void widgetSelected(SelectionEvent e) {
                 StandaloneRetrieveSetup setup = new StandaloneRetrieveSetup();
                 EditStandaloneRetrieveDialog editDialog = new EditStandaloneRetrieveDialog(
                         getShell(), project, setup);
                 if (editDialog.open() == Window.OK) {
-                    List list = ((List) table.getInput());
+                    List<Object> list = (List<Object>) table.getInput();
                     list.add(editDialog.getStandaloneRetrieveSetup());
                     table.refresh();
                 }
@@ -129,12 +129,10 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
         removeButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
         removeButton.setText("Remove");
         removeButton.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings("unchecked")
             public void widgetSelected(SelectionEvent e) {
-                List list = ((List) table.getInput());
-                Iterator it = ((IStructuredSelection) table.getSelection()).iterator();
-                while (it.hasNext()) {
-                    list.remove(it.next());
-                }
+                List<Object> list = (List<Object>) table.getInput();
+                list.removeAll(((IStructuredSelection) table.getSelection()).toList());
                 table.refresh();
             }
         });
@@ -152,7 +150,7 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
             }
         });
 
-        List retrieveSetups;
+        List<StandaloneRetrieveSetup> retrieveSetups;
         try {
             retrieveSetups = retrieveSetupManager.getSetup(project);
         } catch (IOException e) {
@@ -163,12 +161,13 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
         return composite;
     }
 
+    @SuppressWarnings("unchecked")
     private void openEdit(IStructuredSelection selection, IProject project) {
         StandaloneRetrieveSetup setup = (StandaloneRetrieveSetup) selection.getFirstElement();
         EditStandaloneRetrieveDialog editDialog = new EditStandaloneRetrieveDialog(getShell(),
                 project, setup);
         if (editDialog.open() == Window.OK) {
-            List list = ((List) table.getInput());
+            List<Object> list = (List<Object>) table.getInput();
             list.set(list.indexOf(setup), editDialog.getStandaloneRetrieveSetup());
             table.refresh();
         }
@@ -200,10 +199,11 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
 
     }
 
+    @SuppressWarnings("unchecked")
     public boolean performOk() {
-        final IProject project = (IProject) IvyPlugin.adapt(getElement(), IProject.class);
+        final IProject project = IvyPlugin.adapt(getElement(), IProject.class);
 
-        List/* <StandaloneRetrieveSetup> */retrieveSetups = (List) table.getInput();
+        List<StandaloneRetrieveSetup> retrieveSetups = (List<StandaloneRetrieveSetup>) table.getInput();
 
         try {
             retrieveSetupManager.save(project, retrieveSetups);

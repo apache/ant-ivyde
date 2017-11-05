@@ -38,9 +38,11 @@ import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivyde.eclipse.IvyDEException;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerState;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -106,28 +108,23 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         MultiStatus errorStatuses = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                 "Failed to update one or more Ivy files.  See details.", null);
 
-        IvyClasspathContainerImpl[] containers = getIvyClasspathContainers();
-        for (int i = 0; i < containers.length; i++) {
-            IvyClasspathContainerImpl container = containers[i];
+        for (IvyClasspathContainer container : getIvyClasspathContainers()) {
+            IvyClasspathContainerState ivycps = ((IvyClasspathContainerImpl) container).getState();
 
-            ModuleDescriptor md = container.getState().getCachedModuleDescriptor();
+            ModuleDescriptor md = ivycps.getCachedModuleDescriptor();
             if (md == null) {
                 continue;
             }
 
-            Map/* <ModuleRevisionId, String> */newRevisions = new HashMap();
-
-            DependencyDescriptor[] dependencies = md.getDependencies();
-            for (int j = 0; j < dependencies.length; j++) {
-                for (int k = 0; k < multiRevisionDependencies.length; k++) {
-                    MultiRevDependencyDescriptor multiRevision = multiRevisionDependencies[k];
-                    ModuleRevisionId dependencyRevisionId = dependencies[j]
-                            .getDependencyRevisionId();
-                    if (dependencies[j].getDependencyId().equals(multiRevision.getModuleId())
+            Map<ModuleRevisionId, String> newRevisions = new HashMap<>();
+            for (DependencyDescriptor dependency : md.getDependencies()) {
+                for (MultiRevDependencyDescriptor multiRevision : multiRevisionDependencies) {
+                    ModuleRevisionId dependencyRevisionId = dependency.getDependencyRevisionId();
+                    if (dependency.getDependencyId().equals(multiRevision.getModuleId())
                             && multiRevision.hasNewRevision()
                             && multiRevision.isForContainer(container)) {
                         newRevisions.put(dependencyRevisionId,
-                            multiRevisionDependencies[k].getNewRevision());
+                                multiRevision.getNewRevision());
                         break; // move on to the next dependency
                     }
                 }
@@ -139,7 +136,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
 
             File ivyFile;
             try {
-                ivyFile = container.getState().getIvyFile();
+                ivyFile = ivycps.getIvyFile();
             } catch (IvyDEException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
                         "Fail to resolve the ivy file", e));
@@ -180,21 +177,19 @@ public class SyncIvyFilesJob extends WorkspaceJob {
         return status;
     }
 
-    private IvyClasspathContainerImpl[] getIvyClasspathContainers() {
-        Collection/* <IvyClasspathContainer> */containers = new HashSet();
+    private Collection<IvyClasspathContainer> getIvyClasspathContainers() {
+        Collection<IvyClasspathContainer> containers = new HashSet<>();
 
-        for (int i = 0; i < multiRevisionDependencies.length; i++) {
-            MultiRevDependencyDescriptor multiRevision = multiRevisionDependencies[i];
+        for (MultiRevDependencyDescriptor multiRevision : multiRevisionDependencies) {
             if (multiRevision.hasNewRevision()) {
                 containers.addAll(Arrays.asList(multiRevision.getIvyClasspathContainers()));
             }
         }
 
-        return (IvyClasspathContainerImpl[]) containers.toArray(new IvyClasspathContainerImpl[containers
-                .size()]);
+        return containers;
     }
 
-    private void saveChanges(IvyClasspathContainerImpl container, File permanentSaveTarget,
+    private void saveChanges(IvyClasspathContainer container, File permanentSaveTarget,
             File temporaryChanges) throws IOException {
         IvyClasspathContainerConfiguration conf = container.getConf();
         IFile virtualIvyFile = conf.getJavaProject().getProject().getFile(conf.getIvyXmlPath());

@@ -203,8 +203,7 @@ public class WorkspaceResolver extends AbstractResolver {
                 continue;
             }
             for (IvyClasspathContainer container : IvyClasspathContainerHelper.getContainers(p)) {
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) container;
-                ModuleDescriptor md = ivycp.getState().getCachedModuleDescriptor();
+                ModuleDescriptor md = ((IvyClasspathContainerImpl) container).getState().getCachedModuleDescriptor();
                 if (md == null) {
                     continue;
                 }

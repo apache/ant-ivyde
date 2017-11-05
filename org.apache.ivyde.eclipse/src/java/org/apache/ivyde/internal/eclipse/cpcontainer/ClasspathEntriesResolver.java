@@ -23,9 +23,11 @@ import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerConfiguration;
 import org.apache.ivyde.eclipse.cp.RetrieveSetup;
 import org.apache.ivyde.internal.eclipse.IvyDEMessage;
@@ -45,11 +47,11 @@ public class ClasspathEntriesResolver extends IvyResolver {
 
     private ResolveReport resolveReport;
 
-    public ClasspathEntriesResolver(IvyClasspathContainerImpl ivycp, boolean usePreviousResolveIfExist) {
-        super(ivycp.getConf().getIvyXmlPath(), ivycp.getConf().getConfs(), ivycp.getConf()
-                .getJavaProject() == null ? null : ivycp.getConf().getJavaProject().getProject());
-        this.conf = ivycp.getConf();
-        setUsePreviousResolveIfExist(ivycp.getConf().getInheritedAdvancedSetup().isUseExtendedResolveId());
+    public ClasspathEntriesResolver(IvyClasspathContainer container, boolean usePreviousResolveIfExist) {
+        super(container.getConf().getIvyXmlPath(), container.getConf().getConfs(), container.getConf()
+                .getJavaProject() == null ? null : container.getConf().getJavaProject().getProject());
+        this.conf = container.getConf();
+        setUsePreviousResolveIfExist(conf.getInheritedAdvancedSetup().isUseExtendedResolveId());
         setUsePreviousResolveIfExist(usePreviousResolveIfExist);
         setTransitiveResolve(conf.getInheritedClasspathSetup().isTransitiveResolve());
         if (conf.getInheritedClasspathSetup().isRetrievedClasspath()) {
@@ -88,11 +90,10 @@ public class ClasspathEntriesResolver extends IvyResolver {
      * @param mapper IvyClasspathContainerMapper
      * @param artifactReports Set&lt;ArtifactDownloadReport&gt;
      */
-    private void warnIfDuplicates(Ivy ivy, IvyClasspathContainerMapper mapper, Set artifactReports) {
-        ArtifactDownloadReport[] reports = (ArtifactDownloadReport[]) artifactReports
-                .toArray(new ArtifactDownloadReport[0]);
+    private void warnIfDuplicates(Ivy ivy, IvyClasspathContainerMapper mapper, Set<ArtifactDownloadReport> artifactReports) {
+        ArtifactDownloadReport[] reports = artifactReports.toArray(new ArtifactDownloadReport[0]);
 
-        Set duplicates = new HashSet();
+        Set<ModuleId> duplicates = new HashSet<>();
 
         for (int i = 0; i < reports.length - 1; i++) {
             if (!mapper.accept(reports[i].getArtifact())) {
@@ -121,7 +122,7 @@ public class ClasspathEntriesResolver extends IvyResolver {
         StringBuilder buffer = new StringBuilder("There are some duplicates entries due to conflicts"
                 + " between the resolved configurations " + conf.getConfs());
         buffer.append(":\n  - ");
-        Iterator it = duplicates.iterator();
+        Iterator<ModuleId> it = duplicates.iterator();
         while (it.hasNext()) {
             buffer.append(it.next());
             if (it.hasNext()) {

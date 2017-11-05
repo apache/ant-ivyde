@@ -41,7 +41,7 @@ public class FileListEditor extends Composite {
 
     private final ListViewer filelist;
 
-    private List/* <String> */files = new ArrayList();
+    private List<String> files = new ArrayList<>();
 
     private Button edit;
 
@@ -120,8 +120,9 @@ public class FileListEditor extends Composite {
         remove.setText("Remove");
         remove.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
         remove.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings("unchecked")
             public void widgetSelected(SelectionEvent e) {
-                List selection = ((IStructuredSelection) filelist.getSelection()).toList();
+                List<String> selection = ((IStructuredSelection) filelist.getSelection()).toList();
                 files.removeAll(selection);
                 filelist.refresh();
                 fileListUpdated();
@@ -136,7 +137,7 @@ public class FileListEditor extends Composite {
         up.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 int i = getSelectedConfigurationIndex();
-                String f = (String) files.get(i);
+                String f = files.get(i);
                 files.set(i, files.get(i - 1));
                 files.set(i - 1, f);
                 filelist.refresh();
@@ -151,7 +152,7 @@ public class FileListEditor extends Composite {
         down.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 int i = getSelectedConfigurationIndex();
-                String f = (String) files.get(i);
+                String f = files.get(i);
                 files.set(i, files.get(i + 1));
                 files.set(i + 1, f);
                 filelist.refresh();
@@ -168,12 +169,7 @@ public class FileListEditor extends Composite {
     }
 
     private int getSelectedConfigurationIndex(String file) {
-        for (int i = 0; i < files.size(); i++) {
-            if (files.get(i) == file) {
-                return i;
-            }
-        }
-        return -1;
+        return files.indexOf(file);
     }
 
     private void updateUpDownEnableButtons(boolean enabled) {
@@ -183,7 +179,7 @@ public class FileListEditor extends Composite {
         down.setEnabled(enabled && selected && i < files.size() - 1);
     }
 
-    public void init(List/* <String> */files) {
+    public void init(List<String> files) {
         this.files = files;
         filelist.setInput(files);
         remove.setEnabled(false);
@@ -194,7 +190,7 @@ public class FileListEditor extends Composite {
         // to be override to listen to changes
     }
 
-    public List getFiles() {
+    public List<String> getFiles() {
         return files;
     }
 

@@ -24,7 +24,7 @@ public class ClasspathSetup {
 
     private boolean resolveInWorkspace;
 
-    private List/* <String> */acceptedTypes;
+    private List<String> acceptedTypes;
 
     private boolean alphaOrder;
 
@@ -61,11 +61,11 @@ public class ClasspathSetup {
         this.resolveInWorkspace = resolveInWorkspace;
     }
 
-    public List getAcceptedTypes() {
+    public List<String> getAcceptedTypes() {
         return acceptedTypes;
     }
 
-    public void setAcceptedTypes(List acceptedTypes) {
+    public void setAcceptedTypes(List<String> acceptedTypes) {
         this.acceptedTypes = acceptedTypes;
     }
 

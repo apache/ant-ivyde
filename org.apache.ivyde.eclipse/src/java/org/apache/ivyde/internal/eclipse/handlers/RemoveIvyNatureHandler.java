@@ -17,7 +17,6 @@
  */
 package org.apache.ivyde.internal.eclipse.handlers;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,11 +43,8 @@ public class RemoveIvyNatureHandler extends AbstractHandler {
             return null;
         }
 
-        List/* <IProject> */projects = new LinkedList();
-        IStructuredSelection newSelection = (IStructuredSelection) selection;
-        Iterator iter = newSelection.iterator();
-        while (iter.hasNext()) {
-            Object object = iter.next();
+        List<IProject> projects = new LinkedList<>();
+        for (Object object : ((IStructuredSelection) selection).toList()) {
             if (object instanceof IAdaptable) {
                 IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
                 if (project != null) {
@@ -71,9 +67,7 @@ public class RemoveIvyNatureHandler extends AbstractHandler {
                         + "The configuration of the classpath containers will be lost.\n"
                         + "This operation cannot be undone.");
             if (doRemove) {
-                Iterator itProject = projects.iterator();
-                while (itProject.hasNext()) {
-                    IProject project = (IProject) itProject.next();
+                for (IProject project : projects) {
                     IvyNatureHelper.removeNature(project);
                 }
             }

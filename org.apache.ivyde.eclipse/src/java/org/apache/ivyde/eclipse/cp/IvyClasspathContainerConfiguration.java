@@ -17,7 +17,7 @@
  */
 package org.apache.ivyde.eclipse.cp;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
@@ -37,7 +37,7 @@ public class IvyClasspathContainerConfiguration {
 
     private String ivyXmlPath;
 
-    private List/* <String> */confs = Arrays.asList(new String[] {"*"});
+    private List<String> confs = Collections.singletonList("*");
 
     private SettingsSetup settingsSetup = new SettingsSetup();
 
@@ -111,11 +111,11 @@ public class IvyClasspathContainerConfiguration {
         this.ivyXmlPath = ivyXmlPath;
     }
 
-    public List getConfs() {
+    public List<String> getConfs() {
         return confs;
     }
 
-    public void setConfs(List confs) {
+    public void setConfs(List<String> confs) {
         this.confs = confs;
     }
 

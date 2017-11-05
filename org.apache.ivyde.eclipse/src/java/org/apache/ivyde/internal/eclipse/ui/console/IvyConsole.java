@@ -266,11 +266,11 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     }
 
     // MessageLogger implementation
-    private List problems = new ArrayList();
+    private final List<String> problems = new ArrayList<>();
 
-    private List warns = new ArrayList();
+    private final List<String> warns = new ArrayList<>();
 
-    private List errors = new ArrayList();
+    private final List<String> errors = new ArrayList<>();
 
     private boolean showProgress = true;
 
@@ -308,7 +308,7 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         getErrors().add(msg);
     }
 
-    public List getProblems() {
+    public List<String> getProblems() {
         return problems;
     }
 
@@ -323,11 +323,11 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
         errors.clear();
     }
 
-    public List getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
-    public List getWarns() {
+    public List<String> getWarns() {
         return warns;
     }
 

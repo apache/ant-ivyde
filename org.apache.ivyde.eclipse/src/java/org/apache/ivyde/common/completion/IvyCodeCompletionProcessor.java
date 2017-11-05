@@ -20,7 +20,6 @@ package org.apache.ivyde.common.completion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class IvyCodeCompletionProcessor {
      */
     public CodeCompletionProposal[] computeCompletionProposals(IvyFile ivyfile, int caretOffset) {
         model.refreshIfNeeded(ivyfile);
-        List propList = new ArrayList();
+        List<CodeCompletionProposal> propList = new ArrayList<>();
         if (ivyfile.inTag()) {
             String tagName = ivyfile.getTagName();
             if (ivyfile.readyForValue()) {
@@ -60,8 +59,7 @@ public class IvyCodeCompletionProcessor {
             computeStructureProposals(ivyfile, propList, caretOffset);
         }
 
-        return (CodeCompletionProposal[]) propList.toArray(
-                            new CodeCompletionProposal[propList.size()]);
+        return propList.toArray(new CodeCompletionProposal[propList.size()]);
     }
 
     /**
@@ -73,7 +71,7 @@ public class IvyCodeCompletionProcessor {
      * @param propList List&lt;CodeCompletionProposal&gt;
      * @param caretOffset ditto
      */
-    private void computeTagAttributeProposals(String tagName, IvyFile ivyfile, List propList,
+    private void computeTagAttributeProposals(String tagName, IvyFile ivyfile, List<CodeCompletionProposal> propList,
             int caretOffset) {
         String qualifier = ivyfile.getQualifier();
         int qlen = qualifier.length();
@@ -90,11 +88,9 @@ public class IvyCodeCompletionProcessor {
                 return;
             }
             errorMessage = null;
-            List atts = tag.getAttributes();
-            Map existingAtts = ivyfile.getAllAttsValues();
+            Map<String, String> existingAtts = ivyfile.getAllAttsValues();
             // Loop through all proposals
-            for (Iterator iter = atts.iterator(); iter.hasNext();) {
-                IvyTagAttribute att = (IvyTagAttribute) iter.next();
+            for (IvyTagAttribute att : tag.getAttributes()) {
                 if (att.getName().startsWith(qualifier)
                         && !existingAtts.containsKey(att.getName())) {
                     // Yes -- compute whole proposal text
@@ -120,7 +116,7 @@ public class IvyCodeCompletionProcessor {
      * @param propList List&lt;CodeCompletionProposal&gt;
      * @param caretOffset ditto
      */
-    private void computeValueProposals(String tagName, IvyFile ivyfile, List propList,
+    private void computeValueProposals(String tagName, IvyFile ivyfile, List<CodeCompletionProposal> propList,
             int caretOffset) {
         String parent = null;
         String tag = ivyfile.getTagName();
@@ -157,7 +153,7 @@ public class IvyCodeCompletionProcessor {
      * @param propList List&lt;CodeCompletionProposal&gt;
      * @param caretOffset int
      */
-    private void computeStructureProposals(IvyFile ivyfile, List propList, int caretOffset) {
+    private void computeStructureProposals(IvyFile ivyfile, List<CodeCompletionProposal> propList, int caretOffset) {
         String parent = ivyfile.getParentTagName();
         String qualifier = ivyfile.getQualifier();
         int qlen = qualifier.length();
@@ -183,7 +179,7 @@ public class IvyCodeCompletionProcessor {
                 }
             }
 
-            List childs = null;
+            List<IvyTag> childs = null;
 
             if (parent != null) {
                 String parentParent = ivyfile.getParentTagName(ivyfile.getStringIndexBackward("<"
@@ -199,9 +195,7 @@ public class IvyCodeCompletionProcessor {
                 childs = Collections.singletonList(model.getRootIvyTag());
             }
             errorMessage = null;
-            for (Iterator iter = childs.iterator(); iter.hasNext();) {
-                IvyTag child = (IvyTag) iter.next();
-
+            for (IvyTag child : childs) {
                 // Check if proposal matches qualifier
                 if (child.getStartTag().startsWith(qualifier)) {
                     for (Proposal prop : child.getProposals()) {

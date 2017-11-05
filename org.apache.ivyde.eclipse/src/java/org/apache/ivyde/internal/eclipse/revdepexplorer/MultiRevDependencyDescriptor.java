@@ -20,21 +20,17 @@ package org.apache.ivyde.internal.eclipse.revdepexplorer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
-import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 
 public class MultiRevDependencyDescriptor {
     private final ModuleId moduleId;
 
-    /**
-     * Map<IvyClasspathContainer, Collection<DependencyDescriptor>>
-     */
-    private final Map dependenciesByContainer = new HashMap();
+    private final Map<IvyClasspathContainer, Collection<DependencyDescriptor>> dependenciesByContainer = new HashMap<>();
 
     private String newRevision;
 
@@ -71,13 +67,12 @@ public class MultiRevDependencyDescriptor {
      * @param dependencyDescriptor
      *            current descriptor
      */
-    public void addDependencyDescriptor(IvyClasspathContainerImpl container,
+    public void addDependencyDescriptor(IvyClasspathContainer container,
             DependencyDescriptor dependencyDescriptor) {
-        Collection/* <DependencyDescriptor> */dependencies = (Collection) dependenciesByContainer
-                .get(container);
+        Collection<DependencyDescriptor> dependencies = dependenciesByContainer.get(container);
 
         if (dependencies == null) {
-            dependencies = new HashSet/* <DependencyDescriptor> */();
+            dependencies = new HashSet<>();
             dependenciesByContainer.put(container, dependencies);
         }
 
@@ -102,22 +97,15 @@ public class MultiRevDependencyDescriptor {
      * @return all revisions
      */
     public String[] getRevisions() {
-        Set/* <String> */revisions = new HashSet/* <String> */();
+        Set<String> revisions = new HashSet<>();
 
-        /* Collection<Collection<DependencyDescriptor>> */
-        Collection projectDependencyDescriptors = dependenciesByContainer.values();
-
-        Iterator it = projectDependencyDescriptors.iterator();
-        while (it.hasNext()) {
-            Collection/* <DependencyDescriptor> */projectCollection = (Collection) it.next();
-            Iterator descriptorIter = projectCollection.iterator();
-            while (descriptorIter.hasNext()) {
-                DependencyDescriptor descriptor = (DependencyDescriptor) descriptorIter.next();
+        for (Collection<DependencyDescriptor> projectCollection : dependenciesByContainer.values()) {
+            for (DependencyDescriptor descriptor : projectCollection) {
                 revisions.add(descriptor.getDependencyRevisionId().getRevision());
             }
         }
 
-        return (String[]) revisions.toArray(new String[revisions.size()]);
+        return revisions.toArray(new String[revisions.size()]);
     }
 
     /**
@@ -145,10 +133,9 @@ public class MultiRevDependencyDescriptor {
     /**
      * @return all projects
      */
-    public IvyClasspathContainerImpl[] getIvyClasspathContainers() {
-        Collection containers = dependenciesByContainer.keySet();
-        return (IvyClasspathContainerImpl[]) containers.toArray(new IvyClasspathContainerImpl[containers
-                .size()]);
+    public IvyClasspathContainer[] getIvyClasspathContainers() {
+        Collection<IvyClasspathContainer> containers = dependenciesByContainer.keySet();
+        return containers.toArray(new IvyClasspathContainer[containers.size()]);
     }
 
     /**
@@ -156,10 +143,8 @@ public class MultiRevDependencyDescriptor {
      *            classpath container
      * @return true if there is a project match
      */
-    public boolean isForContainer(IvyClasspathContainerImpl container) {
-        IvyClasspathContainerImpl[] containers = getIvyClasspathContainers();
-        for (int i = 0; i < containers.length; i++) {
-            IvyClasspathContainerImpl currentContainer = containers[i];
+    public boolean isForContainer(IvyClasspathContainer container) {
+        for (IvyClasspathContainer currentContainer : getIvyClasspathContainers()) {
             if (currentContainer.equals(container)) {
                 return true;
             }
@@ -181,23 +166,20 @@ public class MultiRevDependencyDescriptor {
      *            container
      * @return revision
      */
-    public String[] getRevisions(IvyClasspathContainerImpl container) {
-        /* Collection<DependencyDescriptor> */
-        Collection containerDependencyDescriptors = (Collection) dependenciesByContainer
+    public String[] getRevisions(IvyClasspathContainer container) {
+        Collection<DependencyDescriptor> containerDependencyDescriptors = dependenciesByContainer
                 .get(container);
 
         if (containerDependencyDescriptors == null) {
             return new String[0];
         }
 
-        Set/* <String> */revisions = new HashSet/* <String> */();
+        Set<String> revisions = new HashSet<>();
 
-        Iterator iter = containerDependencyDescriptors.iterator();
-        while (iter.hasNext()) {
-            DependencyDescriptor descriptor = (DependencyDescriptor) iter.next();
+        for (DependencyDescriptor descriptor : containerDependencyDescriptors) {
             revisions.add(descriptor.getDependencyRevisionId().getRevision());
         }
 
-        return (String[]) revisions.toArray(new String[revisions.size()]);
+        return revisions.toArray(new String[revisions.size()]);
     }
 }

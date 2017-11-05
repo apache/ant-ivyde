@@ -20,7 +20,10 @@ package org.apache.ivyde.common.ivyfile;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,13 +104,13 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "the name of the organisation of the parent module.", false);
         parentOrgAtt.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                List ret = listDependencyTokenValues(att.getName(), ivyFile);
+                List<String> ret = listDependencyTokenValues(att.getName(), ivyFile);
                 ret.add(getSettings().getDefaultOrganization());
                 String org = ((IvyModuleDescriptorFile) ivyFile).getOrganisation();
                 if (org != null) {
                     ret.add(org);
                 }
-                return (String[]) ret.toArray(new String[ret.size()]);
+                return ret.toArray(new String[ret.size()]);
             }
         });
         extend.addAttribute(parentOrgAtt);
@@ -115,8 +118,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "the module name of the parent module", true);
         parentModuleAtt.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                List ret = listDependencyTokenValues(att.getName(), ivyFile);
-                return (String[]) ret.toArray(new String[ret.size()]);
+                List<String> ret = listDependencyTokenValues(att.getName(), ivyFile);
+                return ret.toArray(new String[ret.size()]);
             }
         });
         extend.addAttribute(parentModuleAtt);
@@ -158,9 +161,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
         child.addAttribute(new IvyTagAttribute("url", "an url pointing to the repository.", true,
                 new IValueProvider() {
                     public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                        Map allAttsValues = ivyFile.getAllAttsValues();
+                        Map<String, String> allAttsValues = ivyFile.getAllAttsValues();
                         if (allAttsValues != null) {
-                            String name = (String) allAttsValues.get("name");
+                            String name = allAttsValues.get("name");
                             if ("ibiblio".equals(name)) {
                                 return new String[] {"http://www.ibiblio.org/maven/"};
                             } else if ("ivyrep".equals(name)) {
@@ -175,9 +178,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "an ivy pattern to find modules on this repository", false);
         reppatternTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                Map allAttsValues = ivyFile.getAllAttsValues();
+                Map<String, String> allAttsValues = ivyFile.getAllAttsValues();
                 if (allAttsValues != null) {
-                    String name = (String) allAttsValues.get("name");
+                    String name = allAttsValues.get("name");
                     if ("ibiblio".equals(name)) {
                         return new String[] {"[module]/[type]s/[artifact]-[revision].[ext]"};
                     } else if ("ivyrep".equals(name)) {
@@ -259,7 +262,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
         });
         conf.addAttribute(deprecatedTagAttribute);
         configurations.addChildIvyTag(conf);
-        List allConf = new ArrayList();
+        List<IvyTag> allConf = new ArrayList<>();
         allConf.add(conf);
         addTag(conf.getName(), allConf);
         ivyTag.addChildIvyTag(configurations);
@@ -302,8 +305,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
             public String[] getPossibleValuesForAttribute(String att, IvyFile ivyfile) {
                 String[] r = super.getPossibleValuesForAttribute(att, ivyfile);
                 if (r == null) { // listing can be used even for extra attributes
-                    List ret = listDependencyTokenValues(att, ivyfile);
-                    return (String[]) ret.toArray(new String[ret.size()]);
+                    List<String> ret = listDependencyTokenValues(att, ivyfile);
+                    return ret.toArray(new String[ret.size()]);
                 } else {
                     return r;
                 }
@@ -313,13 +316,13 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "the name of the organisation of the dependency.", false);
         orgAtt.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                List ret = listDependencyTokenValues(att.getName(), ivyFile);
+                List<String> ret = listDependencyTokenValues(att.getName(), ivyFile);
                 ret.add(getSettings().getDefaultOrganization());
                 String org = ((IvyModuleDescriptorFile) ivyFile).getOrganisation();
                 if (org != null) {
                     ret.add(org);
                 }
-                return (String[]) ret.toArray(new String[ret.size()]);
+                return ret.toArray(new String[ret.size()]);
             }
 
         });
@@ -328,8 +331,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 true);
         module.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                List ret = listDependencyTokenValues(att.getName(), ivyFile);
-                return (String[]) ret.toArray(new String[ret.size()]);
+                List<String> ret = listDependencyTokenValues(att.getName(), ivyFile);
+                return ret.toArray(new String[ret.size()]);
             }
         });
         dependency.addAttribute(module);
@@ -337,8 +340,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 "the branch of the dependency. \nDo not set if not needed.", false);
         branch.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                List ret = listDependencyTokenValues(att.getName(), ivyFile);
-                return (String[]) ret.toArray(new String[ret.size()]);
+                List<String> ret = listDependencyTokenValues(att.getName(), ivyFile);
+                return ret.toArray(new String[ret.size()]);
             }
         });
         dependency.addAttribute(branch);
@@ -348,9 +351,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 + " matching revision.", true);
         rev.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
-                List ret = listDependencyTokenValues(att.getName(), ivyFile);
+                List<String> ret = listDependencyTokenValues(att.getName(), ivyFile);
                 ret.add("latest.integration");
-                return (String[]) ret.toArray(new String[ret.size()]);
+                return ret.toArray(new String[ret.size()]);
             }
         });
         dependency.addAttribute(rev);
@@ -373,17 +376,17 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 if (arrowIndex > -1) {
                     // we are looking for a dep conf
                     String org = ((IvyModuleDescriptorFile) ivyFile).getDependencyOrganisation();
-                    Map otherAttValues = ivyFile.getAllAttsValues();
+                    Map<String, String> otherAttValues = ivyFile.getAllAttsValues();
                     if (org != null && otherAttValues != null && otherAttValues.get("name") != null
                             && otherAttValues.get("rev") != null) {
                         otherAttValues.remove("org");
-                        String branch = (String) otherAttValues.remove("branch");
+                        String branch = otherAttValues.remove("branch");
                         otherAttValues.remove("conf");
                         otherAttValues.remove("force");
                         otherAttValues.remove("transitive");
                         otherAttValues.remove("changing");
-                        return getDependencyConfs(org, (String) otherAttValues.remove("name"),
-                            branch, (String) otherAttValues.remove("rev"), otherAttValues,
+                        return getDependencyConfs(org, otherAttValues.remove("name"),
+                            branch, otherAttValues.remove("rev"), otherAttValues,
                             qualifier, base, arrowIndex);
                     }
 
@@ -409,13 +412,13 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 for (int i = 0; i < confs.length; i++) {
                     confs[i] = base + confs[i];
                 }
-                List ret = new ArrayList(Arrays.asList(confs));
+                List<String> ret = new ArrayList<>(Arrays.asList(confs));
                 ret.add("*");
-                return (String[]) ret.toArray(new String[ret.size()]);
+                return ret.toArray(new String[ret.size()]);
             }
 
             private String[] getDependencyConfs(String org, String name, String branch, String rev,
-                    Map otherAtts, String qualifier, StringBuffer base, int arrowIndex) {
+                    Map<String, String> otherAtts, String qualifier, StringBuffer base, int arrowIndex) {
                 Ivy ivy = getIvy();
                 if (ivy == null) {
                     return null;
@@ -431,8 +434,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                     qualifier = qualifier.substring(1);
                 }
                 ResolveData data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
-                ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, name, branch, rev,
-                    otherAtts);
+                ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, name, branch, rev, otherAtts);
                 DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                 try {
                     DependencyResolver resolver = ivy.getSettings().getResolver(mrid);
@@ -447,9 +449,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
                     for (int i = 0; i < confs.length; i++) {
                         confs[i] = base + confs[i];
                     }
-                    List ret = new ArrayList(Arrays.asList(confs));
+                    List<String> ret = new ArrayList<>(Arrays.asList(confs));
                     ret.add("*");
-                    return (String[]) ret.toArray(new String[ret.size()]);
+                    return ret.toArray(new String[ret.size()]);
                 } catch (ParseException e) {
                     getSettings().logError("The dependencies of " + mrid + " could not be parsed",
                         e);
@@ -472,7 +474,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         Ivy ivy = getIvy();
                         int[] indexes = ivyFile.getParentTagIndex();
                         if (indexes != null && ivy != null) {
-                            Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
+                            Map<String, String> otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
                             String org = ((IvyModuleDescriptorFile) ivyFile)
                                     .getDependencyOrganisation(otherAttValues);
                             if (org != null && otherAttValues != null
@@ -491,8 +493,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                                 ResolveData data = new ResolveData(ivy.getResolveEngine(),
                                         new ResolveOptions());
                                 ModuleRevisionId mrid = ModuleRevisionId.newInstance(org,
-                                    (String) otherAttValues.get("name"), (String) otherAttValues
-                                            .get("rev"));
+                                        otherAttValues.get("name"), otherAttValues.get("rev"));
                                 DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(
                                         mrid, false);
                                 try {
@@ -502,9 +503,9 @@ public class IvyModuleDescriptorModel extends IvyModel {
                                     for (int i = 0; i < confs.length; i++) {
                                         confs[i] = base + confs[i];
                                     }
-                                    List ret = new ArrayList(Arrays.asList(confs));
+                                    List<String> ret = new ArrayList<>(Arrays.asList(confs));
                                     ret.add("*");
-                                    return (String[]) ret.toArray(new String[ret.size()]);
+                                    return ret.toArray(new String[ret.size()]);
                                 } catch (ParseException e) {
                                     getSettings().logError(
                                         "The dependencies of " + mrid + " could not be parsed", e);
@@ -533,7 +534,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                     if (indexes == null) {
                         return new String[] {"*"};
                     }
-                    Map otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
+                    Map<String, String> otherAttValues = ivyFile.getAllAttsValues(indexes[0] + 1);
                     String org = ((IvyModuleDescriptorFile) ivyFile)
                         .getDependencyOrganisation(otherAttValues);
                     if (org == null || otherAttValues == null || otherAttValues.get("name") == null
@@ -543,14 +544,14 @@ public class IvyModuleDescriptorModel extends IvyModel {
                     ResolveData data = new ResolveData(ivy.getResolveEngine(),
                         new ResolveOptions());
                     ModuleRevisionId mrid = ModuleRevisionId.newInstance(org,
-                        (String) otherAttValues.get("name"), (String) otherAttValues.get("rev"));
+                            otherAttValues.get("name"), otherAttValues.get("rev"));
                     DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(mrid, false);
                     try {
                         String[] confs = ivy.getSettings().getResolver(mrid)
                             .getDependency(ddd, data).getDescriptor().getConfigurationsNames();
-                        List ret = new ArrayList(Arrays.asList(confs));
+                        List<String> ret = new ArrayList<>(Arrays.asList(confs));
                         ret.add("*");
-                        return (String[]) ret.toArray(new String[ret.size()]);
+                        return ret.toArray(new String[ret.size()]);
                     } catch (ParseException e) {
                         getSettings().logError("The dependencies of " + mrid
                             + " could not be parsed", e);
@@ -561,12 +562,12 @@ public class IvyModuleDescriptorModel extends IvyModel {
         conf3.addChildIvyTag(mapped);
         addTag(mapped);
 
-        String[] matcherNames = new String[0];
+        Collection<String> matcherNames = Collections.emptySet();
         Ivy ivy = getIvy();
         if (ivy != null) {
-            matcherNames = ivy.getSettings().getMatcherNames().toArray(new String[0]);
+            matcherNames = ivy.getSettings().getMatcherNames();
         }
-        ListValueProvider matcherNamesProvider = new ListValueProvider(matcherNames);
+        ListValueProvider matcherNamesProvider = new ListValueProvider(matcherNames.toArray(new String[matcherNames.size()]));
 
         IvyTag artifact2 = new IvyTag("artifact", "defines artifacts restriction \n"
                 + "use only if you do not control dependency ivy file");
@@ -698,8 +699,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
         return "ivy-module";
     }
 
-    List listDependencyTokenValues(String att, IvyFile ivyfile) {
-        Map allAttsValues = ivyfile.getAllAttsValues();
+    private List<String> listDependencyTokenValues(String att, IvyFile ivyfile) {
+        Map<String, String> allAttsValues = ivyfile.getAllAttsValues();
         String org = ((IvyModuleDescriptorFile) ivyfile).getOrganisation();
         if (org != null && !allAttsValues.containsKey("org")) {
             allAttsValues.put("org", org);
@@ -707,8 +708,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
         return listDependencyTokenValues(att, allAttsValues);
     }
 
-    private List listDependencyTokenValues(String att, Map otherAttValues) {
-        List ret = new ArrayList();
+    private List<String> listDependencyTokenValues(String att, Map<String, String> otherAttValues) {
+        List<String> ret = new ArrayList<>();
         Ivy ivy = getIvy();
         if (ivy != null) {
             replaceToken(otherAttValues, "org", IvyPatternHelper.ORGANISATION_KEY);
@@ -722,7 +723,10 @@ public class IvyModuleDescriptorModel extends IvyModel {
 
             String stdAtt = standardiseDependencyAttribute(att);
             otherAttValues.remove(stdAtt);
-            String[] revs = ivy.listTokenValues(stdAtt, otherAttValues);
+            // transform otherAttValues into Map required by Ivy
+            Map<String, Object> ivyAttrs = new HashMap<>();
+            ivyAttrs.putAll(otherAttValues);
+            String[] revs = ivy.listTokenValues(stdAtt, ivyAttrs);
             if (revs != null) {
                 ret.addAll(Arrays.asList(revs));
             }
@@ -730,8 +734,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
         return ret;
     }
 
-    private void replaceToken(Map otherAttValues, String oldToken, String newToken) {
-        String val = (String) otherAttValues.remove(oldToken);
+    private void replaceToken(Map<String, String> otherAttValues, String oldToken, String newToken) {
+        String val = otherAttValues.remove(oldToken);
         if (val != null) {
             otherAttValues.put(newToken, val);
         }

@@ -19,12 +19,12 @@ package org.apache.ivyde.internal.eclipse.handlers;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathUtil;
@@ -48,8 +48,7 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
             return null;
         }
 
-        // Map<IProject, Set<IvyClasspathContainer>>
-        Map projects = getProjectAndContainers((IStructuredSelection) selection);
+        Map<IProject, Set<IvyClasspathContainer>> projects = getProjectAndContainers((IStructuredSelection) selection);
 
         if (projects.size() > 0) {
             handleProjects(projects);
@@ -58,30 +57,27 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
         return null;
     }
 
-    public static Map/* <IProject, Set<IvyClasspathContainer>> */getProjectAndContainers(
+    public static Map<IProject, Set<IvyClasspathContainer>> getProjectAndContainers(
             IStructuredSelection selection) {
-        Map/* <IProject, Set<IvyClasspathContainer>> */projects = new HashMap();
+        Map<IProject, Set<IvyClasspathContainer>> projects = new HashMap<>();
 
-        Iterator it = selection.iterator();
-        while (it.hasNext()) {
-            Object element = it.next();
+        for (Object element : selection.toList()) {
             if (element instanceof IWorkingSet) {
-                IAdaptable[] elements = ((IWorkingSet) element).getElements();
-                for (int i = 0; i < elements.length; i++) {
-                    addElement(projects, elements[i]);
+                for (IAdaptable elem : ((IWorkingSet) element).getElements()) {
+                    addElement(projects, elem);
                 }
             } else if (element instanceof ClassPathContainer) {
                 IvyClasspathContainerImpl ivycp = IvyClasspathUtil
                         .jdt2IvyCPC(((ClassPathContainer) element));
                 IJavaProject javaProject = ivycp.getConf().getJavaProject();
                 if (javaProject != null) {
-                    Set/* <IvyClasspathContainer> */cplist = (Set) projects.get(javaProject
+                    Set<IvyClasspathContainer> containers = projects.get(javaProject
                             .getProject());
-                    if (cplist == null) {
-                        cplist = new HashSet();
-                        projects.put(javaProject.getProject(), cplist);
+                    if (containers == null) {
+                        containers = new HashSet<>();
+                        projects.put(javaProject.getProject(), containers);
                     }
-                    cplist.add(ivycp);
+                    containers.add(ivycp);
                 }
             } else {
                 addElement(projects, element);
@@ -90,7 +86,7 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
         return projects;
     }
 
-    private static void addElement(Map/* <IProject, Set<IvyClasspathContainer>> */projects,
+    private static void addElement(Map<IProject, Set<IvyClasspathContainer>> projects,
             Object adaptableProject) {
         IProject project = null;
         if (adaptableProject instanceof IProject) {
@@ -100,26 +96,23 @@ public abstract class AbstractIvyDEHandler extends AbstractHandler {
         }
         if (project != null) {
             // check that there is an IvyDE container
-            List containers = IvyClasspathContainerHelper.getContainers(project);
+            List<IvyClasspathContainer> containers = IvyClasspathContainerHelper.getContainers(project);
             if (!containers.isEmpty()) {
-                projects.put(project, new HashSet(containers));
+                projects.put(project, new HashSet<>(containers));
             }
         }
     }
 
-    protected void handleProjects(Map projects) {
-        Iterator it = projects.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry entry = (Entry) it.next();
-            Iterator itContainers = ((Set) entry.getValue()).iterator();
-            while (itContainers.hasNext()) {
-                handleContainer((IProject) entry.getKey(),
-                    (IvyClasspathContainerImpl) itContainers.next());
+    protected void handleProjects(Map<IProject, Set<IvyClasspathContainer>> projects) {
+        for (Entry<IProject, Set<IvyClasspathContainer>> entry : projects.entrySet()) {
+            IProject project = entry.getKey();
+            for (IvyClasspathContainer container : entry.getValue()) {
+                handleContainer(project, container);
             }
         }
     }
 
-    protected void handleContainer(IProject project, IvyClasspathContainerImpl cp) {
+    protected void handleContainer(IProject project, IvyClasspathContainer container) {
         throw new UnsupportedOperationException();
     }
 

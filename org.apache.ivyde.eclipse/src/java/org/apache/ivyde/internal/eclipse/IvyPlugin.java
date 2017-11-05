@@ -20,8 +20,6 @@ package org.apache.ivyde.internal.eclipse;
 import java.io.File;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -33,7 +31,6 @@ import org.apache.ivyde.eclipse.IvyDEsecurityHelper;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyAttachmentManager;
-import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerSerializer;
 import org.apache.ivyde.internal.eclipse.resolve.IvyResolveJob;
 import org.apache.ivyde.internal.eclipse.retrieve.RetrieveSetupManager;
@@ -270,15 +267,11 @@ public class IvyPlugin extends AbstractUIPlugin {
     void prefStoreChanged() throws JavaModelException {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IJavaModel javaModel = JavaCore.create(workspace.getRoot());
-        IJavaProject[] projects = javaModel.getJavaProjects();
-        for (int i = 0; i < projects.length; i++) {
-            List<IvyClasspathContainer> containers = IvyClasspathContainerHelper
-                    .getContainers(projects[i]);
-            Iterator<IvyClasspathContainer> itContainers = containers.iterator();
-            while (itContainers.hasNext()) {
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainers.next();
-                if (!ivycp.getConf().isSettingsProjectSpecific()) {
-                    ivycp.launchResolve(false, null);
+        for (IJavaProject project : javaModel.getJavaProjects()) {
+            for (IvyClasspathContainer container : IvyClasspathContainerHelper
+                    .getContainers(project)) {
+                if (!container.getConf().isSettingsProjectSpecific()) {
+                    container.launchResolve(false, null);
                 }
             }
         }
@@ -405,6 +398,7 @@ public class IvyPlugin extends AbstractUIPlugin {
      * Returns the string from the plugin's resource bundle, or 'key' if not found.
      *
      * @param key String
+     * @return String
      */
     public static String getResourceString(String key) {
         ResourceBundle bundle = IvyPlugin.getDefault().getResourceBundle();
@@ -418,6 +412,7 @@ public class IvyPlugin extends AbstractUIPlugin {
     /**
      * Utility class that tries to adapt a non null object to the specified type
      *
+     * @param <T> type
      * @param object
      *            the object to adapt
      * @param type
@@ -425,13 +420,14 @@ public class IvyPlugin extends AbstractUIPlugin {
      * @return the adapted object
      */
 
-    public static/* <T> T */Object adapt(Object object, Class/* <T> */type) {
+    @SuppressWarnings("unchecked")
+    public static <T> T adapt(Object object, Class<T> type) {
         if (type.isInstance(object)) {
-            return /* (T) */object;
+            return (T) object;
         } else if (object instanceof IAdaptable) {
-            return /* (T) */((IAdaptable) object).getAdapter(type);
+            return (T) ((IAdaptable) object).getAdapter(type);
         }
-        return /* (T) */Platform.getAdapterManager().getAdapter(object, type);
+        return (T) Platform.getAdapterManager().getAdapter(object, type);
     }
 
     /**
@@ -451,8 +447,8 @@ public class IvyPlugin extends AbstractUIPlugin {
                     return null;
                 }
 
-                public Enumeration getKeys() {
-                    return Collections.enumeration(Collections.EMPTY_LIST);
+                public Enumeration<String> getKeys() {
+                    return Collections.emptyEnumeration();
                 }
 
             };

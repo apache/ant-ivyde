@@ -36,9 +36,9 @@ public class IvyTag {
 
     private String doc;
 
-    private Map attributes = new HashMap();
+    private final Map<String, IvyTagAttribute> attributes = new HashMap<>();
 
-    private List childs = new ArrayList();
+    private final List<IvyTag> childs = new ArrayList<>();
 
     private boolean allowNoChild = true;
 
@@ -53,8 +53,8 @@ public class IvyTag {
     public IvyTag(String name, IvyTagAttribute[] atts) {
         super();
         this.name = name;
-        for (int i = 0; i < atts.length; i++) {
-            addAttribute(atts[i]);
+        for (IvyTagAttribute att : atts) {
+            addAttribute(att);
         }
     }
 
@@ -66,8 +66,8 @@ public class IvyTag {
     public IvyTag(String name, String doc, IvyTagAttribute[] atts) {
         this.name = name;
         this.doc = doc;
-        for (int i = 0; i < atts.length; i++) {
-            addAttribute(atts[i]);
+        for (IvyTagAttribute att : atts) {
+            addAttribute(att);
         }
     }
 
@@ -94,11 +94,11 @@ public class IvyTag {
         return childs.size() > 0;
     }
 
-    public List getAttributes() {
-        return new ArrayList(attributes.values());
+    public List<IvyTagAttribute> getAttributes() {
+        return new ArrayList<>(attributes.values());
     }
 
-    public List getChilds() {
+    public List<IvyTag> getChilds() {
         return childs;
     }
 
@@ -149,7 +149,7 @@ public class IvyTag {
     }
 
     public String[] getPossibleValuesForAttribute(String att, IvyFile ivyfile) {
-        IvyTagAttribute ivyTagAttribute = (IvyTagAttribute) attributes.get(att);
+        IvyTagAttribute ivyTagAttribute = attributes.get(att);
         if (ivyTagAttribute == null) {
             return null;
         }
@@ -158,13 +158,13 @@ public class IvyTag {
             String qualifier = ivyfile.getAttributeValueQualifier();
             String[] values = provider.getValuesfor(ivyTagAttribute, ivyfile);
             if (values != null) {
-                Set ret = new HashSet(values.length);
+                Set<String> ret = new HashSet<>(values.length);
                 for (String value : values) {
                     if (value.startsWith(qualifier)) {
                         ret.add(value);
                     }
                 }
-                return (String[]) ret.toArray(new String[ret.size()]);
+                return ret.toArray(new String[ret.size()]);
             } else {
                 return null;
             }
@@ -175,8 +175,7 @@ public class IvyTag {
     }
 
     public String getPossibleDocForValue(String value, IvyFile ivyfile) {
-        IvyTagAttribute ivyTagAttribute = (IvyTagAttribute) attributes.get(ivyfile
-                .getAttributeName());
+        IvyTagAttribute ivyTagAttribute = attributes.get(ivyfile.getAttributeName());
         if (ivyTagAttribute == null) {
             return null;
         }
@@ -196,7 +195,7 @@ public class IvyTag {
     }
 
     public Proposal[] getProposals() {
-        List ret = new ArrayList();
+        List<Proposal> ret = new ArrayList<>();
         // Yes -- compute whole proposal text
         String text = getStartTag() + getEndTag();
         // Derive cursor position
@@ -206,7 +205,7 @@ public class IvyTag {
         if (allowNoChild && getChilds().size() > 0) {
             ret.add(new Proposal("<" + getName() + " />", cursor, getDoc()));
         }
-        return (Proposal[]) ret.toArray(new Proposal[ret.size()]);
+        return ret.toArray(new Proposal[ret.size()]);
     }
 
 }

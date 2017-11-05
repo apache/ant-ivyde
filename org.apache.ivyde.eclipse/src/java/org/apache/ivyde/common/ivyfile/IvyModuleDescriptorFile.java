@@ -45,23 +45,20 @@ public class IvyModuleDescriptorFile extends IvyFile {
     }
 
     public String[] getConfigurationNames() {
-        Pattern p = CONFIGURATIONS_START_PATTERN;
-        Matcher m = p.matcher(getDoc());
+        Matcher m = CONFIGURATIONS_START_PATTERN.matcher(getDoc());
         if (m.find()) {
             int start = m.end();
-            p = CONFIGURATIONS_END_PATTERN;
-            m = p.matcher(getDoc());
+            m = CONFIGURATIONS_END_PATTERN.matcher(getDoc());
             int end = getDoc().length();
             if (m.find(start)) {
                 end = m.start();
             }
-            p = CONF_PATTERN;
-            m = p.matcher(getDoc());
-            List ret = new ArrayList();
+            m = CONF_PATTERN.matcher(getDoc());
+            List<String> ret = new ArrayList<>();
             for (boolean found = m.find(start); found && m.end() < end; found = m.find()) {
                 ret.add(m.group(1));
             }
-            return (String[]) ret.toArray(new String[ret.size()]);
+            return ret.toArray(new String[ret.size()]);
         } else {
             return new String[] {"default"};
         }
@@ -77,13 +74,12 @@ public class IvyModuleDescriptorFile extends IvyFile {
     }
 
     public String getDependencyOrganisation() {
-        Map otherAttValues = getAllAttsValues();
+        Map<String, String> otherAttValues = getAllAttsValues();
         return getDependencyOrganisation(otherAttValues);
     }
 
-    public String getDependencyOrganisation(Map otherAttValues) {
-        return otherAttValues != null && otherAttValues.get("org") != null ? (String) otherAttValues
-                .get("org")
-                : getOrganisation();
+    public String getDependencyOrganisation(Map<String, String> otherAttValues) {
+        return (otherAttValues != null && otherAttValues.get("org") != null)
+                ? otherAttValues.get("org") : getOrganisation();
     }
 }

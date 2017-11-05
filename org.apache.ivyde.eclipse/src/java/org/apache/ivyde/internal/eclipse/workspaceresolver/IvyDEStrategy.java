@@ -31,10 +31,10 @@ import org.apache.ivy.plugins.version.VersionMatcher;
  */
 public class IvyDEStrategy extends ComparatorLatestStrategy {
 
-    final class MridComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            String rev1 = ((ModuleRevisionId) o1).getRevision();
-            String rev2 = ((ModuleRevisionId) o2).getRevision();
+    final class MridComparator implements Comparator<ModuleRevisionId> {
+        public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
+            String rev1 = o1.getRevision();
+            String rev2 = o2.getRevision();
 
             boolean latestRev1 = rev1.startsWith("latest") || rev1.startsWith("working");
             boolean latestRev2 = rev2.startsWith("latest") || rev2.startsWith("working");
@@ -89,10 +89,10 @@ public class IvyDEStrategy extends ComparatorLatestStrategy {
      * inspired by PHP version_compare one, unless a dynamic revision is given, in which case the
      * version matcher is used to perform the comparison.
      */
-    final class ArtifactInfoComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            String rev1 = ((ArtifactInfo) o1).getRevision();
-            String rev2 = ((ArtifactInfo) o2).getRevision();
+    final class ArtifactInfoComparator implements Comparator<ArtifactInfo> {
+        public int compare(ArtifactInfo o1, ArtifactInfo o2) {
+            String rev1 = o1.getRevision();
+            String rev2 = o2.getRevision();
 
             /*
              * The revisions can still be not resolved, so we use the current version matcher to
@@ -117,9 +117,9 @@ public class IvyDEStrategy extends ComparatorLatestStrategy {
         }
     }
 
-    private final Comparator mridComparator = new MridComparator();
+    private final Comparator<ModuleRevisionId> mridComparator = new MridComparator();
 
-    private final Comparator artifactInfoComparator = new ArtifactInfoComparator();
+    private final Comparator<ArtifactInfo> artifactInfoComparator = new ArtifactInfoComparator();
 
     public IvyDEStrategy() {
         setComparator(artifactInfoComparator);

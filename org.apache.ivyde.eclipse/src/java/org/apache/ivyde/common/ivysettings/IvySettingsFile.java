@@ -54,7 +54,7 @@ public class IvySettingsFile extends IvyFile {
     }
 
     public URL[] getClasspathUrls() {
-        List urls = new ArrayList();
+        List<URL> urls = new ArrayList<>();
         Matcher m = CLASSPATH_URL_PATTERN.matcher(getDoc());
         while (m.find()) {
             try {
@@ -75,11 +75,11 @@ public class IvySettingsFile extends IvyFile {
                 }
             }
         }
-        return (URL[]) urls.toArray(new URL[urls.size()]);
+        return urls.toArray(new URL[urls.size()]);
     }
 
     private String substitute(String str) {
-        Map variables = new HashMap();
+        Map<String, String> variables = new HashMap<>();
         if (file.getParentFile() != null) {
             URI settingsDirUri = file.getParentFile().toURI();
             variables.put("ivy.settings.dir", settingsDirUri.toString());
@@ -87,8 +87,8 @@ public class IvySettingsFile extends IvyFile {
         return IvyPatternHelper.substituteVariables(str, variables);
     }
 
-    public Map/* <String,String> */getTypedefs() {
-        Map p = getDefaultTypedefs();
+    public Map<Object, Object> getTypedefs() {
+        Map<Object, Object> p = getDefaultTypedefs();
         Matcher m = TYPEDEF_PATTERN.matcher(getDoc());
         while (m.find()) {
             p.put(substitute(m.group(1)), substitute(m.group(2)));
@@ -96,7 +96,7 @@ public class IvySettingsFile extends IvyFile {
         return p;
     }
 
-    public static Map/* <String,String> */getDefaultTypedefs() {
+    public static Map<Object, Object> getDefaultTypedefs() {
         Properties p = new Properties();
         try {
             p.load(XmlSettingsParser.class.getResourceAsStream("typedef.properties"));

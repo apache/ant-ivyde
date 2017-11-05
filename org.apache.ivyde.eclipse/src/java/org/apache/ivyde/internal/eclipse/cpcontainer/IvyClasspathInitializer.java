@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.IvyDEMessage;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
@@ -96,10 +97,10 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                         // try what the IvyDE plugin saved
                         IvyClasspathContainerSerializer serializer = IvyPlugin.getDefault()
                                 .getIvyClasspathContainerSerializer();
-                        Map ivycps = serializer.read(project);
-                        if (ivycps != null) {
+                        Map<IPath, IvyClasspathContainer> containers = serializer.read(project);
+                        if (containers != null) {
                             IvyDEMessage.debug("Found serialized containers");
-                            ivycp = (IvyClasspathContainerImpl) ivycps.get(containerPath);
+                            ivycp = (IvyClasspathContainerImpl) containers.get(containerPath);
                         }
                         if (ivycp == null) {
                             IvyDEMessage.debug("No serialized containers match the expected container path");
@@ -169,18 +170,16 @@ public class IvyClasspathInitializer extends ClasspathContainerInitializer {
                     // update the classpath of the project by updating the IvyDE container
                     IClasspathEntry newEntry = JavaCore.newContainerEntry(updatedPath, null,
                         attributes, exported);
-                    IClasspathEntry[] entries;
-                    entries = project.getRawClasspath();
-                    List newEntries = new ArrayList(Arrays.asList(entries));
+                    IClasspathEntry[] entries = project.getRawClasspath();
+                    List<IClasspathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
                     for (int i = 0; i < newEntries.size(); i++) {
-                        IClasspathEntry e = (IClasspathEntry) newEntries.get(i);
+                        IClasspathEntry e = newEntries.get(i);
                         if (e == entry) {
                             newEntries.set(i, newEntry);
                             break;
                         }
                     }
-                    entries = (IClasspathEntry[]) newEntries.toArray(new IClasspathEntry[newEntries
-                            .size()]);
+                    entries = newEntries.toArray(new IClasspathEntry[newEntries.size()]);
                     project.setRawClasspath(entries, project.getOutputLocation(), null);
                 } catch (JavaModelException e) {
                     IvyPlugin.logError("Unable to update the container path", e);

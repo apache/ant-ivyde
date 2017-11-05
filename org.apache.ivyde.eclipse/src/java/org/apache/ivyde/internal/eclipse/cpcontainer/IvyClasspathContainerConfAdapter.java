@@ -88,7 +88,7 @@ public final class IvyClasspathContainerConfAdapter {
     private static void loadV0(IvyClasspathContainerConfiguration conf, IPath path) {
         // load some configuration that can be loaded
         conf.setIvyXmlPath(path.removeFirstSegments(1).removeLastSegments(1).toString());
-        List confs = IvyClasspathUtil.split(path.lastSegment());
+        List<String> confs = IvyClasspathUtil.split(path.lastSegment());
         if (confs.isEmpty()) {
             confs = Collections.singletonList("*");
         }
@@ -315,7 +315,7 @@ public final class IvyClasspathContainerConfAdapter {
 
         RetrieveSetupManager manager = IvyPlugin.getDefault().getRetrieveSetupManager();
         IProject project = conf.getJavaProject().getProject();
-        List retrieveSetups;
+        List<StandaloneRetrieveSetup> retrieveSetups;
         try {
             retrieveSetups = manager.getSetup(project);
         } catch (IOException e) {
@@ -485,7 +485,7 @@ public final class IvyClasspathContainerConfAdapter {
         path.append(URLEncoder.encode(value, "UTF-8"));
     }
 
-    private static void append(StringBuffer path, String name, List values)
+    private static void append(StringBuffer path, String name, List<String> values)
             throws UnsupportedEncodingException {
         append(path, name, IvyClasspathUtil.concat(values));
     }

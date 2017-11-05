@@ -20,7 +20,6 @@ package org.apache.ivyde.internal.eclipse.ui;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.IvyDEException;
@@ -51,7 +50,7 @@ public class SettingsSetupEditor extends Composite {
     public static final String TOOLTIP_PROPERTY_FILES = "Comma separated list of build property"
             + " files.\nExample: build.properties, override.properties";
 
-    private final List listeners = new ArrayList();
+    private final List<SettingsEditorListener> listeners = new ArrayList<>();
 
     private IvyDEException settingsError;
 
@@ -190,9 +189,8 @@ public class SettingsSetupEditor extends Composite {
     void settingsUpdated() {
         synchronized (listeners) {
             SettingsSetup setup = getIvySettingsSetup();
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                ((SettingsEditorListener) it.next()).settingsEditorUpdated(setup);
+            for (SettingsEditorListener listener : listeners) {
+                listener.settingsEditorUpdated(setup);
             }
         }
     }

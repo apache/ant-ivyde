@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivyde.common.model.IvyModelSettings;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
@@ -40,8 +41,8 @@ public class EclipseIvyModelSettings implements IvyModelSettings {
         this(IvyClasspathContainerHelper.getContainersFromIvyFile(ivyfile));
     }
 
-    private EclipseIvyModelSettings(List/* <IvyClasspathContainer> */containers) {
-        this(containers.isEmpty() ? null : (IvyClasspathContainerImpl) containers.iterator().next());
+    private EclipseIvyModelSettings(List<IvyClasspathContainer> containers) {
+        this(containers.isEmpty() ? null : (IvyClasspathContainerImpl) containers.get(0));
     }
 
     private EclipseIvyModelSettings(IvyClasspathContainerImpl ivycp) {

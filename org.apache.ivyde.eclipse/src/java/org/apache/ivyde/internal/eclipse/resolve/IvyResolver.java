@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,7 +67,7 @@ public class IvyResolver {
 
     private final IProject project;
 
-    private final List confInput;
+    private final List<String> confInput;
 
     private String retrievePattern = null;
 
@@ -84,7 +83,7 @@ public class IvyResolver {
 
     private boolean transitiveResolve = true;
 
-    public IvyResolver(String ivyXmlPath, List confInput, IProject project) {
+    public IvyResolver(String ivyXmlPath, List<String> confInput, IProject project) {
         this.ivyXmlPath = ivyXmlPath;
         this.confInput = confInput;
         this.project = project;
@@ -175,9 +174,9 @@ public class IvyResolver {
             if (!result.getProblemMessages().isEmpty()) {
                 MultiStatus multiStatus = new MultiStatus(IvyPlugin.ID, IStatus.ERROR,
                         "Impossible to resolve dependencies of " + md.getModuleRevisionId(), null);
-                for (Iterator iter = result.getProblemMessages().iterator(); iter.hasNext();) {
+                for (String s : result.getProblemMessages()) {
                     multiStatus.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                            (String) iter.next(), null));
+                            s, null));
                 }
                 return multiStatus;
             }
@@ -196,14 +195,14 @@ public class IvyResolver {
         // nothing to do by default
     }
 
-    private void computeConfs(List/* <String> */confInput, ModuleDescriptor md) {
-        Set configurations = new HashSet();
+    private void computeConfs(List<String> confInput, ModuleDescriptor md) {
+        Set<String> configurations = new HashSet<>();
         configurations.addAll(confInput);
 
         if (configurations.contains("*")) {
             confs = md.getConfigurationsNames();
         } else {
-            confs = (String[]) configurations.toArray(new String[configurations.size()]);
+            confs = configurations.toArray(new String[configurations.size()]);
         }
     }
 
@@ -243,6 +242,7 @@ public class IvyResolver {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     private ResolveResult doResolve(Ivy ivy, ModuleDescriptor md) throws ParseException,
             IOException {
         IvyDEMessage.debug("Doing a full resolve...");
@@ -264,14 +264,13 @@ public class IvyResolver {
 
         ArtifactDownloadReport[] artifactReports = report.getArtifactsReports(null, false);
 
-        Map/* <Artifact, ArtifactDownloadReport> */workspaceArtifacts = IvyContext
-                .getContext().get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
+        Map<Artifact, ArtifactDownloadReport> workspaceArtifacts = IvyContext.getContext()
+                .get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
         if (workspaceArtifacts != null) {
             // some artifact were 'forced' by the dependency declaration, whereas they should be
             // switch by the eclipse project reference
             for (int i = 0; i < artifactReports.length; i++) {
-                ArtifactDownloadReport eclipseArtifactReport = (ArtifactDownloadReport) workspaceArtifacts
-                        .get(artifactReports[i].getArtifact());
+                ArtifactDownloadReport eclipseArtifactReport = workspaceArtifacts.get(artifactReports[i].getArtifact());
                 if (eclipseArtifactReport != null) {
                     // let's switch.
                     artifactReports[i] = eclipseArtifactReport;
@@ -320,9 +319,8 @@ public class IvyResolver {
         }
     }
 
-    private void collectArtifactsByDependency(ResolveReport r, ResolveResult result) {
-        for (Iterator it = r.getDependencies().iterator(); it.hasNext();) {
-            IvyNode node = (IvyNode) it.next();
+    private void collectArtifactsByDependency(ResolveReport rr, ResolveResult result) {
+        for (IvyNode node : rr.getDependencies()) {
             if (node.getDescriptor() != null) {
                 result.putArtifactsForDep(node.getResolvedId(), node.getDescriptor()
                         .getAllArtifacts());
@@ -363,7 +361,7 @@ public class IvyResolver {
         }
         options.setConfs(confs).setDestArtifactPattern(pattern);
         if (retrieveTypes != null && !retrieveTypes.equals("*")) {
-            List typeList = IvyClasspathUtil.split(retrieveTypes);
+            List<String> typeList = IvyClasspathUtil.split(retrieveTypes);
             options.setArtifactFilter(new ArtifactTypeFilter(typeList));
         }
         options.setResolveId(IvyClasspathUtil.buildResolveId(useExtendedResolveId, md));
@@ -404,7 +402,7 @@ public class IvyResolver {
                 .getVariables());
         try {
             // FIXME same as above
-            Map retrievedArtifacts = ivy.getRetrieveEngine().determineArtifactsToCopy(
+            Map<ArtifactDownloadReport, Set<String>> retrievedArtifacts = ivy.getRetrieveEngine().determineArtifactsToCopy(
                 md.getModuleRevisionId(), resolvedPattern, options);
             result.setRetrievedArtifacts(retrievedArtifacts);
         } catch (ParseException e) {

@@ -18,7 +18,7 @@
 package org.apache.ivyde.internal.eclipse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivyde.internal.eclipse.cpcontainer.ClasspathEntriesResolver;
@@ -106,10 +106,9 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
         } else {
             cpes = ivycp.getClasspathEntries();
         }
-        List resolved = new ArrayList(cpes.length);
-        List projects = new ArrayList();
-        for (int i = 0; i < cpes.length; i++) {
-            IClasspathEntry cpe = cpes[i];
+        List<IRuntimeClasspathEntry> resolved = new ArrayList<>(cpes.length);
+        List<IJavaProject> projects = new ArrayList<>();
+        for (IClasspathEntry cpe : cpes) {
             if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
                 IProject p = ResourcesPlugin.getWorkspace().getRoot()
                         .getProject(cpe.getPath().segment(0));
@@ -120,11 +119,10 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
                             .newProjectRuntimeClasspathEntry(jp);
                     resolved.add(classpath);
                     IRuntimeClasspathEntry[] entries = JavaRuntime.resolveRuntimeClasspathEntry(
-                        classpath, jp);
-                    for (int j = 0; j < entries.length; j++) {
-                        IRuntimeClasspathEntry e = entries[j];
+                            classpath, jp);
+                    for (IRuntimeClasspathEntry e : entries) {
                         if (!resolved.contains(e)) {
-                            resolved.add(entries[j]);
+                            resolved.add(e);
                         }
                     }
                 }
@@ -139,7 +137,7 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
         // set classpath property
         IRuntimeClasspathEntry[] result = new IRuntimeClasspathEntry[resolved.size()];
         for (int i = 0; i < result.length; i++) {
-            result[i] = (IRuntimeClasspathEntry) resolved.get(i);
+            result[i] = resolved.get(i);
             result[i].setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
         }
         return result;
@@ -154,16 +152,13 @@ public class IvyDERuntimeClasspathEntryResolver implements IRuntimeClasspathEntr
             return new IRuntimeClasspathEntry[] {entry};
         }
 
-        IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
-        IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(null);
-        List resolved = new ArrayList();
-        for (int i = 0; i < entries.length; i++) {
-            IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(entries[i],
-                project);
-            resolved.addAll(Arrays.asList(temp));
+        IRuntimeClasspathEntry[] entries = ((IRuntimeClasspathEntry2) entry).getRuntimeClasspathEntries(null);
+        List<IRuntimeClasspathEntry> resolved = new ArrayList<>();
+        for (IRuntimeClasspathEntry ent : entries) {
+            IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(ent, project);
+            Collections.addAll(resolved, temp);
         }
-        return (IRuntimeClasspathEntry[]) resolved.toArray(new IRuntimeClasspathEntry[resolved
-                .size()]);
+        return resolved.toArray(new IRuntimeClasspathEntry[resolved.size()]);
     }
 
     public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException {

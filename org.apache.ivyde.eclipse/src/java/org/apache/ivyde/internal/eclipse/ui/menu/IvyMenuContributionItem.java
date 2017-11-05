@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,6 +32,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.eclipse.cp.IvyClasspathContainerHelper;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
 import org.apache.ivyde.internal.eclipse.cpcontainer.IvyClasspathContainerImpl;
@@ -75,8 +75,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
     }
 
     protected IContributionItem[] getContributionItems() {
-        ISelectionService selectionService = (ISelectionService) serviceLocator
-                .getService(ISelectionService.class);
+        ISelectionService selectionService = (ISelectionService) serviceLocator.getService(ISelectionService.class);
         if (selectionService == null) {
             return new IContributionItem[0];
         }
@@ -85,29 +84,26 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             return new IContributionItem[0];
         }
 
-        Map/* <IProject, Set<IvyClasspathContainer>> */containers = new HashMap();
+        Map<IProject, Set<IvyClasspathContainer>> containers = new HashMap<>();
 
-        Map/* <IProject, Set<StandaloneRetrieveSetup>> */retrieveSetups = new HashMap();
+        Map<IProject, Set<StandaloneRetrieveSetup>> retrieveSetups = new HashMap<>();
 
         // this give info about if the selection is only based of classpath containers
         boolean onlyContainers = true;
 
         int totalSelected = 0;
 
-        Iterator it = ((IStructuredSelection) selection).iterator();
-        while (it.hasNext()) {
+        for (Object element : ((IStructuredSelection) selection).toList()) {
             totalSelected++;
-            Object element = it.next();
             boolean projectCollected = collectProject(containers, retrieveSetups, element);
             if (projectCollected) {
                 onlyContainers = false;
             } else {
-                IWorkingSet workingSet = (IWorkingSet) IvyPlugin.adapt(element, IWorkingSet.class);
+                IWorkingSet workingSet = IvyPlugin.adapt(element, IWorkingSet.class);
                 if (workingSet != null) {
                     onlyContainers = false;
-                    IAdaptable[] elements = workingSet.getElements();
-                    for (int i = 0; i < elements.length; i++) {
-                        collectProject(containers, retrieveSetups, elements[i]);
+                    for (IAdaptable elem : workingSet.getElements()) {
+                        collectProject(containers, retrieveSetups, elem);
                     }
                 } else if (element instanceof ClassPathContainer) {
                     collectContainer(containers, (ClassPathContainer) element);
@@ -115,12 +111,12 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             }
         }
 
-        List/* <IContributionItem> */items;
+        List<MenuManager> items;
         MenuManager menuManager;
         if (onlyContainers) {
             // we we have only containers, no need to have a root menu entry
             menuManager = null;
-            items = new ArrayList();
+            items = new ArrayList<>();
         } else {
             menuManager = new MenuManager("Ivy", IvyPlugin
                     .getImageDescriptor("icons/logo16x16.gif"), "org.apache.ivyde.eclipse.menu");
@@ -138,14 +134,9 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         // add retrieve
         if (!retrieveSetups.isEmpty()) {
             boolean oneProject = retrieveSetups.size() == 1 && totalSelected == 1;
-            Iterator itProject = retrieveSetups.entrySet().iterator();
-            while (itProject.hasNext()) {
-                Entry entry = (Entry) itProject.next();
-                IProject project = (IProject) entry.getKey();
-                Iterator itSetup = ((Set) entry.getValue()).iterator();
-                while (itSetup.hasNext()) {
-                    StandaloneRetrieveSetup retrieveSetup = (StandaloneRetrieveSetup) itSetup
-                            .next();
+            for (Entry<IProject, Set<StandaloneRetrieveSetup>> entry : retrieveSetups.entrySet()) {
+                IProject project = entry.getKey();
+                for (StandaloneRetrieveSetup retrieveSetup : entry.getValue()) {
                     RetrieveAction action = new RetrieveAction(retrieveSetup);
                     action.setText("Retrieve '" + retrieveSetup.getName()
                             + (oneProject ? "'" : "' of " + project.getName()));
@@ -164,10 +155,10 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         // add clean cache
         if (!containers.isEmpty()) {
             if (totalSelected == 1 && containers.size() == 1
-                    && ((Set) containers.values().iterator().next()).size() == 1) {
+                    && containers.values().iterator().next().size() == 1) {
                 // only one container
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) ((Set) containers.values()
-                        .iterator().next()).iterator().next();
+                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) containers.values()
+                        .iterator().next().iterator().next();
                 Ivy ivy = ivycp.getState().getCachedIvy();
                 if (ivy != null) {
                     addCleanableForSingleContainer(menuManager, items, ivy);
@@ -187,28 +178,28 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         // add remove ivy nature
         addCommand(menuManager, items, RemoveIvyNatureHandler.COMMAND_ID);
 
-        return (IContributionItem[]) items.toArray(new IContributionItem[items.size()]);
+        return items.toArray(new IContributionItem[items.size()]);
     }
 
-    private void addCommand(MenuManager menuManager, List/* <IContributionItem> */items,
+    private void addCommand(MenuManager menuManager, List<MenuManager> items,
             String commandId) {
         CommandContributionItemParameter parm = new CommandContributionItemParameter(
                 serviceLocator, null, commandId, CommandContributionItem.STYLE_PUSH);
         fillMenu(menuManager, items, new CommandContributionItem(parm));
     }
 
-    private void fillMenu(MenuManager menuManager, List/* <IContributionItem> */items,
-            IContributionItem item) {
+    private void fillMenu(MenuManager menuManager, List<MenuManager> items,
+            IContributionItem commandContributionItem) {
         if (menuManager != null) {
-            menuManager.add(item);
+            menuManager.add(commandContributionItem);
         } else {
-            items.add(item);
+            items.add((MenuManager) commandContributionItem);
         }
     }
 
-    private boolean collectProject(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
-            Map/* <IProject, Set<StandaloneRetrieveSetup>> */retrieveSetups, Object element) {
-        IProject project = (IProject) IvyPlugin.adapt(element, IProject.class);
+    private boolean collectProject(Map<IProject, Set<IvyClasspathContainer>> containers,
+            Map<IProject, Set<StandaloneRetrieveSetup>> retrieveSetups, Object element) {
+        IProject project = IvyPlugin.adapt(element, IProject.class);
         if (project != null && project.isOpen() && IvyNatureHelper.hasNature(project)) {
             doCollectProject(containers, retrieveSetups, project);
             return true;
@@ -216,14 +207,14 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         return false;
     }
 
-    private void doCollectProject(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
-            Map/* <IProject, Set<StandaloneRetrieveSetup>> */retrieveSetups, IProject project) {
-        List ivycps = IvyClasspathContainerHelper.getContainers(project);
-        if (!ivycps.isEmpty()) {
-            containers.put(project, new HashSet(ivycps));
+    private void doCollectProject(Map<IProject, Set<IvyClasspathContainer>> containers,
+            Map<IProject, Set<StandaloneRetrieveSetup>> retrieveSetups, IProject project) {
+        List<IvyClasspathContainer> containerList = IvyClasspathContainerHelper.getContainers(project);
+        if (!containerList.isEmpty()) {
+            containers.put(project, new HashSet<>(containerList));
         }
         RetrieveSetupManager manager = IvyPlugin.getDefault().getRetrieveSetupManager();
-        List setupList;
+        List<StandaloneRetrieveSetup> setupList;
         try {
             setupList = manager.getSetup(project);
         } catch (IOException e) {
@@ -232,11 +223,11 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             return;
         }
         if (!setupList.isEmpty()) {
-            retrieveSetups.put(project, new HashSet(setupList));
+            retrieveSetups.put(project, new HashSet<>(setupList));
         }
     }
 
-    private boolean collectContainer(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
+    private boolean collectContainer(Map<IProject, Set<IvyClasspathContainer>> containers,
             ClassPathContainer element) {
         IvyClasspathContainerImpl ivycp = IvyClasspathUtil.jdt2IvyCPC(element);
         if (ivycp == null) {
@@ -246,25 +237,25 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         return true;
     }
 
-    private void doCollectContainer(Map/* <IProject, Set<IvyClasspathContainer>> */containers,
+    private void doCollectContainer(Map<IProject, Set<IvyClasspathContainer>> containers,
             IvyClasspathContainerImpl ivycp) {
         IJavaProject javaProject = ivycp.getConf().getJavaProject();
         if (javaProject == null) {
             return;
         }
-        Set/* <IvyClasspathContainer> */cplist = (Set) containers.get(javaProject.getProject());
-        if (cplist == null) {
-            cplist = new HashSet();
-            containers.put(javaProject.getProject(), cplist);
+        Set<IvyClasspathContainer> containerSet = containers.get(javaProject.getProject());
+        if (containerSet == null) {
+            containerSet = new HashSet<>();
+            containers.put(javaProject.getProject(), containerSet);
         }
-        cplist.add(ivycp);
+        containerSet.add(ivycp);
     }
 
     private void addCleanableForSingleContainer(MenuManager menuManager,
-            List/* <IContributionItem> */items, Ivy ivy) {
-        List/* <Cleanable> */allCleanables = new ArrayList();
-        List/* <Cleanable> */repositoryCleanables = new ArrayList();
-        List/* <Cleanable> */resolutionCleanables = new ArrayList();
+            List<MenuManager> items, Ivy ivy) {
+        List<Cleanable> allCleanables = new ArrayList<>();
+        List<Cleanable> repositoryCleanables = new ArrayList<>();
+        List<Cleanable> resolutionCleanables = new ArrayList<>();
 
         addResolutionCleanable(allCleanables, ivy);
         addResolutionCleanable(resolutionCleanables, ivy);
@@ -275,29 +266,21 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         addCleanable(menuManager, items, "Clean all caches", allCleanables);
         addCleanable(menuManager, items, "Clean the resolution cache", resolutionCleanables);
         addCleanable(menuManager, items, "Clean every repository cache", repositoryCleanables);
-        Iterator itCleanable = resolutionCleanables.iterator();
-        while (itCleanable.hasNext()) {
-            Cleanable cleanable = (Cleanable) itCleanable.next();
+        for (Cleanable cleanable : resolutionCleanables) {
             addCleanable(menuManager, items, "Clean the cache '" + cleanable.getName() + "'",
-                Collections.singletonList(cleanable));
+                    Collections.singletonList(cleanable));
         }
     }
 
     private void addCleanableForManyContainers(MenuManager menuManager,
-            List/* <IContributionItem> */items, Collection/*
-                                                           * <Set<IvyClasspathContainer >>
-                                                           */containerSets) {
-        List/* <Cleanable> */allCleanables = new ArrayList();
-        List/* <Cleanable> */repositoryCleanables = new ArrayList();
-        List/* <Cleanable> */resolutionCleanables = new ArrayList();
+            List<MenuManager> items, Collection<Set<IvyClasspathContainer>> containerSets) {
+        List<Cleanable> allCleanables = new ArrayList<>();
+        List<Cleanable> repositoryCleanables = new ArrayList<>();
+        List<Cleanable> resolutionCleanables = new ArrayList<>();
 
-        Iterator itSet = containerSets.iterator();
-        while (itSet.hasNext()) {
-            Set set = (Set) itSet.next();
-            Iterator itContainer = set.iterator();
-            while (itContainer.hasNext()) {
-                IvyClasspathContainerImpl ivycp = (IvyClasspathContainerImpl) itContainer.next();
-                Ivy ivy = ivycp.getState().getCachedIvy();
+        for (Set<IvyClasspathContainer> containerSet : containerSets) {
+            for (IvyClasspathContainer container : containerSet) {
+                Ivy ivy = ((IvyClasspathContainerImpl) container).getState().getCachedIvy();
                 if (ivy != null) {
                     addResolutionCleanable(allCleanables, ivy);
                     addResolutionCleanable(resolutionCleanables, ivy);
@@ -312,20 +295,19 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         addCleanable(menuManager, items, "Clean every repository cache", repositoryCleanables);
     }
 
-    private void addResolutionCleanable(List/* <Cleanable> */cleanables, Ivy ivy) {
+    private void addResolutionCleanable(List<Cleanable> cleanables, Ivy ivy) {
         ResolutionCacheManager manager = ivy.getSettings().getResolutionCacheManager();
         cleanables.add(new ResolutionCacheCleanable(manager));
     }
 
-    private void addRepositoryCleanable(List/* <Cleanable> */cleanables, Ivy ivy) {
-        RepositoryCacheManager[] managers = ivy.getSettings().getRepositoryCacheManagers();
-        for (int i = 0; i < managers.length; i++) {
-            cleanables.add(new RepositoryCacheCleanable(managers[i]));
+    private void addRepositoryCleanable(List<Cleanable> cleanables, Ivy ivy) {
+        for (RepositoryCacheManager manager : ivy.getSettings().getRepositoryCacheManagers()) {
+            cleanables.add(new RepositoryCacheCleanable(manager));
         }
     }
 
-    public void addCleanable(MenuManager menuManager, List/* <IContributionItem> */items,
-            String name, List/* <Cleanable> */cleanables) {
+    public void addCleanable(MenuManager menuManager, List<MenuManager> items,
+            String name, List<Cleanable> cleanables) {
         CleanCacheAction action = new CleanCacheAction(name, cleanables);
         action.setText(name);
         fillMenu(menuManager, items, new ActionContributionItem(action));
