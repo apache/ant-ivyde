@@ -20,16 +20,18 @@ package org.apache.ivyde.eclipse.resolvevisualizer.label;
 import java.util.Map;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.zest.core.viewers.EntityConnectionData;
 
 public class SameModuleIdAlgorithm extends LabelDecoratorAlgorithmAdapter {
     public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
-            Map/* <EntityConnectionData> */highlightRelationships, Map/* <IvyNodeElement> */highlightEntities) {
+                                     Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                     Map<IvyNodeElement, Color> highlightEntities) {
         if (selected != null) {
-            IvyNodeElement[] deepDependencies = root.getDeepDependencies();
-            for (int i = 0; i < deepDependencies.length; i++) {
-                if (deepDependencies[i].getOrganization().equals(selected.getOrganization())
-                        && deepDependencies[i].getName().equals(selected.getName())) {
-                    highlightEntities.put(deepDependencies[i], entityColor);
+            for (IvyNodeElement deepDependency : root.getDeepDependencies()) {
+                if (deepDependency.getOrganization().equals(selected.getOrganization())
+                        && deepDependency.getName().equals(selected.getName())) {
+                    highlightEntities.put(deepDependency, entityColor);
                 }
             }
         }

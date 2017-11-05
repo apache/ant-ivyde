@@ -20,8 +20,11 @@ package org.apache.ivyde.eclipse.resolvevisualizer.label;
 import java.util.Map;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.zest.core.viewers.EntityConnectionData;
 
 public interface ILabelDecoratorAlgorithm {
     void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
-            Map/* <EntityConnectionData> */highlightRelationships, Map/* <IvyNodeElement> */highlightEntities);
+                              Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                              Map<IvyNodeElement, Color> highlightEntities);
 }

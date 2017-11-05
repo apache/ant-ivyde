@@ -20,7 +20,6 @@ package org.apache.ivyde.eclipse.resolvevisualizer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.core.module.id.ModuleId;
@@ -42,23 +41,21 @@ public class MessageContentProvider {
         }
         manager.removeAllMessages();
 
-        Map/* <ModuleId, Collection<IvyNodeElement>> */conflicts = new HashMap/* <ModuleId, Collection<IvyNodeElement>> */();
+        Map<ModuleId, Collection<IvyNodeElement>> conflicts = new HashMap<>();
 
-        IvyNodeElement[] deepDependencies = root.getDeepDependencies();
-        for (int i = 0; i < deepDependencies.length; i++) {
-            if (deepDependencies[i].getConflicts().length > 0) {
-                Collection/* <IvyNodeElement> */conflictParticipants = (Collection) conflicts.get(deepDependencies[i]
+        for (IvyNodeElement deepDependency : root.getDeepDependencies()) {
+            if (deepDependency.getConflicts().length > 0) {
+                Collection<IvyNodeElement> conflictParticipants = conflicts.get(deepDependency
                         .getModuleRevisionId().getModuleId());
                 if (conflictParticipants == null) {
-                    conflictParticipants = new HashSet/* <IvyNodeElement> */();
+                    conflictParticipants = new HashSet<>();
                 }
-                conflictParticipants.add(deepDependencies[i]);
-                conflicts.put(deepDependencies[i].getModuleRevisionId().getModuleId(), conflictParticipants);
+                conflictParticipants.add(deepDependency);
+                conflicts.put(deepDependency.getModuleRevisionId().getModuleId(), conflictParticipants);
             }
         }
 
-        for (Iterator conflictIter = conflicts.keySet().iterator(); conflictIter.hasNext();) {
-            ModuleId conflictKey = (ModuleId) conflictIter.next();
+        for (ModuleId conflictKey : conflicts.keySet()) {
             manager.addMessage(conflictKey,
                     "Conflict on module " + conflictKey.getOrganisation() + "#" + conflictKey.getName(),
                     conflicts.get(conflictKey), IMessageProvider.ERROR);

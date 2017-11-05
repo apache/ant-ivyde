@@ -20,17 +20,18 @@ package org.apache.ivyde.eclipse.resolvevisualizer.label;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
+import org.eclipse.swt.graphics.Color;
 
 public class ShortestRootPathAlgorithm extends LabelDecoratorAlgorithmAdapter {
     public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
-            Map/* <EntityConnectionData> */highlightRelationships, Map/* <IvyNodeElement> */highlightEntities) {
+                                     Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                     Map<IvyNodeElement, Color> highlightEntities) {
         // Calculates the smart path.
         if (selected != null) {
             IvyNodeElement[] path = getShortestPathToDescendent(root, selected);
@@ -47,12 +48,12 @@ public class ShortestRootPathAlgorithm extends LabelDecoratorAlgorithmAdapter {
     }
 
     public IvyNodeElement[] getShortestPathToDescendent(IvyNodeElement root, IvyNodeElement target) {
-        LinkedList/* <IvyNodeElement> */q = new LinkedList/* <IvyNodeElement> */();
-        Set/* <IvyNodeElement> */orderedSet = new HashSet/* <IvyNodeElement> */();
-        LinkedList/* <IvyNodeElement> */orderedList = new LinkedList/* <IvyNodeElement> */();
+        LinkedList<IvyNodeElement> q = new LinkedList<>();
+        Set<IvyNodeElement> orderedSet = new HashSet<>();
+        LinkedList<IvyNodeElement> orderedList = new LinkedList<>();
         q.add(root);
         while (!q.isEmpty()) {
-            IvyNodeElement head = (IvyNodeElement) q.remove(0);
+            IvyNodeElement head = q.remove(0);
             if (!orderedSet.contains(head)) {
                 orderedSet.add(head);
                 orderedList.add(head);
@@ -62,32 +63,31 @@ public class ShortestRootPathAlgorithm extends LabelDecoratorAlgorithmAdapter {
         return fixedWeightDijkstraAlgorithm(orderedList, root, target);
     }
 
-    private IvyNodeElement[] fixedWeightDijkstraAlgorithm(LinkedList q, IvyNodeElement s, IvyNodeElement t) {
-        HashMap/* <IvyNodeElement, Integer> */previous = new HashMap/* <IvyNodeElement, Integer> */();
-        HashMap/* <IvyNodeElement, Integer> */dValues = new HashMap/* <IvyNodeElement, Integer> */();
-        for (Iterator/* <IvyNodeElement> */iter = q.iterator(); iter.hasNext();) {
-            dValues.put(iter.next(), Integer.MAX_VALUE / 10);
+    private IvyNodeElement[] fixedWeightDijkstraAlgorithm(LinkedList<IvyNodeElement> q,
+                                                          IvyNodeElement s, IvyNodeElement t) {
+        HashMap<IvyNodeElement, IvyNodeElement> previous = new HashMap<>();
+        HashMap<IvyNodeElement, Integer> dValues = new HashMap<>();
+        for (IvyNodeElement e : q) {
+            dValues.put(e, Integer.MAX_VALUE / 10);
         }
         dValues.put(s, 0);
 
         while (!q.isEmpty()) {
-            IvyNodeElement head = (IvyNodeElement) q.remove(0);
-            IvyNodeElement[] outgoing = head.getDependencies();
-            for (int i = 0; i < outgoing.length; i++) {
-                IvyNodeElement v = outgoing[i];
-                if ((Integer) dValues.get(head) + 1 < (Integer) dValues.get(v)) {
+            IvyNodeElement head = q.remove(0);
+            for (IvyNodeElement v : head.getDependencies()) {
+                if (dValues.get(head) + 1 < dValues.get(v)) {
                     previous.put(v, head);
-                    dValues.put(v, (Integer) dValues.get(head) + 1);
+                    dValues.put(v, dValues.get(head) + 1);
                 }
             }
         }
-        LinkedList/* <IvyNodeElement> */path = new LinkedList/* <IvyNodeElement> */();
+        LinkedList<IvyNodeElement> path = new LinkedList<>();
         IvyNodeElement currentNode = t;
         while (previous.containsKey(currentNode)) {
             path.add(currentNode);
-            currentNode = (IvyNodeElement) previous.get(currentNode);
+            currentNode = previous.get(currentNode);
         }
         path.add(currentNode);
-        return (IvyNodeElement[]) path.toArray(new IvyNodeElement[path.size()]);
+        return path.toArray(new IvyNodeElement[path.size()]);
     }
 }

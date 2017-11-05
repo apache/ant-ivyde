@@ -39,10 +39,9 @@ public class ClasspathContainerSelectionDialog extends ElementListSelectionDialo
         setTitle("Ivy Classpath Containers");
         setMessage("Select a container to view in the resolve visualizer.");
 
-        List/* <IvyClasspathContainer> */classpathContainers = new ArrayList();
-        IProject[] ivyProjects = IvyClasspathContainerHelper.getIvyProjectsInWorkspace();
-        for (int i = 0; i < ivyProjects.length; i++) {
-            classpathContainers.addAll(IvyClasspathContainerHelper.getContainers(ivyProjects[i]));
+        List<IvyClasspathContainer> classpathContainers = new ArrayList<>();
+        for (IProject ivyProject : IvyClasspathContainerHelper.getIvyProjectsInWorkspace()) {
+            classpathContainers.addAll(IvyClasspathContainerHelper.getContainers(ivyProject));
         }
 
         setElements(classpathContainers.toArray());

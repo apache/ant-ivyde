@@ -17,15 +17,15 @@
  */
 package org.apache.ivyde.eclipse.resolvevisualizer.model;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
@@ -38,17 +38,16 @@ public class IvyNodeElementAdapter {
      * @return the root node adapted from the ResolveReport
      */
     public static IvyNodeElement adapt(ResolveReport report) {
-        Map/* <ModuleRevisionId, IvyNodeElement> */resolvedNodes = new HashMap/* <ModuleRevisionId, IvyNodeElement> */();
+        Map<ModuleRevisionId, IvyNodeElement> resolvedNodes = new HashMap<>();
 
         IvyNodeElement root = new IvyNodeElement();
         root.setModuleRevisionId(report.getModuleDescriptor().getModuleRevisionId());
         resolvedNodes.put(report.getModuleDescriptor().getModuleRevisionId(), root);
 
-        List/* <IvyNode> */dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
 
         // First pass - build the map of resolved nodes by revision id
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        for (IvyNode node : dependencies) {
             if (node.getAllEvictingNodes() != null) {
                 // Nodes that are evicted as a result of conf inheritance still appear
                 // as dependencies, but with eviction data. They also appear as evictions.
@@ -61,36 +60,31 @@ public class IvyNodeElementAdapter {
         }
 
         // Second pass - establish relationships between the resolved nodes
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        for (IvyNode node : dependencies) {
             if (node.getAllEvictingNodes() != null) {
                 continue; // see note above
             }
 
-            IvyNodeElement nodeElement = (IvyNodeElement) resolvedNodes.get(node.getResolvedId());
-            Caller[] callers = node.getAllRealCallers();
-            for (int i = 0; i < callers.length; i++) {
-                IvyNodeElement caller = (IvyNodeElement) resolvedNodes.get(callers[i].getModuleRevisionId());
+            IvyNodeElement nodeElement = resolvedNodes.get(node.getResolvedId());
+            for (Caller call : node.getAllRealCallers()) {
+                IvyNodeElement caller = resolvedNodes.get(call.getModuleRevisionId());
                 if (caller != null) {
                     nodeElement.addCaller(caller);
-                    nodeElement.setCallerConfigurations(caller, callers[i].getCallerConfigurations());
+                    nodeElement.setCallerConfigurations(caller, call.getCallerConfigurations());
                 }
             }
         }
 
-        IvyNode[] evictions = report.getEvictedNodes();
-        for (int i = 0; i < evictions.length; i++) {
-            IvyNode eviction = evictions[i];
+        for (IvyNode eviction : report.getEvictedNodes()) {
             IvyNodeElement evictionElement = new IvyNodeElement();
             evictionElement.setModuleRevisionId(eviction.getResolvedId());
             evictionElement.setEvicted(true);
 
-            Caller[] callers = eviction.getAllCallers();
-            for (int j = 0; j < callers.length; j++) {
-                IvyNodeElement caller = (IvyNodeElement) resolvedNodes.get(callers[j].getModuleRevisionId());
+            for (Caller call : eviction.getAllCallers()) {
+                IvyNodeElement caller = resolvedNodes.get(call.getModuleRevisionId());
                 if (caller != null) {
                     evictionElement.addCaller(caller);
-                    evictionElement.setCallerConfigurations(caller, callers[j].getCallerConfigurations());
+                    evictionElement.setCallerConfigurations(caller, call.getCallerConfigurations());
                 }
             }
         }
@@ -109,29 +103,22 @@ public class IvyNodeElementAdapter {
      */
     private static void findConflictsBeneathNode(IvyNodeElement node) {
         // Derive conflicts
-        Map/* <ModuleId, Collection<IvyNodeElement>> */moduleRevisionMap = new HashMap/*
-                                                                                       * <ModuleId,
-                                                                                       * Collection<IvyNodeElement>>
-                                                                                       */();
-        IvyNodeElement[] deepDependencies = node.getDeepDependencies();
-        for (int i = 0; i < deepDependencies.length; i++) {
-            if (deepDependencies[i].isEvicted()) {
+        Map<ModuleId, Collection<IvyNodeElement>> moduleRevisionMap = new HashMap<>();
+        for (IvyNodeElement deepDependency : node.getDeepDependencies()) {
+            if (deepDependency.isEvicted()) {
                 continue;
             }
 
-            ModuleId moduleId = deepDependencies[i].getModuleRevisionId().getModuleId();
+            ModuleId moduleId = deepDependency.getModuleRevisionId().getModuleId();
             if (moduleRevisionMap.containsKey(moduleId)) {
-                Collection/* <IvyNodeElement> */conflicts = (Collection/* <IvyNodeElement> */) moduleRevisionMap
-                        .get(moduleId);
-                conflicts.add(deepDependencies[i]);
-                for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-                    IvyNodeElement conflict = (IvyNodeElement) iter.next();
+                Collection<IvyNodeElement> conflicts = moduleRevisionMap.get(moduleId);
+                conflicts.add(deepDependency);
+                for (IvyNodeElement conflict : conflicts) {
                     conflict.setConflicts(conflicts);
                 }
             } else {
-                List/* <IvyNodeElement> */immutableMatchingSet = Arrays
-                        .asList(new IvyNodeElement[] { deepDependencies[i] });
-                moduleRevisionMap.put(moduleId, new HashSet(immutableMatchingSet));
+                List<IvyNodeElement> immutableMatchingSet = Collections.singletonList(deepDependency);
+                moduleRevisionMap.put(moduleId, new HashSet<>(immutableMatchingSet));
             }
         }
     }

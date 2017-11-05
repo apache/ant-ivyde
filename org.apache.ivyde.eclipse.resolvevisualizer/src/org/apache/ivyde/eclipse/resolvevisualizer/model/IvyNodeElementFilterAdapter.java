@@ -28,14 +28,14 @@ public abstract class IvyNodeElementFilterAdapter implements IIvyNodeElementFilt
             return unfiltered;
         }
 
-        Collection/* <IvyNodeElement> */filtered = new HashSet/* <IvyNodeElement> */();
-        for (int i = 0; i < unfiltered.length; i++) {
-            if (accept(unfiltered[i])) {
-                filtered.add(unfiltered[i]);
+        Collection<IvyNodeElement> filtered = new HashSet<>();
+        for (IvyNodeElement raw : unfiltered) {
+            if (accept(raw)) {
+                filtered.add(raw);
             }
         }
 
-        return (IvyNodeElement[]) filtered.toArray(new IvyNodeElement[filtered.size()]);
+        return filtered.toArray(new IvyNodeElement[filtered.size()]);
     }
 
     public abstract boolean accept(IvyNodeElement unfiltered);

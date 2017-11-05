@@ -18,7 +18,6 @@
 package org.apache.ivyde.eclipse.resolvevisualizer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.label.ConfigurationConflictAlgorithm;
@@ -53,8 +52,8 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
 
     private IvyNodeElement selected = null;
     private IvyNodeElement rootNode = null;
-    private Map/* <EntityConnectionData, Color> */highlightedRelationships = new HashMap/* <EntityConnectionData, Color> */();
-    private Map/* <IvyNodeElement, Color> */highlightedDependencies = new HashMap/* <IvyNodeElement, Color> */();
+    private Map<EntityConnectionData, ConnectionStyle> highlightedRelationships = new HashMap<>();
+    private Map<IvyNodeElement, Color> highlightedDependencies = new HashMap<>();
     private Color disabledColor = null;
     private IvyNodeElement pinnedNode = null;
     private final GraphViewer viewer;
@@ -116,8 +115,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
      * @return Color
      */
     public Color getColor(Object rel) {
-        if (highlightedRelationships.keySet().contains(rel)) {
-            ConnectionStyle style = (ConnectionStyle) highlightedRelationships.get(rel);
+        EntityConnectionData key = (EntityConnectionData) rel;
+        if (highlightedRelationships.keySet().contains(key)) {
+            ConnectionStyle style = highlightedRelationships.get(rel);
             return style.getHighlightColor();
         }
         return LIGHT_GRAY;
@@ -135,8 +135,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
      * @return Color
      */
     public Color getHighlightColor(Object rel) {
-        if (highlightedRelationships.keySet().contains(rel)) {
-            ConnectionStyle style = (ConnectionStyle) highlightedRelationships.get(rel);
+        EntityConnectionData key = (EntityConnectionData) rel;
+        if (highlightedRelationships.keySet().contains(key)) {
+            ConnectionStyle style = highlightedRelationships.get(rel);
             return style.getHighlightColor();
         }
         return ColorConstants.blue;
@@ -147,8 +148,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
     }
 
     public int getLineWidth(Object rel) {
-        if (highlightedRelationships.keySet().contains(rel)) {
-            ConnectionStyle style = (ConnectionStyle) highlightedRelationships.get(rel);
+        EntityConnectionData key = (EntityConnectionData) rel;
+        if (highlightedRelationships.keySet().contains(key)) {
+            ConnectionStyle style = highlightedRelationships.get(rel);
             if (style.isRevealOnHighlight()) {
                 return style.getLineWidth();
             }
@@ -160,7 +162,8 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
         return null;
     }
 
-    public Color getBorderColor(Object entity) {
+    public Color getBorderColor(Object node) {
+        IvyNodeElement entity = (IvyNodeElement) node;
         if (this.selected != null || this.pinnedNode != null) {
             if (entity == this.selected || entity == this.pinnedNode) {
                 return BLACK;
@@ -172,7 +175,6 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
             }
 
         }
-
         return BLACK;
     }
 
@@ -184,8 +186,8 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
         return 0;
     }
 
-    public Color getBackgroundColour(Object entity) {
-
+    public Color getBackgroundColour(Object node) {
+        IvyNodeElement entity = (IvyNodeElement) node;
         if (entity == this.rootNode) {
             if (rootColor == null) {
                 rootColor = LIGHT_GREEN;
@@ -193,13 +195,14 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
             return rootColor;
         }
         if (highlightedDependencies.keySet().contains(entity)) {
-            return (Color) highlightedDependencies.get(entity); // viewer.getGraphControl().HIGHLIGHT_ADJACENT_COLOR;
+            return highlightedDependencies.get(entity); // viewer.getGraphControl().HIGHLIGHT_ADJACENT_COLOR;
         } else {
             return viewer.getGraphControl().DEFAULT_NODE_COLOR;
         }
     }
 
-    public Color getForegroundColour(Object entity) {
+    public Color getForegroundColour(Object node) {
+        IvyNodeElement entity = (IvyNodeElement) node;
         if (this.selected != null || this.pinnedNode != null) {
             if (entity == this.selected || this.pinnedNode == entity) {
                 return BLACK;
@@ -232,10 +235,8 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
      * @param currentSelection IvyNodeElement
      */
     public void setCurrentSelection(IvyNodeElement root, IvyNodeElement currentSelection) {
-        for (Iterator iter = highlightedRelationships.keySet().iterator(); iter.hasNext();) {
-            EntityConnectionData entityConnectionData = (EntityConnectionData) iter.next();
-
-            ConnectionStyle style = (ConnectionStyle) highlightedRelationships.get(entityConnectionData);
+        for (EntityConnectionData entityConnectionData : highlightedRelationships.keySet()) {
+            ConnectionStyle style = highlightedRelationships.get(entityConnectionData);
             if (style.isRevealOnHighlight()) {
                 viewer.unReveal(entityConnectionData);
             }
@@ -245,29 +246,27 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
         this.selected = null;
         this.selected = currentSelection;
 
-        highlightedRelationships = new HashMap/* <EntityConnectionData, Color> */();
-        highlightedDependencies = new HashMap/* <IvyNodeElement, Color> */();
+        highlightedRelationships = new HashMap<>();
+        highlightedDependencies = new HashMap<>();
 
-        rootDirectDependenciesDecorator.calculateHighlighted(root, root, highlightedRelationships,
-                highlightedDependencies);
+        rootDirectDependenciesDecorator.calculateHighlighted(root, root,
+                highlightedRelationships, highlightedDependencies);
         conflictDecorator.calculateHighlighted(root, root, highlightedRelationships, highlightedDependencies);
 
         if (this.selected != null || this.pinnedNode != null) {
-            autoSelectDecorator.calculateHighlighted(root, selected, highlightedRelationships, highlightedDependencies);
+            autoSelectDecorator.calculateHighlighted(root, selected,
+                    highlightedRelationships, highlightedDependencies);
         }
 
-        Object[] connections = viewer.getConnectionElements();
-        for (Iterator iter = highlightedRelationships.keySet().iterator(); iter.hasNext();) {
-            Object entityConnectionData = iter.next();
-
-            ConnectionStyle style = (ConnectionStyle) highlightedRelationships.get(entityConnectionData);
+        for (EntityConnectionData entityConnectionData : highlightedRelationships.keySet()) {
+            ConnectionStyle style = highlightedRelationships.get(entityConnectionData);
             if (style.isRevealOnHighlight()) {
                 viewer.reveal(entityConnectionData);
             }
         }
 
-        for (int i = 0; i < connections.length; i++) {
-            viewer.update(connections[i], null);
+        for (Object connection : viewer.getConnectionElements()) {
+            viewer.update(connection, null);
         }
     }
 
@@ -292,10 +291,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
             IvyNodeElement source = (IvyNodeElement) connection.source;
             IvyNodeElement dest = (IvyNodeElement) connection.dest;
 
-            String[] confs = dest.getCallerConfigurations(source);
-            String tooltipText = "";
-            for (int i = 0; i < confs.length; i++) {
-                tooltipText += confs[i] + ", ";
+            StringBuilder tooltipText = new StringBuilder();
+            for (String conf : dest.getCallerConfigurations(source)) {
+                tooltipText.append(conf).append(", ");
             }
             return new Label(tooltipText.substring(0, tooltipText.length() - 2));
         }

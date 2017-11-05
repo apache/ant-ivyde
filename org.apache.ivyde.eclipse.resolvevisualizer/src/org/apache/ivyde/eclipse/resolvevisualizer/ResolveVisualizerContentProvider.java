@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IIvyNodeElementFilter;
@@ -31,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.zest.core.viewers.IGraphEntityContentProvider;
 
 public class ResolveVisualizerContentProvider implements IGraphEntityContentProvider {
-    Collection/* <IIvyNodeElementFilter> */filters = new HashSet/* <IIvyNodeElementFilter> */();
+    final Collection<IIvyNodeElementFilter> filters = new HashSet<>();
 
     // Returns all entities that should be linked with the given entity
     public Object[] getConnectedTo(Object entity) {
@@ -43,7 +42,7 @@ public class ResolveVisualizerContentProvider implements IGraphEntityContentProv
             return new Object[] {};
         } else {
             IvyNodeElement inputNode = (IvyNodeElement) inputElement;
-            List elements = Arrays.asList(filter(inputNode.getDeepDependencies()));
+            List<IvyNodeElement> elements = Arrays.asList(filter(inputNode.getDeepDependencies()));
             Collections.sort(elements, new IvyNodeElementComparator());
             return elements.toArray();
         }
@@ -51,8 +50,7 @@ public class ResolveVisualizerContentProvider implements IGraphEntityContentProv
 
     public IvyNodeElement[] filter(IvyNodeElement[] deepDependencies) {
         IvyNodeElement[] filtered = deepDependencies;
-        for (Iterator iter = filters.iterator(); iter.hasNext();) {
-            IIvyNodeElementFilter filter = (IIvyNodeElementFilter) iter.next();
+        for (IIvyNodeElementFilter filter : filters) {
             filtered = filter.filter(filtered); // I love this line
         }
 
@@ -70,11 +68,8 @@ public class ResolveVisualizerContentProvider implements IGraphEntityContentProv
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
 
-    private class IvyNodeElementComparator implements Comparator {
-        public int compare(Object arg1, Object arg2) {
-            IvyNodeElement element1 = (IvyNodeElement) arg1;
-            IvyNodeElement element2 = (IvyNodeElement) arg2;
-
+    private class IvyNodeElementComparator implements Comparator<IvyNodeElement> {
+        public int compare(IvyNodeElement element1, IvyNodeElement element2) {
             if (element1.getDepth() > element2.getDepth()) {
                 return -1;
             } else if (element1.getDepth() < element2.getDepth()) {

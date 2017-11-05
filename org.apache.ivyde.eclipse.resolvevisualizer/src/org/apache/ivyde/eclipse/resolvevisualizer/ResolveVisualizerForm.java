@@ -160,7 +160,8 @@ public class ResolveVisualizerForm {
         enableSearchBox(false);
 
         form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter() {
-            public void linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent e) {
+            @SuppressWarnings("unchecked")
+            public void linkActivated(HyperlinkEvent e) {
                 String title = e.getLabel();
                 Object href = e.getHref();
                 if (href instanceof IMessage[] && ((IMessage[]) href).length > 1) {
@@ -192,18 +193,16 @@ public class ResolveVisualizerForm {
                     group.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
                     FormText text = toolkit.createFormText(group, true);
                     configureFormText(ResolveVisualizerForm.this.form.getForm(), text);
-                    if (href instanceof IMessage[]) {
-                        text.setText(createFormTextContent((IMessage[]) href), true, false);
-                    }
+                    text.setText(createFormTextContent((IMessage[]) href), true, false);
 
                     shell.setLocation(hl);
                     shell.pack();
                     shell.open();
                 } else if (href instanceof IMessage[]) {
                     IMessage oneMessage = ((IMessage[]) href)[0];
-                    Set/* <IvyNodeElement> */conflicts = (Set/* <IvyNodeElement> */) oneMessage.getData();
+                    Set<IvyNodeElement> conflicts = (Set<IvyNodeElement>) oneMessage.getData();
                     if (conflicts != null) {
-                        viewer.setSelection(new StructuredSelection(new ArrayList(conflicts)));
+                        viewer.setSelection(new StructuredSelection(new ArrayList<>(conflicts)));
                     }
                 }
             }
@@ -458,6 +457,7 @@ public class ResolveVisualizerForm {
 
     private void configureFormText(final Form form, FormText text) {
         text.addHyperlinkListener(new HyperlinkAdapter() {
+            @SuppressWarnings("unchecked")
             public void linkActivated(HyperlinkEvent e) {
                 String is = (String) e.getHref();
                 try {
@@ -465,9 +465,9 @@ public class ResolveVisualizerForm {
                     int index = Integer.parseInt(is);
                     IMessage[] messages = form.getChildrenMessages();
                     IMessage message = messages[index];
-                    Set/* <IvyNodeElement> */conflicts = (Set/* <IvyNodeElement> */) message.getData();
+                    Set<IvyNodeElement> conflicts = (Set<IvyNodeElement>) message.getData();
                     if (conflicts != null) {
-                        viewer.setSelection(new StructuredSelection(new ArrayList(conflicts)));
+                        viewer.setSelection(new StructuredSelection(new ArrayList<>(conflicts)));
                     }
                 } catch (NumberFormatException ex) {
                 }

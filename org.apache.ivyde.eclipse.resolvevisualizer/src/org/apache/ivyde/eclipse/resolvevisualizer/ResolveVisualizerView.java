@@ -18,12 +18,12 @@
 package org.apache.ivyde.eclipse.resolvevisualizer;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.ivy.core.report.ResolveReport;
@@ -72,7 +72,6 @@ import org.eclipse.zest.layouts.algorithms.HorizontalShift;
 
 public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenchPart {
     private GraphViewer viewer;
-    private FormToolkit toolKit;
 
     private Action focusDialogAction;
     private Action focusDialogActionToolbar;
@@ -87,8 +86,8 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
     private ZoomContributionViewItem contextZoomContributionViewItem;
     private ZoomContributionViewItem toolbarZoomContributionViewItem;
 
-    private Stack/* <IvyNodeElement> */historyStack;
-    private Stack/* <IvyNodeElement> */forwardStack;
+    private final Stack<IvyNodeElement> historyStack;
+    private final Stack<IvyNodeElement> forwardStack;
 
     private IvyNodeElement currentRoot;
     private IvyNodeElement currentSelection;
@@ -102,8 +101,8 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
     private final ForceHiddenFilter forceHiddenFilter;
 
     public ResolveVisualizerView() {
-        historyStack = new Stack/* <IvyNodeElement> */();
-        forwardStack = new Stack/* <IvyNodeElement> */();
+        historyStack = new Stack<>();
+        forwardStack = new Stack<>();
 
         forceHiddenFilter = new ForceHiddenFilter();
         forceHiddenFilter.setEnabled(true);
@@ -116,7 +115,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
      * @param parent Composite
      */
     public void createPartControl(Composite parent) {
-        toolKit = new FormToolkit(parent.getDisplay());
+        FormToolkit toolKit = new FormToolkit(parent.getDisplay());
 
         visualizationForm = new ResolveVisualizerForm(parent, toolKit, this);
         viewer = visualizationForm.getGraphViewer();
@@ -147,26 +146,24 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
         });
 
         visualizationForm.getSearchBox().addModifyListener(new ModifyListener() {
+            @SuppressWarnings("unchecked")
             public void modifyText(ModifyEvent e) {
                 String textString = visualizationForm.getSearchBox().getText();
 
-                HashMap figureListing = new HashMap();
-                ArrayList list = new ArrayList();
-                Iterator iterator = viewer.getGraphControl().getNodes().iterator();
-                while (iterator.hasNext()) {
-                    GraphItem item = (GraphItem) iterator.next();
+                Map<String, GraphItem> figureListing = new HashMap<>();
+                List<GraphItem> list = (List<GraphItem>) viewer.getGraphControl().getNodes();
+                for (GraphItem item : list) {
                     figureListing.put(item.getText(), item);
                 }
-                iterator = figureListing.keySet().iterator();
+                list.clear();
                 if (textString.length() > 0) {
-                    while (iterator.hasNext()) {
-                        String string = (String) iterator.next();
+                    for (String string : figureListing.keySet()) {
                         if (string.toLowerCase().contains(textString.toLowerCase())) {
                             list.add(figureListing.get(string));
                         }
                     }
                 }
-                viewer.getGraphControl().setSelection((GraphItem[]) list.toArray(new GraphItem[list.size()]));
+                viewer.getGraphControl().setSelection(list.toArray(new GraphItem[list.size()]));
             }
         });
 
@@ -299,7 +296,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
         historyAction = new Action() {
             public void run() {
                 if (historyStack.size() > 0) {
-                    IvyNodeElement element = (IvyNodeElement) historyStack.pop();
+                    IvyNodeElement element = historyStack.pop();
                     forwardStack.push(currentRoot);
                     forwardAction.setEnabled(true);
                     focusOn(element);
@@ -318,7 +315,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
         forwardAction = new Action() {
             public void run() {
                 if (forwardStack.size() > 0) {
-                    IvyNodeElement element = (IvyNodeElement) forwardStack.pop();
+                    IvyNodeElement element = forwardStack.pop();
 
                     historyStack.push(currentRoot);
                     historyAction.setEnabled(true);
@@ -394,16 +391,16 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
      *
      * @param focus IvyNodeElement
      */
+    @SuppressWarnings("unchecked")
     public void focusOn(IvyNodeElement focus) {
         viewer.setSelection(new StructuredSelection(focus));
         viewer.setFilters(new ViewerFilter[] {});
         viewer.setInput(focus);
 
-        Iterator nodes = viewer.getGraphControl().getNodes().iterator();
         Graph graph = viewer.getGraphControl();
         Dimension centre = new Dimension(graph.getBounds().width / 2, graph.getBounds().height / 2);
-        while (nodes.hasNext()) {
-            GraphNode graphNode = (GraphNode) nodes.next();
+        List<GraphNode> list = (List<GraphNode>) viewer.getGraphControl().getNodes();
+        for (GraphNode graphNode : list) {
             if (graphNode.getLocation().x <= 1 && graphNode.getLocation().y <= 1) {
                 graphNode.setLocation(centre.width, centre.height);
             }
@@ -461,7 +458,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
     }
 
     private class ForceHiddenFilter extends IvyNodeElementFilterAdapter {
-        private Collection/* <IvyNodeElement> */forceHidden = new HashSet/* <IvyNodeElement> */();
+        private final Collection/* <IvyNodeElement> */<IvyNodeElement> forceHidden = new HashSet/* <IvyNodeElement> */<>();
 
         public boolean accept(IvyNodeElement unfiltered) {
             return !forceHidden.contains(unfiltered);

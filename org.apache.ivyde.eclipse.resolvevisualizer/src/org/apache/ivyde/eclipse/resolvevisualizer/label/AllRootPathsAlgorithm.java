@@ -20,23 +20,24 @@ package org.apache.ivyde.eclipse.resolvevisualizer.label;
 import java.util.Map;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 
 public class AllRootPathsAlgorithm extends LabelDecoratorAlgorithmAdapter {
     public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
-            Map/* <EntityConnectionData> */highlightRelationships, Map/* <IvyNodeElement> */highlightEntities) {
+                                     Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                     Map<IvyNodeElement, Color> highlightEntities) {
         if (selected != null) {
             highlightCallersRecursive(selected, highlightRelationships, highlightEntities);
         }
     }
 
-    private void highlightCallersRecursive(IvyNodeElement node, Map/* <EntityConnectionData> */highlightRelationships,
-            Map/* <IvyNodeElement> */highlightEntities) {
+    private void highlightCallersRecursive(IvyNodeElement node, Map<EntityConnectionData,
+            ConnectionStyle> highlightRelationships, Map<IvyNodeElement, Color> highlightEntities) {
         highlightEntities.put(node, entityColor);
-        IvyNodeElement[] directCallers = node.getCallers();
-        for (int i = 0; i < directCallers.length; i++) {
-            highlightRelationships.put(new EntityConnectionData(directCallers[i], node), relationshipColor);
-            highlightCallersRecursive(directCallers[i], highlightRelationships, highlightEntities);
+        for (IvyNodeElement directCaller : node.getCallers()) {
+            highlightRelationships.put(new EntityConnectionData(directCaller, node), relationshipColor);
+            highlightCallersRecursive(directCaller, highlightRelationships, highlightEntities);
         }
     }
 }

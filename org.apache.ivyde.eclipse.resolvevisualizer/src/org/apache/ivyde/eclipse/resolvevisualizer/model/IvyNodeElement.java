@@ -20,7 +20,6 @@ package org.apache.ivyde.eclipse.resolvevisualizer.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -33,14 +32,14 @@ public class IvyNodeElement {
     private ModuleRevisionId moduleRevisionId;
     private boolean evicted = false;
     private int depth = Integer.MAX_VALUE / 10;
-    private Collection/* <IvyNodeElement> */dependencies = new HashSet/* <IvyNodeElement> */();
-    private Collection/* <IvyNodeElement> */callers = new HashSet/* <IvyNodeElement> */();
-    private Collection/* <IvyNodeElement> */conflicts = new HashSet/* <IvyNodeElement> */();
+    private final Collection<IvyNodeElement> dependencies = new HashSet<>();
+    private final Collection<IvyNodeElement> callers = new HashSet<>();
+    private Collection<IvyNodeElement> conflicts = new HashSet<>();
 
     /**
      * The caller configurations that caused this node to be reached in the resolution, grouped by caller.
      */
-    private Map/* <IvyNodeElement, String[]> */callerConfigurationMap = new HashMap/* <IvyNodeElement, String[]> */();
+    private final Map<IvyNodeElement, String[]> callerConfigurationMap = new HashMap<>();
 
     /**
      * We try to avoid building the list of this nodes deep dependencies by storing them in this cache by depth level.
@@ -59,7 +58,7 @@ public class IvyNodeElement {
     }
 
     public IvyNodeElement[] getDependencies() {
-        return (IvyNodeElement[]) dependencies.toArray(new IvyNodeElement[dependencies.size()]);
+        return dependencies.toArray(new IvyNodeElement[dependencies.size()]);
     }
 
     /**
@@ -70,7 +69,7 @@ public class IvyNodeElement {
      */
     public IvyNodeElement[] getDeepDependencies() {
         if (deepDependencyCache == null) {
-            deepDependencyCache = (IvyNodeElement[]) getDeepDependencies(this).toArray(new IvyNodeElement[] {});
+            deepDependencyCache = getDeepDependencies(this).toArray(new IvyNodeElement[] {});
         }
         return deepDependencyCache;
     }
@@ -81,13 +80,12 @@ public class IvyNodeElement {
      * @param node IvyNodeElement
      * @return Collection&lt;IvyNodeElement&gt;
      */
-    private Collection/* <IvyNodeElement> */getDeepDependencies(IvyNodeElement node) {
-        Collection/* <IvyNodeElement> */deepDependencies = new HashSet/* <IvyNodeElement> */();
+    private Collection<IvyNodeElement> getDeepDependencies(IvyNodeElement node) {
+        Collection<IvyNodeElement> deepDependencies = new HashSet<>();
         deepDependencies.add(node);
 
-        IvyNodeElement[] directDependencies = node.getDependencies();
-        for (int i = 0; i < directDependencies.length; i++) {
-            deepDependencies.addAll(getDeepDependencies(directDependencies[i]));
+        for (IvyNodeElement directDependency : node.getDependencies()) {
+            deepDependencies.addAll(getDeepDependencies(directDependency));
         }
 
         return deepDependencies;
@@ -98,7 +96,7 @@ public class IvyNodeElement {
      * @return An array of configurations by which this module was resolved
      */
     public String[] getCallerConfigurations(IvyNodeElement caller) {
-        return (String[]) callerConfigurationMap.get(caller);
+        return callerConfigurationMap.get(caller);
     }
 
     public void setCallerConfigurations(IvyNodeElement caller, String[] configurations) {
@@ -136,17 +134,16 @@ public class IvyNodeElement {
      */
     public void setDepth(int depth) {
         this.depth = depth;
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            IvyNodeElement dependency = (IvyNodeElement) iter.next();
+        for (IvyNodeElement dependency : dependencies) {
             dependency.setDepth(depth + 1);
         }
     }
 
     public IvyNodeElement[] getConflicts() {
-        return (IvyNodeElement[]) conflicts.toArray(new IvyNodeElement[conflicts.size()]);
+        return conflicts.toArray(new IvyNodeElement[conflicts.size()]);
     }
 
-    public void setConflicts(Collection conflicts) {
+    public void setConflicts(Collection<IvyNodeElement> conflicts) {
         this.conflicts = conflicts;
     }
 
@@ -164,6 +161,6 @@ public class IvyNodeElement {
     }
 
     public IvyNodeElement[] getCallers() {
-        return (IvyNodeElement[]) callers.toArray(new IvyNodeElement[callers.size()]);
+        return callers.toArray(new IvyNodeElement[callers.size()]);
     }
 }

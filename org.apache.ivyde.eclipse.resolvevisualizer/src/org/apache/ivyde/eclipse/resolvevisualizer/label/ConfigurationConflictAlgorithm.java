@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.widgets.ZestStyles;
 
 public class ConfigurationConflictAlgorithm extends LabelDecoratorAlgorithmAdapter {
@@ -31,15 +32,15 @@ public class ConfigurationConflictAlgorithm extends LabelDecoratorAlgorithmAdapt
         relationshipColor = new ConnectionStyle(ZestStyles.CONNECTIONS_SOLID, ColorConstants.red, 1, false);
     }
 
-    public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected, Map highlightRelationships,
-            Map highlightEntities) {
+    public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
+                                     Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                     Map<IvyNodeElement, Color> highlightEntities) {
         if (root == null) {
             return;
         }
-        IvyNodeElement[] deepDependencies = root.getDeepDependencies();
-        for (int i = 0; i < deepDependencies.length; i++) {
-            if (deepDependencies[i].getConflicts().length > 0) {
-                highlightEntities.put(deepDependencies[i], entityColor);
+        for (IvyNodeElement deepDependency : root.getDeepDependencies()) {
+            if (deepDependency.getConflicts().length > 0) {
+                highlightEntities.put(deepDependency, entityColor);
             }
         }
     }

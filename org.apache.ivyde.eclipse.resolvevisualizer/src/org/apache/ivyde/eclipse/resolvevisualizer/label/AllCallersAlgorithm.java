@@ -20,18 +20,18 @@ package org.apache.ivyde.eclipse.resolvevisualizer.label;
 import java.util.Map;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 
 public class AllCallersAlgorithm extends LabelDecoratorAlgorithmAdapter {
     public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
-            Map/* <EntityConnectionData> */highlightRelationships, Map/* <IvyNodeElement> */highlightEntities) {
+                                     Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                     Map<IvyNodeElement, Color> highlightEntities) {
         if (selected != null) {
             highlightEntities.put(selected, entityColor);
-            IvyNodeElement[] directCallers = selected.getCallers();
-            for (int i = 0; i < directCallers.length; i++) {
-                highlightRelationships.put(new EntityConnectionData(directCallers[i], selected), relationshipColor);
-                highlightEntities.put(directCallers[i], entityColor);
-                highlightEntities.put(directCallers[i], entityColor);
+            for (IvyNodeElement directCaller : selected.getCallers()) {
+                highlightRelationships.put(new EntityConnectionData(directCaller, selected), relationshipColor);
+                highlightEntities.put(directCaller, entityColor);
             }
         }
     }

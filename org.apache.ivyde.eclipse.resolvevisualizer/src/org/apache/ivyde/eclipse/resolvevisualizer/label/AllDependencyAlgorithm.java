@@ -20,26 +20,26 @@ package org.apache.ivyde.eclipse.resolvevisualizer.label;
 import java.util.Map;
 
 import org.apache.ivyde.eclipse.resolvevisualizer.model.IvyNodeElement;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 
 public class AllDependencyAlgorithm extends LabelDecoratorAlgorithmAdapter {
     public void calculateHighlighted(IvyNodeElement root, IvyNodeElement selected,
-            Map/* <EntityConnectionData, Color> */highlightRelationships,
-            Map/* <IvyNodeElement, Color> */highlightEntities) {
+                                     Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                     Map<IvyNodeElement, Color> highlightEntities) {
         if (selected != null) {
             highlightDependenciesRecursive(selected, highlightRelationships, highlightEntities);
         }
     }
 
     private void highlightDependenciesRecursive(IvyNodeElement node,
-            Map/* <EntityConnectionData, Color> */highlightRelationships,
-            Map/* <IvyNodeElement, Color> */highlightEntities) {
+                                                Map<EntityConnectionData, ConnectionStyle> highlightRelationships,
+                                                Map<IvyNodeElement, Color> highlightEntities) {
         highlightEntities.put(node, entityColor);
 
-        IvyNodeElement[] directDependencies = node.getDependencies();
-        for (int i = 0; i < directDependencies.length; i++) {
-            highlightRelationships.put(new EntityConnectionData(node, directDependencies[i]), relationshipColor);
-            highlightDependenciesRecursive(directDependencies[i], highlightRelationships, highlightEntities);
+        for (IvyNodeElement directDependency : node.getDependencies()) {
+            highlightRelationships.put(new EntityConnectionData(node, directDependency), relationshipColor);
+            highlightDependenciesRecursive(directDependency, highlightRelationships, highlightEntities);
         }
     }
 }
