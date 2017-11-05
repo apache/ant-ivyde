@@ -42,9 +42,9 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
     private XMLScanner scanner;
 
-    private ColorManager colorManager;
+    private final ColorManager colorManager;
 
-    private IvyContentAssistProcessor processor;
+    private final IvyContentAssistProcessor processor;
 
     private IFile file;
 

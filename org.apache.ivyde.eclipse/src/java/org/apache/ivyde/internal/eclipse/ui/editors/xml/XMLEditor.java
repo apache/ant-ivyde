@@ -27,7 +27,7 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 
 public class XMLEditor extends TextEditor {
 
-    private ColorManager colorManager;
+    private final ColorManager colorManager;
 
     public XMLEditor(IvyContentAssistProcessor processor) {
         super();
@@ -40,7 +40,7 @@ public class XMLEditor extends TextEditor {
     private static final String CONTENTASSIST_PROPOSAL_ID
             = "org.apache.ivyde.ContentAssistProposal";
 
-    private XMLConfiguration configuration;
+    private final XMLConfiguration configuration;
 
     protected void createActions() {
         super.createActions();

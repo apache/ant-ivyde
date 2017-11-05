@@ -55,9 +55,9 @@ import org.eclipse.swt.widgets.Widget;
 
 public class SecuritySetupController {
 
-    private SecuritySetupEditor setupEditorGUI;
+    private final SecuritySetupEditor setupEditorGUI;
 
-    private SecuritySetupDialog addDialog;
+    private final SecuritySetupDialog addDialog;
 
     private MessageDialog confirmationDialog;
 
@@ -73,7 +73,7 @@ public class SecuritySetupController {
 
     private boolean addOperation = true;
 
-    private DataBindingContext ctx = new DataBindingContext();
+    private final DataBindingContext ctx = new DataBindingContext();
 
     /**
      * @param setupEditorGUI SecuritySetupEditor

@@ -58,7 +58,7 @@ import org.xml.sax.SAXException;
  */
 public class SyncIvyFilesJob extends WorkspaceJob {
 
-    private MultiRevDependencyDescriptor[] multiRevisionDependencies;
+    private final MultiRevDependencyDescriptor[] multiRevisionDependencies;
 
     /**
      * FIXME Here we seriously abuse the Ivy core API to allow us to preserve an info element
@@ -67,7 +67,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
      */
     private class RevisionPreservingNamespace extends Namespace {
         private class NullableRevisionModuleRevisionId extends ModuleRevisionId {
-            private String revision;
+            private final String revision;
 
             public NullableRevisionModuleRevisionId(ModuleId moduleId, String revision) {
                 super(moduleId, revision);

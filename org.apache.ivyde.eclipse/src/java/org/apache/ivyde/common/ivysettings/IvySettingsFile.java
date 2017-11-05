@@ -45,7 +45,7 @@ public class IvySettingsFile extends IvyFile {
     private static final Pattern TYPEDEF_PATTERN = Pattern
             .compile("<[\\s]*typedef[^>]+name=\"([^\"]+)\"[^>]+classname=\"([^\"]+)");
 
-    private File file;
+    private final File file;
 
     public IvySettingsFile(IvyModelSettings settings, File file, String projectName, String doc,
             int currentOffset) {

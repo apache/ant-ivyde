@@ -34,11 +34,11 @@ public class ClasspathTypeComposite extends Composite {
 
     private static final int INDENT_RETRIEVE = 60;
 
-    private Button selectRetrieve;
+    private final Button selectRetrieve;
 
-    private RetrieveComposite retrieveComposite;
+    private final RetrieveComposite retrieveComposite;
 
-    private Button selectCache;
+    private final Button selectCache;
 
     public ClasspathTypeComposite(Composite parent, int style, IProject project) {
         super(parent, style);

@@ -52,11 +52,11 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
     public static final String PREF_CONSOLE_ERROR_COLOR = IvyPlugin.ID + ".console.color.error";
 
     // CheckStyle:MagicNumber| OFF
-    private MessageConsoleStream[] streams = new MessageConsoleStream[5];
+    private final MessageConsoleStream[] streams = new MessageConsoleStream[5];
 
     // CheckStyle:MagicNumber| ON
 
-    private ConsoleDocument document;
+    private final ConsoleDocument document;
 
     private boolean initialized = false;
 
@@ -64,11 +64,11 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
 
     private boolean showOnMessage;
 
-    private IConsoleManager consoleManager;
+    private final IConsoleManager consoleManager;
 
     private int logLevel;
 
-    private IvyDEMessageLogger ivyDEMessageLogger;
+    private final IvyDEMessageLogger ivyDEMessageLogger;
 
     public IvyConsole() {
         this("Ivy", IvyPlugin.getImageDescriptor("icons/logo16x16.gif")); //$NON-NLS-1$

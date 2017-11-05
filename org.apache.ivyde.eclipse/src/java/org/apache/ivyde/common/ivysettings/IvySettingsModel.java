@@ -48,7 +48,7 @@ import org.apache.ivyde.common.model.IvyTagAttribute;
 
 public class IvySettingsModel extends IvyModel {
     private String loaded = null;
-    private File file;
+    private final File file;
     private ClassLoader cl;
     private Map typedefClasses;
 

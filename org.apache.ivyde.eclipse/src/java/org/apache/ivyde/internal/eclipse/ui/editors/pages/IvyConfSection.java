@@ -28,7 +28,8 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class IvyConfSection extends SectionPart {
-    private IFormPage page;
+    @SuppressWarnings("unused")
+    private final IFormPage page;
 
     private static final int NUM_COLUMNS = 2;
 

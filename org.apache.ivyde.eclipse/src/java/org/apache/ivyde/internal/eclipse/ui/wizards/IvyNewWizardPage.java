@@ -57,7 +57,7 @@ public class IvyNewWizardPage extends WizardPage {
 
     private Combo statusText;
 
-    private ISelection selection;
+    private final ISelection selection;
 
     /**
      * Constructor for SampleNewWizardPage.

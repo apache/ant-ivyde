@@ -49,7 +49,7 @@ public class IvyResolveJobListener implements TransferListener, IvyListener {
 
     private final int downloadStep;
 
-    private int resolveStep;
+    private final int resolveStep;
 
     public IvyResolveJobListener(final IProgressMonitor monitor, int step) {
         this.monitor = monitor;

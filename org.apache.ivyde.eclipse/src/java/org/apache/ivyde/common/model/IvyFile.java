@@ -32,15 +32,15 @@ public abstract class IvyFile {
     private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern
             .compile("([a-zA-Z0-9]+)[ ]*=[ ]*\"([^\"]*)\"");
 
-    private String doc;
+    private final String doc;
 
-    private int currentOffset;
+    private final int currentOffset;
 
-    private String reversed;
+    private final String reversed;
 
-    private String projectName;
+    private final String projectName;
 
-    private IvyModelSettings settings;
+    private final IvyModelSettings settings;
 
     public IvyFile(IvyModelSettings settings, String projectName, String doc) {
         this(settings, projectName, doc, 0);

@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.IStatus;
 
 public class IdValidator extends BaseValidator {
 
-    private boolean isAddOperation;
+    private final boolean isAddOperation;
 
-    private String prevHostVal;
+    private final String prevHostVal;
 
-    private String prevRealmVal;
+    private final String prevRealmVal;
 
     /**
      * @param reaction IValidationReaction

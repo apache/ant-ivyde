@@ -31,7 +31,7 @@ public class ModuleDescriptorExtensionDescriptor {
 
     public static final String MODEL_CONTRIBUTOR_CLASS_ATTRIBUTE = "modelContributorClass";
 
-    private IConfigurationElement element;
+    private final IConfigurationElement element;
 
     public ModuleDescriptorExtensionDescriptor(final IConfigurationElement element) {
         this.element = element;

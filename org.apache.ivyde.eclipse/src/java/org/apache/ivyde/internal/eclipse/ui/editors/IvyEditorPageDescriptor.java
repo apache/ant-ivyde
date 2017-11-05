@@ -32,7 +32,7 @@ public class IvyEditorPageDescriptor {
 
     private static final String CLASS_ATTRIBUTE = "pageClass";
 
-    private IConfigurationElement element;
+    private final IConfigurationElement element;
 
     public IvyEditorPageDescriptor(final IConfigurationElement element) {
         this.element = element;

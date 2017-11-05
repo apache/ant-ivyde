@@ -94,12 +94,12 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
     private IvyNodeElement currentSelection;
     private IvyClasspathContainer currentContainer;
 
-    private ResolveVisualizerContentProvider contentProvider = new ResolveVisualizerContentProvider();
-    private MessageContentProvider messageContentProvider = new MessageContentProvider();
+    private final ResolveVisualizerContentProvider contentProvider = new ResolveVisualizerContentProvider();
+    private final MessageContentProvider messageContentProvider = new MessageContentProvider();
     private IvyNodeLabelProvider labelProvider;
     private ResolveVisualizerForm visualizationForm;
 
-    private ForceHiddenFilter forceHiddenFilter;
+    private final ForceHiddenFilter forceHiddenFilter;
 
     public ResolveVisualizerView() {
         historyStack = new Stack/* <IvyNodeElement> */();

@@ -38,7 +38,7 @@ public class StandaloneRetrieveSetup {
 
     private IProject project;
 
-    private StandaloneRetrieveSetupState state = new StandaloneRetrieveSetupState(this);
+    private final StandaloneRetrieveSetupState state = new StandaloneRetrieveSetupState(this);
 
     public StandaloneRetrieveSetupState getState() {
         return state;

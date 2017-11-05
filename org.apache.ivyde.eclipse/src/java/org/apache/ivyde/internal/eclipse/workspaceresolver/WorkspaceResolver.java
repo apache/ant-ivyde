@@ -111,13 +111,13 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public static final String IVYDE_WORKSPACE_ARTIFACT_REPORTS = "IvyDEWorkspaceArtifactReports";
 
-    private IProject[] projects;
+    private final IProject[] projects;
 
-    private boolean ignoreBranchOnWorkspaceProjects;
+    private final boolean ignoreBranchOnWorkspaceProjects;
 
-    private boolean ignoreVersionOnWorkspaceProjects;
+    private final boolean ignoreVersionOnWorkspaceProjects;
 
-    private boolean osgiResolveInWorkspaceAvailable;
+    private final boolean osgiResolveInWorkspaceAvailable;
 
     public WorkspaceResolver(IProject project, IvySettings ivySettings) {
         String projectName = project == null ? "<null>" : project.getName();

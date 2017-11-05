@@ -54,7 +54,7 @@ public class IvyDEProjectPreferences extends PropertyPage implements IWorkbenchP
 
     private TableViewer table;
 
-    private RetrieveSetupManager retrieveSetupManager;
+    private final RetrieveSetupManager retrieveSetupManager;
 
     public IvyDEProjectPreferences() {
         noDefaultAndApplyButton();

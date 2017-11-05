@@ -44,13 +44,13 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class PathEditor extends Composite {
 
-    private Text text;
+    private final Text text;
 
-    private Button variableButton;
+    private final Button variableButton;
 
-    private Button browseFileSystem;
+    private final Button browseFileSystem;
 
-    private Button browseWorkspace;
+    private final Button browseWorkspace;
 
     private final IProject project;
 

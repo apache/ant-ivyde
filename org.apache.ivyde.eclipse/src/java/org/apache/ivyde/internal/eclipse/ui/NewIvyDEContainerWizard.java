@@ -36,7 +36,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 public class NewIvyDEContainerWizard extends Wizard {
 
-    private IvydeContainerPage containerPage;
+    private final IvydeContainerPage containerPage;
 
     public NewIvyDEContainerWizard(IJavaProject project, IFile ivyfile) {
         containerPage = new IvydeContainerPage();

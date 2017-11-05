@@ -45,11 +45,11 @@ import org.eclipse.zest.core.widgets.ZestStyles;
  * Alters the color of the labels and connections based on the selected analysis algorithm.
  */
 public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStyleProvider, IEntityStyleProvider {
-    public Color GRAY = new Color(Display.getDefault(), 128, 128, 128);
-    public Color LIGHT_GRAY = new Color(Display.getDefault(), 220, 220, 220);
-    public Color BLACK = new Color(Display.getDefault(), 0, 0, 0);
-    public Color RED = new Color(Display.getDefault(), 255, 0, 0);
-    public Color LIGHT_GREEN = new Color(Display.getDefault(), 96, 255, 96);
+    public final Color GRAY = new Color(Display.getDefault(), 128, 128, 128);
+    public final Color LIGHT_GRAY = new Color(Display.getDefault(), 220, 220, 220);
+    public final Color BLACK = new Color(Display.getDefault(), 0, 0, 0);
+    public final Color RED = new Color(Display.getDefault(), 255, 0, 0);
+    public final Color LIGHT_GREEN = new Color(Display.getDefault(), 96, 255, 96);
 
     private IvyNodeElement selected = null;
     private IvyNodeElement rootNode = null;
@@ -60,8 +60,8 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
     private GraphViewer viewer;
 
     private ILabelDecoratorAlgorithm autoSelectDecorator = new ShortestRootPathAlgorithm();
-    private DirectDependenciesAlgorithm rootDirectDependenciesDecorator = new DirectDependenciesAlgorithm();
-    private ConfigurationConflictAlgorithm conflictDecorator = new ConfigurationConflictAlgorithm();
+    private final DirectDependenciesAlgorithm rootDirectDependenciesDecorator = new DirectDependenciesAlgorithm();
+    private final ConfigurationConflictAlgorithm conflictDecorator = new ConfigurationConflictAlgorithm();
 
     private Color rootColor;
     private Color rootSelectedColor;

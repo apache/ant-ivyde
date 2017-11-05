@@ -41,7 +41,7 @@ public class EditStandaloneRetrieveDialog extends Dialog {
 
     private Text nameText;
 
-    private StandaloneRetrieveSetup retrieveSetup;
+    private final StandaloneRetrieveSetup retrieveSetup;
 
     private IvyFilePathText ivyFilePathText;
 

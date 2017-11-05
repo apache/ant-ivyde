@@ -33,7 +33,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 
 public class ResolvedPath {
 
-    private String inputPath;
+    private final String inputPath;
 
     private String resolvedPath;
 

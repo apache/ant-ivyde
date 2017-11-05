@@ -33,13 +33,12 @@ import org.eclipse.swt.widgets.Table;
 
 public class SecuritySetupEditor extends Composite {
 
-    private TableViewer tableViewer;
-    private Group credentialsGroup;
-    private Button addBtn;
-    private Button editBtn;
-    private Button deleteBtn;
-    private Table table;
-
+    private final TableViewer tableViewer;
+    private final Group credentialsGroup;
+    private final Button addBtn;
+    private final Button editBtn;
+    private final Button deleteBtn;
+    private final Table table;
     public SecuritySetupEditor(Composite parent, int style) {
         super(parent, style);
         setLayout(new GridLayout());

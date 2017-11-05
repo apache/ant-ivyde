@@ -34,11 +34,11 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public abstract class AbstractSetupTab {
 
-    private Button projectSpecificButton;
+    private final Button projectSpecificButton;
 
-    private Link mainGeneralSettingsLink;
+    private final Link mainGeneralSettingsLink;
 
-    private Composite setupEditor;
+    private final Composite setupEditor;
 
     public AbstractSetupTab(final TabFolder tabs, String title, final String preferencePageId, IProject project) {
         TabItem tab = new TabItem(tabs, SWT.NONE);

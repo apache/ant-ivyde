@@ -31,7 +31,7 @@ public abstract class IvyModel {
 
     private Properties defaults;
 
-    private IvyModelSettings settings;
+    private final IvyModelSettings settings;
 
     public IvyModel(IvyModelSettings settings) {
         loadDefaults();

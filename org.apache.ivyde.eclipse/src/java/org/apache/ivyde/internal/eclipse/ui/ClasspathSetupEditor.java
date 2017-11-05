@@ -41,27 +41,27 @@ public class ClasspathSetupEditor extends Composite {
     public static final String TOOLTIP_ACCEPTED_TYPES = "Comma separated list of artifact types to add to the classpath.\n"
             + "Example: jar, zip";
 
-    private Button resolveInWorkspaceCheck;
+    private final Button resolveInWorkspaceCheck;
 
-    private Button transitiveResolveCheck;
+    private final Button transitiveResolveCheck;
 
-    private Label alphaOrderLabel;
+    private final Label alphaOrderLabel;
 
-    private Combo alphaOrderCheck;
+    private final Combo alphaOrderCheck;
 
-    private Button selectCache;
+    private final Button selectCache;
 
-    private Button selectRetrieve;
+    private final Button selectRetrieve;
 
-    private RetrieveComposite retrieveComposite;
+    private final RetrieveComposite retrieveComposite;
 
-    private Label acceptedTypesLabel;
+    private final Label acceptedTypesLabel;
 
-    private Text acceptedTypesText;
+    private final Text acceptedTypesText;
 
-    private Button readOSGiMetadataCheck;
+    private final Button readOSGiMetadataCheck;
 
-    private boolean osgiAvailable;
+    private final boolean osgiAvailable;
 
     public ClasspathSetupEditor(Composite parent, int style, IProject project) {
         super(parent, style);

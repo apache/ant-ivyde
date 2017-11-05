@@ -28,7 +28,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 
 public class IvyFileEditorInput implements IPathEditorInput, IStorageEditorInput, IFileEditorInput {
-    private IFile ivyFile;
+    private final IFile ivyFile;
 
     public IvyFileEditorInput(IFile input) {
         super();

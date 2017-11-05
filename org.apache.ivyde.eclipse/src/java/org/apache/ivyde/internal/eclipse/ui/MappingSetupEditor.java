@@ -49,25 +49,25 @@ public class MappingSetupEditor extends Composite {
             + " to all jar artifact in modules with multiple jar artifacts and only one"
             + " javadoc artifact";
 
-    private Text sourceTypesText;
+    private final Text sourceTypesText;
 
-    private Text sourceSuffixesText;
+    private final Text sourceSuffixesText;
 
-    private Text javadocTypesText;
+    private final Text javadocTypesText;
 
-    private Text javadocSuffixesText;
+    private final Text javadocSuffixesText;
 
-    private Button mapIfOnlyOneSourceCheck;
+    private final Button mapIfOnlyOneSourceCheck;
 
-    private Button mapIfOnlyOneJavadocCheck;
+    private final Button mapIfOnlyOneJavadocCheck;
 
-    private Label sourceTypesLabel;
+    private final Label sourceTypesLabel;
 
-    private Label sourceSuffixesLabel;
+    private final Label sourceSuffixesLabel;
 
-    private Label javadocTypesLabel;
+    private final Label javadocTypesLabel;
 
-    private Label javadocSuffixesLabel;
+    private final Label javadocSuffixesLabel;
 
     public MappingSetupEditor(Composite parent, int style) {
         super(parent, style);

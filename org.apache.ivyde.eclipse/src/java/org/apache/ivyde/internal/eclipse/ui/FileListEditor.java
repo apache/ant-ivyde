@@ -39,19 +39,19 @@ import org.eclipse.swt.widgets.Label;
 
 public class FileListEditor extends Composite {
 
-    private ListViewer filelist;
+    private final ListViewer filelist;
 
     private List/* <String> */files = new ArrayList();
 
     private Button edit;
 
-    private Button add;
+    private final Button add;
 
     private Button remove;
 
-    private Button up;
+    private final Button up;
 
-    private Button down;
+    private final Button down;
 
     public FileListEditor(Composite parent, int style,  String label, final String labelPopup,
             final IProject project, final String defaultExtension) {

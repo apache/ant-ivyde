@@ -57,17 +57,17 @@ public class SettingsSetupEditor extends Composite {
 
     private FieldDecoration errorDecoration;
 
-    private FileListEditor propFilesEditor;
+    private final FileListEditor propFilesEditor;
 
     private DecoratedField settingsTextDeco;
 
-    private Button loadOnDemandButton;
+    private final Button loadOnDemandButton;
 
-    private PathEditor settingsEditor;
+    private final PathEditor settingsEditor;
 
     private Button defaultButton;
 
-    private PathEditor ivyUserDirEditor;
+    private final PathEditor ivyUserDirEditor;
 
     public SettingsSetupEditor(Composite parent, int style, IProject project) {
         super(parent, style);

@@ -43,13 +43,13 @@ public class RetrieveComposite extends Composite {
 
     private static final String DEFAULT_PATTERN = "/[type]s/[artifact]-[revision](-[classifier]).[ext]";
 
-    private PathEditor retrievePatternText;
+    private final PathEditor retrievePatternText;
 
-    private Button retrieveSyncButton;
+    private final Button retrieveSyncButton;
 
     private Text confsText;
 
-    private Text typesText;
+    private final Text typesText;
 
     public RetrieveComposite(Composite parent, int style, boolean withConf, IProject project) {
         super(parent, style);

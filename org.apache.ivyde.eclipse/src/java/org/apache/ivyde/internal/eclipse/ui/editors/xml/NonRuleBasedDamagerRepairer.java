@@ -37,7 +37,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
     private IDocument fDocument;
 
     /** The default text attribute if non is returned as data by the current token */
-    private TextAttribute fDefaultTextAttribute;
+    private final TextAttribute fDefaultTextAttribute;
 
     /**
      * Constructor for NonRuleBasedDamagerRepairer.

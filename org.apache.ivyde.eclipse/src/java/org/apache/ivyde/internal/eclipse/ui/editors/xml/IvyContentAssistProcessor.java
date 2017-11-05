@@ -38,7 +38,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.graphics.Point;
 
 public abstract class IvyContentAssistProcessor implements IContentAssistProcessor {
-    private IContextInformationValidator fValidator = new ContextInformationValidator(this);
+    private final IContextInformationValidator fValidator = new ContextInformationValidator(this);
 
     private String errorMessage = null;
 

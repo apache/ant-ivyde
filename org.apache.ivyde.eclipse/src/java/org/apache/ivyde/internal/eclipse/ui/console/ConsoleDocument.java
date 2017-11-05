@@ -30,9 +30,9 @@ public class ConsoleDocument {
     private static final int BUFFER_SIZE = 200;
 
     protected static class ConsoleLine {
-        private String line;
+        private final String line;
 
-        private int type;
+        private final int type;
 
         ConsoleLine(String line, int type) {
             this.line = line;

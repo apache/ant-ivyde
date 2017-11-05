@@ -26,7 +26,7 @@ import org.apache.ivyde.internal.eclipse.IvyPlugin;
 
 public class IvyDEMessageLogger implements MessageLogger {
 
-    private IvyConsole console;
+    private final IvyConsole console;
 
     private int logLevel;
 

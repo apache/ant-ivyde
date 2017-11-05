@@ -18,11 +18,11 @@
 package org.apache.ivyde.common.model;
 
 public class Proposal {
-    private int cursor;
+    private final int cursor;
 
-    private String proposal;
+    private final String proposal;
 
-    private String doc;
+    private final String doc;
 
     public Proposal(String proposal, int cursor, String doc) {
         this.cursor = cursor;

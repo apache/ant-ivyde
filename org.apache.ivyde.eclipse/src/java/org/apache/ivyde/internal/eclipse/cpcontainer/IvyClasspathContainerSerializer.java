@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -91,9 +90,9 @@ public class IvyClasspathContainerSerializer {
 
     private static final String PATTERN = "pattern";
 
-    private File containersStateDir;
+    private final File containersStateDir;
 
-    private IvyAttachmentManager ivyAttachmentManager;
+    private final IvyAttachmentManager ivyAttachmentManager;
 
     public IvyClasspathContainerSerializer(File containersStateDir,
             IvyAttachmentManager ivyAttachmentManager) {

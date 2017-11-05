@@ -79,11 +79,11 @@ import org.eclipse.zest.core.widgets.Graph;
 public class ResolveVisualizerForm {
     public static final String HEADER_TEXT = "Ivy Resolve Visualization";
 
-    private FormToolkit toolkit;
+    private final FormToolkit toolkit;
     private GraphViewer viewer;
-    private ScrolledForm form;
-    private ManagedForm managedForm;
-    private ResolveVisualizerView view;
+    private final ScrolledForm form;
+    private final ManagedForm managedForm;
+    private final ResolveVisualizerView view;
 
     private Label searchLabel;
     private Text searchBox;
@@ -103,8 +103,8 @@ public class ResolveVisualizerForm {
 
     private ThumbnailNavigator thumbnailNavigator;
 
-    private DepthFilter depthFilter = new DepthFilter();
-    private EvictionFilter evictionFilter = new EvictionFilter();
+    private final DepthFilter depthFilter = new DepthFilter();
+    private final EvictionFilter evictionFilter = new EvictionFilter();
 
     public ResolveVisualizerForm(Composite parent, FormToolkit toolkit, ResolveVisualizerView view) {
         this.toolkit = toolkit;

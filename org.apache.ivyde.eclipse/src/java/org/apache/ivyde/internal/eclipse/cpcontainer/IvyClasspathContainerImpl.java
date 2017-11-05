@@ -50,7 +50,7 @@ public class IvyClasspathContainerImpl implements IClasspathContainer, IvyClassp
 
     private IClasspathEntry[] classpathEntries;
 
-    private IPath path;
+    private final IPath path;
 
     private IvyClasspathContainerConfiguration conf;
 

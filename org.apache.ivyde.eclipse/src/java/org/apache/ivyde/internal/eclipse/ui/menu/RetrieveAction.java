@@ -32,7 +32,7 @@ public class RetrieveAction extends Action {
 
     private final StandaloneRetrieveSetup setup;
 
-    private IvyResolveJob ivyResolveJob;
+    private final IvyResolveJob ivyResolveJob;
 
     public RetrieveAction(StandaloneRetrieveSetup retrieveSetup) {
         this.setup = retrieveSetup;

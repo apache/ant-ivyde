@@ -25,11 +25,12 @@ import org.eclipse.swt.widgets.Label;
 
 public class GeneralValidationReaction implements IValidationReaction {
 
-    private Button okButton;
+    private final Button okButton;
 
-    private Label errorLabel;
+    @SuppressWarnings("unused")
+    private final Label errorLabel;
 
-    private Label errorIcon;
+    private final Label errorIcon;
 
     @Override
     public void ok() {

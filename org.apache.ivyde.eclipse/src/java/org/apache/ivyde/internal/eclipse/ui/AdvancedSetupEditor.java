@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Composite;
 
 public class AdvancedSetupEditor extends Composite {
 
-    private Button resolveBeforeLaunchCheck;
+    private final Button resolveBeforeLaunchCheck;
 
-    private Button useExtendedResolveIdCheck;
+    private final Button useExtendedResolveIdCheck;
 
     public AdvancedSetupEditor(Composite parent, int style) {
         super(parent, style);

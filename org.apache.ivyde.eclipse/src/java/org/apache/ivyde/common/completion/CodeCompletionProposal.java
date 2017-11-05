@@ -20,22 +20,22 @@ package org.apache.ivyde.common.completion;
 public class CodeCompletionProposal {
 
     /** The string to be displayed in the completion proposal popup. */
-    private String displayString;
+    private final String displayString;
 
     /** The replacement string. */
-    private String replacementString;
+    private final String replacementString;
 
     /** The replacement offset. */
-    private int replacementOffset;
+    private final int replacementOffset;
 
     /** The replacement length. */
-    private int replacementLength;
+    private final int replacementLength;
 
     /** The cursor position after this proposal has been applied. */
-    private int cursorPosition;
+    private final int cursorPosition;
 
     /** The documentation of this proposal. */
-    private String doc;
+    private final String doc;
 
     public CodeCompletionProposal(String replacementString, int replacementOffset,
             int replacementLength, int cursorPosition) {

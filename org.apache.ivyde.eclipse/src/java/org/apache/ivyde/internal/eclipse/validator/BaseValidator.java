@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 
 public abstract class BaseValidator implements IValidator {
 
-    private IValidationReaction reaction;
+    private final IValidationReaction reaction;
 
     private IStatus validationStatus;
 

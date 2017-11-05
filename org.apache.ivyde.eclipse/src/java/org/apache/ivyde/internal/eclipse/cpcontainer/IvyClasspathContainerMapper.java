@@ -77,15 +77,15 @@ public class IvyClasspathContainerMapper {
 
     private final Map<ArtifactDownloadReport, Set<String>> retrievedArtifacts;
 
-    private ClasspathSetup classpathSetup;
+    private final ClasspathSetup classpathSetup;
 
-    private MappingSetup mapping;
+    private final MappingSetup mapping;
 
-    private boolean osgiAvailable;
+    private final boolean osgiAvailable;
 
-    private boolean osgiClasspathAvailable;
+    private final boolean osgiClasspathAvailable;
 
-    private IvyAttachmentManager attachmentManager = IvyPlugin.getDefault()
+    private final IvyAttachmentManager attachmentManager = IvyPlugin.getDefault()
             .getIvyAttachmentManager();
 
     public IvyClasspathContainerMapper(IProgressMonitor monitor, Ivy ivy,

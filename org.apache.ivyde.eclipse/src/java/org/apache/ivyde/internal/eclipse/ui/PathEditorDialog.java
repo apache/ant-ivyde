@@ -27,11 +27,11 @@ import org.eclipse.swt.widgets.Shell;
 
 public class PathEditorDialog extends Dialog {
 
-    private String label;
+    private final String label;
 
-    private IProject project;
+    private final IProject project;
 
-    private String defaultExtension;
+    private final String defaultExtension;
 
     private PathEditor editor;
 

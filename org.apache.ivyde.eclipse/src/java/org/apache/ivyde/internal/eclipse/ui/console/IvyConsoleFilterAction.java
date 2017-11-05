@@ -32,7 +32,7 @@ public class IvyConsoleFilterAction extends Action implements IMenuCreator {
 
     private Menu fMenu;
 
-    private IvyConsole console;
+    private final IvyConsole console;
 
     public IvyConsoleFilterAction(IvyConsole console) {
         this.console = console;

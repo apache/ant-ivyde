@@ -47,17 +47,17 @@ public class ConfTableViewer extends Composite {
 
     private final List listeners = new ArrayList();
 
-    private Button selectAll;
+    private final Button selectAll;
 
-    private Button up;
+    private final Button up;
 
-    private Button down;
+    private final Button down;
 
     private Configuration[] orderedConfigurations = new Configuration[0];
 
-    private Button all;
+    private final Button all;
 
-    private Button none;
+    private final Button none;
 
     public ConfTableViewer(Composite parent, int style) {
         super(parent, style);
