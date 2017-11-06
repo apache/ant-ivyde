@@ -100,6 +100,10 @@ public class ResolveResult {
         artifactReports.addAll(Arrays.asList(reports));
     }
 
+    void addArtifactReport(ArtifactDownloadReport report) {
+        artifactReports.add(report);
+    }
+
     void putArtifactsForDep(ModuleRevisionId resolvedId, Artifact[] allArtifacts) {
         artifactsByDependency.put(resolvedId, allArtifacts);
     }

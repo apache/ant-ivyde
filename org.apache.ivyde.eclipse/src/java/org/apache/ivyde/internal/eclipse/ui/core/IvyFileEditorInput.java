@@ -59,7 +59,7 @@ public class IvyFileEditorInput implements IPathEditorInput, IStorageEditorInput
         return getClass().getName() + "(" + ivyFile.getFullPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         return null;
     }

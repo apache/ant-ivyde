@@ -137,9 +137,7 @@ public class WorkspaceResolver extends AbstractResolver {
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         IvyContext context = IvyContext.getContext();
-        @SuppressWarnings("unchecked")
-        Map<Artifact, Artifact> workspaceArtifacts = context
-                .get(IVYDE_WORKSPACE_ARTIFACTS);
+        Map<Artifact, Artifact> workspaceArtifacts = context.get(IVYDE_WORKSPACE_ARTIFACTS);
         Map<Artifact, ArtifactDownloadReport> workspaceReports = null;
         if (workspaceArtifacts != null) {
             workspaceReports = new HashMap<>();
@@ -304,15 +302,11 @@ public class WorkspaceResolver extends AbstractResolver {
                         // project
 
                         // we need the context which is used when downloading data, which is the
-                        // parent
-                        // of the current one
-                        // so let's hack: popContext (the child), getContext (the parent), setVar,
-                        // pushContext (child)
+                        // parent of the current one so let's hack: popContext (the child),
+                        // getContext (the parent), setVar, pushContext (child)
                         IvyContext currentContext = IvyContext.popContext();
                         IvyContext parentContext = IvyContext.getContext();
-                        @SuppressWarnings("unchecked")
-                        Map<Artifact, Artifact> workspaceArtifacts = parentContext
-                                .get(IVYDE_WORKSPACE_ARTIFACTS);
+                        Map<Artifact, Artifact> workspaceArtifacts = parentContext.get(IVYDE_WORKSPACE_ARTIFACTS);
                         if (workspaceArtifacts == null) {
                             workspaceArtifacts = new HashMap<>();
                             parentContext.set(IVYDE_WORKSPACE_ARTIFACTS, workspaceArtifacts);

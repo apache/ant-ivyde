@@ -242,7 +242,6 @@ public class IvyResolver {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     private ResolveResult doResolve(Ivy ivy, ModuleDescriptor md) throws ParseException,
             IOException {
         IvyDEMessage.debug("Doing a full resolve...");
@@ -262,22 +261,21 @@ public class IvyResolver {
 
         ResolveResult result = new ResolveResult(report);
 
-        ArtifactDownloadReport[] artifactReports = report.getArtifactsReports(null, false);
-
         Map<Artifact, ArtifactDownloadReport> workspaceArtifacts = IvyContext.getContext()
                 .get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
         if (workspaceArtifacts != null) {
-            // some artifact were 'forced' by the dependency declaration, whereas they should be
-            // switch by the eclipse project reference
-            for (int i = 0; i < artifactReports.length; i++) {
-                ArtifactDownloadReport eclipseArtifactReport = workspaceArtifacts.get(artifactReports[i].getArtifact());
-                if (eclipseArtifactReport != null) {
-                    // let's switch.
-                    artifactReports[i] = eclipseArtifactReport;
+            // some artifacts were 'forced' by the dependency declaration, whereas they should be
+            // changed to the eclipse project reference
+            for (ArtifactDownloadReport artifactReport : report.getArtifactsReports(null, false)) {
+                ArtifactDownloadReport eclipseArtifactReport = workspaceArtifacts.get(artifactReport.getArtifact());
+                if (eclipseArtifactReport == null) {
+                    result.addArtifactReport(artifactReport);
+                } else {
+                    // let's change
+                    result.addArtifactReport(eclipseArtifactReport);
                 }
             }
         }
-        result.addArtifactReports(artifactReports);
 
         collectArtifactsByDependency(report, result);
 

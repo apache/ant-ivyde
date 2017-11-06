@@ -258,7 +258,7 @@ public class IvySettingsModel extends IvyModel {
                                     && m.getParameterTypes().length == 0
                                     && isSupportedChildType(m.getReturnType())) {
                                 String name = StringUtils
-                                .uncapitalize(m.getName().substring("create".length()));
+                                    .uncapitalize(m.getName().substring("create".length()));
                                 if (name.length() == 0) {
                                     continue;
                                 }
