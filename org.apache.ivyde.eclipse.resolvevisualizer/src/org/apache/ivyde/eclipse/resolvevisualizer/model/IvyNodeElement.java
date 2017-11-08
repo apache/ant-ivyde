@@ -17,6 +17,7 @@
  */
 package org.apache.ivyde.eclipse.resolvevisualizer.model;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ public class IvyNodeElement {
     private final Collection<IvyNodeElement> dependencies = new HashSet<>();
     private final Collection<IvyNodeElement> callers = new HashSet<>();
     private Collection<IvyNodeElement> conflicts = new HashSet<>();
+    private int hash;
 
     /**
      * The caller configurations that caused this node to be reached in the resolution, grouped by caller.
@@ -55,6 +57,19 @@ public class IvyNodeElement {
             }
         }
         return false;
+    }
+
+    public int hashCode() {
+        if (hash == 0) {
+            // CheckStyle:MagicNumber| OFF
+            hash = 31;
+            hash = hash * 13 + getModuleRevisionId().hashCode();
+            hash = hash * 13 + Arrays.hashCode(getDeepDependencies());
+            hash = hash * 13 + Arrays.hashCode(getConflicts());
+            hash = hash * 13 + Arrays.hashCode(getCallers());
+            // CheckStyle:MagicNumber| ON
+        }
+        return hash;
     }
 
     public IvyNodeElement[] getDependencies() {

@@ -235,10 +235,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
      * @param currentSelection IvyNodeElement
      */
     public void setCurrentSelection(IvyNodeElement root, IvyNodeElement currentSelection) {
-        for (EntityConnectionData entityConnectionData : highlightedRelationships.keySet()) {
-            ConnectionStyle style = highlightedRelationships.get(entityConnectionData);
-            if (style.isRevealOnHighlight()) {
-                viewer.unReveal(entityConnectionData);
+        for (Map.Entry<EntityConnectionData, ConnectionStyle> relationship : highlightedRelationships.entrySet()) {
+            if (relationship.getValue().isRevealOnHighlight()) {
+                viewer.unReveal(relationship.getKey());
             }
         }
 
@@ -258,10 +257,9 @@ public class IvyNodeLabelProvider implements ILabelProvider, IConnectionStylePro
                     highlightedRelationships, highlightedDependencies);
         }
 
-        for (EntityConnectionData entityConnectionData : highlightedRelationships.keySet()) {
-            ConnectionStyle style = highlightedRelationships.get(entityConnectionData);
-            if (style.isRevealOnHighlight()) {
-                viewer.reveal(entityConnectionData);
+        for (Map.Entry<EntityConnectionData, ConnectionStyle> relationship : highlightedRelationships.entrySet()) {
+            if (relationship.getValue().isRevealOnHighlight()) {
+                viewer.reveal(relationship.getKey());
             }
         }
 

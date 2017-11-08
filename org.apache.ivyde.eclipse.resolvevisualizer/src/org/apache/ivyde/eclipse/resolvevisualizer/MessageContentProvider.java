@@ -55,10 +55,11 @@ public class MessageContentProvider {
             }
         }
 
-        for (ModuleId conflictKey : conflicts.keySet()) {
+        for (Map.Entry<ModuleId, Collection<IvyNodeElement>> conflict : conflicts.entrySet()) {
+            final ModuleId conflictKey = conflict.getKey();
             manager.addMessage(conflictKey,
                     "Conflict on module " + conflictKey.getOrganisation() + "#" + conflictKey.getName(),
-                    conflicts.get(conflictKey), IMessageProvider.ERROR);
+                    conflict.getValue(), IMessageProvider.ERROR);
         }
     }
 

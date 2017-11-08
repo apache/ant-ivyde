@@ -157,9 +157,9 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
                 }
                 list.clear();
                 if (textString.length() > 0) {
-                    for (String string : figureListing.keySet()) {
-                        if (string.toLowerCase().contains(textString.toLowerCase())) {
-                            list.add(figureListing.get(string));
+                    for (Map.Entry<String, GraphItem> figure : figureListing.entrySet()) {
+                        if (figure.getKey().toLowerCase().contains(textString.toLowerCase())) {
+                            list.add(figure.getValue());
                         }
                     }
                 }
@@ -458,7 +458,7 @@ public class ResolveVisualizerView extends ViewPart implements IZoomableWorkbenc
     }
 
     private class ForceHiddenFilter extends IvyNodeElementFilterAdapter {
-        private final Collection/* <IvyNodeElement> */<IvyNodeElement> forceHidden = new HashSet/* <IvyNodeElement> */<>();
+        private final Collection<IvyNodeElement> forceHidden = new HashSet<>();
 
         public boolean accept(IvyNodeElement unfiltered) {
             return !forceHidden.contains(unfiltered);
