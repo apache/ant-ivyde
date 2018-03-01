@@ -111,7 +111,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             }
         }
 
-        List<MenuManager> items;
+        List<IContributionItem> items;
         MenuManager menuManager;
         if (onlyContainers) {
             // we we have only containers, no need to have a root menu entry
@@ -120,7 +120,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         } else {
             menuManager = new MenuManager("Ivy", IvyPlugin
                     .getImageDescriptor("icons/logo16x16.gif"), "org.apache.ivyde.eclipse.menu");
-            items = Collections.singletonList(menuManager);
+            items = Collections.<IContributionItem>singletonList(menuManager);
         }
 
         // add resolve, refresh, reload settings
@@ -181,19 +181,19 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         return items.toArray(new IContributionItem[items.size()]);
     }
 
-    private void addCommand(MenuManager menuManager, List<MenuManager> items,
+    private void addCommand(MenuManager menuManager, List<IContributionItem> items,
             String commandId) {
         CommandContributionItemParameter parm = new CommandContributionItemParameter(
                 serviceLocator, null, commandId, CommandContributionItem.STYLE_PUSH);
         fillMenu(menuManager, items, new CommandContributionItem(parm));
     }
 
-    private void fillMenu(MenuManager menuManager, List<MenuManager> items,
+    private void fillMenu(MenuManager menuManager, List<IContributionItem> items,
             IContributionItem commandContributionItem) {
         if (menuManager != null) {
             menuManager.add(commandContributionItem);
         } else {
-            items.add((MenuManager) commandContributionItem);
+            items.add(commandContributionItem);
         }
     }
 
@@ -252,7 +252,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
     }
 
     private void addCleanableForSingleContainer(MenuManager menuManager,
-            List<MenuManager> items, Ivy ivy) {
+            List<IContributionItem> items, Ivy ivy) {
         List<Cleanable> allCleanables = new ArrayList<>();
         List<Cleanable> repositoryCleanables = new ArrayList<>();
         List<Cleanable> resolutionCleanables = new ArrayList<>();
@@ -273,7 +273,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
     }
 
     private void addCleanableForManyContainers(MenuManager menuManager,
-            List<MenuManager> items, Collection<Set<IvyClasspathContainer>> containerSets) {
+            List<IContributionItem> items, Collection<Set<IvyClasspathContainer>> containerSets) {
         List<Cleanable> allCleanables = new ArrayList<>();
         List<Cleanable> repositoryCleanables = new ArrayList<>();
         List<Cleanable> resolutionCleanables = new ArrayList<>();
@@ -306,7 +306,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
         }
     }
 
-    public void addCleanable(MenuManager menuManager, List<MenuManager> items,
+    private void addCleanable(MenuManager menuManager, List<IContributionItem> items,
             String name, List<Cleanable> cleanables) {
         CleanCacheAction action = new CleanCacheAction(name, cleanables);
         action.setText(name);
