@@ -192,7 +192,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             IContributionItem commandContributionItem) {
         if (menuManager != null) {
             menuManager.add(commandContributionItem);
-        } else {
+        } else if (commandContributionItem instanceof MenuManager) {
             items.add((MenuManager) commandContributionItem);
         }
     }
