@@ -78,7 +78,7 @@ For the sample project, we want it to be `js`.
 This is a comma seperated list of type names which is be retrieved ('`$$*$$`' means __All__).
 For the sample project, we want them all: '`$$*$$`'.
 
-Now in the "Settings" tab, the setup entries are the same as the link:preferences.html#settings[global ones]. Click on "Enable project specific settings" to customize for your setup.
+Now in the "Settings" tab, the setup entries are the same as the link:preferences{outfilesuffix}#settings[global ones]. Click on "Enable project specific settings" to customize for your setup.
 
 image::images/retrieve_setup_settings.jpg[]
 

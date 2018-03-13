@@ -17,7 +17,7 @@
    under the License.
 ////
 
-Apache IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overrided in each link:cpc/edit.html[project].
+Apache IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overrided in each link:cpc/edit{outfilesuffix}[project].
 
 The global configuration can be found in the preferences of Eclipse (menu Window > Preferences for Windows and Linux users, Eclipse > Preferences for mac users), and select the item Ivy.
 
@@ -59,7 +59,7 @@ image::images/pref_advanced.jpg[]
 
 .Resolve before launch:
 
-An IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about link:cpc/launch.html[launch configurations] for further information on this feature.
+An IvyDE container can be used in the classpath of a launch configuration, and the container can be resolved on each launch. See the documentation about link:cpc/launch{outfilesuffix}[launch configurations] for further information on this feature.
 
 .Use extended resolve id
 
@@ -71,7 +71,7 @@ image::images/pref_classpath.jpg[]
 
 .Resolve dependencies in workspace:
 
-Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the link:cpc/workspace.html[documentation] for further information on this feature.
+Apache IvyDE allows Ivy dependencies between projects in the workspace to be realized through project references rather than jars from the repository.  See the link:cpc/workspace{outfilesuffix}[documentation] for further information on this feature.
 
 .Resolve dependencies transitively
 
@@ -109,7 +109,7 @@ By default, Apache IvyDE will parse the ivy settings file each times it is neede
 
 .Ivy settings path:
 
-The path to your ivy settings file. Leave it blank to use Ivy default resolvers. See also the documentation about link:eclipsevar.html[Eclipse variables].
+The path to your ivy settings file. Leave it blank to use Ivy default resolvers. See also the documentation about link:eclipsevar{outfilesuffix}[Eclipse variables].
 
 .Ivy user dir:
 
@@ -147,7 +147,7 @@ If checked, in case there is only one artifact which is detected of type source,
 
 Same as above but with javadoc
 
-For further information on how the mapping works, checkout this link:cpc/jarmapping.html[specific documentation].
+For further information on how the mapping works, checkout this link:cpc/jarmapping{outfilesuffix}[specific documentation].
 
 == [[workspace]]Workspace resolver
 
@@ -165,10 +165,10 @@ When a project is opened, IvyDE will trigger the resolve of every other project 
 
 This option forces the workspace resolver to ignore the version of a module specified in an ivy.xml if a project containing an Ivy file with that module organization and name is found in the workspace, instead substituting a project reference.  This may have unintended consequences.
 
-For further information on how the workspace resolver works, checkout this link:cpc/workspace.html[specific documentation].
+For further information on how the workspace resolver works, checkout this link:cpc/workspace{outfilesuffix}[specific documentation].
 
 == [[xmleditor]]XML Editor
 
-This configuration panel allow you to change the color used in the link:ivyeditor.html[Ivy file editor] and the link:settingseditor.html[Ivy settings editor].
+This configuration panel allow you to change the color used in the link:ivyeditor{outfilesuffix}[Ivy file editor] and the link:settingseditor{outfilesuffix}[Ivy settings editor].
 
 image::images/xml_editor_color.jpg[]

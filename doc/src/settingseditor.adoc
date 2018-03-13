@@ -39,4 +39,4 @@ image::images/settings_completion_att.jpg[]
 
 === Change colors
 
-You can change the color used by the editor in the link:preferences.html#xmleditor[global preferences page].
+You can change the color used by the editor in the link:preferences{outfilesuffix}#xmleditor[global preferences page].

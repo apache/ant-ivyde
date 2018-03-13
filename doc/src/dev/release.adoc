@@ -109,7 +109,7 @@ svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
 
 == Prepare the updatesite
 
-The instructions to build the updatesite are link:updatesite.html[there].
+The instructions to build the updatesite are link:updatesite{outfilesuffix}[there].
 
 == Vote for the released artifacts
 
@@ -160,7 +160,7 @@ In order to keep the main dist area of a reasonable size, old releases should be
 
 === Deploy the updatesite
 
-Follow the instructions of that link:updatesite.html#deployment[page].
+Follow the instructions of that link:updatesite{outfilesuffix}#deployment[page].
 
 == Annoucement
 

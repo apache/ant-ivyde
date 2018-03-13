@@ -33,7 +33,7 @@ image::images/wizard2.jpg[]
 	
 . Container: you must select a target project. (This is already set if you access the wizard through the context menu on your project root folder).
 . File name: the Ivy file name (ivy.xml by default).	
-. Organisation: the component owner name. (your company name or the company that provides the component if you are writing an ivy.xml file for 3rd party jars). Note that this value can be set in the link:preferences.html[Ivy preference page.]
+. Organisation: the component owner name. (your company name or the company that provides the component if you are writing an ivy.xml file for 3rd party jars). Note that this value can be set in the link:preferences{outfilesuffix}[Ivy preference page.]
 . Module name: the component name.
 . Status: the status of the project. (integration by default since we have just created its ivy file. Please refer to the link:../../../history/latest-milestone/index.html[Ivy documentation for more details]).
 
@@ -64,8 +64,8 @@ Available value completion:
 ** __info/repository__: name (the other attributes depend on it), url, ivys, pattern, artifacts
 ** __configurations/conf__: visibility,  deprecated, extends
 ** __publications/artifact__: type, conf, ext
-** __dependencies/dependency__: org, name, rev are resolved thanks to Ivy using the ivyconf set in the link:cpc/edit.html[project Ivy preference page]. If not set to "default" Ivy uses its defaults resolvers configuration (ie Ivyrep + ibiblio), and if these are not set Ivy uses the ivyconf set in the link:preferences.html[Eclipse Ivy preference page]. conf values are computed from the current ivy.xml file and the dependency ivy.xml file if any.
+** __dependencies/dependency__: org, name, rev are resolved thanks to Ivy using the ivyconf set in the link:cpc/edit{outfilesuffix}[project Ivy preference page]. If not set to "default" Ivy uses its defaults resolvers configuration (ie Ivyrep + ibiblio), and if these are not set Ivy uses the ivyconf set in the link:preferences{outfilesuffix}[Eclipse Ivy preference page]. conf values are computed from the current ivy.xml file and the dependency ivy.xml file if any.
 
 image::images/completion4.jpg[]
 
-* *Change colors:* you can change the color used by the editor in the link:preferences.html#xmleditor[global preferences page].
+* *Change colors:* you can change the color used by the editor in the link:preferences{outfilesuffix}#xmleditor[global preferences page].

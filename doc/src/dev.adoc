@@ -21,5 +21,5 @@ Adding new features or fixing bugs needs community involvement.
 
 Here you will find the basics for how to get involved:
 
-* How to link:dev/build.html[build] Apache IvyDE from the sources
-* and the process to de a link:dev/release.html[release] of Apache IvyDE
+* How to link:dev/build{outfilesuffix}[build] Apache IvyDE from the sources
+* and the process to de a link:dev/release{outfilesuffix}[release] of Apache IvyDE

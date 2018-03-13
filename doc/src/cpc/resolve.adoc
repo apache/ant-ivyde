@@ -23,7 +23,7 @@ This command will invoke the "resolve" Ivy task and update your classpath contai
 
 There is also a "refresh" action: this action is similar to the resolve one, but does not perform a full resolve if a report already exists in the cache. This is particularly useful if you work with Apache Ant and a command line so that you avoid two full resolves.  It is also the default action performed on classpath containers when the Eclipse workspace is opened (*Windows > Preferences > Ivy*), in effect restoring the classpath container to its state prior to the last closing of the workspace if no other action is performed against the ivy.xml in the meantime.
 
-And there is a "reload settings" action: by default IvyDE does reload ivy settings files each time a resolve it required. But in case the ivy settings file is remote, this take make the user experience quite slow. To work around that, you can check in the link:../preferences.html[preference page] the option to only load on demand, and use the "reload settings" action in the context menu.
+And there is a "reload settings" action: by default IvyDE does reload ivy settings files each time a resolve it required. But in case the ivy settings file is remote, this take make the user experience quite slow. To work around that, you can check in the link:../preferences{outfilesuffix}[preference page] the option to only load on demand, and use the "reload settings" action in the context menu.
 
 == Context Menu
 

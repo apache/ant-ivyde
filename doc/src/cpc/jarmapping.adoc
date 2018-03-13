@@ -27,7 +27,7 @@ There are three types of jars handled by Eclipse":
 * the source jars/zip: they will be bound to the binary one to browse dependency sources; they are basically a zip of .java files
 * the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of .html files respectively in a layout produced by javadoc.
 
-To find the binary jars, Apache IvyDE is relying on the "Accepted types" preference field you can find in the link:create.html[container configuration panel], or in the link:../preferences.html#classpath[global one]. If the artifact has a type listed here, it is then added to the classpath.
+To find the binary jars, Apache IvyDE is relying on the "Accepted types" preference field you can find in the link:create{outfilesuffix}[container configuration panel], or in the link:../preferences{outfilesuffix}#classpath[global one]. If the artifact has a type listed here, it is then added to the classpath.
 
 For the sources, it is relying on the "Sources types".
 

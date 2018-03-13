@@ -37,11 +37,11 @@ image::../images/build_path_menu.jpg[]
 
 image::../images/add_lib.jpg[]
 
-* Select an ivy.xml file or a link:maven.html[maven pom.xml] and the desired configurations.
+* Select an ivy.xml file or a link:maven{outfilesuffix}[maven pom.xml] and the desired configurations.
 
 image::../images/ivy_file_def.jpg[]
 
-* [[localconf]]You then might want to use specific settings for your project, a configuration different from the link:../preferences.html[global one]. Click on the "Enable project specific settings" check box. For additional configuration options, see the documentation about link:../eclipsevar.html[Eclipse variables].
+* [[localconf]]You then might want to use specific settings for your project, a configuration different from the link:../preferences{outfilesuffix}[global one]. Click on the "Enable project specific settings" check box. For additional configuration options, see the documentation about link:../eclipsevar{outfilesuffix}[Eclipse variables].
 
 image::../images/project_specific_settings.jpg[]
 

@@ -61,4 +61,4 @@ Also note that if any of the resolver defined in your ivysettings.xml have the l
 
 == WTP support
 
-Note that WTP doesn't support IvyDE's workspace resolver. See the details in the page dedicated to link:wtp.html#resolve-in-workspace[WTP integration].
+Note that WTP doesn't support IvyDE's workspace resolver. See the details in the page dedicated to link:wtp{outfilesuffix}#resolve-in-workspace[WTP integration].

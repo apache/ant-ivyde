@@ -19,7 +19,7 @@
 
 Eclipse contains a link:http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/preferences/run-debug/ref-string_substitution.htm[string substitution mecanism]. This feature allows you to specify a path location that can be shared between developers.
 
-Apache IvyDE uses it to find the ivysettings.xml and properties files in both the link:preferences.html#settings[global preference page] and the link:cpc/create.html#localconf[project specific preference page].
+Apache IvyDE uses it to find the ivysettings.xml and properties files in both the link:preferences{outfilesuffix}#settings[global preference page] and the link:cpc/create{outfilesuffix}#localconf[project specific preference page].
 
 == Options
 

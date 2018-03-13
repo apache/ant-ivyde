@@ -21,11 +21,11 @@ The IvyDE classpath container will help you manage the classpath of your Java&#1
 
 Some of the tasks that can be performed on the container include:
     
-* link:cpc/create.html[Create] a container
-* link:cpc/edit.html[Edit] its setup
-* Launch a link:cpc/resolve.html[resolve] of the dependencies
-* link:cpc/retrieve.html[Retrieve] the dependencies in your project
-* Resolve dependencies within the Eclipse link:cpc/workspace.html[workspace]
-* link:cpc/launch.html[Launch] software or unit tests with a classpath managed by IvyDE
-* Use IvyDE with link:cpc/maven.html[maven pom.xml]
-* Use IvyDE in concert with link:cpc/wtp.html[WTP]
+* link:cpc/create{outfilesuffix}[Create] a container
+* link:cpc/edit{outfilesuffix}[Edit] its setup
+* Launch a link:cpc/resolve{outfilesuffix}[resolve] of the dependencies
+* link:cpc/retrieve{outfilesuffix}[Retrieve] the dependencies in your project
+* Resolve dependencies within the Eclipse link:cpc/workspace{outfilesuffix}[workspace]
+* link:cpc/launch{outfilesuffix}[Launch] software or unit tests with a classpath managed by IvyDE
+* Use IvyDE with link:cpc/maven{outfilesuffix}[maven pom.xml]
+* Use IvyDE in concert with link:cpc/wtp{outfilesuffix}[WTP]
