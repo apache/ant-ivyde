@@ -46,12 +46,9 @@ public class MultiRevDependencyDescriptor {
     public boolean equals(Object o) {
         if (o instanceof MultiRevDependencyDescriptor) {
             MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) o;
-
-            if (getOrganization().equals(mrdd.getOrganization())
+            return getOrganization().equals(mrdd.getOrganization())
                     && getModule().equals(mrdd.getModule())
-                    && dependenciesByContainer.equals(mrdd.dependenciesByContainer)) {
-                return true;
-            }
+                    && dependenciesByContainer.equals(mrdd.dependenciesByContainer);
         }
 
         return false;

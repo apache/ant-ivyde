@@ -116,10 +116,7 @@ public final class IvyDEsecurityHelper {
         if (preferences.nodeExists(IVY_DE_CREDENTIALS_BASE_NODE)) {
             ISecurePreferences node = preferences.node(IVY_DE_CREDENTIALS_BASE_NODE);
             if (node.nodeExists(host)) {
-                ISecurePreferences childNode = node.node(host);
-                if (childNode.nodeExists(realm)) {
-                    return true;
-                }
+                return node.node(host).nodeExists(realm);
             }
         }
         return false;

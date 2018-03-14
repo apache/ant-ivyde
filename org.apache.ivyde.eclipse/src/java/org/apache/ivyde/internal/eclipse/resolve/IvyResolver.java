@@ -196,8 +196,7 @@ public class IvyResolver {
     }
 
     private void computeConfs(List<String> confInput, ModuleDescriptor md) {
-        Set<String> configurations = new HashSet<>();
-        configurations.addAll(confInput);
+        Set<String> configurations = new HashSet<>(confInput);
 
         if (configurations.contains("*")) {
             confs = md.getConfigurationsNames();

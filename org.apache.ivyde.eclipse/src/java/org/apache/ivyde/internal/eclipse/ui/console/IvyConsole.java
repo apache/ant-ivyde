@@ -223,14 +223,19 @@ public class IvyConsole extends MessageConsole implements MessageLogger {
             preference);
         if (rgb == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
             // CheckStyle:MagicNumber| OFF
-            if (PREF_CONSOLE_DEBUG_COLOR.equals(preference)) {
-                rgb = new RGB(180, 180, 255);
-            } else if (PREF_CONSOLE_VERBOSE_COLOR.equals(preference)) {
-                rgb = new RGB(50, 150, 50);
-            } else if (PREF_CONSOLE_WARN_COLOR.equals(preference)) {
-                rgb = new RGB(255, 80, 20);
-            } else if (PREF_CONSOLE_ERROR_COLOR.equals(preference)) {
-                rgb = new RGB(255, 0, 0);
+            switch (preference) {
+                case PREF_CONSOLE_DEBUG_COLOR:
+                    rgb = new RGB(180, 180, 255);
+                    break;
+                case PREF_CONSOLE_VERBOSE_COLOR:
+                    rgb = new RGB(50, 150, 50);
+                    break;
+                case PREF_CONSOLE_WARN_COLOR:
+                    rgb = new RGB(255, 80, 20);
+                    break;
+                case PREF_CONSOLE_ERROR_COLOR:
+                    rgb = new RGB(255, 0, 0);
+                    break;
             }
             // CheckStyle:MagicNumber| ON
         }

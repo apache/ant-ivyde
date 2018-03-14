@@ -221,16 +221,20 @@ public class StandaloneRetrieveSerializer {
                 NodeList children = node.getChildNodes();
                 for (int j = 0; j < children.getLength(); j++) {
                     Node item = children.item(j);
-                    if (item.getNodeName().equals(IVYSETTINGS)) {
-                        SettingsSetup settingsSetup = readSettingsSetup(item);
-                        setup.setSettingsSetup(settingsSetup);
-                        setup.setSettingsProjectSpecific(true);
-                    } else if (item.getNodeName().equals(IVYXML)) {
-                        String ivyXmlPath = readIvyXmlPath(item);
-                        setup.setIvyXmlPath(ivyXmlPath);
-                    } else if (item.getNodeName().equals(RETRIEVE)) {
-                        RetrieveSetup retrieveSetup = readRetrieveSetup(item);
-                        setup.setRetrieveSetup(retrieveSetup);
+                    switch (item.getNodeName()) {
+                        case IVYSETTINGS:
+                            SettingsSetup settingsSetup = readSettingsSetup(item);
+                            setup.setSettingsSetup(settingsSetup);
+                            setup.setSettingsProjectSpecific(true);
+                            break;
+                        case IVYXML:
+                            String ivyXmlPath = readIvyXmlPath(item);
+                            setup.setIvyXmlPath(ivyXmlPath);
+                            break;
+                        case RETRIEVE:
+                            RetrieveSetup retrieveSetup = readRetrieveSetup(item);
+                            setup.setRetrieveSetup(retrieveSetup);
+                            break;
                     }
                 }
 

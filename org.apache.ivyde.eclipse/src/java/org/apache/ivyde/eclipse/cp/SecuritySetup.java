@@ -165,14 +165,7 @@ public class SecuritySetup implements Comparable<SecuritySetup> {
         } else if (!host.equals(other.host)) {
             return false;
         }
-        if (realm == null) {
-            if (other.realm != null) {
-                return false;
-            }
-        } else if (!realm.equals(other.realm)) {
-            return false;
-        }
-        return true;
+        return realm == null ? other.realm == null : realm.equals(other.realm);
     }
 
     @Override
