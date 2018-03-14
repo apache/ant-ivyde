@@ -27,7 +27,7 @@ image::../images/addivylibrary.jpg[]
 
 == Standard creation
 
-The standard way to add the IvyDE classpath container is to manipulate the Eclipse&#153;'s "Build Path":
+The standard way to add the IvyDE classpath container is to manipulate the Eclipse(TM)'s "Build Path":
 
 * Select the project in which you want to create an IvyDE classpath container and open the "Add Libraries" form of Eclipse (in package Explorer, in the context menu of your project choose : [Build Path]/[Add Libraries]).
 

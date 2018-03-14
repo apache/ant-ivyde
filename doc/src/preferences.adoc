@@ -35,7 +35,7 @@ If checked, the Ivy console will be opened on startup so that every log from Ivy
 
 .On Eclipse startup:
 
-Specifies what Apache IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse&#153; is starting up.
+Specifies what Apache IvyDE should do in every project containing an IvyDE managed classpath container when Eclipse(TM) is starting up.
 
 .On Ivy file change:
 

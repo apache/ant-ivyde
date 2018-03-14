@@ -17,7 +17,7 @@
    under the License.
 ////
 
-This page describes how to build the Apache IvyDE plugin from the source. The build is based on the Eclipse&#153; build system so it requires an Eclipse install. You also need to have an Ivy bundle installed.
+This page describes how to build the Apache IvyDE plugin from the source. The build is based on the Eclipse(TM) build system so it requires an Eclipse install. You also need to have an Ivy bundle installed.
 
 == [[setup]]Setup of the build
 

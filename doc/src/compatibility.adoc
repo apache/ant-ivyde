@@ -27,7 +27,7 @@ The reverse is not true, downgrading is not supported and may break your configu
 
 Apache IvyDE expects to be used with a version 2.1 or superior of Apache Ivy. In order to use some OSGi features, an Ivy 2.3 or superior is needed.
 
-== Eclipse&#153; integration
+== Eclipse(TM) integration
 
 Apache IvyDE has been maintained to be compatible with Eclipse 4.3 (aka Eclipse Kepler) and superior.
 

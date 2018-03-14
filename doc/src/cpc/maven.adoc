@@ -17,7 +17,7 @@
    under the License.
 ////
 
-If you want to use a Apache Maven&#153; pom.xml instead of an ivy.xml file, you can select a pom file in the configuration options of the IvyDE classpath.
+If you want to use a Apache Maven(TM) pom.xml instead of an ivy.xml file, you can select a pom file in the configuration options of the IvyDE classpath.
 
 When a Maven POM is selected, the configurations list is updated with all Maven scopes.
 
@@ -28,7 +28,7 @@ Both examples below are a good illustration of the simplicity of using Maven POM
 
 == [[one]]Maven1 Sample
 
-This sample presents a simple use case involving a Maven POM and the IvyDE classpath container. We are going to create an Eclipse&#153; project on commons-httpclient sources.
+This sample presents a simple use case involving a Maven POM and the IvyDE classpath container. We are going to create an Eclipse(TM) project on commons-httpclient sources.
 
 * Download the link:http://archive.apache.org/dist/httpcomponents/commons-httpclient/3.0/source/commons-httpclient-3.0-src.zip[commons httpclient sources]
 
