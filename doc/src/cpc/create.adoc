@@ -21,7 +21,7 @@ First, locate an ivy.xml file or a maven pom.xml ready to be used to build a cla
 
 == Fast creation
 
-For most of the projects, the ivy.xml file (or the pom.xml) is in the java project. So you can just right click on the ivy.xml and select "Add Ivy Library..." and you can directly access the prefilled setup of the IvyDE classpath container
+For most of the projects, the ivy.xml file (or the pom.xml) is in the Java project. So you can just right click on the ivy.xml and select "Add Ivy Library..." and you can directly access the prefilled setup of the IvyDE classpath container
 
 image::../images/addivylibrary.jpg[]
 
@@ -37,7 +37,7 @@ image::../images/build_path_menu.jpg[]
 
 image::../images/add_lib.jpg[]
 
-* Select an ivy.xml file or a link:maven{outfilesuffix}[maven pom.xml] and the desired configurations.
+* Select an ivy.xml file or a link:maven{outfilesuffix}[Maven pom.xml] and the desired configurations.
 
 image::../images/ivy_file_def.jpg[]
 

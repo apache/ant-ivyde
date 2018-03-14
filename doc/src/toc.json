@@ -112,7 +112,7 @@
                   },
                   {
                     "id":"cpc/maven",
-                    "title":"Use with maven poms",
+                    "title":"Use with Maven POMs",
                     "children": [
 
                       ]

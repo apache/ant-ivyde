@@ -19,28 +19,28 @@
 
 If you want to use a Apache Maven&#153; pom.xml instead of an ivy.xml file, you can select a pom file in the configuration options of the IvyDE classpath.
 
-When a maven pom is selected, the configurations list is updated with all maven scopes.
+When a Maven POM is selected, the configurations list is updated with all Maven scopes.
 
-Both examples below are a good illustration of the simplicity of using maven poms in Apache IvyDE:
+Both examples below are a good illustration of the simplicity of using Maven POMs in Apache IvyDE:
 
 * link:#one[Maven1 sample]
 * link:#two[Maven2 sample]
 
 == [[one]]Maven1 Sample
 
-This sample presents a simple use case involving a maven pom and the IvyDE classpath container. We are going to create an Eclipse&#153; project on commons-httpclient sources.
+This sample presents a simple use case involving a Maven POM and the IvyDE classpath container. We are going to create an Eclipse&#153; project on commons-httpclient sources.
 
 * Download the link:http://archive.apache.org/dist/httpcomponents/commons-httpclient/3.0/source/commons-httpclient-3.0-src.zip[commons httpclient sources]
 
 * Unzip this file (c:/tmp/commons-httpclient/)
 
-* Create a new Eclipse java project based on the unzipped sources (c:/tmp/commons-httpclient/)
+* Create a new Eclipse Java project based on the unzipped sources (c:/tmp/commons-httpclient/)
 
 image::../images/httpProject_errors.jpg[]
 
 *Note:* your project willnot compile: some imports cannot be resolved.
 
-* Add a new classpath container based on the "project.xml" pom and select "default" configuration (maven scope)
+* Add a new classpath container based on the "project.xml" pom and select "default" configuration (Maven scope)
 
 image::../images/httpProject_pom.jpg[]
 
@@ -52,7 +52,7 @@ image::../images/httpProject_clean.jpg[]
 
 This sample demonstrates how the IvyDE classpath container on a Apache Maven 2 pom can handle transitive dependencies.
 
-* Create a new empty java project in Eclipse.
+* Create a new empty Java project in Eclipse.
 
 * In your project, create an `ivysettings.xml` file:
 
