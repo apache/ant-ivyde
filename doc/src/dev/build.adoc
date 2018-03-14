@@ -23,9 +23,9 @@ This page describes how to build the Apache IvyDE plugin from the source. The bu
 
 === [[eclipse-install]]Eclipse installation
 
-You need first an Eclipse install which contains the PDE plugins (by default included in the "SDK" and "Classic" versions). We will refer to the eclipse installation path in the documentation as `$ECLIPSE_HOME`. In that `$ECLIPSE_HOME` folder you should have the plugins and features folders.
+You need first an Eclipse install which contains the PDE plugins (by default included in the "SDK" and "Classic" versions). We will refer to the Eclipse installation path in the documentation as `$ECLIPSE_HOME`. In that `$ECLIPSE_HOME` folder you should have the plugins and features folders.
 
-It is recommended to have an eclipse installation dedicated to the build. So you will be able to have better control over the Ivy bundle installed there. And as the build clean the internal cache of Eclipse, running an eclipse and building with the same instance might raise some troubleshootings in the IDE.
+It is recommended to have an Eclipse installation dedicated to the build. So you will be able to have better control over the Ivy bundle installed there. And as the build cleans the internal cache of Eclipse, running an Eclipse and building with the same instance might cause some troubleshooting in the IDE.
 
 Lots of ant target depends on that Eclipse installation, so they need a `baseLocation` property to be defined. Note that you can avoid specifying that property in each command line by having a `local.build.properties` file which contains somethink like:
 

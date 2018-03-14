@@ -35,7 +35,7 @@ image::images/wizard2.jpg[]
 . File name: the Ivy file name (ivy.xml by default).	
 . Organisation: the component owner name. (your company name or the company that provides the component if you are writing an ivy.xml file for 3rd party jars). Note that this value can be set in the link:preferences{outfilesuffix}[Ivy preference page.]
 . Module name: the component name.
-. Status: the status of the project. (integration by default since we have just created its ivy file. Please refer to the link:../../../history/latest-milestone/index.html[Ivy documentation for more details]).
+. Status: the status of the project. (integration by default since we have just created its Ivy file. Please refer to the link:../../../history/latest-milestone/index.html[Ivy documentation for more details]).
 
 == [[editor]]Ivy Editor
 

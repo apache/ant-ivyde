@@ -105,11 +105,11 @@ image::images/pref_settings.jpg[]
 
 .Reload the settings only on demand:
 
-By default, Apache IvyDE will parse the ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the ivy editor). For remote ivysettings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).
+By default, Apache IvyDE will parse the Ivy settings file each times it is needed (each resolve, refresh, clean cache or completion in the Ivy editor). For remote Ivy settings this can slow the UI dramatically, so it is possible to make IvyDE keep the settings in a cache and only reload them via the context menu on the container).
 
 .Ivy settings path:
 
-The path to your ivy settings file. Leave it blank to use Ivy default resolvers. See also the documentation about link:eclipsevar{outfilesuffix}[Eclipse variables].
+The path to your Ivy settings file. Leave it blank to use Ivy default resolvers. See also the documentation about link:eclipsevar{outfilesuffix}[Eclipse variables].
 
 .Ivy user dir:
 

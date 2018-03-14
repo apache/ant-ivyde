@@ -17,17 +17,17 @@
    under the License.
 ////
 
-This preference section allows you to manage credentials, which the ivy dependency manager needs to access protected repositories. The credentials are directly stored into the Eclipse Secure storage and loaded during the ivyDE-plugin's startup. This preference page allows you to manage your ivy credentials safely without the need to "publish" them in plain-text inside your build-files.
+This preference section allows you to manage credentials, which the Ivy dependency manager needs to access protected repositories. The credentials are directly stored into the Eclipse Secure storage and loaded during the IvyDE-plugin's startup. This preference page allows you to manage your Ivy credentials safely without the need to "publish" them in plain-text inside your build-files.
 
 == [[general]]General workflow
 
-The ivyDE credentials extension allows you - as already mentioned - to protect your ivy credentials by using the Eclipse Secure storage. The credential entries are only maintained by the Eclipse secure storage itself: Every operation (add/edit/remove) is directly performed on the Eclipse secure storage without any intermediate caches. At the ivyDE plugin's startup, the Eclipse Secure storage is accessed (this operation requires you to insert your password if your Eclipse Secure storage is password-protected) and all the credential entries - which are related to the ivy dependency manager - are loaded and copied to the internal ivy credential manager (where ivy looks for credentials in case of protected repositories).
+The IvyDE credentials extension allows you - as already mentioned - to protect your Ivy credentials by using the Eclipse Secure storage. The credential entries are only maintained by the Eclipse secure storage itself: Every operation (add/edit/remove) is directly performed on the Eclipse secure storage without any intermediate caches. At the IvyDE plugin's startup, the Eclipse Secure storage is accessed (this operation requires you to insert your password if your Eclipse Secure storage is password-protected) and all the credential entries - which are related to the Ivy dependency manager - are loaded and copied to the internal Ivy credential manager (where Ivy looks for credentials in case of protected repositories).
 
-Please note that this "credential-copying" is directly done after the ivyDE plugin's startup. If your ivy-configuration files, respectively, your build-files also contain credentials pointing to the same repository (same host@realm combination as already stored in the Eclipse Secure storage), the credentials inside the Eclipse Secure storage may be overwritten due to the fact, that credentials specified within the mentioned alternative locations may be added to the internal ivy credential manager after the "credential-copying" was performed. 
+Please note that this "credential-copying" is directly done after the IvyDE plugin's startup. If your Ivy settings files, respectively, your buildfiles also contain credentials pointing to the same repository (same host@realm combination as already stored in the Eclipse Secure storage), the credentials inside the Eclipse Secure storage may be overwritten due to the fact that credentials specified within the mentioned alternative locations may be added to the internal Ivy credential manager after the "credential copying" was performed.
 
 == [[credentialsOverview]]Overview
 
-In this view all your credentials related to the ivy dependency manager are listed. The credentials consist of:
+In this view all your credentials related to the Ivy dependency manager are listed. The credentials consist of:
 
 * Host: The host of your protected repository.
 
@@ -47,11 +47,11 @@ Click on the "Add..." button to add new credentials:
 
 image::images/sec_add_credentials_empty.png[]
 
-A new dialog appears where you can insert a new credential entry. The properties "Host" and "Realm" are required because they are used to identify an artifact-repository and thus also a credential entry within the Eclipse secure storage. The property "Id" is read-only and shows you the repository's identifier (host@realm).
+A new dialog appears where you can insert a new credential entry. The properties "Host" and "Realm" are required because they are used to identify an artifact repository and thus also a credential entry within the Eclipse secure storage. The property "Id" is read-only and shows you the repository's identifier (host@realm).
 
 image::images/sec_add_credentials_filled.png[]
 
-If the inserted host@realm combination is unique and not already existing, the credential entry can be saved (stored directly to the Eclipse Secure storage). Press "OK" to save, "Cancel" otherwise.
+If the inserted host@realm combination is unique and does not already exist, the credential entry can be saved (stored directly to the Eclipse Secure storage). Press "OK" to save, "Cancel" otherwise.
 
 The added credential entry is now visible within the overview and can be edited or removed:
 
@@ -61,7 +61,7 @@ Adding a new credential entry having the same identifier is not permitted (as me
 
 image::images/sec_add_credentials_duplicate.png[]
 
-The ivy dependency manager allows multiple repositories for the same host, but their realm has to be unique on that host:
+The Ivy dependency manager allows multiple repositories for the same host, but their realm has to be unique on that host:
 
 image::images/sec_add_credentials_duplicate_resolved.png[]
 
@@ -85,4 +85,4 @@ In the credentials overview press "Remove" to delete the selected credential ent
 
 image::images/sec_remove_credentials.png[]
 
-Please note that the internal ivyDE credentials manager (currently) does not permit to delete credentials once they are loaded at startup. If you delete credentials entries, the corresponding entries in the internal ivyDE credentials manager are invalidated (password and username are nulled). After Eclipse is restarted, the the internal ivyDE credentials manager is rebuild.
+Please note that the internal IvyDE credentials manager (currently) does not permit removal of credentials once they are loaded at startup. If you delete credentials entries, the corresponding entries in the internal IvyDE credentials manager are invalidated (password and username are nulled). After Eclipse is restarted, the the internal IvyDE credentials manager is rebuild.

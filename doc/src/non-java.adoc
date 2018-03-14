@@ -56,7 +56,7 @@ For the sample project, let's choose "javascripts".
 
 .Ivy file
 
-The ivy file which declares the dependencies to retrieve.
+The Ivy file which declares the dependencies to retrieve.
 For the sample project, we will use the same one has the one which is used for the Java dependencies (it is not required).
 
 .Retrieve pattern
