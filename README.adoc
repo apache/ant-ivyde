@@ -27,4 +27,4 @@ This software is licensed under the terms you may find in the file named link:LI
 
 == Building
 
-To be able to build IvyDE yourself, go read that link:doc/dev/build{outfilesuffix}[documentation]
+To be able to build IvyDE yourself, go read that link:doc/src/dev/build{outfilesuffix}[documentation]
