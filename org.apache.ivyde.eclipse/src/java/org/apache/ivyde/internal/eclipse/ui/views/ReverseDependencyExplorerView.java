@@ -344,7 +344,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
         }
 
         public boolean hasChildren(Object parent) {
-            if ((parent instanceof MultiRevDependencyDescriptor)) {
+            if (parent instanceof MultiRevDependencyDescriptor) {
                 MultiRevDependencyDescriptor mrdd = (MultiRevDependencyDescriptor) parent;
                 return mrdd.getIvyClasspathContainers().length > 0;
             }
