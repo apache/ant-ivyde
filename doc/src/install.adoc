@@ -28,8 +28,8 @@ http://ant.apache.org/ivy/ivyde/download.cgi
 
 So you should have the zip distribution of Apache IvyDE in which you should find these files:
 
-* features/org.apache.ivyde.feature_2.1.0.XXXX.jar
-* plugins/org.apache.ivyde.eclipse_2.1.0.XXXX.jar
+* features/org.apache.ivyde.feature_2.2.0.XXXX.jar
+* plugins/org.apache.ivyde.eclipse_2.2.0.XXXX.jar
 
 You can then install them by copying them respectively in the $ECLIPSE_HOME/features and the $ECLIPSE_HOME/plugins:
 [source]
@@ -40,13 +40,12 @@ cp plugins/* $ECLIPSE_HOME/plugins
 
 === Install the latest Apache Ivy bundle
 
-Get the latest Apache Ivy feature and bundle for the updatesite:
+Get the latest Apache Ivy build for the updatesite:
 
-* the link:[preferred]/ant/ivyde/updatesite/features[features folder]
-* the link:[preferred]/ant/ivyde/updatesite/plugins[plugins folder]
+* the link:https://builds.apache.org/view/All/job/IvyDE-updatesite/lastSuccessfulBuild/artifact/trunk/build/[latest successful build]
 
-And then just copy them respectively in the `$ECLIPSE_HOME/features` and the `$ECLIPSE_HOME/plugins` folders.
+Then unpack the zip file and use as local update site.
 
 === Restart Eclipse
 
-After installing manually your plugins, you have to restart your Eclipse to have it take into account the changes. It is recommended to restart it with the -clean option on the command line.
+After installing manually your plugins, you have to restart your Eclipse to have it take into account the changes. It is recommended to restart it with the `-clean` option on the command line.
