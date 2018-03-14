@@ -31,7 +31,7 @@ Lots of ant target depends on that Eclipse installation, so they need a `baseLoc
 
 [source]
 ----
-baseLocation=/home/me/tools/eclipse-3.4
+baseLocation=/home/me/tools/eclipse-4.3
 ----
 
 An Ant target is provided to download all the necessary binaries, just like the CI is running: `ant download-eclipse`. No need to specify a `baseLocation` in the prperty file to use that downloaded Eclipse and plugins.
