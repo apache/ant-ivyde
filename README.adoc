@@ -1,42 +1,30 @@
-            Apache IvyDE v2.2.0
-           ---------------------
+= Apache IvyDE v2.2.0
 
 
-Supported Platforms
---------------------
+== Supported Platforms
 
-IvyDE expects to run in a specified environment, please check the documentation:
-  doc/compatibility.html
+IvyDE expects to run in a specific environment, please check the link:doc/src/compatibility{outfilesuffix}[documentation]
 
 
-Installation
--------------
+== Installation
 
 For most user who have access to the internet it is simpler to install the
-latest release from the IvyDE updatesite. So just look out there:
-  http://ant.apache.org/ivy/ivyde/download.cgi
+latest release from the IvyDE updatesite. So just look out there: http://ant.apache.org/ivy/ivyde/download.cgi
 
-If you want to install the zip distribution manually, see
-  doc/install.html
+If you want to install the zip distribution manually, see the link:doc/src/install{outfilesuffix}[instructions]
 
 
-Getting Started
-----------------
+== Getting Started
 
-For an introduction to Apache IvyDE and how to use it, please read the documentation 
-located in the doc subdirectory:
-  doc/index.html
+For an introduction to Apache IvyDE and how to use it, please read the link:doc/src/index{outfilesuffix}[documentation]
+located in the `doc` subdirectory
 
 
-Licensing
----------
+== Licensing
 
-This software is licensed under the terms you may find in the file 
-named "LICENSE" in this directory.
+This software is licensed under the terms you may find in the file named link:LICENSE["LICENSE"] in this directory
 
 
-Building
---------
+== Building
 
-To be able to build IvyDE yourself, go read that documentation:
-  doc/dev/build.html
+To be able to build IvyDE yourself, go read that link:doc/dev/build{outfilesuffix}[documentation]
