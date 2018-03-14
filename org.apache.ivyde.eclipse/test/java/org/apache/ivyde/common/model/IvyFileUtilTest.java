@@ -34,7 +34,7 @@ public class IvyFileUtilTest {
     private static String hibContentStr;
 
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUp() {
         try (RandomAccessFile accessFile = new RandomAccessFile(IvyFileUtilTest.class.getResource(
                 "/ivy-hibernate.xml").getFile(), "r")) {
             byte[] content = new byte[(int) accessFile.length()];
