@@ -180,7 +180,7 @@ public class IvyTag {
             return null;
         }
         IValueProvider provider = ivyTagAttribute.getValueProvider();
-        if (provider != null && (provider instanceof IDocumentedValueProvider)) {
+        if (provider instanceof IDocumentedValueProvider) {
             return ((IDocumentedValueProvider) provider).getDocForValue(value, ivyfile);
         }
         return null;

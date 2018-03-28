@@ -80,7 +80,7 @@ public class IvyMenuContributionItem extends CompoundContributionItem implements
             return new IContributionItem[0];
         }
         ISelection selection = selectionService.getSelection();
-        if (selection == null || !(selection instanceof IStructuredSelection)) {
+        if (!(selection instanceof IStructuredSelection)) {
             return new IContributionItem[0];
         }
 
