@@ -51,10 +51,8 @@ public class IvyNodeElement {
     public boolean equals(Object obj) {
         if (obj instanceof IvyNodeElement) {
             IvyNodeElement elem = (IvyNodeElement) obj;
-            if (elem.getOrganization().equals(getOrganization()) && elem.getName().equals(getName())
-                    && elem.getRevision().equals(getRevision())) {
-                return true;
-            }
+            return elem.getOrganization().equals(getOrganization()) && elem.getName().equals(getName())
+                    && elem.getRevision().equals(getRevision());
         }
         return false;
     }
