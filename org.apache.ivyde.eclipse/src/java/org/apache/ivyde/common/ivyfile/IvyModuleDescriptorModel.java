@@ -231,7 +231,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 StringBuilder base = new StringBuilder();
                 String qualifier = ivyFile.getAttributeValueQualifier();
                 int comma = qualifier.lastIndexOf(",") + 1;
-                base.append(qualifier.substring(0, comma));
+                base.append(qualifier, 0, comma);
                 qualifier = qualifier.substring(comma);
                 while (qualifier.length() > 0 && qualifier.charAt(0) == ' ') {
                     base.append(' ');
@@ -402,7 +402,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                     int arrowIndex) {
                 // search for word after last comma
                 int comma = qualifier.lastIndexOf(",") + 1;
-                base.append(qualifier.substring(0, comma));
+                base.append(qualifier, 0, comma);
                 qualifier = qualifier.substring(comma);
                 while (qualifier.length() > 0 && qualifier.charAt(0) == ' ') {
                     base.append(' ');
@@ -423,11 +423,11 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 if (ivy == null) {
                     return null;
                 }
-                base.append(qualifier.substring(0, arrowIndex + 2));
+                base.append(qualifier, 0, arrowIndex + 2);
                 qualifier = qualifier.substring(arrowIndex + 2);
                 // search for word after last comma
                 int comma = qualifier.lastIndexOf(",") + 1;
-                base.append(qualifier.substring(0, comma));
+                base.append(qualifier, 0, comma);
                 qualifier = qualifier.substring(comma);
                 while (qualifier.length() > 0 && qualifier.charAt(0) == ' ') {
                     base.append(' ');
@@ -484,7 +484,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                                 String qualifier = ivyFile.getAttributeValueQualifier();
                                 // search for word after last comma
                                 int comma = qualifier.lastIndexOf(",") + 1;
-                                base.append(qualifier.substring(0, comma));
+                                base.append(qualifier, 0, comma);
                                 qualifier = qualifier.substring(comma);
                                 while (qualifier.length() > 0 && qualifier.charAt(0) == ' ') {
                                     base.append(' ');
