@@ -29,6 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class IvyFileUtilTest {
     private static String hibContentStr;
@@ -49,8 +50,7 @@ public class IvyFileUtilTest {
     @Test
     public void testInTag() {
         IvyFile ivyFile = new IvyModuleDescriptorFile(null, "", hibContentStr);
-        boolean b = ivyFile.inTag(1000);
-        assertEquals(b, true);
+        assertTrue(ivyFile.inTag(1000));
     }
 
     @Test
