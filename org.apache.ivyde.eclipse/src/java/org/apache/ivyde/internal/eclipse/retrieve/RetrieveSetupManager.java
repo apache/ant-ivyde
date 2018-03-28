@@ -104,9 +104,9 @@ public class RetrieveSetupManager implements ISaveParticipant {
     }
 
     public void saving(ISaveContext context) throws CoreException {
-        Map<IProject, IEclipsePreferences> toFlush = new HashMap<>();
+        Map<IProject, IEclipsePreferences> toFlush;
         synchronized (projectPrefs) {
-            toFlush.putAll(projectPrefs);
+            toFlush = new HashMap<>(projectPrefs);
             projectPrefs.clear();
         }
         for (Entry<IProject, IEclipsePreferences> entry : toFlush.entrySet()) {
