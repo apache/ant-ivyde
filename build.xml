@@ -533,7 +533,7 @@ You have to specify the Ivy to install with one of the following property:
 
     <target name="checkstyle" depends="checkstyle-internal"
             description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
-        <fail if="checkstyle.failed"
+        <fail if="checkstyle.failed" unless="ignore.checkstyle"
               message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
     </target>
 
