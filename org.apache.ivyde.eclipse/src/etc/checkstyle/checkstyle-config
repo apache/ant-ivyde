@@ -25,7 +25,7 @@
     <property name="ignoreLines" value="2"/>
   </module>
   <module name="FileLength"/>
-  <module name="FileTabCharacterCheck"/>
+  <module name="FileTabCharacter"/>
   <module name="TreeWalker">
     <!-- Javadoc requirements -->
     <!-- TODO uncomment this when javadoc will be improved
@@ -100,9 +100,11 @@
     <module name="InnerAssignment"/>
     <module name="MagicNumber"/>
     <module name="MissingSwitchDefault"/>
+    <!-- Allow redundant throw declarations for doc purposes
     <module name="RedundantThrows">
       <property name="allowUnchecked" value="true"/>
     </module>
+    -->
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
 
@@ -129,11 +131,12 @@
     <module name="FileContentsHolder"/>
   </module>
 
-  <!--TODO: comment this out, if Simian is not present -->
-  <!--
-  <module name="au.com.redhillconsulting.simian.SimianCheck"/>
-  -->
+  <module name="RegexpSingleline">
+    <!-- \s matches whitespace character, $ matches end of line. -->
+    <property name="format" value="\s+$"/>
+  </module>
 
+  <!-- <module name="au.com.redhillconsulting.simian.SimianCheck"/> -->
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="CheckStyle\:([\w\|]+) *OFF"/>
     <property name="onCommentFormat" value="CheckStyle\:([\w\|]+) *ON"/>

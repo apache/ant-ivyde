@@ -66,7 +66,7 @@
     </target>
 
     <target name="init-asciidoctor-extensions" depends="init-ivy" unless="skip.doc">
-        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.5" inline="true"/>
+        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.6" inline="true"/>
         <mkdir dir="${work.dir}/asciidoc-extensions/classes"/>
         <javac srcdir="${doc.dir}/extensions/src" destdir="${work.dir}/asciidoc-extensions/classes"
                debug="true" includeantruntime="no" classpathref="asciidoctorj.path"/>
@@ -510,21 +510,41 @@ You have to specify the Ivy to install with one of the following property:
         ======================================================================================
     -->
 
-    <target name="checkstyle" depends="init-ivy" description="Generate checkstyle report">
-        <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="5.0"
+    <target name="checkstyle-internal" depends="init-ivy" description="Generate checkstyle report">
+        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8.2"
                        inline="true" conf="default" pathid="checkstyle.classpath" transitive="true"/>
-        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
+        <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
+                 resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
 
         <mkdir dir="${checkstyle.report.dir}"/>
-        <checkstyle config="${checkstyle.src.dir}/checkstyle-config" failOnViolation="false" failureProperty="checkstyle.failed">
+        <property name="src.dir" value="org.apache.ivyde.eclipse/src/java"/>
+        <cs:checkstyle xmlns:cs="antlib:com.puppycrawl.tools.checkstyle.ant"
+                       config="${checkstyle.src.dir}/checkstyle-config"
+                       failOnViolation="false" failureProperty="checkstyle.failed">
             <classpath>
                 <path refid="checkstyle.classpath"/>
             </classpath>
             <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml"/>
-            <fileset dir="org.apache.ivyde.eclipse/src/java">
+            <fileset dir="${src.dir}">
                 <include name="**/*.java"/>
             </fileset>
-        </checkstyle>
+        </cs:checkstyle>
+    </target>
+
+    <target name="checkstyle" depends="checkstyle-internal"
+            description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
+        <fail if="checkstyle.failed"
+              message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
+    </target>
+
+    <target name="checkstyle-report" depends="checkstyle-internal">
+        <property name="checkstyle.basedir" location="${src.dir}"/>
+        <xslt in="${checkstyle.report.dir}/checkstyle.xml"
+              style="${checkstyle.src.dir}/checkstyle-frames.xsl"
+              out="${checkstyle.report.dir}/output.txt">
+            <param name="basedir" expression="${checkstyle.basedir}"/>
+            <param name="output.dir" expression="${checkstyle.report.dir}"/>
+        </xslt>
     </target>
 
     <!--
