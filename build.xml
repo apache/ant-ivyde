@@ -770,7 +770,7 @@ forceContextQualifier=${jenkins.version.qualifier}
      -->
 
     <!-- RAT Release Auditing Tool -->
-    <property name="rat.version" value="0.7" description="Which Version of RAT to use"/>
+    <property name="rat.version" value="0.12" description="Which Version of RAT to use"/>
 
     <target name="rat" description="--> Runs the ReleaseAuditingTool" depends="init-ivy">
         <fail message="No release available to check. Missing '${dist.dir}/version.properties'">
