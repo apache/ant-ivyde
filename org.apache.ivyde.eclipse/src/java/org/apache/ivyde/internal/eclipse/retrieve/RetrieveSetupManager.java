@@ -59,34 +59,21 @@ public class RetrieveSetupManager implements ISaveParticipant {
         List<StandaloneRetrieveSetup> retrieveSetups;
 
         StandaloneRetrieveSerializer serializer = new StandaloneRetrieveSerializer();
-        ByteArrayInputStream in = new ByteArrayInputStream(retrieveSetup.getBytes());
-        try {
+        try (ByteArrayInputStream in = new ByteArrayInputStream(retrieveSetup.getBytes())) {
             retrieveSetups = serializer.read(in, project);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                // we don't care
-            }
         }
+        // we don't care
         return retrieveSetups;
     }
 
     public void save(final IProject project, List<StandaloneRetrieveSetup> retrieveSetups)
             throws IOException {
         StandaloneRetrieveSerializer serializer = new StandaloneRetrieveSerializer();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
+        final String retrieveSetup;
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             serializer.write(out, retrieveSetups);
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                // we don't care
-            }
+            retrieveSetup = new String(out.toByteArray());
         }
-
-        final String retrieveSetup = new String(out.toByteArray());
 
         synchronized (projectPrefs) {
             IEclipsePreferences pref = projectPrefs.get(project);

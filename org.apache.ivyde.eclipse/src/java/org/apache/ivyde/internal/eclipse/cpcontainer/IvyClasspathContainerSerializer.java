@@ -103,21 +103,12 @@ public class IvyClasspathContainerSerializer {
     public void save(IJavaProject project) {
         List<IvyClasspathContainer> containers = IvyClasspathContainerHelper
                 .getContainers(project);
-        try {
-            File file = new File(containersStateDir, project.getProject().getName() + ".xml");
-            IvyDEMessage.verbose("Saving the state of the containers of the project "
-                    + project.getProject().getName() + " into " + file);
-            FileOutputStream out = new FileOutputStream(file);
-            try {
-                write(out, containers);
-            } finally {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    // don't care
-                }
-            }
-        } catch (Exception ioe) {
+        File file = new File(containersStateDir, project.getProject().getName() + ".xml");
+        IvyDEMessage.verbose("Saving the state of the containers of the project "
+                + project.getProject().getName() + " into " + file);
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            write(out, containers);
+        } catch (IOException ioe) {
             IvyPlugin.logWarn("IvyDE container states of the project "
                     + project.getProject().getName() + " could not be saved", ioe);
         }
@@ -132,18 +123,9 @@ public class IvyClasspathContainerSerializer {
                     + project.getProject().getName() + " doesn't exist.");
             return null;
         }
-        try {
-            FileInputStream in = new FileInputStream(file);
-            try {
-                return read(in);
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // don't care
-                }
-            }
-        } catch (Exception ioe) {
+        try (FileInputStream in = new FileInputStream(file)) {
+            return read(in);
+        } catch (IOException | SAXException ioe) {
             IvyPlugin.logWarn("IvyDE container states of the project "
                     + project.getProject().getName() + " could not be read", ioe);
             return null;
@@ -317,8 +299,8 @@ public class IvyClasspathContainerSerializer {
                     }
                 }
 
-                IvyClasspathContainerImpl ivycp = new IvyClasspathContainerImpl(project, path, cpEntries,
-                        cpAttributes);
+                IvyClasspathContainerImpl ivycp = new IvyClasspathContainerImpl(project, path,
+                        cpEntries, cpAttributes);
                 containers.put(path, ivycp);
             }
             return containers;

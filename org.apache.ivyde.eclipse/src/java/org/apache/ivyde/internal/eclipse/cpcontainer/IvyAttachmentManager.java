@@ -54,17 +54,8 @@ public class IvyAttachmentManager {
             return;
         }
         IvyDEMessage.verbose("Reading attachment properties");
-        try {
-            FileInputStream in = new FileInputStream(containersAttachmentFile);
-            try {
-                prop.load(in);
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // don't care
-                }
-            }
+        try (FileInputStream in = new FileInputStream(containersAttachmentFile)) {
+            prop.load(in);
         } catch (IOException ioe) {
             IvyPlugin.logWarn("IvyDE attachment properties could not be loaded", ioe);
         }
@@ -127,17 +118,8 @@ public class IvyAttachmentManager {
 
         // store the global result
         IvyDEMessage.verbose("Saving attachment properties");
-        try {
-            FileOutputStream out = new FileOutputStream(containersAttachmentFile);
-            try {
-                prop.store(out, "");
-            } finally {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    // don't care
-                }
-            }
+        try (FileOutputStream out = new FileOutputStream(containersAttachmentFile)) {
+            prop.store(out, "");
         } catch (IOException ioe) {
             IvyPlugin.logWarn("IvyDE attachment properties could not be saved", ioe);
         }
