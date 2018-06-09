@@ -55,13 +55,15 @@ public class IvyModuleDescriptorFile extends IvyFile {
             }
             m = CONF_PATTERN.matcher(getDoc());
             List<String> ret = new ArrayList<>();
-            for (boolean found = m.find(start); found && m.end() < end; found = m.find()) {
+            boolean found = m.find(start);
+            while (found && m.end() < end) {
                 ret.add(m.group(1));
+                found = m.find();
             }
             return ret.toArray(new String[ret.size()]);
-        } else {
-            return new String[] {"default"};
         }
+
+        return new String[] {"default"};
     }
 
     public String getOrganisation() {

@@ -34,6 +34,7 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivyde.common.model.IvyFile;
 import org.apache.ivyde.common.model.IvyModelSettings;
+import org.apache.ivyde.internal.eclipse.IvyPlugin;
 
 public class IvySettingsFile extends IvyFile {
     private static final Pattern CLASSPATH_URL_PATTERN = Pattern
@@ -102,7 +103,7 @@ public class IvySettingsFile extends IvyFile {
             p.load(XmlSettingsParser.class.getResourceAsStream("typedef.properties"));
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            IvyPlugin.logError(e.getMessage(), e);
         }
         return p;
     }

@@ -318,10 +318,8 @@ public abstract class IvyFile {
                                     + closedName.length()))) {
                                 stack.pop();
                             }
-                        } else {
-                            if (parentEndTagReached) {
-                                return new int[] {offset + 1, lastSpaceIndex};
-                            }
+                        } else if (parentEndTagReached) {
+                            return new int[]{offset + 1, lastSpaceIndex};
                         }
                     }
                 }

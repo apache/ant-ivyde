@@ -307,9 +307,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 if (r == null) { // listing can be used even for extra attributes
                     List<String> ret = listDependencyTokenValues(att, ivyfile);
                     return ret.toArray(new String[ret.size()]);
-                } else {
-                    return r;
                 }
+                return r;
             }
         };
         IvyTagAttribute orgAtt = new IvyTagAttribute("org",
@@ -389,7 +388,6 @@ public class IvyModuleDescriptorModel extends IvyModel {
                             branch, otherAttValues.remove("rev"), otherAttValues,
                             qualifier, base, arrowIndex);
                     }
-
                 } else {
                     // we are looking for a master conf
                     return getMasterConfs(ivyFile, qualifier, base, arrowIndex);

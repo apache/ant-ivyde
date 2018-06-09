@@ -304,11 +304,10 @@ public class ResolveVisualizerForm {
             public void widgetSelected(SelectionEvent e) {
                 if (evictionFilterEnablement.getSelection()) {
                     evictionFilter.setEnabled(true);
-                    view.refresh();
                 } else {
                     evictionFilter.setEnabled(false);
-                    view.refresh();
                 }
+                view.refresh();
             }
         });
 

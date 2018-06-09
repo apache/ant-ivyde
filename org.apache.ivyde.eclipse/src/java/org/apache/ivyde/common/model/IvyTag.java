@@ -103,11 +103,11 @@ public class IvyTag {
     }
 
     public String getEndTag() {
-        if (getChilds().size() > 0) {
-            return "</" + getName() + ">";
-        } else {
+        if (getChilds().size() == 0) {
             return "/>";
         }
+
+        return "</" + getName() + ">";
     }
 
     public String getStartTag() {
@@ -126,10 +126,11 @@ public class IvyTag {
     }
 
     public String getId() {
-        if (getParent() != null) {
-            return getParent().getId() + "." + getName();
+        if (getParent() == null) {
+            return getName();
         }
-        return getName();
+
+        return getParent().getId() + "." + getName();
     }
 
     public void setDoc(String doc) {
@@ -154,7 +155,9 @@ public class IvyTag {
             return null;
         }
         IValueProvider provider = ivyTagAttribute.getValueProvider();
-        if (provider != null) {
+        if (provider == null) {
+            System.out.println("No provider set for:" + att);
+        } else {
             String qualifier = ivyfile.getAttributeValueQualifier();
             String[] values = provider.getValuesfor(ivyTagAttribute, ivyfile);
             if (values != null) {
@@ -165,11 +168,7 @@ public class IvyTag {
                     }
                 }
                 return ret.toArray(new String[ret.size()]);
-            } else {
-                return null;
             }
-        } else {
-            System.out.println("No provider set for:" + att);
         }
         return null;
     }

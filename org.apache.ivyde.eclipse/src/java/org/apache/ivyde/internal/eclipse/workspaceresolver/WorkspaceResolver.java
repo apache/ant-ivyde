@@ -211,8 +211,7 @@ public class WorkspaceResolver extends AbstractResolver {
 
                 if (osgiResolveInWorkspaceAvailable && org.equals(BundleInfo.BUNDLE_TYPE)) {
                     // looking for an OSGi bundle via its symbolic name
-                    String sn = md.getExtraInfoContentByTagName("Bundle-SymbolicName");
-                    if (sn == null || !module.equals(sn)) {
+                    if (!module.equals(md.getExtraInfoContentByTagName("Bundle-SymbolicName"))) {
                         // not found, skip to next
                         continue;
                     }

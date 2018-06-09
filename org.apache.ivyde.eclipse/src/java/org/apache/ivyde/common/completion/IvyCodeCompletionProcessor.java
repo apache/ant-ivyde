@@ -188,9 +188,8 @@ public class IvyCodeCompletionProcessor {
                 if (root == null) {
                     errorMessage = "parent tag :" + parent + " not found in model:";
                     return;
-                } else {
-                    childs = root.getChilds();
                 }
+                childs = root.getChilds();
             } else {
                 childs = Collections.singletonList(model.getRootIvyTag());
             }

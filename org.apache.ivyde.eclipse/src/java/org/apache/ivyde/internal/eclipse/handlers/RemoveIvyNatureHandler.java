@@ -45,17 +45,15 @@ public class RemoveIvyNatureHandler extends AbstractHandler {
 
         List<IProject> projects = new LinkedList<>();
         for (Object object : ((IStructuredSelection) selection).toList()) {
-            if (object instanceof IAdaptable) {
-                IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
-                if (project != null) {
-                    if (IvyNatureHelper.hasNature(project)) {
-                        projects.add(project);
-                    }
-                } else {
-                    return null;
-                }
-            } else {
+            if (!(object instanceof IAdaptable)) {
                 return null;
+            }
+            IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
+            if (project == null) {
+                return null;
+            }
+            if (IvyNatureHelper.hasNature(project)) {
+                projects.add(project);
             }
         }
 

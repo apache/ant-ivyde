@@ -320,15 +320,15 @@ public final class IvyClasspathContainerConfAdapter {
             retrieveSetups = manager.getSetup(project);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            IvyPlugin.logError(e.getMessage(), e);
             return;
         }
         retrieveSetups.add(setup);
         try {
             manager.save(project, retrieveSetups);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            IvyPlugin.logError(e.getMessage(), e);
         }
     }
 

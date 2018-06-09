@@ -144,7 +144,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
             IvyClasspathContainerConfiguration cpc = container.getConf();
 
             // first check that this is not the one we are editing
-            if (oldIvyFile != null && cpc.getIvyXmlPath().equals(oldIvyFile) && oldConfs != null
+            if (cpc.getIvyXmlPath().equals(oldIvyFile) && oldConfs != null
                     && oldConfs.size() == cpc.getConfs().size()
                     && oldConfs.containsAll(cpc.getConfs())) {
                 continue;

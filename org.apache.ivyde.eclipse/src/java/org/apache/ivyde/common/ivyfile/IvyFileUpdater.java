@@ -222,25 +222,27 @@ public class IvyFileUpdater {
         while (matcher.find(index + 1)) {
             if (matcher.end() > end) {
                 return index;
-            } else {
-                index = matcher.end();
             }
+
+            index = matcher.end();
         }
         return index;
     }
 
     private int findStartOfBlock(String content, int index) {
-        for (index--; index >= 0; index--) {
+        index--;
+        while (index >= 0) {
             char c = content.charAt(index);
             if (c != ' ' && c != '\t') {
                 return index + 1;
             }
+            index--;
         }
         return 0;
     }
 
     private int findEndOfBlock(String content, int index) {
-        for (; index < content.length(); index++) {
+        while (index < content.length()) {
             char c = content.charAt(index);
             if (c != ' ' && c != '\t') {
                 if (c == '\n' || c == '\r') {
@@ -248,6 +250,7 @@ public class IvyFileUpdater {
                 }
                 return index;
             }
+            index++;
         }
         return index - 1;
     }

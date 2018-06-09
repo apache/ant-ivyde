@@ -222,19 +222,19 @@ public class IvyResolver {
                 IvyDEMessage.info("The resolve report for the configuration " + conf
                         + " was not found. Falling back by doing a resolve again.");
                 return doResolve(ivy, md);
-            } else {
-                IvyDEMessage.verbose("Resolve report found, parsing it");
-                // found a report, try to parse it.
-                try {
-                    XmlReportParser parser = new XmlReportParser();
-                    parser.parse(report);
-                    result.addArtifactReports(parser.getArtifactReports());
-                    findAllArtifactOnRefresh(ivy, parser, result);
-                } catch (ParseException e) {
-                    IvyDEMessage.info("Error while parsing the report " + report
-                            + ". Falling back by doing a resolve again.");
-                    return doResolve(ivy, md);
-                }
+            }
+
+            IvyDEMessage.verbose("Resolve report found, parsing it");
+            // found a report, try to parse it.
+            try {
+                XmlReportParser parser = new XmlReportParser();
+                parser.parse(report);
+                result.addArtifactReports(parser.getArtifactReports());
+                findAllArtifactOnRefresh(ivy, parser, result);
+            } catch (ParseException e) {
+                IvyDEMessage.info("Error while parsing the report " + report
+                        + ". Falling back by doing a resolve again.");
+                return doResolve(ivy, md);
             }
         }
 

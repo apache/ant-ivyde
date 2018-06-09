@@ -196,10 +196,9 @@ public final class IvyClasspathContainerHelper {
         }
         try {
             for (IClasspathEntry entry : javaProject.getRawClasspath()) {
-                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-                    if (containerPath.equals(entry.getPath())) {
-                        return entry;
-                    }
+                if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
+                        && containerPath.equals(entry.getPath())) {
+                    return entry;
                 }
             }
         } catch (JavaModelException e) {

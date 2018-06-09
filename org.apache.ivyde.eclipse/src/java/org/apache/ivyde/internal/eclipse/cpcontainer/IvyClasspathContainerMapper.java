@@ -126,8 +126,11 @@ public class IvyClasspathContainerMapper {
                 IvyDEMessage.verbose("Adding " + artifact.getName() + " to the classpath");
 
                 // handle unzipped jar with 'Bundle-Classpath'
-                if (osgiClasspathAvailable && artifact.getLocalFile().isDirectory()
-                        && classpathSetup.isReadOSGiMetadata()) {
+                if (!osgiClasspathAvailable || !artifact.getLocalFile().isDirectory()
+                        || !classpathSetup.isReadOSGiMetadata()) {
+                            // simple entry
+                            paths.add(buildEntry(artifact));
+                } else {
                     File manifestFile = new File(artifact.getLocalFile(), "META-INF/MANIFEST.MF");
                     if (!manifestFile.exists()) {
                         // no manifest : back to simple classpath
@@ -160,9 +163,6 @@ public class IvyClasspathContainerMapper {
                                         + ")", e);
                         }
                     }
-                } else {
-                    // simple entry
-                    paths.add(buildEntry(artifact));
                 }
             }
 

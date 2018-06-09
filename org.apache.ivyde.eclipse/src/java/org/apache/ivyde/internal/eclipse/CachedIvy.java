@@ -159,25 +159,25 @@ public abstract class CachedIvy {
         // before returning the found ivy, try to refresh it if the settings changed
         if (settingsPath.getFile() != null) {
             return getIvyFromFile(settingsPath);
-        } else {
-            // an URL but not a file
-            if (ivy == null || ivySettingsLastModified == -1) {
-                IvySettings ivySettings = createIvySettings();
-                ivy = Ivy.newInstance(ivySettings);
-                try {
-                    ivy.configure(settingsPath.getUrl());
-                    ivySettingsLastModified = 0;
-                } catch (ParseException e) {
-                    ivy = null;
-                    throw new IvyDEException("Parsing error of the Ivy settings",
-                            "The ivy settings file '" + settingsPath.getResolvedPath()
-                                    + "' could not be parsed: " + e.getMessage(), e);
-                } catch (IOException e) {
-                    ivy = null;
-                    throw new IvyDEException("Read error of the Ivy settings",
-                            "The ivy settings file '" + settingsPath.getResolvedPath()
-                                    + "' could not be read: " + e.getMessage(), e);
-                }
+        }
+
+        // an URL but not a file
+        if (ivy == null || ivySettingsLastModified == -1) {
+            IvySettings ivySettings = createIvySettings();
+            ivy = Ivy.newInstance(ivySettings);
+            try {
+                ivy.configure(settingsPath.getUrl());
+                ivySettingsLastModified = 0;
+            } catch (ParseException e) {
+                ivy = null;
+                throw new IvyDEException("Parsing error of the Ivy settings",
+                        "The ivy settings file '" + settingsPath.getResolvedPath()
+                                + "' could not be parsed: " + e.getMessage(), e);
+            } catch (IOException e) {
+                ivy = null;
+                throw new IvyDEException("Read error of the Ivy settings",
+                        "The ivy settings file '" + settingsPath.getResolvedPath()
+                                + "' could not be read: " + e.getMessage(), e);
             }
         }
         return ivy;

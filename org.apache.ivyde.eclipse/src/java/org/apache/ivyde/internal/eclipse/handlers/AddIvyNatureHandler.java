@@ -40,16 +40,14 @@ public class AddIvyNatureHandler extends AbstractHandler {
 
         List<IProject> projects = new LinkedList<>();
         for (Object object : ((IStructuredSelection) selection).toList()) {
-            if (object instanceof IAdaptable) {
-                IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
-                if (project != null) {
-                    projects.add(project);
-                } else {
-                    return null;
-                }
-            } else {
+            if (!(object instanceof IAdaptable)) {
                 return null;
             }
+            IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
+            if (project == null) {
+                return null;
+            }
+            projects.add(project);
         }
 
         if (projects.size() > 0) {

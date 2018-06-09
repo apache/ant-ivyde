@@ -312,9 +312,9 @@ public class ReverseDependencyExplorerView extends ViewPart {
 
                 if (mrdd.hasMultipleRevisions() && !mrdd.hasNewRevision()) {
                     return sharedImages.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
-                } else {
-                    return IvyPlugin.getImageDescriptor("icons/synced.gif").createImage();
                 }
+
+                return IvyPlugin.getImageDescriptor("icons/synced.gif").createImage();
             } else if (obj instanceof CPDependencyDescriptor) {
                 return JavaUI.getSharedImages().getImage(
                     org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_LIBRARY);
