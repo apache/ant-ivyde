@@ -50,7 +50,6 @@
     <property name="rat.dir" value="${work.dir}/rat"/>
 
     <target name="download-ivy" unless="ivy.jar.file">
-        <property name="ivy.version"  value="2.4.0"/>
         <property name="ivy.jar.url"  value="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
         <property name="ivy.jar.dir"  value="${work.dir}"/>
         <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
@@ -78,11 +77,14 @@
     </target>
 
     <target name="init-asciidoctor" depends="init-asciidoctor-extensions">
-        <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
-        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path">
+        <mkdir dir="${work.dir}/asciidoc-lib/jars" />
+        <mkdir dir="${work.dir}/asciidoc-lib/classes" />
+        <ivy:retrieve organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true" pattern="${work.dir}/asciidoc-lib/jars/[artifact].[ext]" conf="default" />
+        <unzip src="${work.dir}/asciidoc-lib/jars/asciidoctor-ant.jar" dest="${work.dir}/asciidoc-lib/classes" />
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml">
             <classpath>
                 <pathelement location="${work.dir}/asciidoc-extensions/classes"/>
-                <path refid="asciidoctor.path"/>
+                <pathelement location="${work.dir}/asciidoc-lib/classes" />
             </classpath>
         </taskdef>
     </target>
