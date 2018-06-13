@@ -311,13 +311,13 @@ ivyde.build.version=${build.version}
             <arg value="archive"/>
             <arg value="HEAD"/>
             <arg value="-o"/>
-            <arg value="${work.dir}/sources/apache-ivyde-sources-${build.version}.tar.gz"/>
+            <arg value="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz"/>
         </exec>
         <exec executable="git" dir="${basedir}" >
             <arg value="archive"/>
             <arg value="HEAD"/>
             <arg value="-o"/>
-            <arg value="${work.dir}/sources/apache-ivyde-sources-${build.version}.zip"/>
+            <arg value="${dist.dir}/apache-ivyde-sources-${build.version}.zip"/>
         </exec>
     </target>
 
