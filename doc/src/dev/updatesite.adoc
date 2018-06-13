@@ -33,7 +33,7 @@ Checkout that SVN repo and `cd` to the `trunk` directory. We will build the p2 r
 The zip distribution needs to be unpacked into the updatesite directory:
 [source]
 ----
-ant build-ivyde-p2-repo -Divyde.zip=...../path/to/org.apache.ivyde.feature-${VERSION}.zip
+ant build-ivyde-p2-repo -Divyde.zip=...../path/to/apache-ivyde-${VERSION}.zip
 ----
 
 Now the binary files need to be signed.
