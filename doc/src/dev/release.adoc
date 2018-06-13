@@ -62,10 +62,11 @@ And sign the artifacts:
 ./signArtifacts.sh
 ----
 
-Then it is time to tag the release as soon as you are happy with your artifacts:
+Then it is time to commit the changes and tag the release as soon as you are happy with your artifacts:
 
 [source]
 ----
+git commit -m "Release $VERSION" ./
 git tag $VERSION -m "Tag IvyDE release $VERSION"
 ----
 
