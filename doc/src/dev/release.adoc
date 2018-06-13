@@ -18,7 +18,7 @@
 ////
 
 This documentation is defining every steps that needs to be accomplished when releasing Apache IvyDE.
-In this doc, the released version is denoted as $VERSION, so it HAVE to be replaced in the command line argument accordingly. There is also some $LOGIN which is referencing your login on the Apache machines.
+In this doc, the released version is denoted as $VERSION, so it HAS to be replaced in the command line argument accordingly. There is also some $LOGIN which is referencing your login on the Apache machines.
 
 == Prepare
 
@@ -28,61 +28,25 @@ First in link:https://issues.apache.org/jira/browse/IVYDE[Jira] make sure that n
 
 === Release notes
 
-Make sure the release notes and the annoucement are up to date. Look at doc/release-notes.html. Remove there anything which refers to a draft status.
+Make sure the release notes and the annoucement are up to date in doc/src/release-notes.adoc.
 
 === Last checks
 
-Make sure that there is no missing ASL header in the source files. The build of IvyDE generate a report there: https://builds.apache.org/job/IvyDE/lastSuccessfulBuild/artifact/trunk/work/rat/report.txt
+Make sure that there is no missing ASL header in the source files. The build of IvyDE generate a report there: https://builds.apache.org/job/IvyDE/lastSuccessfulBuild/artifact/work/rat/report.txt
 
 Make sure the copyright year in the NOTICE file is the current year.
 
-Make sure the copyright year in the html template is the current year; the 3 template files to check are: `template.html`, `template-eclipse.html` and `printTemplate.html`.
+Make sure the copyright year in the asciidoc template files is the current year; the 3 template files to check are:
+  - `doc/templates/book/document.html.slim`
+  - `doc/templates/articles/document.html.slim`
+  - `doc/templates/eclipse/document.html.slim`
 
-=== Release branch
 
-Some modifications of the branch are need to do the release. So a new branch is needed:
+== Building for release
 
-[source]
-----
-svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/trunk \
-           https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
-      -m "Creating a release branch for IvyDE $VERSION"
-----
+Make sure you have a proper working copy with a `git status`. You should have no modification.
 
-and then checkout it:
-
-[source]
-----
-svn co https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION ivyde-$VERSION
-----
-
-=== Documentation release
-
-The documentation have to specify the correct version number:
-In the files:
-
-* doc/template.html +
-The header should look like this
-[source]
-----
-<title>${title} | Apache IvyDE $VERSION Documentation</title>
-----
-
-You'll need to fix the revision of the svn:external in doc. Edit the svn:external property on the folder doc and set it to the latest revision. It should look like:
-
-[source]
-----
-xooki -r1306546 https://svn.apache.org/repos/asf/ant/site/xooki/
-style -r1306546 https://svn.apache.org/repos/asf/ant/site/ivyde/sources/style/
-----
-
-=== Commit your changes
-
-Don't forget to commit the changes you've done into the release branch.
-
-== Building
-
-Make sure you have a proper working copy with a `svn status`. You should have no modification.
+Edit the `build.properties` and update the value of the `version.qualifier` property to an appropriate qualifier. For example, if you want to release the `Final` version of `2.3.0` then the `version.qualifier` value is expected to be `Final`. Similarly, if you are releasing `rc1` of `2.3.0` then the value for this property will be `rc1`
 
 Then launch the build:
 
@@ -102,14 +66,20 @@ Then it is time to tag the release as soon as you are happy with your artifacts:
 
 [source]
 ----
-svn copy https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION \
-           https://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION \
-      -m "Tag IvyDE release $VERSION"
+git tag $VERSION -m "Tag IvyDE release $VERSION"
 ----
+
+For example, for tagging the `2.3.0-rc1` release, use:
+
+[source]
+----
+git tag 2.3.0-rc1 -m "Tag IvyDE release 2.3.0-rc1"
+----
+
 
 == Prepare the updatesite
 
-The instructions to build the updatesite are link:updatesite{outfilesuffix}[there].
+The instructions to build the updatesite are in `doc/src/dev/updatesite.adoc`.
 
 == Vote for the released artifacts
 
@@ -125,7 +95,7 @@ Subject: [VOTE] IvyDE $VERSION Release
 
 I have built a release candidate for Apache IvyDE $VERSION
 
-The tag is here: http://svn.apache.org/repos/asf/ant/ivy/ivyde/tags/$VERSION
+The tag is here: https://git1-us-west.apache.org/repos/asf?p=ant-ivyde.git;a=commit;h=refs/tags/$VERSION
 
 You can download the distribution from this URL: https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
 
@@ -166,7 +136,7 @@ Follow the instructions of that link:updatesite{outfilesuffix}#deployment[page].
 
 The annoucement should have been already prepared and reviewed by other committers. Its content can be found in doc/release-notes.html.
 
-With that content, send a mail to announce@apache.org, ivy-user@ant.apache.org and dev@ant.apache.org with the title "[ANNOUNCE] Apache IvyDE $VERSION released", and with your apache email as sender (announce@ requires it). 
+With that content, send a mail to announce@apache.org, ivy-user@ant.apache.org and dev@ant.apache.org with the title "[ANNOUNCE] Apache IvyDE $VERSION released", and with your apache email as sender (announce@ requires it).
 
 == Update the documentation
 
@@ -181,17 +151,17 @@ First we need to update the external links. In svn/site/ivyde/sources/history:
 svn pe svn:externals .
 ----
 
-And: 
+And:
 * update latest-milestone:
 [source]
 ----
-latest-milestone https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION/doc 
+latest-milestone https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION/doc
 ----
 
 * add an entry:
 [source]
 ----
-$VERSION https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION/doc 
+$VERSION https://svn.apache.org/repos/asf/ant/ivy/ivyde/branches/$VERSION/doc
 ----
 
 Then we need to edit svn/site/ivyde/sources/toc.json:

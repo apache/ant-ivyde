@@ -25,14 +25,9 @@ Important note: in this doc, the released version is denoted as $VERSION (and ha
 
 == [[setup]]Build a p2 repository
 
-The svn location of the updatesite builder is there: https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk . We will build the p2 repository dedicated to the version to release.
+The svn location of the updatesite builder is at: https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk .
 
-* For an Ivy release:
-As you have a build jar for Ivy, just do:
-[source]
-----
-ant build-ivy-p2-repo -Divy.jar=...../path/to/ivy.jar
-----
+Checkout that SVN repo and `cd` to the `trunk` directory. We will build the p2 repository dedicated to the version to release.
 
 * For an IvyDE release:
 The zip distribution needs to be unpacked into the updatesite directory:
@@ -43,22 +38,27 @@ ant build-ivyde-p2-repo -Divyde.zip=...../path/to/org.apache.ivyde.feature-${VER
 
 Now the binary files need to be signed.
 
-* For an Ivy release:
-[source]
-----
-./signArtifacts.sh ivy-${VERSION}
-----
 * For an IvyDE release:
 [source]
 ----
 ./signArtifacts.sh ivyde-${VERSION}
 ----
 
+Example:
+
+[source]
+----
+./signArtifacts.sh ivyde-2.3.0.beta1-201806131514-RELEASE
+----
+
+
 And finally commit your changes in `dist/dev` (this will put the p2 repository in the dev space of the dist repository).
 
 === Test the updatesite
 
-The updatesite is ready to be tested at: `https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-${VERSION} `
+The updatesite is ready to be tested at: `https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-${VERSION}`
+
+*NOTE*: It's now time to wait for the release VOTE to pass before deciding on and following the rest of the steps in this document.
 
 === In case of an unaccepted release
 
@@ -96,7 +96,7 @@ NB: adding or removing lines in `versions.xml` infer that you should edit the `s
 
 === Publish the p2 repository data
 
-It is just about moving data (svn rm is not allowed, the two steps are required): 
+It is just about moving data (svn rm is not allowed, the two steps are required):
 [source]
 ----
 svn mv https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSION https://dist.apache.org/repos/dist/release/ant/ivyde/updatesite/ -m 'publishing the p2 repo of the release of IvyDE $VERSION'
