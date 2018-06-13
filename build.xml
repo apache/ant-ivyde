@@ -304,27 +304,23 @@ ivyde.build.version=${build.version}
         </echo>
     </target>
 
-    <target name="package-sources" depends="compute-version">
-        <exec executable="svn" dir="${basedir}" outputproperty="svn.info.url">
-            <arg value="--xml"/>
-            <arg value="info"/>
-            <redirector>
-                <outputfilterchain>
-                    <containsregex pattern="&lt;url&gt;(.*)&lt;/url&gt;" replace="\1"/>
-                </outputfilterchain>
-            </redirector>
-        </exec>
+    <target name="package-sources" depends="compute-version" description="Create source archive files">
         <delete dir="${work.dir}/sources"/>
         <mkdir dir="${work.dir}/sources"/>
-        <exec executable="svn" dir="${work.dir}/sources" >
-            <arg value="export"/>
-            <arg value="${svn.info.url}"/>
-            <arg value="apache-ivyde-sources-${build.version}"/>
+        <exec executable="git" dir="${basedir}" >
+            <arg value="archive"/>
+            <arg value="HEAD"/>
+            <arg value="-o"/>
+            <arg value="${work.dir}/sources/apache-ivyde-sources-${build.version}.tar.gz"/>
         </exec>
-        <mkdir dir="${dist.dir}"/>
-        <zip destfile="${dist.dir}/apache-ivyde-sources-${build.version}.zip" basedir="${work.dir}/sources"/>
-        <tar destfile="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz" basedir="${work.dir}/sources" compression="gzip"/>
+        <exec executable="git" dir="${basedir}" >
+            <arg value="archive"/>
+            <arg value="HEAD"/>
+            <arg value="-o"/>
+            <arg value="${work.dir}/sources/apache-ivyde-sources-${build.version}.zip"/>
+        </exec>
     </target>
+
 
     <target name="generate-p2-category" depends="compute-version,eclipse-classpath">
         <loadfile property="ASL2-header" srcFile="${basedir}/builder/ASL2-header.xml"/>
