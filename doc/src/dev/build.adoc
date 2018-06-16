@@ -27,7 +27,7 @@ First, you need an Eclipse installation which contains the PDE plugins (e.g., an
 
 It is recommended to have an Eclipse installation dedicated to the build. So you will be able to have better control over the Ivy bundle installed there. And as the build cleans the internal cache of Eclipse, running an Eclipse and building with the same instance might cause some troubleshooting in the IDE.
 
-Lots of Ant targets depends on that Eclipse installation, so they need a `baseLocation` property to be defined. Note that you can avoid specifying that property in each command line by having a `local.build.properties` file which contains something like:
+Lots of Ant targets depend on that Eclipse installation, so they need a `baseLocation` property to be defined. Note that you can avoid specifying that property in each command line by having a `local.build.properties` file which contains something like:
 
 [source]
 ----
