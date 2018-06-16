@@ -17,11 +17,11 @@
    under the License.
 ////
 
-Once a release have been build for Ivy or IvyDE, they should be pushed to the Eclipse updatesite so that Eclipse users will be able to update automatically their installed version of Ivy or IvyDE.
+Once a release has been build for Ivy or IvyDE, it should be pushed to the Eclipse updatesite so that Eclipse users will be able to update automatically their installed version of Ivy or IvyDE.
 
 This doc is in two parts, the link:#setup[setup] of the updatesite which will be the candidate for the vote of the Ivy or IvyDE release, and the link:#deployment[final deployment] once the release is accepted.
 
-Important note: in this doc, the released version is denoted as $VERSION (and have to be replaced accordingly in every commands), but this is the OSGi one, not the usually shown one, in particular for release candidate versions. For instance an Ivy version can be `2.0.0-RC1` but the OSGi one, and the one to use here is `2.0.0.cr1`.
+Important note: in this doc, the released version is denoted as $VERSION (and has to be replaced accordingly in every command), but this is the OSGi one, not the usually shown one, in particular for release candidate versions. For instance an Ivy version can be `2.0.0-RC1` but the OSGi one, and the one to use here is `2.0.0.cr1`.
 
 == [[setup]]Build a p2 repository
 
@@ -72,7 +72,7 @@ svn rm https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSIO
 
 === Clean up old releases
 
-First, you may want to remove from the main repository references to the older releases. Note also that the ASF policy regarding the space occupied by the main dist is about rectricting to only have the main stable released version available there; older are archived on archiche.apache.org.
+First, you may want to remove from the main repository references to the older releases. Note also that the ASF policy regarding the space occupied by the main dist is about restricting to only have the main stable released version available there; older are archived at https://archive.apache.org/dist/ant/.
 
 To remove a version from the main dist, you'll need to remove the data and remove its reference in the main updatesite.
 
@@ -83,20 +83,20 @@ To remove the data:
 svn rm https://dist.apache.org/repos/dist/release/ant/ivyde/updatesite/ivyde-$OLD_VERSION -m 'Remove old version'
 ----
 
-Then the version listed in the updatesite are maintained in `https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk/versions.xml`
+Then the version listed in the updatesite is maintained in `https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk/versions.xml`
 
-Then you have to decide if the version you removed should be still listed in the Eclipse updatesite or not.
+You have to decide if the version you removed should be still listed in the Eclipse updatesite or not.
 
 To remove a version from the listed one, edit the file `versions.xml`
 
-* If the version should no appear anymore, just delete the line about the deleted version.
+* If the version should not appear anymore, just delete the line listing the deleted version.
 * If the version should still be listed, prepend the reference to the old version by `http://archive.apache.org/dist/ant/ivy/updatesite/`
 
-NB: adding or removing lines in `versions.xml` infer that you should edit the `size` attribute in the `versions.xml`, it should correspond to the number of "child".
+NB: adding or removing lines in `versions.xml` infer that you should edit the `size` attribute in the `versions.xml`, it should correspond to the number of "child" tags.
 
 === Publish the p2 repository data
 
-It is just about moving data (svn rm is not allowed, the two steps are required):
+It is just about moving data (`svn rm` is not allowed, the two steps are required):
 [source]
 ----
 svn mv https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSION https://dist.apache.org/repos/dist/release/ant/ivyde/updatesite/ -m 'publishing the p2 repo of the release of IvyDE $VERSION'
@@ -106,13 +106,13 @@ svn mv https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSIO
 
 Last but not least, the p2 repository should now list the new release.
 
-Edit the file `versions.xml`, and add a line about the released version:
+Edit the file `versions.xml`, and add a line listing the released version:
 [source]
 ----
 <child location='ivyde-2.1.0'/>
 ----
 
-NB: adding or removing lines in `versions.xml` infer that you should edit the `size` attribute in the `versions.xml`, it should correspond to the number of "child".
+NB: adding or removing lines in `versions.xml` infer that you should edit the `size` attribute in the `versions.xml`, it should correspond to the number of "child" tags.
 
 And run:
 [source]

@@ -23,42 +23,42 @@ This page describes how to build the Apache IvyDE plugin from the source. The bu
 
 === [[eclipse-install]]Eclipse installation
 
-You need first an Eclipse install which contains the PDE plugins (by default included in the "SDK" and "Classic" versions). We will refer to the Eclipse installation path in the documentation as `$ECLIPSE_HOME`. In that `$ECLIPSE_HOME` folder you should have the plugins and features folders.
+First, you need an Eclipse installation which contains the PDE plugins (e.g., an Eclipse SDK). We will refer to the Eclipse installation path in the documentation as `$ECLIPSE_HOME`. In that `$ECLIPSE_HOME` folder you should have the `plugins` and `features` folders.
 
 It is recommended to have an Eclipse installation dedicated to the build. So you will be able to have better control over the Ivy bundle installed there. And as the build cleans the internal cache of Eclipse, running an Eclipse and building with the same instance might cause some troubleshooting in the IDE.
 
-Lots of ant target depends on that Eclipse installation, so they need a `baseLocation` property to be defined. Note that you can avoid specifying that property in each command line by having a `local.build.properties` file which contains something like:
+Lots of Ant targets depends on that Eclipse installation, so they need a `baseLocation` property to be defined. Note that you can avoid specifying that property in each command line by having a `local.build.properties` file which contains something like:
 
 [source]
 ----
 baseLocation=/home/me/tools/eclipse-4.3
 ----
 
-An Ant target is provided to download all the necessary binaries, just like the CI is running: `ant download-eclipse`. No need to specify a `baseLocation` in the prperty file to use that downloaded Eclipse and plugins.
+An Ant target is provided to download all the necessary binaries, just like the CI is running: `ant download-eclipse`. No need to specify a `baseLocation` in the property file to use that downloaded Eclipse and plugins.
 
 === [[install-ivy]]The Apache Ivy bundle
 
-The IvyDE plugins depends on the Apache Ivy 2.0 OSGi bundle. So the Ivy bundle have to be installed in the Eclipse installation before starting the build. An Ant target will accomplished that task quite automatically. Inline help will be displayed when no property is specified:
+The IvyDE plugins depends on the Apache Ivy 2.0 OSGi bundle. So the Ivy bundle has to be installed in the Eclipse installation before starting the build. An Ant target will accomplish that automatically. Inline help will be displayed when no property is specified:
 
 [source]
 ----
 ant install-ivy
 ----
 
-Note: due to link:https://issues.apache.org/jira/browse/IVY-802[an old bug in the build script of Ivy], the OSGi version of Ivy is "0.0.0" for every version older than the 2.0.0-RC1. So older version than 2.0.0-RC1 is not supported.
+Note: due to link:https://issues.apache.org/jira/browse/IVY-802[an old bug in the build script of Ivy], the OSGi version of Ivy is "0.0.0" for every version older than the 2.0.0-RC1. So versions older than 2.0.0-RC1 are not supported.
 
 == [[build]]Building
 
-First somehow you got some sources, for instance from the ASF git repository:
+First somehow you get the source code, for instance from the ASF Git repository:
 
 [source]
 ----
 git clone http://git.apache.org/ant-ivyde.git ivyde
 ----
 
-or get directly the released sources from the link:../../download.cgi#sources[distribution].
+or use the released source code directly from the link:../../download.cgi#sources[distribution].
 
-And go into the root folder of the sources. In that folder you should see the builder, org.apache.ivyde.eclipse and org.apache.ivyde.feature folders.
+Then, go into the root directory of the sources. In that directory you should see the `builder`, `org.apache.ivyde.eclipse` and `org.apache.ivyde.feature` subdirectories.
 
 And run the build:
 
@@ -67,15 +67,15 @@ And run the build:
 ant build -DbaseLocation=$ECLIPSE_HOME
 ----
 
-Then in the created directory "work" you will find a directory (something like 2.0.0.alpha1-200804171513) in which you will find the zip archive ready to be unzipped in an Eclipse install.
+Then in the created directory `work` you will find a subdirectory (something like `2.0.0.alpha1-200804171513`) in which you will find the zip archive ready to be unzipped in an Eclipse install.
 
 == [[install]]Install
 
-After a successful build you should have a zip file at `dist/org.apache.ivyde.feature-$VERSION.zip`. The zip file contains the "plugins" and "features" folders ready to be unzipped in an Eclipse install. So here is the process:
+After a successful build you should have a zip file at `dist/org.apache.ivyde.feature-$VERSION.zip`. The zip file contains the `plugins` and `features` directories ready to be unzipped in an Eclipse install. So here is the process:
 
 [source]
 ----
-cd $ECLIPSE_HOME
+cd $ECLIPSE_HOME/dropins
 unzip ...../dist/org.apache.ivyde.feature-$VERSION.zip
 ----
 
