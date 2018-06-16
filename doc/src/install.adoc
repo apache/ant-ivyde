@@ -20,7 +20,7 @@
 == [[latest]]Install the last release via Internet
 
 For most users who have access to the internet it is easiest to install the latest release from the Apache IvyDE update site. So just look out there:
-http://ant.apache.org/ivy/ivyde/download.cgi
+https://ant.apache.org/ivy/ivyde/download.cgi
 
 == [[manual]]Manual install
 
@@ -32,7 +32,7 @@ You should have the zip distribution of Apache IvyDE in which you should find th
 * plugins/org.apache.ivyde.eclipse_2.3.0.XXXX.jar
 
 You can then install them by unpacking the distribution in `$ECLIPSE_HOME/dropins` directory.
-For more information, please see link:http://wiki.eclipse.org/Equinox/p2/Getting_Started[Equinox/p2] documentation.
+For more information, please see link:https://wiki.eclipse.org/Equinox/p2/Getting_Started[Equinox/p2] documentation.
 
 === Install the latest Apache Ivy bundle
 

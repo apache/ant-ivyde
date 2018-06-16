@@ -47,7 +47,7 @@ The second step is to bind a source artifact with a binary one. IvyDE has the fo
 
 In the ivy.xml file in your repository, you can specifically bind a binary artifact to a source one and to a javadoc one, so IvyDE knows for sure which bind to the other.
 
-In the link:http://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html[artifact] element, you can specify:
+In the link:https://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html[artifact] element, you can specify:
 
 * `ivyde:source="my-source-artifact-name"` which specify the artifact name of the source to bind to the current binary one
 * `ivyde:javadoc="my-javadoc-artifact-name"` which specify the artifact name of the javadoc to bind to the current binary one

@@ -30,7 +30,7 @@ Both examples below are a good illustration of the simplicity of using Maven POM
 
 This sample presents a simple use case involving a Maven POM and the IvyDE classpath container. We are going to create an Eclipse(TM) project on commons-httpclient sources.
 
-* Download the link:http://archive.apache.org/dist/httpcomponents/commons-httpclient/3.0/source/commons-httpclient-3.0-src.zip[commons httpclient sources]
+* Download the link:https://archive.apache.org/dist/httpcomponents/commons-httpclient/3.0/source/commons-httpclient-3.0-src.zip[commons httpclient sources]
 
 * Unzip this file (c:/tmp/commons-httpclient/)
 

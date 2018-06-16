@@ -90,7 +90,7 @@ You have to decide if the version you removed should be still listed in the Ecli
 To remove a version from the listed ones, edit the file `versions.xml`
 
 * If the version should not appear anymore, just delete the line listing the deleted version.
-* If the version should still be listed, prepend the reference to the old version by `http://archive.apache.org/dist/ant/ivy/updatesite/`
+* If the version should still be listed, prepend the reference to the old version by `https://archive.apache.org/dist/ant/ivyde/updatesite/`
 
 NB: adding or removing lines in `versions.xml` infer that you should edit the `size` attribute in the `versions.xml`, it should correspond to the number of "child" tags.
 

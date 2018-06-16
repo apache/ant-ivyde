@@ -53,7 +53,7 @@ First somehow you get the source code, for instance from the ASF Git repository:
 
 [source]
 ----
-git clone http://git.apache.org/ant-ivyde.git ivyde
+git clone https://git.apache.org/ant-ivyde.git ivyde
 ----
 
 or use the released source code directly from the link:../../download.cgi#sources[distribution].

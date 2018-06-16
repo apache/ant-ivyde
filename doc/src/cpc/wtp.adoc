@@ -17,7 +17,7 @@
    under the License.
 ////
 
-WTP refers to the link:http://www.eclipse.org/webtools/[Web Tools Platform] project from the Eclipse Foundation which allows Eclipse(TM) users to easily develop, launch and debug web applications. Apache IvyDE works with WTP 2.0+ (Eclipse 3.3+).
+WTP refers to the link:https://www.eclipse.org/webtools/[Web Tools Platform] project from the Eclipse Foundation which allows Eclipse(TM) users to easily develop, launch and debug web applications. Apache IvyDE works with WTP 2.0+ (Eclipse 3.3+).
 
 In the properties of your project configured to use WTP, there is a section titled "Java EE Module Dependencies". In this section you will find the IvyDE classpath container listed, usually with the name "ivy.xml [*]". Select it and dependencies found in the IvyDE classpath container will be deployed as well.
 
