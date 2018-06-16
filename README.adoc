@@ -8,8 +8,8 @@ IvyDE expects to run in a specific environment, please check the link:doc/src/co
 
 == Installation
 
-For most user who have access to the internet it is simpler to install the
-latest release from the IvyDE updatesite. So just look out there: http://ant.apache.org/ivy/ivyde/download.cgi
+For most users who have access to the internet it is easiest to install the latest release from the IvyDE update site. So just look out there:
+http://ant.apache.org/ivy/ivyde/download.cgi
 
 If you want to install the zip distribution manually, see the link:doc/src/install{outfilesuffix}[instructions]
 
@@ -17,7 +17,7 @@ If you want to install the zip distribution manually, see the link:doc/src/insta
 == Getting Started
 
 For an introduction to Apache IvyDE and how to use it, please read the link:doc/src/index{outfilesuffix}[documentation]
-located in the `doc` subdirectory
+located in the `doc/src` subdirectory
 
 
 == Licensing
@@ -27,4 +27,4 @@ This software is licensed under the terms you may find in the file named link:LI
 
 == Building
 
-To be able to build IvyDE yourself, go read that link:doc/src/dev/build{outfilesuffix}[documentation]
+To be able to build IvyDE yourself, please read the relevant link:doc/src/dev/build{outfilesuffix}[documentation]
