@@ -17,7 +17,7 @@
    under the License.
 ////
 
-The resolve vizulizer show the graph of the dependencies of a project.
+The resolve visualizer shows the graph of the dependencies of a project.
 
 == [[open]]Open the view
 

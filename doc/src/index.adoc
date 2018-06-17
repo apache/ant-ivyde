@@ -32,7 +32,7 @@ A summary of the features it provides follows:
 
 * link:revdepexplorer{outfilesuffix}[Reverse Dependency Explorer]: helps you work with conflicting dependencies amongst several projects.
 
-* link:non-java{outfilesuffix}[Resolve and retrieve for non Java project]: automation of the retrival of your dependencies in your non Java project
+* link:non-java{outfilesuffix}[Resolve and retrieve for non Java project]: automation of the retrieval of your dependencies in your non Java project
 
 Apache IvyDE can be also used with other plugins like link:cpc/wtp{outfilesuffix}[WTP] and link:ant{outfilesuffix}[Apache Ant].
 

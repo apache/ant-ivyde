@@ -1,6 +1,6 @@
 /**
  * jQuery Default Value Plugin v1.0
- * Progressive enhancement technique for inital input field values
+ * Progressive enhancement technique for initial input field values
  *
  * The MIT License
  * 

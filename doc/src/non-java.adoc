@@ -19,7 +19,7 @@
 
 Ivy is a generic dependency manager and can manipulate jars as well as any other kind of resources. IvyDE leverages this feature by bringing dependency management to non Java Eclipse projects.
 
-In this document we will document how to work with IvyDE and non Java dependencies with a concrete exemple: we will manage the dependencies between some JavaScript files and bring them into a Java webapp.
+In this document we will document how to work with IvyDE and non Java dependencies with a concrete example: we will manage the dependencies between some JavaScript files and bring them into a Java webapp.
 
 == Import the sample project into Eclipse
 
@@ -51,7 +51,7 @@ image::images/retrieve_setup.jpg[]
 
 .Name
 
-It gives a human readable name to the retrieve setup. This name will be used later in the context menu to actually launch a retreive of the dependencies.
+It gives a human readable name to the retrieve setup. This name will be used later in the context menu to actually launch a retrieve of the dependencies.
 For the sample project, let's choose "javascripts".
 
 .Ivy file
@@ -66,7 +66,7 @@ For the sample project we want them there: `src/org/apache/ivyde/sample/webappjs
 
 .Delete old retrieved artifacts
 
-Before doing a retrieve, the location where the dependencies are dowloaded will be wiped out is this option is selected.
+Before doing a retrieve, the location where the dependencies are downloaded will be wiped out is this option is selected.
 
 .Configurations
 
@@ -75,7 +75,7 @@ For the sample project, we want it to be `js`.
 
 .Types
 
-This is a comma seperated list of type names which is be retrieved ('`$$*$$`' means __All__).
+This is a comma separated list of type names which is be retrieved ('`$$*$$`' means __All__).
 For the sample project, we want them all: '`$$*$$`'.
 
 Now in the "Settings" tab, the setup entries are the same as the link:preferences{outfilesuffix}#settings[global ones]. Click on "Enable project specific settings" to customize for your setup.

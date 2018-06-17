@@ -38,7 +38,7 @@ This sample presents a simple use case involving a Maven POM and the IvyDE class
 
 image::../images/httpProject_errors.jpg[]
 
-*Note:* your project willnot compile: some imports cannot be resolved.
+*Note:* your project will not compile: some imports cannot be resolved.
 
 * Add a new classpath container based on the "project.xml" pom and select "default" configuration (Maven scope)
 

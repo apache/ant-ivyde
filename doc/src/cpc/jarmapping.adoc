@@ -35,7 +35,7 @@ For the javadocs, it is relying on the "Javadocs types".
 
 == Binding the jars
 
-=== Alorithm
+=== Algorithm
 
 The second step is to bind a source artifact with a binary one. IvyDE has the following algorithm:
     
@@ -52,7 +52,7 @@ In the link:https://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact
 * `ivyde:source="my-source-artifact-name"` which specify the artifact name of the source to bind to the current binary one
 * `ivyde:javadoc="my-javadoc-artifact-name"` which specify the artifact name of the javadoc to bind to the current binary one
 
-=== Exemples
+=== Examples
 
 For instance, searching for the sources of mylib.jar (type=jar), with the default value of "Sources suffixes" ("-source,-sources,-src"), IvyDE will look to bind it to the first one existing of:
 
@@ -81,7 +81,7 @@ With the IvyDE namespace, having the ivy.xml file:
 </ivy-module>
 ----
 
-Without furether setup in IvyDE preferences pages, IvyDE will bind:
+Without further setup in IvyDE preferences pages, IvyDE will bind:
 
 * the jar `the-sources-of-mylib` as sources of the jar `mylib`
 * the jar `the-javadoc-of-mylib` as javadoc of the jar `mylib`

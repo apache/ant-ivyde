@@ -17,7 +17,7 @@
    under the License.
 ////
 
-Some projects are composed of mulpliple modules.  Often, these modules have dependencies between them, dependencies managed by Apache Ivy (of course!). 
+Some projects are composed of multiple modules.  Often, these modules have dependencies between them, dependencies managed by Apache Ivy (of course!).
 
 Eclipse is capable of calculating the workspace's build order according to dependencies between projects.  To leverage this advantage, Apache IvyDE has the ability to add a project reference to a dependency located in the workspace in place of downloading its published artifact(s) from the repository.  In this way, developers can develop multi-module applications, and test the interaction between these modules, before building and publishing artifacts to the repository.
 
@@ -33,8 +33,8 @@ Important notes: to make the resolve in workspace work correctly the __info__ in
     
 * The __org__ and __name__
 * If there is a __rev__ specified, dependencies should specify the appropriate range
-* If there is no __rev__ specified, only dependencies with __lastest__ will match
-* The __status__ should match the required one: a dependency with __latest.integration__ will only match if there is __status="interation"__ in the info of the dependant module
+* If there is no __rev__ specified, only dependencies with __latest__ will match
+* The __status__ should match the required one: a dependency with __latest.integration__ will only match if there is __status="integration"__ in the info of the dependant module
 
 Having two projects "A" and "B" configured to use IvyDE and the workspace resolver, here is the expected resolved dependencies:
 

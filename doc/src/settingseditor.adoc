@@ -27,7 +27,7 @@ Completion comes with contextual help. The completion popup is displayed through
 	
 === XML structure
 
-Allows you to quickly to insert valid tags in the right place. If the tag can have nested childrenm, both notations, simple tag and open tag, are proposed.
+Allows you to quickly to insert valid tags in the right place. If the tag can have nested children, both notations, simple tag and open tag, are proposed.
 	    
 image::images/settings_completion_struct.jpg[]
 	

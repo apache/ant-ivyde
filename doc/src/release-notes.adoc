@@ -17,13 +17,13 @@
    under the License.
 ////
 
-. link:#annoucement[Release Annoucement]
+. link:#announcement[Release Announcement]
 . link:#what[What is Apache IvyDE?]
 . link:#majorchanges[Major Changes in this Release]
 . link:#changes[List of Changes in this Release]
 . link:#contrib[Committers and Contributors for this Release]
 
-== [[annoucement]]Release Annoucement
+== [[announcement]]Release Announcement
 
 The Apache IvyDE project is pleased to announce its 2.3.0-rc1 release.
 
@@ -33,7 +33,7 @@ The Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management in
 
 Apache IvyDE is the Eclipse plugin which integrates Apache Ivy's dependency management into Eclipse(TM).
 
-Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of ivy.xml and ivysettings.xml files with completion. Get some preview here: https://ant.apache.org/ivy/ivyde/screenshots.html.
+Apache IvyDE lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management. Apache IvyDE will contribute to the classpath of your Java project or you can make it retrieve your dependencies directly into your project. Last but not least Apache IvyDE offer editors of `ivy.xml` and `ivysettings.xml` files with completion. Get some preview here: https://ant.apache.org/ivy/ivyde/screenshots.html.
 
 === [[majorchanges]]Major changes in this release:
 

@@ -28,7 +28,7 @@ First in link:https://issues.apache.org/jira/browse/IVYDE[Jira] make sure that n
 
 === Release notes
 
-Make sure the release notes and the annoucement are up to date in doc/src/release-notes.adoc.
+Make sure the release notes and the announcement are up to date in doc/src/release-notes.adoc.
 
 === Last checks
 
@@ -127,15 +127,15 @@ Then just do:
 $ svn mv https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION https://dist.apache.org/repos/dist/release/ant/ivyde/$VERSION
 ----
 
-In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the link:https://archive.apache.org/dist/ant/ivyde/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
+In order to keep the main dist area of a reasonable size, old releases should be removed. They will disappear from the main dist but will still be available via the link:https://archive.apache.org/dist/ant/ivyde/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
 
 === Deploy the updatesite
 
 Follow the instructions of that link:updatesite{outfilesuffix}#deployment[page].
 
-== Annoucement
+== Announcement
 
-The annoucement should have been already prepared and reviewed by other committers. Its content can be found in doc/release-notes.html.
+The announcement should have been already prepared and reviewed by other committers. Its content can be found in doc/release-notes.html.
 
 With that content, send a mail to announce@apache.org, ivy-user@ant.apache.org and dev@ant.apache.org with the title "[ANNOUNCE] Apache IvyDE $VERSION released", and with your apache email as sender (announce@ requires it).
 
@@ -200,7 +200,7 @@ And now let's generate the site and deploy it:
 ----
 ant generate-history -Dhistory.version=$VERSION
 ----
-WARNING: that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
+WARNING: that target is modifying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
 
 . generate the website with the new toc:
 [source]
@@ -232,9 +232,9 @@ Add the just released version in IvyDE's doap file: see doap_IvyDE.rdf at the ro
 
 === Clean up the release notes
 
-Edit the release notes in the documentation (doc/release-notes.html) so it can be prepared and maintanined for the next release:
+Edit the release notes in the documentation (doc/release-notes.html) so it can be prepared and maintained for the next release:
 
-* edit the content under "Release Annoucement": edit the version it is talking about and clean it up so it is a summary of the release notes
+* edit the content under "Release Announcement": edit the version it is talking about and clean it up so it is a summary of the release notes
 * edit the content under "Status of this release": update it with the goal of the next release, or a TODO if it has not yet been defined
 * edit the content under "Major Changes in this Release": wipe it all and put there something like "Nothing done yet"
 * edit the content under "List of Changes in this Release": remove the list of entries and update the version in "List of changes since Apache IvyDE X.X.X"

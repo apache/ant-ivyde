@@ -17,7 +17,7 @@
    under the License.
 ////
 
-Apache IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overrided in each link:cpc/edit{outfilesuffix}[project].
+Apache IvyDE maintains a global configuration, which controls the behaviour of every Ivy instance in every project in the workspace. This global configuration can be overridden in each link:cpc/edit{outfilesuffix}[project].
 
 The global configuration can be found in the preferences of Eclipse (menu Window > Preferences for Windows and Linux users, Eclipse > Preferences for mac users), and select the item Ivy.
 
@@ -31,7 +31,7 @@ If checked, it will force Ivy to never check resources via any network and trust
 
 .Open the Ivy console on startup
 
-If checked, the Ivy console will be opened on startup so that every log from Ivy will be printed. This is especially usefull when looking for debug log from IvyDE starting up.
+If checked, the Ivy console will be opened on startup so that every log from Ivy will be printed. This is especially useful when looking for debug log from IvyDE starting up.
 
 .On Eclipse startup:
 

@@ -31,6 +31,6 @@ Apache IvyDE expects to be used with a version 2.1 or superior of Apache Ivy. In
 
 Apache IvyDE has been maintained to be compatible with Eclipse 4.3 (aka Eclipse Kepler) and superior.
 
-== JVM compability
+== JVM compatibility
 
 Apache IvyDE is requiring a minimum of Java 7.
