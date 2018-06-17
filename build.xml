@@ -305,17 +305,18 @@ ivyde.build.version=${build.version}
     </target>
 
     <target name="package-sources" depends="compute-version" description="Create source archive files">
-        <delete dir="${work.dir}/sources"/>
-        <mkdir dir="${work.dir}/sources"/>
+        <mkdir dir="${dist.dir}"/>
         <exec executable="git" dir="${basedir}" >
             <arg value="archive"/>
             <arg value="HEAD"/>
+            <arg value="--prefix=apache-ivyde-sources-${build.version}/"/>
             <arg value="-o"/>
             <arg value="${dist.dir}/apache-ivyde-sources-${build.version}.tar.gz"/>
         </exec>
         <exec executable="git" dir="${basedir}" >
             <arg value="archive"/>
             <arg value="HEAD"/>
+            <arg value="--prefix=apache-ivyde-sources-${build.version}/"/>
             <arg value="-o"/>
             <arg value="${dist.dir}/apache-ivyde-sources-${build.version}.zip"/>
         </exec>
