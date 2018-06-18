@@ -33,14 +33,14 @@ image::../images/rad_jee_page.jpg[]
 
 *Note:* due to a bug in RAD 7.5.3, this IBM specific property is not persisted when we close the workbench and reopen it. To work around this:
 
-* Export RSA preferences ( File > Export > General > Preferences)
+* Export RSA preferences (File > Export > General > Preferences)
 
-* Open the exported .epf file and replace +
-/instance/org.eclipse.jst.j2ee/org.eclipse.jst.j2ee.preferences.allowClasspathDep=false +
+* Open the exported `.epf` file and replace +
+`/instance/org.eclipse.jst.j2ee/org.eclipse.jst.j2ee.preferences.allowClasspathDep=false` +
 with +
-/instance/org.eclipse.jst.j2ee/org.eclipse.jst.j2ee.preferences.allowClasspathDep=true
+`/instance/org.eclipse.jst.j2ee/org.eclipse.jst.j2ee.preferences.allowClasspathDep=true`
 
-* Load the modified .epf
+* Load the modified `.epf` file
 
 == [[resolve-in-workspace]]Resolve in workspace
 
@@ -50,7 +50,7 @@ A feature request has been opened in WTP's Bugzilla: see link:https://bugs.eclip
 
 If you really want to link a Java project into the classpath of a WTP project, you should follow what is described in the link:https://bugs.eclipse.org/bugs/show_bug.cgi?id=184125#c12[comment #12] and the link:https://bugs.eclipse.org/bugs/show_bug.cgi?id=184125#c17[comment #17]:
   
-* in your ivy.xml of your WTP project, exclude from your dependencies the Java projects you want to link to (you can create a specific Ivy configuration for that, so it won't mess with the configurations used by an Ant build for instance)
+* in your `ivy.xml` file of your WTP project, exclude from your dependencies the Java projects you want to link to (you can create a specific Ivy configuration for that, so it won't mess with the configurations used by an Ant build for instance)
   
 * make sure your Java project is a WTP "utility" project
   

@@ -21,11 +21,11 @@ Apache IvyDE will resolve the dependencies and artifacts you are requiring. Then
 
 == Finding jars types
 
-There are three types of jars handled by Eclipse":
+There are three types of jars handled by Eclipse:
     
-* the binary jars: they will be added to the classpath in oder to compile and run; they contain the .class files.    
-* the source jars/zip: they will be bound to the binary one to browse dependency sources; they are basically a zip of .java files
-* the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of .html files respectively in a layout produced by javadoc.
+* the binary jars: they will be added to the classpath in oder to compile and run; they contain the `.class` files.
+* the source jars/zip: they will be bound to the binary one to browse dependency sources; they are basically a zip of `.java` files
+* the javadoc jars/zip: they will be bound to the binary one to browse the API documentation of the dependencies of your project; they are a zip of `.html` files respectively in a layout produced by javadoc.
 
 To find the binary jars, Apache IvyDE is relying on the "Accepted types" preference field you can find in the link:create{outfilesuffix}[container configuration panel], or in the link:../preferences{outfilesuffix}#classpath[global one]. If the artifact has a type listed here, it is then added to the classpath.
 
@@ -39,13 +39,13 @@ For the javadocs, it is relying on the "Javadocs types".
 
 The second step is to bind a source artifact with a binary one. IvyDE has the following algorithm:
     
-* first, it looks up for a specified name in the ivy.xml via the "ivyde" namespace (see bellow)
+* first, it looks up for a specified name in the `ivy.xml` file via the "ivyde" namespace (see bellow)
 * next, if a binary jar has the same artifact name than a source one, there are bound together.
 * if none matched, then IvyDE search for sources which have one of the suffix specified in "Sources suffixes".
 
 === The IvyDE namespace
 
-In the ivy.xml file in your repository, you can specifically bind a binary artifact to a source one and to a javadoc one, so IvyDE knows for sure which bind to the other.
+In the `ivy.xml` file in your repository, you can specifically bind a binary artifact to a source one and to a javadoc one, so IvyDE knows for sure which bind to the other.
 
 In the link:https://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact.html[artifact] element, you can specify:
 
@@ -54,20 +54,20 @@ In the link:https://ant.apache.org/ivy/history/latest-milestone/ivyfile/artifact
 
 === Examples
 
-For instance, searching for the sources of mylib.jar (type=jar), with the default value of "Sources suffixes" ("-source,-sources,-src"), IvyDE will look to bind it to the first one existing of:
+For instance, searching for the sources of mylib.jar (`type="jar"`), with the default value of "Sources suffixes" (`-source,-sources,-src`), IvyDE will look to bind it to the first one existing of:
 
-* mylib.jar (type=source)
-* mylib-source.jar (type=source)
-* mylib-sources.jar (type=source)
-* mylib-src.jar (type=source)
+* mylib.jar (`type="source"`)
+* mylib-source.jar (`type="source"`)
+* mylib-sources.jar (`type="source"`)
+* mylib-src.jar (`type="source"`)
 
-Note that Apache IvyDE don't care about the extension, it can be .zip too.
+Note that Apache IvyDE don't care about the extension, it can be `.zip` too.
 
 Same apply for javadocs with respectively "Javadocs suffixes".
 
 '''
 
-With the IvyDE namespace, having the ivy.xml file:
+With the IvyDE namespace, having the `ivy.xml` file:
 
 [source]
 ----

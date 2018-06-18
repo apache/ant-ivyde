@@ -82,24 +82,24 @@ Now in the "Settings" tab, the setup entries are the same as the link:preference
 
 image::images/retrieve_setup_settings.jpg[]
 
-For the sample project, we want to use the ivysettings in the Java project: `${workspace_loc:ivyde-sample-webapp-js-repo/ivysettings.xml}`.
+For the sample project, we want to use the Ivy settings in the Java project: `${workspace_loc:ivyde-sample-webapp-js-repo/ivysettings.xml}`.
 
 Finally, click *OK* to finish.
 
 == Launch a retrieve
 
-Now that the retrieve is setup, a new entry should be available in the "Ivy" context menu. The menu entry should be "Retrieve 'xxx'" where "xxx" is the name you gave to the retrieve setup. For the sample project, it will be "Retrieve 'javascripts'".
+Now that the retrieve is set up, a new entry should be available in the "Ivy" context menu. The menu entry should be "Retrieve 'xxx'" where "xxx" is the name you gave to the retrieve setup. For the sample project, it will be "Retrieve 'javascripts'".
 
-Select the entry to actually launch the retrieve. The Eclipse project get automatically refreshed with the retrieved files. For the sample project look into `src/org/apache/ivyde/sample/webappjsrepo/js/jquery-1.7.1.min.js`.
+Select the entry to actually launch the retrieve. The Eclipse project gets automatically refreshed with the retrieved files. For the sample project look into `src/org/apache/ivyde/sample/webappjsrepo/js/jquery-1.7.1.min.js`.
 
 image::images/launch_standalone_retrieve.jpg[]
 
 == Launch the sample webapp
 
-To see the result, we'll launch the Java webapp and look it it your browser locally.
+To see the result, we'll launch the Java webapp and look at it in your browser locally.
 
 Right click the Java class `org.apache.ivyde.sample.webappjsrepo.HTTPServer` and select "Run As" / "Java Application".
 Now open the web page http://localhost:8888/index.html
-If working properly, the JavaScript files should have been properly loaded and the input field should have automatically been filled with a default value.
+If working properly, the JavaScript files should have been loaded and the input field should have automatically been filled with a default value.
 
 image::images/webapp-js-repo-launch.jpg[]

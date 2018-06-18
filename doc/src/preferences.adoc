@@ -39,7 +39,7 @@ Specifies what Apache IvyDE should do in every project containing an IvyDE manag
 
 .On Ivy file change:
 
-Controls whether a resolve is performed each time Eclipse detects a change on an ivy.xml file configured by an IvyDE container via a save in the editor, a refresh, or a team/update.
+Controls whether a resolve is performed each time Eclipse detects a change on an `ivy.xml` file configured by an IvyDE container via a save in the editor, a refresh, or a team/update.
 
 .Organisation:
 
@@ -51,7 +51,7 @@ Your company web site url for Ivy editor completion.
 
 .Open a popup on each failed resolve
 
-On a resolve error, IvyDE mark an error on the ivy.xml of the project; if checked it will also open a popup with a detailed error message
+On a resolve error, IvyDE mark an error on the `ivy.xml` file of the project; if checked it will also open a popup with a detailed error message
 
 == [[advanced]]Advanced
 
@@ -75,11 +75,11 @@ Apache IvyDE allows Ivy dependencies between projects in the workspace to be rea
 
 .Resolve dependencies transitively
 
-If unchecked, the dependencies will be resolved with transitivity disabled regardless to the settings in ivy.xml
+If unchecked, the dependencies will be resolved with transitivity disabled regardless to the settings in `ivy.xml` file
 
 .Read OSGi metadata:
 
-If your classpath is based on jars which are actually OSGi bundles, checking this option will make IvyDE read the jar manifests and setup the specific OSGi visibility constraints.
+If your classpath is based on jars which are actually OSGi bundles, checking this option will make IvyDE read the jar manifests and set up the specific OSGi visibility constraints.
 
 .Accepted types:
 
@@ -87,7 +87,7 @@ A comma separated list of extensions which will make IvyDE add the artifact to t
 
 .Order of the classpath entries:
 
-By default, the classpath container entries are ordered by order of declaration in the ivy.xml. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.
+By default, the classpath container entries are ordered by order of declaration in the `ivy.xml` file. When there are many entries, it can be useful to have them ordered lexically for enhanced readability.
 
 .Build the classpath with:
 
@@ -163,7 +163,7 @@ When a project is opened, IvyDE will trigger the resolve of every other project 
 
 .Ignore version when resolving workspace projects:
 
-This option forces the workspace resolver to ignore the version of a module specified in an ivy.xml if a project containing an Ivy file with that module organization and name is found in the workspace, instead substituting a project reference.  This may have unintended consequences.
+This option forces the workspace resolver to ignore the version of a module specified in an `ivy.xml` file if a project containing an Ivy file with that module organization and name is found in the workspace, instead substituting a project reference.  This may have unintended consequences.
 
 For further information on how the workspace resolver works, checkout this link:cpc/workspace{outfilesuffix}[specific documentation].
 

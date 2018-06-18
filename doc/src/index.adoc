@@ -17,7 +17,7 @@
    under the License.
 ////
 
-Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse(TM). It lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects, or any other kind of project which needs dependency management.
+Apache IvyDE Eclipse plugin integrates Apache Ivy's dependency management into Eclipse(TM). It lets you manage your dependencies declared in an `ivy.xml` file in your Java Eclipse projects, or any other kind of project which needs dependency management.
 
 A summary of the features it provides follows:
 

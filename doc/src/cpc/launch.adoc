@@ -43,11 +43,11 @@ Choose "IvyDE Managed dependencies":
 
 image::../images/launch_addivyde.jpg[]
 
-Select the absolute path to your ivy.xml and select the proper configurations:
+Select the absolute path to your `ivy.xml` file and select the proper configurations:
 
 image::../images/launch_manualconf.jpg[]
 
-*Note:* in the launch configuration it is not possible to edit or launch a resolve manually on the container you are creating. But it is possible to launch a resolve before each launch. It is recommended to do so if the resolve process is not too long. Otherwise you will have to recreate the container each time you change something in the ivy.xml for instance.
+*Note:* in the launch configuration it is not possible to edit or launch a resolve manually on the container you are creating. But it is possible to launch a resolve before each launch. It is recommended to do so if the resolve process is not too long. Otherwise you will have to recreate the container each time you change something in the `ivy.xml` file for instance.
 
 To enable the resolve before each launch, go into the "Advanced" tab and select "Resolve before launch".
 

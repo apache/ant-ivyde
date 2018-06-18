@@ -25,7 +25,7 @@ At other times it is instructive just to see what dependencies are being utilize
 
 The Reverse Dependency Explorer turns the dependency tree upside-down, exploring the workspace by organization, module, and revision and providing a mechanism to synchronize revisions across projects/classpath containers.
 
-Consider the following workspace, with three projects, all of which have an ivy.xml file at their project root.  Each of these Ivy files has an associated IvyDE managed classpath container.
+Consider the following workspace, with three projects, all of which have an `ivy.xml` file at their project root.  Each of these Ivy files has an associated IvyDE managed classpath container.
 
 image::images/revexplorer_project.jpg[]
 

@@ -29,7 +29,7 @@ To enable resolution in the workspace, go to the "classpath" panel of the classp
 
 image::../images/workspace.jpg[]
 
-Important notes: to make the resolve in workspace work correctly the __info__ in the ivy.xml should be properly set:
+Important notes: to make the resolve in workspace work correctly the __info__ in the `ivy.xml` file should be properly set:
     
 * The __org__ and __name__
 * If there is a __rev__ specified, dependencies should specify the appropriate range

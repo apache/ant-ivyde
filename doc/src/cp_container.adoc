@@ -27,5 +27,5 @@ Some of the tasks that can be performed on the container include:
 * link:cpc/retrieve{outfilesuffix}[Retrieve] the dependencies in your project
 * Resolve dependencies within the Eclipse link:cpc/workspace{outfilesuffix}[workspace]
 * link:cpc/launch{outfilesuffix}[Launch] software or unit tests with a classpath managed by IvyDE
-* Use IvyDE with link:cpc/maven{outfilesuffix}[Maven pom.xml]
+* Use IvyDE with link:cpc/maven{outfilesuffix}[Maven `pom.xml`]
 * Use IvyDE in concert with link:cpc/wtp{outfilesuffix}[WTP]

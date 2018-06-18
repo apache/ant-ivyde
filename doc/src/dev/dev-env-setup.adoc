@@ -17,7 +17,7 @@
    under the License.
 ////
 
-This page describe how to setup an environment to develop IvyDE.
+This page describe how to set up an environment to develop IvyDE.
 
 == Requirement
 

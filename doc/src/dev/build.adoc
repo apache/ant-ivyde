@@ -17,7 +17,7 @@
    under the License.
 ////
 
-This page describes how to build the Apache IvyDE plugin from the source. The build is based on the Eclipse(TM) build system so it requires an Eclipse install. You also need to have an Ivy bundle installed.
+This page describes how to build the Apache IvyDE plugin from the source. The build is based on the Eclipse(TM) build system so it requires an Eclipse installation. You also need to have an Ivy bundle installed.
 
 == [[setup]]Setup of the build
 
@@ -67,11 +67,11 @@ And run the build:
 ant build -DbaseLocation=$ECLIPSE_HOME
 ----
 
-Then in the created directory `work` you will find a subdirectory (something like `2.0.0.alpha1-200804171513`) in which you will find the zip archive ready to be unzipped in an Eclipse install.
+Then in the created directory `work` you will find a subdirectory (something like `2.0.0.alpha1-200804171513`) in which you will find the zip archive ready to be unzipped in an Eclipse installation.
 
 == [[install]]Install
 
-After a successful build you should have a zip file at `dist/org.apache.ivyde.feature-$VERSION.zip`. The zip file contains the `plugins` and `features` directories ready to be unzipped in an Eclipse install. So here is the process:
+After a successful build you should have a zip file at `dist/org.apache.ivyde.feature-$VERSION.zip`. The zip file contains the `plugins` and `features` directories ready to be unzipped in an Eclipse installation. So here is the process:
 
 [source]
 ----

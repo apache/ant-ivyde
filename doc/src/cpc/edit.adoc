@@ -17,7 +17,7 @@
    under the License.
 ////
 
-During the life of your project, you can change the ivy.xml file or link:maven{outfilesuffix}[Maven pom.xml] and change its configuration.
+During the life of your project, you can change the `ivy.xml` file or link:maven{outfilesuffix}[Maven `pom.xml`] and change its configuration.
 
 == Context Menu
 
