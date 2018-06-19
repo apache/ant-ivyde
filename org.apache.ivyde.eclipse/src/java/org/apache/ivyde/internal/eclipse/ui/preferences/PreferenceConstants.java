@@ -135,7 +135,7 @@ public final class PreferenceConstants {
 
     static {
         for (Field field : PreferenceConstants.class.getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers()) && String.class.equals(field.getType())) {
                 try {
                     ALL.add((String) field.get(null));
                 } catch (IllegalArgumentException | IllegalAccessException e) {
