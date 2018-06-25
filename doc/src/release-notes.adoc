@@ -67,6 +67,7 @@ List of changes since link:/ivy/ivyde/history/2.2.0.final/release-notes.html[Apa
 * FIX: Typo in IvyResolveJob (jira:IVYDE-362[]) (thanks to Nicolas Gavalda)
 * FIX: User-selected configurations not checked in the viewer (jira:IVYDE-378[]) (thanks to Carsten Pfeiffer)
 * FIX: Fix ClassCastException (jira:IVYDE-386[])
+* FIX: Fix the issue where the IvyDE preferences couldn't be saved (jira:IVYDE-388[])
 
 * NEW: add support for OSGi 'Bundle-Classpath' directive (Ivy 2.4.0-rc1 is required)
 * NEW: basic support for the workspace resolver to find OSGi bundles managed by Ivy in the workspace (Ivy 2.4.0-rc2 is required)
