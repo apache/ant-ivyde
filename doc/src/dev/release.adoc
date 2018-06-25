@@ -96,11 +96,11 @@ Subject: [VOTE] IvyDE $VERSION Release
 
 I have built a release candidate for Apache IvyDE $VERSION
 
-The tag is here: https://git1-us-west.apache.org/repos/asf?p=ant-ivyde.git;a=commit;h=refs/tags/$VERSION
+The tag is here: https://git1-us-west.apache.org/repos/asf?p=ant-ivyde.git;a=commit;h=refs/tags/$VERSION with the sha1 ${githash-of-tag}
 
-You can download the distribution from this URL: https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION
+You can download the distribution from this URL: https://dist.apache.org/repos/dist/dev/ant/ivyde/$VERSION at revision ${svn-rev-of-the-commit}
 
-The Eclipse p2 repository is there: https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSION
+The Eclipse p2 repository is there: https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivyde-$VERSION at revision ${svn-rev-of-the-commit}
 
 Do you vote for the release of these binaries?
 
