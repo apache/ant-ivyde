@@ -260,21 +260,23 @@ public class IvyResolver {
 
         ResolveResult result = new ResolveResult(report);
 
-        Map<Artifact, ArtifactDownloadReport> workspaceArtifacts = IvyContext.getContext()
-                .get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
+        ArtifactDownloadReport[] artifactReports = report.getArtifactsReports(null, false);
+
+        Map<Artifact, ArtifactDownloadReport> workspaceArtifacts = IvyContext
+                .getContext().get(WorkspaceResolver.IVYDE_WORKSPACE_ARTIFACT_REPORTS);
         if (workspaceArtifacts != null) {
-            // some artifacts were 'forced' by the dependency declaration, whereas they should be
-            // changed to the eclipse project reference
-            for (ArtifactDownloadReport artifactReport : report.getArtifactsReports(null, false)) {
-                ArtifactDownloadReport eclipseArtifactReport = workspaceArtifacts.get(artifactReport.getArtifact());
-                if (eclipseArtifactReport == null) {
-                    result.addArtifactReport(artifactReport);
-                } else {
-                    // let's change
-                    result.addArtifactReport(eclipseArtifactReport);
+            // some artifact were 'forced' by the dependency declaration, whereas they should be
+            // switch by the eclipse project reference
+            for (int i = 0; i < artifactReports.length; i++) {
+                ArtifactDownloadReport eclipseArtifactReport = (ArtifactDownloadReport) workspaceArtifacts
+                        .get(artifactReports[i].getArtifact());
+                if (eclipseArtifactReport != null) {
+                    // let's switch.
+                    artifactReports[i] = eclipseArtifactReport;
                 }
             }
         }
+        result.addArtifactReports(artifactReports);
 
         collectArtifactsByDependency(report, result);
 
