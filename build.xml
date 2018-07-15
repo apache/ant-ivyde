@@ -655,6 +655,10 @@ You have to specify the Ivy to install with one of the following property:
         <unzip src="${basedir}/dependencies/${eclipse.download.gef.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.gef.name}"/>
         <mkdir dir="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}"/>
         <unzip src="${basedir}/dependencies/${eclipse.download.zest.name}.zip" dest="${basedir}/dependencies/eclipse/dropins/${eclipse.download.zest.name}"/>
+        <!-- remove files from p2 repo packaging, it confuses the build -->
+        <delete>
+            <fileset dir="${basedir}/dependencies/eclipse/dropins/" includes="*/artifacts.jar,*/content.jar" />
+        </delete>
         <move file="${basedir}/dependencies/eclipse" tofile="${basedir}/dependencies/${eclipse.download.sdk.name}"/>
     </target>
 
