@@ -17,4 +17,4 @@
 #	 * under the License.
 #	 ***************************************************************
 eclipse.preferences.version=1
-org.apache.ivyde.eclipse.standaloneretrieve=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><setuplist><setup name\="dependencies" resolveInWorkspace\="false"><ivysettings ivyUserDir\="" loadondemand\="false" path\="${workspace_loc\:ivydetest-retrieve-var/ivysettings.xml}"/><ivyxml path\="ivy.xml"/><retrieve confs\="*" pattern\="${workspace_loc\:ivydetest-retrieve-var/lib}/[artifact]-[revision](-[classifier]).[ext]" sync\="true" types\="*"/></setup></setuplist>
+org.apache.ivyde.eclipse.standaloneretrieve=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><setuplist><setup name\="dependencies" resolveInWorkspace\="false"><ivysettings ivyUserDir\="" loadondemand\="false" path\="${workspace_loc\:ivydetest-retrieve-var/ivysettings.xml}"/><ivyxml path\="ivy.xml"/><retrieve confs\="*" pattern\="${workspace_loc\:ivydetest-retrieve-var/lib}/[artifact]-[revision](-[type]).[ext]" sync\="true" types\="*"/></setup></setuplist>
