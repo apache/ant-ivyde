@@ -17,60 +17,31 @@
  */
 package org.apache.ivyde.internal.eclipse.handlers;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivyde.eclipse.IvyNatureHelper;
+import org.apache.ivyde.eclipse.cp.IvyClasspathContainer;
 import org.apache.ivyde.internal.eclipse.IvyPlugin;
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.handlers.HandlerUtil;
 
-public class RemoveIvyNatureHandler extends AbstractHandler {
+public class RemoveIvyNatureHandler extends AbstractIvyDEHandler {
 
     public static final String COMMAND_ID = "org.apache.ivyde.commands.removeivynature";
 
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        ISelection selection = HandlerUtil.getCurrentSelection(event);
-        if (!(selection instanceof IStructuredSelection)) {
-            return null;
-        }
-
-        List<IProject> projects = new LinkedList<>();
-        for (Object object : ((IStructuredSelection) selection).toList()) {
-            if (!(object instanceof IAdaptable)) {
-                return null;
-            }
-            IProject project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
-            if (project == null) {
-                return null;
-            }
-            if (IvyNatureHelper.hasNature(project)) {
-                projects.add(project);
+    @Override
+    protected void handleProjects(Map<IProject, Set<IvyClasspathContainer>> projects) {
+        Shell shell = IvyPlugin.getActiveWorkbenchShell();
+        boolean doRemove = MessageDialog.openQuestion(shell, "Remove Ivy dependency management",
+            "Do you want to remove the Ivy dependency management ?\n\n"
+                    + "The configuration of the classpath containers will be lost.\n"
+                    + "This operation cannot be undone.");
+        if (doRemove) {
+            for (IProject project : projects.keySet()) {
+                IvyNatureHelper.removeNature(project);
             }
         }
-
-        if (projects.size() > 0) {
-            Shell shell = IvyPlugin.getActiveWorkbenchShell();
-            boolean doRemove = MessageDialog.openQuestion(shell,
-                "Remove Ivy dependency management",
-                "Do you want to remove the Ivy dependency management ?\n\n"
-                        + "The configuration of the classpath containers will be lost.\n"
-                        + "This operation cannot be undone.");
-            if (doRemove) {
-                for (IProject project : projects) {
-                    IvyNatureHelper.removeNature(project);
-                }
-            }
-        }
-
-        return null;
     }
 }
