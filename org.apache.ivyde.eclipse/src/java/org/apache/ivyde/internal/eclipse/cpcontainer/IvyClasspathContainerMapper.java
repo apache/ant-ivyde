@@ -367,12 +367,11 @@ public class IvyClasspathContainerMapper {
                         url = new URL(u);
                     } catch (MalformedURLException e) {
                         // this should not happen
-                        IvyPlugin.logError("The jar URL for the javadoc is not formed correctly "
-                                + u, e);
+                        IvyPlugin.logError("The jar URL for the javadoc is malformed " + u, e);
                     }
                 } catch (MalformedURLException e) {
                     // this should not happen
-                    IvyPlugin.logError("The path has not a correct URL: " + javadocArtifact, e);
+                    IvyPlugin.logError("The path has incorrect URL: " + javadocArtifact, e);
                 }
             }
         }

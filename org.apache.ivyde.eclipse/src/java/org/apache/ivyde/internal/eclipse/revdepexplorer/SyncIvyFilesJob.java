@@ -139,7 +139,7 @@ public class SyncIvyFilesJob extends WorkspaceJob {
                 ivyFile = ivycps.getIvyFile();
             } catch (IvyDEException e) {
                 errorStatuses.add(new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR,
-                        "Fail to resolve the ivy file", e));
+                        "Fail to resolve the Ivy file", e));
                 continue;
             }
 

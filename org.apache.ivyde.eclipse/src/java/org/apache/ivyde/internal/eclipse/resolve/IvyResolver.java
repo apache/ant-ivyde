@@ -157,7 +157,7 @@ public class IvyResolver {
                     postResolveOrRefresh(ivy, md, result, monitor);
                 }
             } catch (ParseException e) {
-                String errorMsg = "Error while parsing the ivy file from " + this.toString() + "\n"
+                String errorMsg = "Error while parsing the Ivy file from " + this.toString() + "\n"
                         + e.getMessage();
                 IvyDEMessage.error(errorMsg);
                 return new Status(IStatus.ERROR, IvyPlugin.ID, IStatus.ERROR, errorMsg, e);
@@ -268,7 +268,7 @@ public class IvyResolver {
             // some artifact were 'forced' by the dependency declaration, whereas they should be
             // switch by the eclipse project reference
             for (int i = 0; i < artifactReports.length; i++) {
-                ArtifactDownloadReport eclipseArtifactReport = (ArtifactDownloadReport) workspaceArtifacts
+                ArtifactDownloadReport eclipseArtifactReport = workspaceArtifacts
                         .get(artifactReports[i].getArtifact());
                 if (eclipseArtifactReport != null) {
                     // let's switch.

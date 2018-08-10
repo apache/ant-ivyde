@@ -62,7 +62,7 @@ public class ReportView extends ViewPart implements ISelectionListener {
                 URL report = container.getReportUrl();
                 if (report == null || !browser.setUrl(report.toExternalForm())) {
                     browser.setText("<html></html>");
-                    IvyDEMessage.warn("Impossible to set report view url to " + report.toExternalForm());
+                    IvyDEMessage.warn("Impossible to set report view URL to " + report.toExternalForm());
                 }
             }
         }

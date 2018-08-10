@@ -67,8 +67,8 @@ public class IvyNewWizardPage extends WizardPage {
     public IvyNewWizardPage(ISelection selection) {
         super("wizardPage");
         setTitle("Ivy File");
-        setDescription("This wizard creates a new ivy.xml "
-                + "that can be opened by the ivy multi-page editor.");
+        setDescription("This wizard creates a new ivy.xml file "
+                + "that can be opened by the Ivy multi-page editor.");
         this.selection = selection;
     }
 

@@ -112,7 +112,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
     void checkCompleted() {
         String error = null;
         if (ivyFilePathText.getIvyFilePath().length() == 0) {
-            error = "Choose an ivy file";
+            error = "Choose an Ivy file";
         } else if (project != null) {
             error = checkConf();
         }
@@ -282,7 +282,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
 
     public void createControl(Composite parent) {
         setTitle("IvyDE Managed Libraries");
-        setDescription("Choose ivy file and its configurations.");
+        setDescription("Choose Ivy file and its configurations.");
 
         tabs = new TabFolder(parent, SWT.BORDER);
         tabs.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
@@ -373,7 +373,7 @@ public class IvydeContainerPage extends NewElementWizardPage implements IClasspa
                 } catch (IvyDEException e) {
                     md = null;
                     e.show(IStatus.ERROR, "Ivy configuration error",
-                        "The configurations of the ivy.xml could not be retrieved: ");
+                        "The configurations of the ivy.xml file could not be retrieved: ");
                 }
                 confTableViewer.setModuleDescriptor(md);
             }

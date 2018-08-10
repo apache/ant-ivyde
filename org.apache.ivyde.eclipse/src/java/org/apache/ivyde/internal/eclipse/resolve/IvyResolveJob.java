@@ -104,7 +104,7 @@ public class IvyResolveJob extends Job {
 
         IvyDEMessage.verbose(toResolve.size() + " container(s) to resolve");
 
-        monitor.beginTask("Loading ivy descriptors", MONITOR_LENGTH);
+        monitor.beginTask("Loading Ivy descriptors", MONITOR_LENGTH);
 
         Map<ModuleDescriptor, List<ResolveRequest>> inworkspaceModules = new LinkedHashMap<>();
         List<ResolveRequest> otherModules = new ArrayList<>();
@@ -134,7 +134,7 @@ public class IvyResolveJob extends Job {
                     monitor.worked(step);
                     continue;
                 }
-                IvyDEMessage.verbose("Loading ivysettings for " + request.toString());
+                IvyDEMessage.verbose("Loading Ivy settings for " + request.toString());
                 CachedIvy cachedIvy = request.getCachedIvy();
                 Ivy ivy;
                 try {

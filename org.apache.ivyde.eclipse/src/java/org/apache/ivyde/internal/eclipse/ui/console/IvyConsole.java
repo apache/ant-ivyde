@@ -36,7 +36,7 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
- * This class is used to deal with ivy output, and is largely inspired of CVSOutputConsole for its
+ * This class is used to deal with Ivy output, and is largely inspired of CVSOutputConsole for its
  * implementation
  */
 public class IvyConsole extends MessageConsole implements MessageLogger {

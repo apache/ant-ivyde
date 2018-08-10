@@ -30,7 +30,7 @@ public abstract class BaseValidator implements IValidator {
 
     public static final String EXISTING_ENTRY_ERROR = "An entry with that host and realm already exists";
 
-    public static final String VALID_MESSAGE = "Valid ivy credentials: Press 'OK' to save them";
+    public static final String VALID_MESSAGE = "Valid Ivy credentials: Press 'OK' to save them";
 
     public abstract boolean doValidation(Object validatedObject);
 

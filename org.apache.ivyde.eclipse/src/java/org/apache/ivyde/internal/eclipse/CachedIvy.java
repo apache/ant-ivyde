@@ -122,7 +122,7 @@ public abstract class CachedIvy {
         try {
             return doGetIvy();
         } catch (IvyDEException e) {
-            e.contextualizeMessage("Error while resolving the ivy instance for " + this.toString());
+            e.contextualizeMessage("Error while resolving the Ivy instance for " + this.toString());
             throw e;
         }
     }
@@ -171,12 +171,12 @@ public abstract class CachedIvy {
             } catch (ParseException e) {
                 ivy = null;
                 throw new IvyDEException("Parsing error of the Ivy settings",
-                        "The ivy settings file '" + settingsPath.getResolvedPath()
+                        "The Ivy settings file '" + settingsPath.getResolvedPath()
                                 + "' could not be parsed: " + e.getMessage(), e);
             } catch (IOException e) {
                 ivy = null;
                 throw new IvyDEException("Read error of the Ivy settings",
-                        "The ivy settings file '" + settingsPath.getResolvedPath()
+                        "The Ivy settings file '" + settingsPath.getResolvedPath()
                                 + "' could not be read: " + e.getMessage(), e);
             }
         }
@@ -202,12 +202,12 @@ public abstract class CachedIvy {
             } catch (ParseException e) {
                 ivy = null;
                 throw new IvyDEException("Parsing error of the Ivy settings",
-                        "The ivy settings file '" + ivySettingsPath.getResolvedPath()
+                        "The Ivy settings file '" + ivySettingsPath.getResolvedPath()
                                 + "' could not be parsed: " + e.getMessage(), e);
             } catch (IOException e) {
                 ivy = null;
                 throw new IvyDEException("Read error of the Ivy settings",
-                        "The ivy settings file '" + ivySettingsPath.getResolvedPath()
+                        "The Ivy settings file '" + ivySettingsPath.getResolvedPath()
                                 + "' could not be read: " + e.getMessage(), e);
             }
             ivySettingsLastModified = file.lastModified();
@@ -279,17 +279,17 @@ public abstract class CachedIvy {
     public File getIvyFile() throws IvyDEException {
         ResolvedPath ivyPath = new ResolvedPath(getIvyXmlPath(), getProject());
         if (ivyPath.getError() != null) {
-            throw new IvyDEException("Incorrect path of the ivy.xml",
+            throw new IvyDEException("Incorrect path of the ivy.xml file",
                     "The ivy.xml path '" + ivyPath.getInputPath() + "' is incorrect: "
                             + ivyPath.getError().getMessage(), ivyPath.getError());
         }
         if (!ivyPath.isSet()) {
-            throw new IvyDEException("Empty path of the ivy.xml",
+            throw new IvyDEException("Empty path of the ivy.xml file",
                     "The ivy.xml path is resolved to be empty: '" + ivyPath.getInputPath() + "'",
                     null);
         }
         if (ivyPath.getFile() == null) {
-            throw new IvyDEException("The path of the ivy.xml is not a local file",
+            throw new IvyDEException("Non-local path of the ivy.xml file",
                     "The ivy.xml path is resolved to be a file: '" + ivyPath.getResolvedPath()
                             + "'", null);
         }
@@ -356,10 +356,10 @@ public abstract class CachedIvy {
             throw new IvyDEException("Incorrect URL of the Ivy file",
                     "The URL to the ivy.xml file is incorrect: '" + file.getAbsolutePath() + "'", e);
         } catch (ParseException e) {
-            throw new IvyDEException("Parsing error of the Ivy file", "The ivy file '"
+            throw new IvyDEException("Parsing error of the Ivy file", "The Ivy file '"
                     + file.getAbsolutePath() + "' could not be parsed: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new IvyDEException("Read error of the Ivy file", "The ivy file '"
+            throw new IvyDEException("Read error of the Ivy file", "The Ivy file '"
                     + file.getAbsolutePath() + "' could not be read: " + e.getMessage(), e);
         }
     }

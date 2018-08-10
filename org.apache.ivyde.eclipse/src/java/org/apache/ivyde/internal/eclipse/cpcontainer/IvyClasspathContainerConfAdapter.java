@@ -333,7 +333,7 @@ public final class IvyClasspathContainerConfAdapter {
     }
 
     /**
-     * Read old configuration that were based on relative urls, like: "file://./ivysettings.xml" or
+     * Read old configuration that were based on relative URLs, like: "file://./ivysettings.xml" or
      * "file:./ivysettings.xml", and also URL like "project:///ivysettings.xml".
      * <p>
      * It will be replaced by the Eclipse variable ${workspace_loc: ... }

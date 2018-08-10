@@ -48,14 +48,14 @@ public final class IvyDEsecurityHelper {
     public static void addCredentialsToIvyCredentialStorage(SecuritySetup setup) {
         CredentialsStore.INSTANCE.addCredentials(setup.getRealm(), setup.getHost(),
             setup.getUserName(), setup.getPwd());
-        IvyPlugin.logInfo("Credentials " + setup.toString() + " added to ivyDE credential store");
+        IvyPlugin.logInfo("Credentials " + setup.toString() + " added to IvyDE credential store");
     }
 
     public static void cpyCredentialsFromSecureToIvyStorage() {
         for (SecuritySetup entry : getCredentialsFromSecureStore()) {
             addCredentialsToIvyCredentialStorage(entry);
             IvyPlugin.logInfo("Credentials " + entry.toString()
-                    + " from eclipse secure storage copied to ivyDE credential store");
+                    + " from Eclipse secure storage copied to IvyDE credential store");
         }
     }
 
@@ -95,7 +95,7 @@ public final class IvyDEsecurityHelper {
                                 childChildNode.get(PASSWORD_KEY, null));
                         setupValues.add(toAdd);
                         IvyPlugin.logInfo("Credentials " + toAdd.toString()
-                                + " loaded from eclipse secure storage");
+                                + " loaded from Eclipse secure storage");
                     } catch (StorageException e1) {
                         IvyPlugin.logError(e1.getMessage(), e1);
                     }
@@ -135,7 +135,7 @@ public final class IvyDEsecurityHelper {
                     try {
                         node.flush();
                         IvyPlugin.logInfo("Credentials " + setup.toString()
-                                + "' removed from eclipse secure storage");
+                                + "' removed from Eclipse secure storage");
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         IvyPlugin.logError(e.getMessage(), e);
@@ -149,7 +149,7 @@ public final class IvyDEsecurityHelper {
         // need to invalidate => on credentialStore just add-ops allowed
         CredentialsStore.INSTANCE.addCredentials(setup.getHost(), setup.getRealm(), null, null);
         IvyPlugin.logInfo("Credentials " + setup
-                + " invalidated on ivyDE credential store: Removed on next eclipse startup.");
+                + " invalidated on IvyDE credential store: Removed on next Eclipse startup.");
     }
 
     public static boolean credentialsInSecureStorage() {

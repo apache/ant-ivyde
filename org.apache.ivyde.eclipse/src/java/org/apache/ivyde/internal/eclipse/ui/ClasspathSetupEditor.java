@@ -81,7 +81,7 @@ public class ClasspathSetupEditor extends Composite {
                 false, 2, 1));
         transitiveResolveCheck.setText("Resolve dependencies transitively");
         transitiveResolveCheck
-                .setToolTipText("If unchecked, will resolve dependency with transitivity disabled regardless of the settings in ivy.xml");
+                .setToolTipText("If unchecked, will resolve dependency with transitivity disabled regardless of the settings in the ivy.xml file");
 
         readOSGiMetadataCheck = new Button(this, SWT.CHECK);
         readOSGiMetadataCheck.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false,

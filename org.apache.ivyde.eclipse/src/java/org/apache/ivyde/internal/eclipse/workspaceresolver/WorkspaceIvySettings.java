@@ -42,7 +42,7 @@ public class WorkspaceIvySettings extends IvySettings {
 
     private DependencyResolver decorate(DependencyResolver resolver) {
         if (resolver == null) {
-            return resolver;
+            return null;
         }
         String projectName = project == null ? "<null>" : project.getName();
         ChainResolver chain = new ChainResolver();

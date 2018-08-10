@@ -50,11 +50,11 @@ public class IvyModuleDescriptorModel extends IvyModel {
         super(settings);
 
         // ivy-module
-        IvyTag ivyTag = new IvyTag("ivy-module", "root tag of ivy file");
-        ivyTag.setDoc("Root tag of any ivy-file.");
+        IvyTag ivyTag = new IvyTag("ivy-module", "root tag of Ivy file");
+        ivyTag.setDoc("Root tag of any Ivy file.");
         ivyTag.addAttribute(new IvyTagAttribute("version",
-                "The version of the ivy file specification \n"
-                        + "should be '2.0' with current version of ivy", true));
+                "The version of the Ivy file specification \n"
+                        + "should be '2.0' with current version of Ivy", true));
         addTag(ivyTag);
 
         IValueProvider defaultOrganizationProvider = new IValueProvider() {
@@ -84,7 +84,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
             }
         });
         IvyTagAttribute moduleTagAttribute = new IvyTagAttribute("module",
-                "the name of the module described by this ivy file.", true);
+                "the name of the module described by this Ivy file.", true);
         IValueProvider projectNameValueProvider = new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 return new String[] {ivyFile.getProjectName()};
@@ -136,16 +136,16 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 + "Try to respect spelling when using a classical license.", true,
                 new ListValueProvider(getDefault("license"))));
         child
-                .addAttribute(new IvyTagAttribute("url", "an url pointing to the license text.",
+                .addAttribute(new IvyTagAttribute("url", "an URL pointing to the license text.",
                         false));
         addTag(child);
         info.addChildIvyTag(child);
-        child = new IvyTag("ivyauthor", "describes who has contributed to write the ivy file");
+        child = new IvyTag("ivyauthor", "describes who has contributed to write the Ivy file");
         child.addAttribute(new IvyTagAttribute("name",
                 "the name of the author, as a person or a company.", true,
                 defaultOrganizationProvider));
         child.addAttribute(new IvyTagAttribute("url",
-                "an url pointing to where the author can be reached.", false,
+                "an URL pointing to where the author can be reached.", false,
                 defaultOrganizationURLProvider));
         addTag(child);
         info.addChildIvyTag(child);
@@ -158,7 +158,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         return new String[] {"ibiblio", "ivyrep"};
                     }
                 }));
-        child.addAttribute(new IvyTagAttribute("url", "an url pointing to the repository.", true,
+        child.addAttribute(new IvyTagAttribute("url", "an URL pointing to the repository.", true,
                 new IValueProvider() {
                     public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                         Map<String, String> allAttsValues = ivyFile.getAllAttsValues();
@@ -175,7 +175,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
 
                 }));
         IvyTagAttribute reppatternTagAttribute = new IvyTagAttribute("pattern",
-                "an ivy pattern to find modules on this repository", false);
+                "an Ivy pattern to find modules on this repository", false);
         reppatternTagAttribute.setValueProvider(new IValueProvider() {
             public String[] getValuesfor(IvyTagAttribute att, IvyFile ivyFile) {
                 Map<String, String> allAttsValues = ivyFile.getAllAttsValues();
@@ -192,13 +192,13 @@ public class IvyModuleDescriptorModel extends IvyModel {
         });
         child.addAttribute(reppatternTagAttribute);
         child.addAttribute(new IvyBooleanTagAttribute("ivys",
-                "true if ivy file can be found on this repository", false));
+                "true if Ivy file can be found on this repository", false));
         child.addAttribute(new IvyBooleanTagAttribute("artifacts",
                 "true if module artifacts can be found on this repository", false));
         addTag(child);
         info.addChildIvyTag(child);
         child = new IvyTag("description", "gives general description about the module");
-        child.addAttribute(new IvyTagAttribute("homepage", "the url of the homepage of the module",
+        child.addAttribute(new IvyTagAttribute("homepage", "The URL of the homepage of the module",
                 false, defaultOrganizationURLProvider));
         addTag(child);
         info.addChildIvyTag(child);
@@ -277,7 +277,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                 projectNameValueProvider));
         artifact.addAttribute(new IvyTagAttribute("type", "the type of the published artifact. \n"
                 + "It's usually its extension, but not necessarily. \n"
-                + "For instance, ivy files are of type 'ivy' but have 'xml' extension", true,
+                + "For instance, Ivy files are of type 'ivy' but have 'xml' extension", true,
                 new ListValueProvider(getDefault("type"))));
         artifact.addAttribute(new IvyTagAttribute("ext", "the extension of the published artifact",
                 false, new ListValueProvider(getDefault("ext"))));
@@ -567,8 +567,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
         }
         ListValueProvider matcherNamesProvider = new ListValueProvider(matcherNames.toArray(new String[matcherNames.size()]));
 
-        IvyTag artifact2 = new IvyTag("artifact", "defines artifacts restriction \n"
-                + "use only if you do not control dependency ivy file");
+        IvyTag artifact2 = new IvyTag("artifact", "defines artifact restriction \n"
+                + "use only if you do not control dependency Ivy file");
         artifact2.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \n"
                 + "dependency module to add to the include list, \n"
                 + "or a regexp matching this name", false));
@@ -582,7 +582,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
                         + "or a regexp matching this name", false, new ListValueProvider(
                         getDefault("ext"))));
         artifact2.addAttribute(new IvyTagAttribute("url",
-                "an url where this artifact can be found \n"
+                "an URL where this artifact can be found \n"
                         + "if it isn't present at the standard \n" + "location in the repository",
                 false));
         artifact2.addAttribute(new IvyTagAttribute("conf",
@@ -598,8 +598,8 @@ public class IvyModuleDescriptorModel extends IvyModel {
         allConf.add(conf4);
         artifact2.addChildIvyTag(conf4);
         addTag(artifact2);
-        IvyTag include = new IvyTag("include", "defines artifacts restriction \n"
-                + "use only if you do not control dependency ivy file");
+        IvyTag include = new IvyTag("include", "defines artifact restriction \n"
+                + "use only if you do not control dependency Ivy file");
         include.addAttribute(new IvyTagAttribute("name", "the name of an artifact of the \n"
                 + "dependency module to add to the include list, \n"
                 + "or a regexp matching this name", false));
@@ -628,7 +628,7 @@ public class IvyModuleDescriptorModel extends IvyModel {
         addTag(include);
         allConf.add(conf5);
         IvyTag exclude = new IvyTag("exclude", "defines artifacts restriction \n"
-                + "use only if you do not control dependency ivy file");
+                + "use only if you do not control dependency Ivy file");
         exclude.addAttribute(new IvyTagAttribute("org", "the organisation of the dependency \n"
                 + "module or artifact to exclude, \n" + "or a pattern matching this organisation",
                 false));

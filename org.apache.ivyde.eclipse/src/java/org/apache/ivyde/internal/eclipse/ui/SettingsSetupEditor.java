@@ -43,8 +43,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class SettingsSetupEditor extends Composite {
 
-    public static final String TOOLTIP_SETTINGS_PATH = "The url where your ivysettings file can be"
-            + " found. \nLeave it empty to reference the default ivy settings. \n"
+    public static final String TOOLTIP_SETTINGS_PATH = "The URL where your Ivy settings file can be"
+            + " found. \nLeave it empty to reference the default Ivy settings. \n"
             + "Relative paths are handled relative to the project.";
 
     public static final String TOOLTIP_PROPERTY_FILES = "Comma separated list of build property"
@@ -135,7 +135,7 @@ public class SettingsSetupEditor extends Composite {
                 } catch (MalformedURLException ex) {
                     // this cannot happen
                     IvyPlugin
-                            .logError("The file got from the file browser has not a valid URL", ex);
+                            .logError("The file got from the file browser has an invalid URL", ex);
                 }
             }
 

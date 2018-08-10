@@ -93,7 +93,7 @@ public class IvyFilePathText extends PathEditor {
             textUpdated();
         } catch (MalformedURLException ex) {
             // this cannot happen
-            IvyPlugin.logError("The file got from the file browser has not a valid URL", ex);
+            IvyPlugin.logError("The file got from the file browser has an invalid URL", ex);
         }
     }
 

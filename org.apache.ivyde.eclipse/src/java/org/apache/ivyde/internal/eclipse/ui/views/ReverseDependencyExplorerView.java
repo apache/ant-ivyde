@@ -114,7 +114,7 @@ public class ReverseDependencyExplorerView extends ViewPart {
                 }
             }
         };
-        syncAction.setToolTipText("Synchronize ivy dependencies");
+        syncAction.setToolTipText("Synchronize Ivy dependencies");
         syncAction.setImageDescriptor(IvyPlugin.getImageDescriptor("icons/synced.gif"));
 
         Action refreshAction = new Action() {
