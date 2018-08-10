@@ -253,35 +253,19 @@ public abstract class CachedIvy {
         } else {
             IvyDEMessage.verbose(propFiles.size() + " property file(s) to load");
             for (String file : propFiles) {
-                InputStream is;
                 Path p = new Path(file);
                 IvyDEMessage.debug("Loading property file " + p);
-                if (getProject() != null && !p.isAbsolute()) {
-                    try {
-                        is = new FileInputStream(getProject().getLocation().append(file).toFile());
-                    } catch (FileNotFoundException e) {
-                        throw new IvyDEException("Property file not found", "The property file '"
-                                + file + "' could not be found", e);
-                    }
-                } else {
-                    try {
-                        is = new FileInputStream(file);
-                    } catch (FileNotFoundException e) {
-                        throw new IvyDEException("Property file not found", "The property file '"
-                                + file + "' was not found", e);
-                    }
-                }
+                String propFile = (getProject() != null && !p.isAbsolute())
+                        ? getProject().getLocation().append(file).toString() : file;
                 Properties props = new Properties();
-                try {
+                try (InputStream is = new FileInputStream(propFile)) {
                     props.load(is);
+                } catch (FileNotFoundException e) {
+                    throw new IvyDEException("Property file not found", "The property file '"
+                            + propFile + "' was not found", e);
                 } catch (IOException e) {
-                    throw new IvyDEException("Not a property file", "The property file '" + file
-                            + "' could not be loaded", e);
-                }
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // don't care
+                    throw new IvyDEException("Not a property file", "The property file '"
+                            + propFile + "' could not be loaded", e);
                 }
 
                 for (String key : props.stringPropertyNames()) {
