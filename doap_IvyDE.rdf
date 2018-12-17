@@ -78,8 +78,8 @@
     </release>
     <repository>
       <GitRepository>
-        <location rdf:resource="https://git-wip-us.apache.org/repos/asf/ant-ivyde.git"/>
-        <browse rdf:resource="https://git-wip-us.apache.org/repos/asf?p=ant-ivyde.git"/>
+        <location rdf:resource="https://gitbox.apache.org/repos/asf/ant-ivyde.git"/>
+        <browse rdf:resource="https://gitbox.apache.org/repos/asf?p=ant-ivyde.git"/>
       </GitRepository>
     </repository>
   </Project>
