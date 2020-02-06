@@ -20,7 +20,7 @@
     <settings defaultResolver="chain" />
 
     <resolvers>
-        <ibiblio name="maven-central" root="http://repo1.maven.org/maven2/" m2compatible="true" checksums="" />
+        <ibiblio name="maven-central" root="https://repo1.maven.org/maven2/" m2compatible="true" checksums="" />
         
         <filesystem name="local-js">
             <ivy pattern="${ivy.settings.dir}/../repo/[organisation]/[module]/[revision]/ivy.xml" />
