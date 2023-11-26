@@ -27,8 +27,8 @@
     <name>Apache IvyDE</name>
     <homepage rdf:resource="http://ant.apache.org/ivyde/" />
     <asfext:pmc rdf:resource="http://ant.apache.org" />
-    <shortdesc>Integrate Ivy in Eclipse with the IvyDE plugin.</shortdesc>
-    <description>IvyDE lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects. IvyDE will contribute to the classpath of your Java project, with the classpath container. It also bring an editor of ivy.xml files, with completion.</description>
+    <shortdesc>Retired project: Integrate Ivy in Eclipse with the IvyDE plugin.</shortdesc>
+    <description>The now retired IvyDE lets you manage your dependencies declared in an ivy.xml in your Java Eclipse projects. IvyDE will contribute to the classpath of your Java project, with the classpath container. It also bring an editor of ivy.xml files, with completion.</description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/IVYDE" />
     <mailing-list rdf:resource="http://ant.apache.org/ivy/ivyde/mailing-lists.html" />
     <download-page rdf:resource="http://ant.apache.org/ivy/ivyde/download.cgi" />
