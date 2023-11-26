@@ -1,3 +1,8 @@
+WARNING: The Ant PMC link:https://lists.apache.org/thread/wo32q8s8o8z9m126gz3m533q2fnqq21o[voted] to archive the IvyDE subproject. This means that all its resources are removed or made read only and no further development will be done.
+
+NOTE: It also means that, if a community grows, the subproject could
+be link:https://ant.apache.org/processes.html#Reactivate%20a%20subproject%20or%20component[reactivated].
+
 = Apache IvyDE
 
 
