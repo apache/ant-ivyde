@@ -50,7 +50,7 @@
     <property name="rat.dir" value="${work.dir}/rat"/>
 
     <target name="download-ivy" unless="ivy.jar.file">
-        <property name="ivy.jar.url"  value="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
+        <property name="ivy.jar.url"  value="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"/>
         <property name="ivy.jar.dir"  value="${work.dir}"/>
         <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
         <mkdir dir="${ivy.jar.dir}"/>
